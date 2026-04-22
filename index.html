@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIFE SHIFT SIMULATOR 2075</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d0d1a;--navy2:#12122a;--accent:#e94560;--gold:#f5a623;
+  --cyan:#00d4ff;--white:#f0f0f0;--gray:#888;
+  --card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);
+  --ff-head:'Bebas Neue',sans-serif;--ff-body:'Noto Sans JP',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--white);font-family:var(--ff-body);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+
+.screen{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .4s ease}
+.screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* START */
+#screen-start{padding:40px 24px;text-align:center}
+.start-eyebrow{font-size:.7rem;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:20px}
+.start-title{font-family:var(--ff-head);font-size:clamp(2.8rem,10vw,6rem);line-height:.9;letter-spacing:2px;margin-bottom:8px}
+.start-title span{color:var(--accent)}
+.start-sub{font-size:.95rem;color:var(--gray);margin-bottom:48px;line-height:1.8}
+.start-stats{display:flex;gap:32px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+.stat-item{text-align:center}
+.stat-num{font-family:var(--ff-head);font-size:2.2rem;color:var(--cyan)}
+.stat-label{font-size:.7rem;color:var(--gray);letter-spacing:2px}
+.input-group{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:32px;width:100%;max-width:360px;margin-inline:auto}
+.input-group label{font-size:.8rem;color:var(--gray);letter-spacing:2px}
+.input-group input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.1rem;padding:14px 20px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s}
+.input-group input:focus{border-color:var(--accent)}
+.input-group input::placeholder{color:var(--gray)}
+.btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.2rem;letter-spacing:3px;padding:16px 48px;border-radius:4px;transition:transform .15s,box-shadow .15s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,69,96,.4)}
+
+/* PHASE */
+#screen-phase{display:none;flex-direction:column;min-height:100vh;padding:0}
+#screen-phase.active{display:flex}
+.logo-bar{width:100%;padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;background:rgba(13,13,26,.9);backdrop-filter:blur(8px)}
+.logo-bar .logo{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:2px;color:var(--accent)}
+.logo-bar .year{font-size:.75rem;color:var(--gray);margin-left:auto}
+.phase-progress{width:100%;height:3px;background:var(--border)}
+.phase-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s ease}
+.phase-container{flex:1;display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding:32px 20px;width:100%}
+.phase-meta{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.phase-tag{font-size:.65rem;letter-spacing:3px;padding:4px 10px;border-radius:2px;text-transform:uppercase}
+.phase-tag.era{background:rgba(233,69,96,.15);color:var(--accent);border:1px solid rgba(233,69,96,.3)}
+.phase-tag.age{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
+.phase-tag.year{background:var(--card);color:var(--gray);border:1px solid var(--border)}
+.era-description{font-size:.82rem;color:var(--gray);line-height:1.8;padding:12px 16px;border-left:2px solid var(--accent);background:var(--card);border-radius:0 4px 4px 0;margin-bottom:12px}
+.era-stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.era-stat{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 14px}
+.era-stat-value{font-family:var(--ff-head);font-size:1.4rem;color:var(--gold)}
+.era-stat-label{font-size:.7rem;color:var(--gray)}
+.era-stat-source{font-size:.6rem;color:rgba(136,136,136,.6);margin-top:2px}
+.phase-question{font-size:clamp(1rem,3vw,1.25rem);font-weight:700;line-height:1.6;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
+.choices{display:flex;flex-direction:column;gap:12px}
+.choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:16px 20px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;gap:16px;align-items:flex-start}
+.choice-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08);transform:translateX(4px)}
+.choice-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
+.choice-label{font-family:var(--ff-head);font-size:1.4rem;color:var(--accent);min-width:24px;line-height:1}
+.choice-content{flex:1}
+.choice-text{font-size:.9rem;font-weight:700;margin-bottom:4px;line-height:1.5}
+.choice-example{font-size:.75rem;color:var(--gray)}
+
+/* EVENT */
+.event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px;animation:fadeIn .3s ease}
+.event-card{background:var(--navy2);border:1px solid var(--accent);border-radius:8px;padding:32px;max-width:560px;width:100%;box-shadow:0 0 60px rgba(233,69,96,.2)}
+.event-eyebrow{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px}
+.event-title{font-family:var(--ff-head);font-size:1.6rem;margin-bottom:12px}
+.event-desc{font-size:.85rem;color:var(--gray);line-height:1.7;margin-bottom:24px}
+.event-choices{display:flex;flex-direction:column;gap:10px}
+.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:4px;cursor:pointer;font-size:.85rem;line-height:1.5;transition:border-color .2s,background .2s}
+.event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.08)}
+
+/* RESULT */
+#screen-result{padding:40px 20px;max-width:720px;margin:0 auto;width:100%;align-items:stretch}
+.result-eyebrow{font-size:.7rem;letter-spacing:4px;color:var(--gray);margin-bottom:16px;text-align:center}
+.result-score-block{text-align:center;margin-bottom:40px}
+.result-score-num{font-family:var(--ff-head);font-size:clamp(4rem,15vw,8rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.result-tier{font-family:var(--ff-head);font-size:1.8rem;letter-spacing:4px;margin-top:8px}
+.result-headline{font-size:.95rem;color:var(--gray);line-height:1.8;margin-top:16px;max-width:480px;margin-inline:auto}
+.result-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px;position:relative;height:280px}
+.result-feedback{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px;line-height:1.9;font-size:.9rem}
+.result-feedback h3{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px}
+.result-action{background:rgba(233,69,96,.08);border:1px solid rgba(233,69,96,.3);border-radius:8px;padding:20px 24px;margin-bottom:32px;font-size:.9rem;line-height:1.7}
+.result-action h3{font-size:.65rem;letter-spacing:3px;color:var(--gold);margin-bottom:8px}
+.compare-block{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:24px}
+.compare-block h3{font-size:.65rem;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
+.compare-stat{display:flex;gap:16px;flex-wrap:wrap}
+.compare-item{flex:1;min-width:120px;text-align:center}
+.compare-num{font-family:var(--ff-head);font-size:2rem}
+.compare-label{font-size:.7rem;color:var(--gray)}
+.tier-bar{margin-top:16px}
+.tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.75rem}
+.tier-bar-label{width:50px;text-align:right;color:var(--gray)}
+.tier-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px}
+.tier-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
+.tier-bar-pct{width:36px;text-align:right;color:var(--gray);font-size:.7rem}
+.share-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
+.btn-share{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:12px 20px;border-radius:4px;cursor:pointer;font-size:.85rem;transition:border-color .2s,background .2s}
+.btn-share:hover{border-color:var(--cyan);background:rgba(0,212,255,.08)}
+.btn-retry{display:block;width:100%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--ff-head);font-size:1rem;letter-spacing:3px;padding:14px;border-radius:4px;cursor:pointer;transition:background .2s;margin-bottom:60px}
+.btn-retry:hover{background:rgba(233,69,96,.1)}
+
+/* LOADING */
+.loading{display:none;position:fixed;inset:0;background:rgba(13,13,26,.9);align-items:center;justify-content:center;z-index:300;font-family:var(--ff-head);font-size:1.5rem;letter-spacing:4px;color:var(--accent)}
+.loading.show{display:flex}
+
+@media(max-width:480px){
+  .phase-container{padding:20px 16px}
+  .era-stats{flex-direction:column}
+  .result-chart-wrap{height:220px}
+}
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading">CALCULATING...</div>
+
+<!-- START -->
+<div class="screen active" id="screen-start">
+  <div style="width:100%;max-width:640px;padding:40px 24px;text-align:center">
+    <p class="start-eyebrow">AI時代を生き残る50年の疑似体験</p>
+    <h1 class="start-title">LIFE SHIFT<br><span>SIMULATOR</span><br>2075</h1>
+    <p class="start-sub">あなたは今20歳。<br>70歳の定年まで、6つの時代の岐路に立つ。<br>選択が、あなたの価値を決める。</p>
+    <div class="start-stats">
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">PHASES</div></div>
+      <div class="stat-item"><div class="stat-num">50</div><div class="stat-label">YEARS</div></div>
+      <div class="stat-item"><div class="stat-num">5〜10</div><div class="stat-label">MINUTES</div></div>
+    </div>
+    <div class="input-group">
+      <label>NICKNAME</label>
+      <input type="text" id="nickname-input" placeholder="ニックネームを入力" maxlength="20">
+    </div>
+    <p style="font-size:.7rem;color:var(--gray);margin-bottom:24px">ニックネームと選択結果はイベント分析のために保存されます</p>
+    <button class="btn-primary" onclick="startGame()">START SIMULATION</button>
+  </div>
+</div>
+
+<!-- PHASE -->
+<div class="screen" id="screen-phase">
+  <div style="width:100%">
+    <div class="logo-bar">
+      <span class="logo">LSS 2075</span>
+      <span id="phase-counter" style="font-size:.75rem;color:var(--gray)"></span>
+      <span class="year" id="phase-year-label"></span>
+    </div>
+    <div class="phase-progress">
+      <div class="phase-progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="phase-container">
+    <div class="phase-header">
+      <div class="phase-meta" id="phase-meta"></div>
+      <div class="era-description" id="era-description"></div>
+      <div class="era-stats" id="era-stats"></div>
+    </div>
+    <div class="phase-question" id="phase-question"></div>
+    <div class="choices" id="choices"></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="screen-result">
+  <div style="width:100%;max-width:720px;padding:40px 20px">
+    <p class="result-eyebrow">SIMULATION COMPLETE</p>
+    <div class="result-score-block">
+      <div class="result-score-num" id="result-score">--</div>
+      <div class="result-tier" id="result-tier">--</div>
+      <div class="result-headline" id="result-headline"></div>
+    </div>
+    <div class="result-chart-wrap"><canvas id="radar-chart"></canvas></div>
+    <div class="result-feedback"><h3>ANALYSIS</h3><p id="result-body"></p></div>
+    <div class="result-action"><h3>TODAY'S ACTION</h3><p id="result-action"></p></div>
+    <div class="compare-block" id="compare-block">
+      <h3>LIVE COMPARISON</h3>
+      <div class="compare-stat">
+        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-label">参加者数</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-label">平均スコア</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-label">上位</div></div>
+      </div>
+      <div class="tier-bar" id="tier-bar"></div>
+    </div>
+    <div class="share-row">
+      <button class="btn-share" onclick="shareX()">𝕏 でシェア</button>
+      <button class="btn-share" onclick="copyResult()">結果をコピー</button>
+    </div>
+    <button class="btn-retry" onclick="resetGame()">▶ もう一度プレイ</button>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// GAS エンドポイント（デプロイ後に差し替え）
+// ================================================================
+const GAS_URL = 'YOUR_GAS_ENDPOINT_URL';
+
+// ================================================================
+// スキーマ
+// ================================================================
+const SCHEMA = {
+  config: {
+    totalPhases: 6,
+    eventTriggerProbability: 0.35,
+    scoreWeights: {
+      phaseWeights: {phase_1:.12,phase_2:.15,phase_3:.18,phase_4:.20,phase_5:.17,phase_6:.18}
+    },
+    resultTiers: [
+      {min:80,max:100,label:'先駆者',color:'#e94560'},
+      {min:60,max:79, label:'適応者',color:'#4fc3f7'},
+      {min:40,max:59, label:'模索者',color:'#81c784'},
+      {min:0, max:39, label:'転換期',color:'#ff8a65'},
+    ]
+  },
+  phases: [
+    {id:'phase_1',order:1,ageRange:'20〜25歳',yearRange:'2025〜2030年',era:'AI実装期',
+     eraDescription:'生成AIが業務に普及し始め、ホワイトカラーの定型業務の約30%が自動化される。新卒採用の評価軸が「即戦力」から「学習速度」に移行しつつある時代。',
+     eraStats:[{label:'自動化リスクの高い職種割合',value:'約47%',source:'OECD 2023'},{label:'AI関連スキル需要の伸び',value:'+68%',source:'WEF 2025'}],
+     question:'AIが多くのコーディング・文書作成・データ集計を自動化し始めた。あなたは最初のキャリアをどこに張る？',
+     choices:[
+       {id:'p1_a',label:'A',text:'AIが苦手な領域（感情・身体・曖昧さ）に特化する',example:'医療・介護・教育・クリエイティブ職など',tags:['specialization'],eraFitScore:7},
+       {id:'p1_b',label:'B',text:'AIを使いこなす側になるため、活用・設計スキルを磨く',example:'プロンプトエンジニアリング・AI導入コンサルなど',tags:['ai-native'],eraFitScore:8},
+       {id:'p1_c',label:'C',text:'技術より「何を作るか」の意思決定側に移る',example:'企画・事業開発・プロダクトマネジメントなど',tags:['strategic'],eraFitScore:6},
+       {id:'p1_d',label:'D',text:'今の専門をより深く掘り、AIに代替されない職人的水準を目指す',example:'弁護士・会計士・エンジニア・研究者など',tags:['specialization'],eraFitScore:6},
+     ]},
+    {id:'phase_2',order:2,ageRange:'25〜30歳',yearRange:'2030〜2035年',era:'AGI移行期',
+     eraDescription:'汎用AIの登場により、専門職の一部が大規模に代替される。新たな職種が急増し、転職市場が活性化。「何ができるか」より「どう学べるか」が問われる。',
+     eraStats:[{label:'消滅リスクの高い職種割合',value:'約23%',source:'WEF 2025'},{label:'新規創出が見込まれる職種数',value:'+1,700万人分',source:'WEF 2025'}],
+     question:'AGIの台頭で、積み上げてきたスキルの一部が陳腐化しつつある。どう動く？',
+     choices:[
+       {id:'p2_a',label:'A',text:'影響を受けにくい上流工程（意思決定・交渉・関係構築）にシフトする',example:'経営企画・渉外・ファシリテーターなど',tags:['strategic'],eraFitScore:8},
+       {id:'p2_b',label:'B',text:'新技術の導入・管理側に回り、組織とAIの橋渡し役になる',example:'AIプロジェクトマネージャー・DX推進担当など',tags:['ai-native'],eraFitScore:9},
+       {id:'p2_c',label:'C',text:'副業・個人事業を立ち上げ、組織依存を減らしていく',example:'フリーランス・スタートアップ創業など',tags:['independent'],eraFitScore:7},
+       {id:'p2_d',label:'D',text:'現職を続けながら、AIリスクの低い分野への異業種転職を検討する',example:'インフラ・農業・医療・公共サービスなど',tags:['specialization'],eraFitScore:5},
+     ]},
+    {id:'phase_3',order:3,ageRange:'30〜40歳',yearRange:'2035〜2045年',era:'産業再編期',
+     eraDescription:'複数の産業が融合・再編され、業界の境界が崩壊。T型からπ型・掛け算型人材の需要が急増。組織より個人のブランドが問われる10年。',
+     eraStats:[{label:'複数スキル保有者の年収プレミアム',value:'+34%',source:'McKinsey 2024'},{label:'リモート・ハイブリッド就労者割合',value:'約58%',source:'OECD 2024'}],
+     question:'30代。「掛け算」の時代が来た。あなたはどう自分をデザインする？',
+     choices:[
+       {id:'p3_a',label:'A',text:'専門×専門の掛け算（例：医療×AI、法律×テック）で希少人材になる',example:'メドテック専門弁護士・AI倫理コンサルなど',tags:['rare-combination'],eraFitScore:9},
+       {id:'p3_b',label:'B',text:'専門×マネジメントで、チームを率いる側に移行する',example:'テックリード・プロダクトオーナーなど',tags:['leadership'],eraFitScore:7},
+       {id:'p3_c',label:'C',text:'個人ブランドを構築し、発信・コミュニティで影響力を持つ',example:'インフルエンサー・コミュニティマネージャーなど',tags:['community-builder'],eraFitScore:7},
+       {id:'p3_d',label:'D',text:'海外・グローバル市場に活動の場を広げる',example:'海外拠点での就労・グローバル企業転職など',tags:['global'],eraFitScore:8},
+     ]},
+    {id:'phase_4',order:4,ageRange:'40〜50歳',yearRange:'2045〜2055年',era:'人機協働成熟期',
+     eraDescription:'人間とAIの役割分担が定着。「AIに何をさせるか」を判断できる人間の価値が最大化。少子化による人手不足が深刻化し、後進の育成が社会的急務に。',
+     eraStats:[{label:'管理職・育成職の需要増加率',value:'+41%',source:'内閣府 2024'},{label:'AI意思決定支援ツール導入企業割合',value:'約79%',source:'McKinsey 2024'}],
+     question:'40代。あなたは何を次の世代に渡すか？',
+     choices:[
+       {id:'p4_a',label:'A',text:'後進の育成に注力し、組織・社会の人材底上げに貢献する',example:'メンター・教育職・社内アカデミー立ち上げなど',tags:['leadership'],eraFitScore:9},
+       {id:'p4_b',label:'B',text:'自分の知見を体系化し、仕組み・ツール・コンテンツとして残す',example:'著書出版・SaaS開発・フレームワーク設計など',tags:['legacy'],eraFitScore:8},
+       {id:'p4_c',label:'C',text:'経営・意思決定層に入り、組織の方向性を決める側になる',example:'役員・取締役・社外取締役など',tags:['strategic'],eraFitScore:8},
+       {id:'p4_d',label:'D',text:'専門家として第一線に残り続け、現場からの価値提供を続ける',example:'スペシャリスト・顧問・エキスパートなど',tags:['specialization'],eraFitScore:7},
+     ]},
+    {id:'phase_5',order:5,ageRange:'50〜60歳',yearRange:'2055〜2065年',era:'社会構造変容期',
+     eraDescription:'労働の定義が拡張され、有償・無償・創作・ケアが等価に評価される社会へ。コミュニティとの関係が生存基盤になりつつある。',
+     eraStats:[{label:'週4日労働制導入企業割合（先進国）',value:'約44%',source:'OECD 2024'},{label:'社会的孤立リスクの高い中高年割合',value:'約31%',source:'内閣府 2023'}],
+     question:'50代。コミュニティとの関係をどう設計する？',
+     choices:[
+       {id:'p5_a',label:'A',text:'特定の地域・コミュニティに根を張り、ローカルな価値を生み出す',example:'地域創生・NPO・ローカルビジネスなど',tags:['community-builder'],eraFitScore:8},
+       {id:'p5_b',label:'B',text:'グローバルなネットワークを活かし、越境的な価値を生む',example:'国際機関・グローバルNGO・越境コンサルなど',tags:['global'],eraFitScore:7},
+       {id:'p5_c',label:'C',text:'個人の創作・研究・思索に集中し、深い作品・知見を残す',example:'作家・研究者・アーティストなど',tags:['legacy'],eraFitScore:7},
+       {id:'p5_d',label:'D',text:'複数のコミュニティを横断し、つなぎ役・触媒として動く',example:'コネクター・コミュニティデザイナーなど',tags:['community-builder'],eraFitScore:9},
+     ]},
+    {id:'phase_6',order:6,ageRange:'60〜70歳',yearRange:'2065〜2075年',era:'ポスト労働期',
+     eraDescription:'AIと自動化による生産性向上でBI的制度が普及しつつある。「働かなくていい社会」で「それでも何をするか」が問われる最終章。',
+     eraStats:[{label:'65歳以上就労継続希望者割合',value:'約67%',source:'内閣府 2023'},{label:'BI・類似制度の導入国・地域数',value:'40以上',source:'Stanford Basic Income Lab 2024'}],
+     question:'60代。働かなくてもいい時代に、あなたは何を選ぶ？',
+     choices:[
+       {id:'p6_a',label:'A',text:'現役を続け、経験と知恵を社会に還元し続ける',example:'顧問・社外取締役・ボランティアリーダーなど',tags:['leadership'],eraFitScore:8},
+       {id:'p6_b',label:'B',text:'自分の人生を総括する作品・記録・物語を残す',example:'回顧録・ドキュメンタリー・アーカイブ構築など',tags:['legacy'],eraFitScore:7},
+       {id:'p6_c',label:'C',text:'次世代のために資産・知見・人脈を意図的に譲渡する',example:'寄付・奨学金設立・後継者育成など',tags:['legacy'],eraFitScore:8},
+       {id:'p6_d',label:'D',text:'探求・学習・創造を純粋に楽しむ生き方を選ぶ',example:'生涯学習・趣味の専門化・DIY研究など',tags:['specialization'],eraFitScore:7},
+     ]},
+  ],
+  randomEvents:[
+    {id:'ev1',category:'⚡ 技術系ショック',title:'AIが法務・財務の定型業務を完全代替',
+     description:'担当業務の約60%が自動化された。組織内の役割を見直す必要がある。',
+     triggerPhases:['phase_2','phase_3'],
+     choices:[
+       {id:'ev1_a',text:'影響を受けにくい上流工程（意思決定・交渉）にシフトする',addTag:'strategic',eraFitCorrection:5},
+       {id:'ev1_b',text:'自動化ツールの導入・管理側に回る',addTag:'ai-native',eraFitCorrection:6},
+     ]},
+    {id:'ev2',category:'📉 経済系ショック',title:'グローバル景気後退による採用・昇進の凍結',
+     description:'業界全体が縮小し、2年間キャリアアップの機会が消えた。',
+     triggerPhases:['phase_1','phase_2','phase_3'],
+     choices:[
+       {id:'ev2_a',text:'スキル投資に時間を充て、次の波に備える',addTag:'specialization',eraFitCorrection:5},
+       {id:'ev2_b',text:'影響の少ない業界・地域に素早く移動する',addTag:'independent',eraFitCorrection:4},
+     ]},
+    {id:'ev3',category:'🌊 社会系ショック',title:'パンデミック再来による働き方の強制変化',
+     description:'突然の社会的制約で、対面前提のキャリアが機能不全に陥った。',
+     triggerPhases:['phase_2','phase_3','phase_4'],
+     choices:[
+       {id:'ev3_a',text:'デジタル・リモート環境での価値発揮にフルシフトする',addTag:'ai-native',eraFitCorrection:7},
+       {id:'ev3_b',text:'対面でしかできない価値を守り、制約が解けるまで耐える',addTag:'specialization',eraFitCorrection:2},
+     ]},
+    {id:'ev4',category:'🏢 組織系ショック',title:'所属組織の縮小・吸収合併',
+     description:'少子化と経営難で、勤め先が突然再編された。役割が大幅に変わる。',
+     triggerPhases:['phase_3','phase_4','phase_5'],
+     choices:[
+       {id:'ev4_a',text:'新組織に適応し、変化をチャンスとして活かす',addTag:'strategic',eraFitCorrection:6},
+       {id:'ev4_b',text:'独立・転職のきっかけとして、新しい場に移る',addTag:'independent',eraFitCorrection:5},
+     ]},
+  ],
+  tagDefinitions:{
+    'specialization':{eraFitMultiplier:{phase_1:1.2,phase_2:0.8,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:1.0}},
+    'ai-native':     {eraFitMultiplier:{phase_1:1.2,phase_2:1.2,phase_3:1.1,phase_4:0.9,phase_5:0.8,phase_6:0.8}},
+    'strategic':     {eraFitMultiplier:{phase_1:1.0,phase_2:1.2,phase_3:1.2,phase_4:1.2,phase_5:1.1,phase_6:1.0}},
+    'independent':   {eraFitMultiplier:{phase_1:0.9,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.1,phase_6:1.0}},
+    'rare-combination':{eraFitMultiplier:{phase_1:0.8,phase_2:1.0,phase_3:1.3,phase_4:1.2,phase_5:1.1,phase_6:1.0}},
+    'leadership':    {eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.3,phase_5:1.1,phase_6:1.0}},
+    'community-builder':{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.1,phase_5:1.3,phase_6:1.2}},
+    'global':        {eraFitMultiplier:{phase_1:1.0,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:0.9}},
+    'legacy':        {eraFitMultiplier:{phase_1:0.7,phase_2:0.8,phase_3:0.9,phase_4:1.1,phase_5:1.2,phase_6:1.3}},
+  },
+  feedbackTemplates:{
+    先駆者:{headline:'あなたはAI時代の波を自ら作り出す側にいます',body:'時代適合度と選択の一貫性・発展性が高水準で両立しています。特に{tag}を軸にした選択が時代の需要と高くフィットしていました。',action:'今のあなたに必要なのは、この強みをより大きなスケールで発揮する場を見つけることです。まず自分の強みを言語化してみてください。'},
+    適応者:{headline:'あなたはAI時代を着実に生き抜く柔軟性を持っています',body:'変化への対応力は高いですが、軸の深さという観点でさらに投資をすることで次のステージに上がれる可能性があります。',action:'今のあなたに必要なのは、器用さを活かしつつ、1つの軸での「深さ」を意識的に作ることです。今週、自分の専門分野を1つ決めてみてください。'},
+    模索者:{headline:'あなたはまだ自分の軸を探している途中です',body:'選択に一貫性を持たせることと、選択した道への意識的な投資がスコアを引き上げる鍵になります。探索は悪いことではありません。',action:'今のあなたに必要なのは、「どんな人間でありたいか」という問いに時間を使うことです。今週30分、書き出してみてください。'},
+    転換期:{headline:'あなたは今、大きな転換点の手前にいます',body:'現在の選択パターンは時代の需要とのズレが積み重なっています。ただし、これは今の選択を変えれば逆転できる状況です。',action:'今のあなたに必要なのは、「このままでいい」という前提を一度捨てる勇気です。まず1つだけ、違う選択をしてみてください。'},
+  }
+};
+
+// ================================================================
+// ゲーム状態
+// ================================================================
+let state={nickname:'',sessionId:'',currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
+
+// ================================================================
+// スコアエンジン（v3確定版）
+// ================================================================
+const PHASE_IDS=['phase_1','phase_2','phase_3','phase_4','phase_5','phase_6'];
+
+function getPhaseRanges(){
+  const r={};
+  SCHEMA.phases.forEach(p=>{
+    const s=p.choices.map(c=>c.eraFitScore*(SCHEMA.tagDefinitions[c.tags[0]]?.eraFitMultiplier[p.id]??1));
+    r[p.id]={min:Math.min(...s),max:Math.max(...s)};
+  });
+  return r;
+}
+const PR=getPhaseRanges();
+
+function calcEraFit(choices,tags){
+  const pw=SCHEMA.config.scoreWeights.phaseWeights;
+  return choices.reduce((t,cid,i)=>{
+    const pid=PHASE_IDS[i];
+    const phase=SCHEMA.phases.find(p=>p.id===pid);
+    const choice=phase.choices.find(c=>c.id===cid);
+    const tag=tags[i][0];
+    const raw=choice.eraFitScore*(SCHEMA.tagDefinitions[tag]?.eraFitMultiplier[pid]??1);
+    const r=PR[pid];
+    const norm=r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10;
+    return t+norm*pw[pid];
+  },0);
+}
+
+function calcChainBonus(allTags){
+  const tags=allTags.map(t=>t[0]);
+  if((tags[0]==='specialization'||tags[1]==='specialization')&&tags[2]==='rare-combination')
+    return {bonus:1.6,rule:'multiplication'};
+  let maxS=1,cur=1,sTag=tags[0],sStart=0,tStart=0;
+  for(let i=1;i<tags.length;i++){
+    if(tags[i]===tags[i-1]){cur++;if(cur>maxS){maxS=cur;sTag=tags[i];sStart=tStart;}}
+    else{cur=1;tStart=i;}
+  }
+  if(maxS>=3){
+    const end=sStart+maxS;
+    return(end<tags.length&&tags[end]!==sTag)
+      ?{bonus:1.5,rule:'consistent+pivot'}
+      :{bonus:1.0,rule:'consistent'};
+  }
+  if(new Set(tags).size>=5)return {bonus:-0.5,rule:'scattered'};
+  return {bonus:0,rule:'none'};
+}
+
+function calcCtxBonus(allTags){
+  const tags=allTags.map(t=>t[0]);
+  const map={'specialization:ai-native':0.5,'ai-native:strategic':0.4,'independent:community-builder':0.4,'leadership:legacy':0.5,'strategic:strategic':0.3};
+  return tags.slice(1).reduce((b,t,i)=>{const k=`${tags[i]}:${t}`;return b+(map[k]||0);},0);
+}
+
+function calcFinalScore(choices,tags){
+  return Math.min(100,Math.max(0,Math.round((calcEraFit(choices,tags)+calcChainBonus(tags).bonus+calcCtxBonus(tags))*10)));
+}
+
+function getDominantTag(tags){
+  const c={};tags.flat().forEach(t=>{c[t]=(c[t]||0)+1;});
+  return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+}
+
+const TAG_LABELS={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+
+// ================================================================
+// ゲーム制御
+// ================================================================
+function startGame(){
+  const nick=document.getElementById('nickname-input').value.trim();
+  if(!nick){document.getElementById('nickname-input').focus();return;}
+  state={nickname:nick,sessionId:crypto.randomUUID(),currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
+  showScreen('screen-phase');
+  renderPhase();
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function renderPhase(){
+  const phase=SCHEMA.phases[state.currentPhase];
+  const pNum=state.currentPhase+1;
+  document.getElementById('progress-fill').style.width=`${(pNum-1)/6*100}%`;
+  document.getElementById('phase-counter').textContent=`PHASE ${pNum} / 6`;
+  document.getElementById('phase-year-label').textContent=phase.yearRange;
+  document.getElementById('phase-meta').innerHTML=`
+    <span class="phase-tag era">${phase.era}</span>
+    <span class="phase-tag age">${phase.ageRange}</span>
+    <span class="phase-tag year">${phase.yearRange}</span>`;
+  document.getElementById('era-description').textContent=phase.eraDescription;
+  document.getElementById('era-stats').innerHTML=phase.eraStats.map(s=>`
+    <div class="era-stat">
+      <div class="era-stat-value">${s.value}</div>
+      <div class="era-stat-label">${s.label}</div>
+      <div class="era-stat-source">${s.source}</div>
+    </div>`).join('');
+  document.getElementById('phase-question').textContent=phase.question;
+  document.getElementById('choices').innerHTML=phase.choices.map(c=>`
+    <button class="choice-btn" onclick="selectChoice('${c.id}',this)">
+      <span class="choice-label">${c.label}</span>
+      <div class="choice-content">
+        <div class="choice-text">${c.text}</div>
+        <div class="choice-example">${c.example}</div>
+      </div>
+    </button>`).join('');
+}
+
+function selectChoice(choiceId,btn){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  setTimeout(()=>proceedAfterChoice(choiceId),400);
+}
+
+function proceedAfterChoice(choiceId){
+  const phase=SCHEMA.phases[state.currentPhase];
+  const choice=phase.choices.find(c=>c.id===choiceId);
+  state.choices.push(choiceId);
+  state.tags.push([...choice.tags]);
+  const event=tryTriggerEvent(phase.id);
+  if(event)showEvent(event);
+  else nextPhase();
+}
+
+function tryTriggerEvent(phaseId){
+  if(Math.random()>SCHEMA.config.eventTriggerProbability)return null;
+  const av=SCHEMA.randomEvents.filter(e=>e.triggerPhases.includes(phaseId));
+  return av.length?av[Math.floor(Math.random()*av.length)]:null;
+}
+
+function showEvent(event){
+  const el=document.createElement('div');
+  el.className='event-overlay';el.id='event-overlay';
+  el.innerHTML=`
+    <div class="event-card">
+      <div class="event-eyebrow">${event.category}</div>
+      <div class="event-title">${event.title}</div>
+      <div class="event-desc">${event.description}</div>
+      <div class="event-choices">
+        ${event.choices.map(c=>`
+          <button class="event-choice-btn" onclick="selectEventChoice('${event.id}','${c.id}','${c.addTag||''}',${c.eraFitCorrection||0})">${c.text}</button>`).join('')}
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+}
+
+function selectEventChoice(eventId,choiceId,addTag,correction){
+  state.eventChoices.push({eventId,choiceId,addTag,correction});
+  if(addTag){const last=state.tags[state.tags.length-1];if(!last.includes(addTag))last.push(addTag);}
+  document.getElementById('event-overlay')?.remove();
+  nextPhase();
+}
+
+function nextPhase(){
+  state.currentPhase++;
+  if(state.currentPhase>=SCHEMA.phases.length){
+    showLoading(true);
+    setTimeout(async()=>{await showResult();showLoading(false);},600);
+  }else renderPhase();
+}
+
+// ================================================================
+// 結果
+// ================================================================
+async function showResult(){
+  const score=calcFinalScore(state.choices,state.tags);
+  const chain=calcChainBonus(state.tags);
+  const tier=SCHEMA.config.resultTiers.find(t=>score>=t.min&&score<=t.max);
+  const domTag=getDominantTag(state.tags);
+  const fb=SCHEMA.feedbackTemplates[tier?.label]||SCHEMA.feedbackTemplates['模索者'];
+
+  document.getElementById('result-score').textContent=score;
+  document.getElementById('result-tier').textContent=tier?.label||'--';
+  document.getElementById('result-tier').style.color=tier?.color||'#fff';
+  document.getElementById('result-headline').textContent=fb.headline;
+  document.getElementById('result-body').textContent=fb.body.replace('{tag}',TAG_LABELS[domTag]||domTag);
+  document.getElementById('result-action').textContent=fb.action;
+
+  // レーダー
+  renderRadar(calcRadarScores(),tier?.color||'#e94560');
+
+  // GAS
+  await saveToGAS(score,tier?.label,domTag,chain.rule);
+  fetchStats(score);
+
+  showScreen('screen-result');
+  document.getElementById('progress-fill').style.width='100%';
+}
+
+function calcRadarScores(){
+  const tags=state.tags.map(t=>t[0]);
+  const expertTags=['specialization','rare-combination','leadership','legacy'];
+  const adaptTags=['ai-native','independent','strategic','global','community-builder'];
+  let exp=0,adp=0,era=0;
+  tags.forEach((tag,i)=>{
+    const pid=PHASE_IDS[i];
+    const w=SCHEMA.config.scoreWeights.phaseWeights[pid]*6;
+    if(expertTags.includes(tag))exp+=10*w;
+    if(adaptTags.includes(tag))adp+=10*w;
+    const phase=SCHEMA.phases.find(p=>p.id===pid);
+    const choice=phase.choices.find(c=>c.id===state.choices[i]);
+    const raw=choice.eraFitScore*(SCHEMA.tagDefinitions[tag]?.eraFitMultiplier[pid]??1);
+    const r=PR[pid];
+    era+=(r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10)*w;
+  });
+  const chain=calcChainBonus(state.tags);
+  const consistency=chain.rule.includes('consistent')||chain.rule==='multiplication'?85:chain.rule==='scattered'?30:55;
+  const crisis=state.eventChoices.length>0?Math.min(100,50+state.eventChoices.length*15):50;
+  return [Math.min(100,Math.round(exp)),Math.min(100,Math.round(adp)),Math.min(100,Math.round(era*10)),crisis,consistency];
+}
+
+function renderRadar(data,color){
+  if(state.radarChart)state.radarChart.destroy();
+  const ctx=document.getElementById('radar-chart').getContext('2d');
+  state.radarChart=new Chart(ctx,{
+    type:'radar',
+    data:{
+      labels:['専門性','適応力','時代適合性','危機対応力','一貫性'],
+      datasets:[{data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointBackgroundColor:color,pointRadius:4}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,0.08)'},angleLines:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#888',font:{family:"'Noto Sans JP'",size:11}}}},
+      plugins:{legend:{display:false}}
+    }
+  });
+}
+
+// ================================================================
+// GAS通信
+// ================================================================
+async function saveToGAS(score,tier,dominantTag,chainRule){
+  if(!GAS_URL||GAS_URL==='YOUR_GAS_ENDPOINT_URL')return;
+  try{
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'save',sessionId:state.sessionId,nickname:state.nickname,score,tier,dominantTag,chainRule,choices:state.choices,eventChoices:state.eventChoices,phaseTags:state.tags})});
+  }catch(e){console.warn('GAS save:',e);}
+}
+
+async function fetchStats(myScore){
+  if(!GAS_URL||GAS_URL==='YOUR_GAS_ENDPOINT_URL'){document.getElementById('compare-block').style.display='none';return;}
+  try{
+    const res=await fetch(`${GAS_URL}?action=stats`);
+    const data=await res.json();
+    if(!data.ok||!data.total){document.getElementById('compare-block').style.display='none';return;}
+    document.getElementById('cmp-total').textContent=data.total;
+    document.getElementById('cmp-avg').textContent=data.avgScore;
+    // 上位%（ティア分布から概算）
+    const tier=SCHEMA.config.resultTiers.find(t=>myScore>=t.min&&myScore<=t.max);
+    const aboveTiers=SCHEMA.config.resultTiers.filter(t=>t.min>tier?.min);
+    const aboveCnt=aboveTiers.reduce((s,t)=>s+(data.tiers[t.label]||0),0);
+    const beatPct=data.total>1?Math.round((1-aboveCnt/data.total)*100):100;
+    document.getElementById('cmp-beat').textContent=`${beatPct}%`;
+    // ティアバー
+    const colors={先駆者:'#e94560',適応者:'#4fc3f7',模索者:'#81c784',転換期:'#ff8a65'};
+    document.getElementById('tier-bar').innerHTML=Object.entries(colors).map(([label,color])=>{
+      const cnt=data.tiers[label]||0;
+      const pct=data.total>0?Math.round(cnt/data.total*100):0;
+      return `<div class="tier-bar-row">
+        <span class="tier-bar-label">${label}</span>
+        <div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="tier-bar-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+  }catch(e){document.getElementById('compare-block').style.display='none';}
+}
+
+// ================================================================
+// シェア
+// ================================================================
+function shareX(){
+  const score=document.getElementById('result-score').textContent;
+  const tier=document.getElementById('result-tier').textContent;
+  const text=encodeURIComponent(`LIFE SHIFT SIMULATOR 2075\n\nValue Score：${score}点 [${tier}]\nAI時代の50年を疑似体験👉`);
+  const url=encodeURIComponent('https://agent-network-alp.github.io/life-shift-simulator-2075/');
+  window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`,'_blank');
+}
+
+function copyResult(){
+  const score=document.getElementById('result-score').textContent;
+  const tier=document.getElementById('result-tier').textContent;
+  navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nValue Score：${score}点 [${tier}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/`).then(()=>alert('コピーしました！'));
+}
+
+function resetGame(){
+  if(state.radarChart){state.radarChart.destroy();}
+  state={nickname:'',sessionId:'',currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
+  document.getElementById('nickname-input').value='';
+  showScreen('screen-start');
+}
+
+function showLoading(show){document.getElementById('loading').classList.toggle('show',show);}
+</script>
+</body>
+</html>
