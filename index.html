@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LIFE SHIFT SIMULATOR 2075</title>
+<title>LIFE SHIFT SIMULATOR 2075 | 株式会社エージェント</title>
+<meta name="description" content="未来へ旅して、戻ってきた君はどこへ向かう。AI時代の就活生のための50年疑似体験。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -11,406 +12,313 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#0d0d1a;--navy2:#12122a;--accent:#e94560;--gold:#f5a623;
-  --cyan:#00d4ff;--white:#f0f0f0;--gray:#888;
+  --cyan:#00d4ff;--white:#f0f0f0;--gray:#888;--lgray:#555;
   --card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);
   --ff-head:'Bebas Neue',sans-serif;--ff-body:'Noto Sans JP',sans-serif;
 }
 html{scroll-behavior:smooth}
 body{background:var(--navy);color:var(--white);font-family:var(--ff-body);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
-
-.screen{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .4s ease}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.screen{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .35s ease}
 .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
-@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-
-/* START */
-#screen-start{padding:40px 24px;text-align:center}
-.start-eyebrow{font-size:.7rem;letter-spacing:4px;color:var(--accent);text-transform:uppercase;margin-bottom:20px}
-.start-title{font-family:var(--ff-head);font-size:clamp(2.8rem,10vw,6rem);line-height:.9;letter-spacing:2px;margin-bottom:8px}
-.start-title span{color:var(--accent)}
-.start-sub{font-size:.95rem;color:var(--gray);margin-bottom:48px;line-height:1.8}
-.start-stats{display:flex;gap:32px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
-.stat-item{text-align:center}
-.stat-num{font-family:var(--ff-head);font-size:2.2rem;color:var(--cyan)}
-.stat-label{font-size:.7rem;color:var(--gray);letter-spacing:2px}
-.input-group{display:flex;flex-direction:column;align-items:center;gap:12px;margin-bottom:32px;width:100%;max-width:360px;margin-inline:auto}
-.input-group label{font-size:.8rem;color:var(--gray);letter-spacing:2px}
-.input-group input{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.1rem;padding:14px 20px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s}
-.input-group input:focus{border-color:var(--accent)}
-.input-group input::placeholder{color:var(--gray)}
-.btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.2rem;letter-spacing:3px;padding:16px 48px;border-radius:4px;transition:transform .15s,box-shadow .15s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+#loading-overlay{position:fixed;inset:0;background:var(--navy);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .5s ease}
+#loading-overlay.hide{opacity:0;pointer-events:none}
+.loading-logo{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3rem);letter-spacing:4px;color:var(--accent)}
+.loading-bar-wrap{width:200px;height:2px;background:var(--border)}
+.loading-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0%;transition:width .3s ease}
+.loading-text{font-size:.75rem;color:var(--gray);letter-spacing:3px;animation:pulse 1.5s infinite}
+.top-bar{width:100%;position:sticky;top:0;z-index:100;background:rgba(13,13,26,.92);backdrop-filter:blur(8px)}
+.top-bar-inner{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
+.top-logo{font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;color:var(--accent)}
+.top-step{font-size:.72rem;color:var(--gray);margin-left:auto}
+.top-year{font-size:.72rem;color:var(--cyan)}
+.progress-bar{width:100%;height:2px;background:var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .5s ease}
+.onboard-wrap{width:100%;max-width:540px;padding:40px 24px;text-align:center}
+.onboard-eyebrow{font-size:.65rem;letter-spacing:4px;color:var(--accent);margin-bottom:20px;text-transform:uppercase}
+.onboard-title{font-family:var(--ff-head);font-size:clamp(2rem,8vw,3.5rem);line-height:.95;letter-spacing:2px;margin-bottom:16px}
+.onboard-title span{color:var(--accent)}
+.onboard-sub{font-size:.88rem;color:var(--gray);line-height:1.8;margin-bottom:40px}
+.onboard-hint{font-size:.7rem;color:var(--lgray);margin-bottom:32px;letter-spacing:1px}
+.input-box{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.1rem;padding:14px 20px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s;margin-bottom:8px}
+.input-box:focus{border-color:var(--accent)}
+.input-box::placeholder{color:var(--lgray)}
+.choice2-wrap{display:flex;gap:12px;width:100%;margin-bottom:8px;flex-wrap:wrap}
+.choice2-btn{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:20px 16px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;font-size:.9rem;line-height:1.5;text-align:center}
+.choice2-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08);transform:translateY(-2px)}
+.choice2-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
+.choice2-label{font-family:var(--ff-head);font-size:1.1rem;color:var(--accent);display:block;margin-bottom:6px}
+.btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;padding:16px 48px;border-radius:4px;transition:transform .15s,box-shadow .15s;margin-top:8px}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,69,96,.4)}
-
-/* PHASE */
-#screen-phase{display:none;flex-direction:column;min-height:100vh;padding:0}
+.btn-primary:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--gray);cursor:pointer;font-family:var(--ff-body);font-size:.85rem;padding:10px 24px;border-radius:4px;transition:border-color .2s;margin-top:8px}
+.btn-secondary:hover{border-color:var(--white);color:var(--white)}
+.industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%;margin-bottom:16px;max-height:340px;overflow-y:auto}
+.industry-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:12px 10px;border-radius:4px;cursor:pointer;font-size:.82rem;text-align:center;transition:border-color .2s,background .2s;line-height:1.4}
+.industry-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.06)}
+.industry-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
+.recommend-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,background .2s;text-align:left;display:flex;align-items:center;gap:16px}
+.recommend-card:hover{border-color:var(--accent);background:rgba(233,69,96,.06)}
+.recommend-card.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
+.recommend-rank{font-family:var(--ff-head);font-size:1.8rem;color:var(--accent);min-width:32px}
+.recommend-name{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.recommend-stars{color:var(--gold);font-size:1rem;letter-spacing:2px}
+#screen-departure{background:var(--navy)}
+.departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:.08;position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
+.departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
+.departure-tag{font-size:.65rem;letter-spacing:4px;color:var(--accent);margin-bottom:20px}
+.departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px}
+.departure-copy span{color:var(--cyan)}
+.departure-desc{font-size:.88rem;color:var(--gray);line-height:1.9;margin-bottom:40px}
+#screen-phase{display:none;flex-direction:column;min-height:100vh}
 #screen-phase.active{display:flex}
-.logo-bar{width:100%;padding:16px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;background:rgba(13,13,26,.9);backdrop-filter:blur(8px)}
-.logo-bar .logo{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:2px;color:var(--accent)}
-.logo-bar .year{font-size:.75rem;color:var(--gray);margin-left:auto}
-.phase-progress{width:100%;height:3px;background:var(--border)}
-.phase-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .6s ease}
-.phase-container{flex:1;display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding:32px 20px;width:100%}
-.phase-meta{display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
-.phase-tag{font-size:.65rem;letter-spacing:3px;padding:4px 10px;border-radius:2px;text-transform:uppercase}
-.phase-tag.era{background:rgba(233,69,96,.15);color:var(--accent);border:1px solid rgba(233,69,96,.3)}
-.phase-tag.age{background:rgba(0,212,255,.1);color:var(--cyan);border:1px solid rgba(0,212,255,.2)}
-.phase-tag.year{background:var(--card);color:var(--gray);border:1px solid var(--border)}
-.era-description{font-size:.82rem;color:var(--gray);line-height:1.8;padding:12px 16px;border-left:2px solid var(--accent);background:var(--card);border-radius:0 4px 4px 0;margin-bottom:12px}
-.era-stats{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.era-stat{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 14px}
-.era-stat-value{font-family:var(--ff-head);font-size:1.4rem;color:var(--gold)}
-.era-stat-label{font-size:.7rem;color:var(--gray)}
-.era-stat-source{font-size:.6rem;color:rgba(136,136,136,.6);margin-top:2px}
-.phase-question{font-size:clamp(1rem,3vw,1.25rem);font-weight:700;line-height:1.6;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border)}
-.choices{display:flex;flex-direction:column;gap:12px}
-.choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:16px 20px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;display:flex;gap:16px;align-items:flex-start}
-.choice-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08);transform:translateX(4px)}
-.choice-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
-.choice-label{font-family:var(--ff-head);font-size:1.4rem;color:var(--accent);min-width:24px;line-height:1}
-.choice-content{flex:1}
-.choice-text{font-size:.9rem;font-weight:700;margin-bottom:4px;line-height:1.5}
-.choice-example{font-size:.75rem;color:var(--gray)}
-
-/* EVENT */
-.event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:200;padding:24px;animation:fadeIn .3s ease}
-.event-card{background:var(--navy2);border:1px solid var(--accent);border-radius:8px;padding:32px;max-width:560px;width:100%;box-shadow:0 0 60px rgba(233,69,96,.2)}
-.event-eyebrow{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px}
-.event-title{font-family:var(--ff-head);font-size:1.6rem;margin-bottom:12px}
-.event-desc{font-size:.85rem;color:var(--gray);line-height:1.7;margin-bottom:24px}
-.event-choices{display:flex;flex-direction:column;gap:10px}
-.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:4px;cursor:pointer;font-size:.85rem;line-height:1.5;transition:border-color .2s,background .2s}
-.event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.08)}
-
-/* RESULT */
-#screen-result{padding:40px 20px;max-width:720px;margin:0 auto;width:100%;align-items:stretch}
-.result-eyebrow{font-size:.7rem;letter-spacing:4px;color:var(--gray);margin-bottom:16px;text-align:center}
-.result-score-block{text-align:center;margin-bottom:40px}
-.result-score-num{font-family:var(--ff-head);font-size:clamp(4rem,15vw,8rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.result-tier{font-family:var(--ff-head);font-size:1.8rem;letter-spacing:4px;margin-top:8px}
-.result-headline{font-size:.95rem;color:var(--gray);line-height:1.8;margin-top:16px;max-width:480px;margin-inline:auto}
-.result-chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px;position:relative;height:280px}
-.result-feedback{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px;line-height:1.9;font-size:.9rem}
-.result-feedback h3{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px}
-.result-action{background:rgba(233,69,96,.08);border:1px solid rgba(233,69,96,.3);border-radius:8px;padding:20px 24px;margin-bottom:32px;font-size:.9rem;line-height:1.7}
-.result-action h3{font-size:.65rem;letter-spacing:3px;color:var(--gold);margin-bottom:8px}
-.compare-block{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:24px}
-.compare-block h3{font-size:.65rem;letter-spacing:3px;color:var(--cyan);margin-bottom:16px}
-.compare-stat{display:flex;gap:16px;flex-wrap:wrap}
-.compare-item{flex:1;min-width:120px;text-align:center}
-.compare-num{font-family:var(--ff-head);font-size:2rem}
-.compare-label{font-size:.7rem;color:var(--gray)}
-.tier-bar{margin-top:16px}
-.tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.75rem}
-.tier-bar-label{width:50px;text-align:right;color:var(--gray)}
-.tier-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px}
+.phase-body{flex:1;display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding:28px 20px;width:100%}
+.era-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.era-tag{font-size:.62rem;letter-spacing:2px;padding:4px 10px;border-radius:2px;text-transform:uppercase}
+.era-tag.t-era{background:rgba(233,69,96,.12);color:var(--accent);border:1px solid rgba(233,69,96,.25)}
+.era-tag.t-age{background:rgba(0,212,255,.08);color:var(--cyan);border:1px solid rgba(0,212,255,.18)}
+.era-tag.t-year{background:var(--card);color:var(--gray);border:1px solid var(--border)}
+.era-desc{font-size:.8rem;color:var(--gray);line-height:1.8;padding:10px 14px;border-left:2px solid var(--accent);background:var(--card);border-radius:0 4px 4px 0;margin-bottom:10px}
+.era-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.era-stat{flex:1;min-width:130px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
+.era-stat-val{font-family:var(--ff-head);font-size:1.3rem;color:var(--gold)}
+.era-stat-lbl{font-size:.68rem;color:var(--gray)}
+.era-stat-src{font-size:.58rem;color:rgba(136,136,136,.55);margin-top:2px}
+.q-indicator{font-size:.62rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px}
+.q-layer1{font-size:.8rem;color:var(--gray);margin-bottom:4px;line-height:1.6}
+.q-layer2{font-size:clamp(.95rem,2.5vw,1.15rem);font-weight:700;line-height:1.6;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.choices4{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.choice4-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:5px;cursor:pointer;transition:border-color .2s,background .2s,transform .12s;display:flex;gap:14px;align-items:flex-start}
+.choice4-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.07);transform:translateX(3px)}
+.choice4-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.14)}
+.choice4-lbl{font-family:var(--ff-head);font-size:1.3rem;color:var(--accent);min-width:20px;line-height:1}
+.choice4-body{flex:1}
+.choice4-text{font-size:.88rem;font-weight:700;margin-bottom:3px;line-height:1.5}
+.choice4-ex{font-size:.72rem;color:var(--gray)}
+.mirror-msg{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);border-radius:4px;padding:10px 14px;font-size:.8rem;color:var(--cyan);margin-top:8px;animation:slideUp .3s ease}
+.event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;animation:fadeIn .25s ease}
+.event-card{background:var(--navy2);border:1px solid var(--accent);border-radius:8px;padding:28px;max-width:520px;width:100%;box-shadow:0 0 50px rgba(233,69,96,.18)}
+.event-cat{font-size:.62rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
+.event-title{font-family:var(--ff-head);font-size:1.5rem;margin-bottom:10px}
+.event-desc{font-size:.82rem;color:var(--gray);line-height:1.7;margin-bottom:20px}
+.event-choices{display:flex;flex-direction:column;gap:8px}
+.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:12px 16px;border-radius:4px;cursor:pointer;font-size:.83rem;line-height:1.5;transition:border-color .2s,background .2s}
+.event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.07)}
+#screen-result{padding:0;align-items:stretch}
+.result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%}
+.ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;background:linear-gradient(180deg,rgba(233,69,96,.05) 0%,transparent 100%);border-radius:8px;position:relative;overflow:hidden}
+.ending-year-bg{font-family:var(--ff-head);font-size:clamp(4rem,15vw,10rem);line-height:1;color:var(--accent);opacity:.08;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
+.ending-title{font-family:var(--ff-head);font-size:clamp(1.4rem,5vw,2.4rem);letter-spacing:3px;margin-bottom:16px;position:relative}
+.ending-copy{font-size:.9rem;color:var(--gray);line-height:1.9;max-width:480px;margin:0 auto;position:relative}
+.score-block{text-align:center;margin-bottom:40px}
+.score-num{font-family:var(--ff-head);font-size:clamp(4rem,14vw,7rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-tier{font-family:var(--ff-head);font-size:1.6rem;letter-spacing:4px;margin-top:6px}
+.score-headline{font-size:.9rem;color:var(--gray);line-height:1.8;margin-top:12px;max-width:440px;margin-inline:auto}
+.result-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:24px}
+.result-card h3{font-size:.62rem;letter-spacing:3px;margin-bottom:14px}
+.industry-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.industry-bar-name{font-size:.8rem;width:160px;flex-shrink:0}
+.industry-bar-name.top1{color:var(--gold);font-weight:700}
+.industry-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px}
+.industry-bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
+.industry-bar-pct{font-size:.75rem;width:36px;text-align:right;color:var(--gray)}
+.radar-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:24px;height:260px;position:relative}
+.action-block{background:rgba(233,69,96,.06);border:1px solid rgba(233,69,96,.25);border-radius:8px;padding:20px 22px;margin-bottom:32px}
+.action-block h3{font-size:.62rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
+.action-item{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:12px 16px;cursor:pointer;font-size:.85rem;line-height:1.6;transition:border-color .2s,background .2s;text-align:left;color:var(--white);font-family:var(--ff-body);width:100%;margin-bottom:8px;display:block}
+.action-item:hover{border-color:var(--gold);background:rgba(245,166,35,.06)}
+.action-item.picked{border-color:var(--gold);background:rgba(245,166,35,.1)}
+.compare-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.compare-item{flex:1;min-width:90px;text-align:center}
+.compare-num{font-family:var(--ff-head);font-size:1.8rem}
+.compare-lbl{font-size:.68rem;color:var(--gray)}
+.tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.72rem}
+.tier-bar-lbl{width:46px;text-align:right;color:var(--gray)}
+.tier-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px}
 .tier-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
-.tier-bar-pct{width:36px;text-align:right;color:var(--gray);font-size:.7rem}
-.share-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px}
-.btn-share{flex:1;min-width:120px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:12px 20px;border-radius:4px;cursor:pointer;font-size:.85rem;transition:border-color .2s,background .2s}
-.btn-share:hover{border-color:var(--cyan);background:rgba(0,212,255,.08)}
-.btn-retry{display:block;width:100%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--ff-head);font-size:1rem;letter-spacing:3px;padding:14px;border-radius:4px;cursor:pointer;transition:background .2s;margin-bottom:60px}
-.btn-retry:hover{background:rgba(233,69,96,.1)}
-
-/* LOADING */
-.loading{display:none;position:fixed;inset:0;background:rgba(13,13,26,.9);align-items:center;justify-content:center;z-index:300;font-family:var(--ff-head);font-size:1.5rem;letter-spacing:4px;color:var(--accent)}
-.loading.show{display:flex}
-
-@media(max-width:480px){
-  .phase-container{padding:20px 16px}
-  .era-stats{flex-direction:column}
-  .result-chart-wrap{height:220px}
-}
+.tier-bar-pct{width:32px;text-align:right;color:var(--gray);font-size:.68rem}
+.share-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px}
+.btn-share{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:11px 16px;border-radius:4px;cursor:pointer;font-size:.82rem;transition:border-color .2s}
+.btn-share:hover{border-color:var(--cyan)}
+.btn-retry{display:block;width:100%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--ff-head);font-size:.95rem;letter-spacing:3px;padding:13px;border-radius:4px;cursor:pointer;transition:background .2s;margin-bottom:24px}
+.btn-retry:hover{background:rgba(233,69,96,.08)}
+.brand-footer{text-align:center;font-size:.7rem;color:var(--lgray);letter-spacing:2px;padding-bottom:40px}
+@media(max-width:480px){.phase-body{padding:16px}.era-stats{flex-direction:column}.radar-wrap{height:210px}.industry-bar-name{width:120px;font-size:.72rem}.choice2-wrap{flex-direction:column}}
 </style>
 </head>
 <body>
 
-<div class="loading" id="loading">CALCULATING...</div>
+<div id="loading-overlay">
+  <div class="loading-logo">LSS 2075</div>
+  <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
+  <div class="loading-text">LOADING DATA...</div>
+</div>
 
 <!-- START -->
-<div class="screen active" id="screen-start">
-  <div style="width:100%;max-width:640px;padding:40px 24px;text-align:center">
-    <p class="start-eyebrow">AI時代を生き残る50年の疑似体験</p>
-    <h1 class="start-title">LIFE SHIFT<br><span>SIMULATOR</span><br>2075</h1>
-    <p class="start-sub">あなたは今20歳。<br>70歳の定年まで、6つの時代の岐路に立つ。<br>選択が、あなたの価値を決める。</p>
-    <div class="start-stats">
-      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">PHASES</div></div>
-      <div class="stat-item"><div class="stat-num">50</div><div class="stat-label">YEARS</div></div>
-      <div class="stat-item"><div class="stat-num">5〜10</div><div class="stat-label">MINUTES</div></div>
+<div class="screen" id="screen-start">
+  <div class="onboard-wrap">
+    <p class="onboard-eyebrow">AI時代を生き残る50年の疑似体験</p>
+    <h1 class="onboard-title">LIFE SHIFT<br><span>SIMULATOR</span><br>2075</h1>
+    <p class="onboard-sub">未来へ旅して、戻ってきた君はどこへ向かう。<br>6つの時代の岐路で選択を重ね、<br>あなたの価値とキャリアの方向性を確かめよう。</p>
+    <p class="onboard-hint">ニックネームを入力してスタート</p>
+    <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
+    <p style="font-size:.68rem;color:var(--lgray);margin-bottom:20px">ニックネームと選択結果はイベント分析のために保存されます</p>
+    <button class="btn-primary" onclick="goStart()">はじめる →</button>
+  </div>
+</div>
+
+<!-- ONBOARD Q-A〜D -->
+<div class="screen" id="screen-onboard">
+  <div style="width:100%">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <span class="top-logo">LSS 2075</span>
+        <span class="top-step" id="ob-step-label"></span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="ob-progress"></div></div>
     </div>
-    <div class="input-group">
-      <label>NICKNAME</label>
-      <input type="text" id="nickname-input" placeholder="ニックネームを入力" maxlength="20">
+  </div>
+  <div class="onboard-wrap" style="padding-top:32px">
+    <p class="onboard-hint">直感で答えてください。全部で約1分です。</p>
+    <p class="onboard-eyebrow" id="ob-eyebrow"></p>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.3rem,5vw,2rem);margin-bottom:32px;line-height:1.2" id="ob-question"></h2>
+    <div class="choice2-wrap" id="ob-choices"></div>
+    <button class="btn-secondary" id="ob-back" onclick="obBack()">← 戻る</button>
+  </div>
+</div>
+
+<!-- INDUSTRY -->
+<div class="screen" id="screen-industry">
+  <div style="width:100%">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <span class="top-logo">LSS 2075</span>
+        <span class="top-step">STEP 6 / 6</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
     </div>
-    <p style="font-size:.7rem;color:var(--gray);margin-bottom:24px">ニックネームと選択結果はイベント分析のために保存されます</p>
-    <button class="btn-primary" onclick="startGame()">START SIMULATION</button>
+  </div>
+  <div class="onboard-wrap" style="padding-top:28px;max-width:600px">
+    <p class="onboard-eyebrow">INDUSTRY</p>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.8rem);margin-bottom:8px">気になる業種を選んでください</h2>
+    <p style="font-size:.78rem;color:var(--gray);margin-bottom:20px">AIがあなたの回答から3業種を推薦しています</p>
+    <div id="recommend-section">
+      <p style="font-size:.62rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">AI RECOMMEND</p>
+      <div id="recommend-list"></div>
+      <button class="btn-secondary" onclick="showAllInd()" style="margin-bottom:20px">全業種から選ぶ</button>
+    </div>
+    <div id="all-industry-section" style="display:none">
+      <p style="font-size:.62rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">ALL INDUSTRIES</p>
+      <div class="industry-grid" id="industry-grid"></div>
+    </div>
+    <button class="btn-primary" id="ind-next-btn" onclick="goIndNext()" disabled>次へ →</button>
+    <button class="btn-secondary" onclick="obBack()">← 戻る</button>
+  </div>
+</div>
+
+<!-- DEPARTURE -->
+<div class="screen" id="screen-departure">
+  <div class="departure-year-bg">2075</div>
+  <div class="departure-main">
+    <p class="departure-tag">DEPARTURE — 2026</p>
+    <h2 class="departure-copy">未来へ旅立て。<br><span>2075年まで。</span></h2>
+    <p class="departure-desc">あなたは今、就活生だ。<br>未来を見ずに選択するのか？<br><br>6つの時代を旅して、戻ってきたとき——<br>答えが見える。</p>
+    <button class="btn-primary" onclick="startGame()">旅に出る →</button>
   </div>
 </div>
 
 <!-- PHASE -->
 <div class="screen" id="screen-phase">
-  <div style="width:100%">
-    <div class="logo-bar">
-      <span class="logo">LSS 2075</span>
-      <span id="phase-counter" style="font-size:.75rem;color:var(--gray)"></span>
-      <span class="year" id="phase-year-label"></span>
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <span class="top-logo">LSS 2075</span>
+      <span class="top-step" id="phase-step"></span>
+      <span class="top-year" id="phase-year"></span>
     </div>
-    <div class="phase-progress">
-      <div class="phase-progress-fill" id="progress-fill" style="width:0%"></div>
-    </div>
+    <div class="progress-bar"><div class="progress-fill" id="phase-prog"></div></div>
   </div>
-  <div class="phase-container">
-    <div class="phase-header">
-      <div class="phase-meta" id="phase-meta"></div>
-      <div class="era-description" id="era-description"></div>
-      <div class="era-stats" id="era-stats"></div>
-    </div>
-    <div class="phase-question" id="phase-question"></div>
-    <div class="choices" id="choices"></div>
+  <div class="phase-body">
+    <div class="era-tags" id="era-tags"></div>
+    <div class="era-desc" id="era-desc"></div>
+    <div class="era-stats" id="era-stats"></div>
+    <div class="q-indicator" id="q-ind"></div>
+    <div class="q-layer1" id="q-l1"></div>
+    <div class="q-layer2" id="q-l2"></div>
+    <div class="choices4" id="choices4"></div>
+    <div id="mirror-area"></div>
   </div>
 </div>
 
 <!-- RESULT -->
 <div class="screen" id="screen-result">
-  <div style="width:100%;max-width:720px;padding:40px 20px">
-    <p class="result-eyebrow">SIMULATION COMPLETE</p>
-    <div class="result-score-block">
-      <div class="result-score-num" id="result-score">--</div>
-      <div class="result-tier" id="result-tier">--</div>
-      <div class="result-headline" id="result-headline"></div>
+  <div class="result-inner">
+    <div class="ending-block">
+      <div class="ending-year-bg">2075</div>
+      <h2 class="ending-title">旅が終わった。<br>2026年に戻ってきた。</h2>
+      <p class="ending-copy" id="ending-copy"></p>
     </div>
-    <div class="result-chart-wrap"><canvas id="radar-chart"></canvas></div>
-    <div class="result-feedback"><h3>ANALYSIS</h3><p id="result-body"></p></div>
-    <div class="result-action"><h3>TODAY'S ACTION</h3><p id="result-action"></p></div>
-    <div class="compare-block" id="compare-block">
-      <h3>LIVE COMPARISON</h3>
-      <div class="compare-stat">
-        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-label">参加者数</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-label">平均スコア</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-label">上位</div></div>
+    <div class="score-block">
+      <div class="score-num" id="res-score">--</div>
+      <div class="score-tier" id="res-tier">--</div>
+      <div class="score-headline" id="res-headline"></div>
+    </div>
+    <div class="result-card">
+      <h3 style="color:var(--cyan)">INDUSTRY FIT</h3>
+      <div id="ind-bars"></div>
+    </div>
+    <div class="radar-wrap"><canvas id="radar-chart"></canvas></div>
+    <div class="result-card">
+      <h3 style="color:var(--accent)">ANALYSIS</h3>
+      <p id="res-body" style="font-size:.88rem;line-height:1.9"></p>
+    </div>
+    <div class="action-block">
+      <h3>TODAY'S ACTION — 3つから選ぶ</h3>
+      <div id="action-list"></div>
+    </div>
+    <div class="result-card" id="compare-block">
+      <h3 style="color:var(--cyan)">LIVE COMPARISON</h3>
+      <div class="compare-stats">
+        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-lbl">参加者数</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-lbl">平均スコア</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-lbl">上位</div></div>
       </div>
-      <div class="tier-bar" id="tier-bar"></div>
+      <div id="tier-bars"></div>
     </div>
     <div class="share-row">
-      <button class="btn-share" onclick="shareX()">𝕏 でシェア</button>
-      <button class="btn-share" onclick="copyResult()">結果をコピー</button>
+      <button class="btn-share" onclick="shareX()">𝕏 シェア</button>
+      <button class="btn-share" onclick="copyRes()">コピー</button>
     </div>
     <button class="btn-retry" onclick="resetGame()">▶ もう一度プレイ</button>
+    <div class="brand-footer">by 株式会社エージェント</div>
   </div>
 </div>
 
 <script>
-// ================================================================
-// GAS エンドポイント（デプロイ後に差し替え）
-// ================================================================
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbxmW1kE-CFbpUQwXzD_iaak0aOviXI395xDBT6KcttL5Jnv9om7a3QovceCi7avVD-9/exec';
-
-// ================================================================
-// スキーマ
-// ================================================================
-const SCHEMA = {
-  config: {
-    totalPhases: 6,
-    eventTriggerProbability: 0.35,
-    scoreWeights: {
-      phaseWeights: {phase_1:.12,phase_2:.15,phase_3:.18,phase_4:.20,phase_5:.17,phase_6:.18}
-    },
-    resultTiers: [
-      {min:80,max:100,label:'先駆者',color:'#e94560'},
-      {min:60,max:79, label:'適応者',color:'#4fc3f7'},
-      {min:40,max:59, label:'模索者',color:'#81c784'},
-      {min:0, max:39, label:'転換期',color:'#ff8a65'},
-    ]
-  },
-  phases: [
-    {id:'phase_1',order:1,ageRange:'20〜25歳',yearRange:'2025〜2030年',era:'AI実装期',
-     eraDescription:'生成AIが業務に普及し始め、ホワイトカラーの定型業務の約30%が自動化される。新卒採用の評価軸が「即戦力」から「学習速度」に移行しつつある時代。',
-     eraStats:[{label:'自動化リスクの高い職種割合',value:'約47%',source:'OECD 2023'},{label:'AI関連スキル需要の伸び',value:'+68%',source:'WEF 2025'}],
-     question:'AIが多くのコーディング・文書作成・データ集計を自動化し始めた。あなたは最初のキャリアをどこに張る？',
-     choices:[
-       {id:'p1_a',label:'A',text:'AIが苦手な領域（感情・身体・曖昧さ）に特化する',example:'医療・介護・教育・クリエイティブ職など',tags:['specialization'],eraFitScore:7},
-       {id:'p1_b',label:'B',text:'AIを使いこなす側になるため、活用・設計スキルを磨く',example:'プロンプトエンジニアリング・AI導入コンサルなど',tags:['ai-native'],eraFitScore:8},
-       {id:'p1_c',label:'C',text:'技術より「何を作るか」の意思決定側に移る',example:'企画・事業開発・プロダクトマネジメントなど',tags:['strategic'],eraFitScore:6},
-       {id:'p1_d',label:'D',text:'今の専門をより深く掘り、AIに代替されない職人的水準を目指す',example:'弁護士・会計士・エンジニア・研究者など',tags:['specialization'],eraFitScore:6},
-     ]},
-    {id:'phase_2',order:2,ageRange:'25〜30歳',yearRange:'2030〜2035年',era:'AGI移行期',
-     eraDescription:'汎用AIの登場により、専門職の一部が大規模に代替される。新たな職種が急増し、転職市場が活性化。「何ができるか」より「どう学べるか」が問われる。',
-     eraStats:[{label:'消滅リスクの高い職種割合',value:'約23%',source:'WEF 2025'},{label:'新規創出が見込まれる職種数',value:'+1,700万人分',source:'WEF 2025'}],
-     question:'AGIの台頭で、積み上げてきたスキルの一部が陳腐化しつつある。どう動く？',
-     choices:[
-       {id:'p2_a',label:'A',text:'影響を受けにくい上流工程（意思決定・交渉・関係構築）にシフトする',example:'経営企画・渉外・ファシリテーターなど',tags:['strategic'],eraFitScore:8},
-       {id:'p2_b',label:'B',text:'新技術の導入・管理側に回り、組織とAIの橋渡し役になる',example:'AIプロジェクトマネージャー・DX推進担当など',tags:['ai-native'],eraFitScore:9},
-       {id:'p2_c',label:'C',text:'副業・個人事業を立ち上げ、組織依存を減らしていく',example:'フリーランス・スタートアップ創業など',tags:['independent'],eraFitScore:7},
-       {id:'p2_d',label:'D',text:'現職を続けながら、AIリスクの低い分野への異業種転職を検討する',example:'インフラ・農業・医療・公共サービスなど',tags:['specialization'],eraFitScore:5},
-     ]},
-    {id:'phase_3',order:3,ageRange:'30〜40歳',yearRange:'2035〜2045年',era:'産業再編期',
-     eraDescription:'複数の産業が融合・再編され、業界の境界が崩壊。T型からπ型・掛け算型人材の需要が急増。組織より個人のブランドが問われる10年。',
-     eraStats:[{label:'複数スキル保有者の年収プレミアム',value:'+34%',source:'McKinsey 2024'},{label:'リモート・ハイブリッド就労者割合',value:'約58%',source:'OECD 2024'}],
-     question:'30代。「掛け算」の時代が来た。あなたはどう自分をデザインする？',
-     choices:[
-       {id:'p3_a',label:'A',text:'専門×専門の掛け算（例：医療×AI、法律×テック）で希少人材になる',example:'メドテック専門弁護士・AI倫理コンサルなど',tags:['rare-combination'],eraFitScore:9},
-       {id:'p3_b',label:'B',text:'専門×マネジメントで、チームを率いる側に移行する',example:'テックリード・プロダクトオーナーなど',tags:['leadership'],eraFitScore:7},
-       {id:'p3_c',label:'C',text:'個人ブランドを構築し、発信・コミュニティで影響力を持つ',example:'インフルエンサー・コミュニティマネージャーなど',tags:['community-builder'],eraFitScore:7},
-       {id:'p3_d',label:'D',text:'海外・グローバル市場に活動の場を広げる',example:'海外拠点での就労・グローバル企業転職など',tags:['global'],eraFitScore:8},
-     ]},
-    {id:'phase_4',order:4,ageRange:'40〜50歳',yearRange:'2045〜2055年',era:'人機協働成熟期',
-     eraDescription:'人間とAIの役割分担が定着。「AIに何をさせるか」を判断できる人間の価値が最大化。少子化による人手不足が深刻化し、後進の育成が社会的急務に。',
-     eraStats:[{label:'管理職・育成職の需要増加率',value:'+41%',source:'内閣府 2024'},{label:'AI意思決定支援ツール導入企業割合',value:'約79%',source:'McKinsey 2024'}],
-     question:'40代。あなたは何を次の世代に渡すか？',
-     choices:[
-       {id:'p4_a',label:'A',text:'後進の育成に注力し、組織・社会の人材底上げに貢献する',example:'メンター・教育職・社内アカデミー立ち上げなど',tags:['leadership'],eraFitScore:9},
-       {id:'p4_b',label:'B',text:'自分の知見を体系化し、仕組み・ツール・コンテンツとして残す',example:'著書出版・SaaS開発・フレームワーク設計など',tags:['legacy'],eraFitScore:8},
-       {id:'p4_c',label:'C',text:'経営・意思決定層に入り、組織の方向性を決める側になる',example:'役員・取締役・社外取締役など',tags:['strategic'],eraFitScore:8},
-       {id:'p4_d',label:'D',text:'専門家として第一線に残り続け、現場からの価値提供を続ける',example:'スペシャリスト・顧問・エキスパートなど',tags:['specialization'],eraFitScore:7},
-     ]},
-    {id:'phase_5',order:5,ageRange:'50〜60歳',yearRange:'2055〜2065年',era:'社会構造変容期',
-     eraDescription:'労働の定義が拡張され、有償・無償・創作・ケアが等価に評価される社会へ。コミュニティとの関係が生存基盤になりつつある。',
-     eraStats:[{label:'週4日労働制導入企業割合（先進国）',value:'約44%',source:'OECD 2024'},{label:'社会的孤立リスクの高い中高年割合',value:'約31%',source:'内閣府 2023'}],
-     question:'50代。コミュニティとの関係をどう設計する？',
-     choices:[
-       {id:'p5_a',label:'A',text:'特定の地域・コミュニティに根を張り、ローカルな価値を生み出す',example:'地域創生・NPO・ローカルビジネスなど',tags:['community-builder'],eraFitScore:8},
-       {id:'p5_b',label:'B',text:'グローバルなネットワークを活かし、越境的な価値を生む',example:'国際機関・グローバルNGO・越境コンサルなど',tags:['global'],eraFitScore:7},
-       {id:'p5_c',label:'C',text:'個人の創作・研究・思索に集中し、深い作品・知見を残す',example:'作家・研究者・アーティストなど',tags:['legacy'],eraFitScore:7},
-       {id:'p5_d',label:'D',text:'複数のコミュニティを横断し、つなぎ役・触媒として動く',example:'コネクター・コミュニティデザイナーなど',tags:['community-builder'],eraFitScore:9},
-     ]},
-    {id:'phase_6',order:6,ageRange:'60〜70歳',yearRange:'2065〜2075年',era:'ポスト労働期',
-     eraDescription:'AIと自動化による生産性向上でBI的制度が普及しつつある。「働かなくていい社会」で「それでも何をするか」が問われる最終章。',
-     eraStats:[{label:'65歳以上就労継続希望者割合',value:'約67%',source:'内閣府 2023'},{label:'BI・類似制度の導入国・地域数',value:'40以上',source:'Stanford Basic Income Lab 2024'}],
-     question:'60代。働かなくてもいい時代に、あなたは何を選ぶ？',
-     choices:[
-       {id:'p6_a',label:'A',text:'現役を続け、経験と知恵を社会に還元し続ける',example:'顧問・社外取締役・ボランティアリーダーなど',tags:['leadership'],eraFitScore:8},
-       {id:'p6_b',label:'B',text:'自分の人生を総括する作品・記録・物語を残す',example:'回顧録・ドキュメンタリー・アーカイブ構築など',tags:['legacy'],eraFitScore:7},
-       {id:'p6_c',label:'C',text:'次世代のために資産・知見・人脈を意図的に譲渡する',example:'寄付・奨学金設立・後継者育成など',tags:['legacy'],eraFitScore:8},
-       {id:'p6_d',label:'D',text:'探求・学習・創造を純粋に楽しむ生き方を選ぶ',example:'生涯学習・趣味の専門化・DIY研究など',tags:['specialization'],eraFitScore:7},
-     ]},
-  ],
-  randomEvents:[
-    {id:'ev1',category:'⚡ 技術系ショック',title:'AIが法務・財務の定型業務を完全代替',
-     description:'担当業務の約60%が自動化された。組織内の役割を見直す必要がある。',
-     triggerPhases:['phase_2','phase_3'],
-     choices:[
-       {id:'ev1_a',text:'影響を受けにくい上流工程（意思決定・交渉）にシフトする',addTag:'strategic',eraFitCorrection:5},
-       {id:'ev1_b',text:'自動化ツールの導入・管理側に回る',addTag:'ai-native',eraFitCorrection:6},
-     ]},
-    {id:'ev2',category:'📉 経済系ショック',title:'グローバル景気後退による採用・昇進の凍結',
-     description:'業界全体が縮小し、2年間キャリアアップの機会が消えた。',
-     triggerPhases:['phase_1','phase_2','phase_3'],
-     choices:[
-       {id:'ev2_a',text:'スキル投資に時間を充て、次の波に備える',addTag:'specialization',eraFitCorrection:5},
-       {id:'ev2_b',text:'影響の少ない業界・地域に素早く移動する',addTag:'independent',eraFitCorrection:4},
-     ]},
-    {id:'ev3',category:'🌊 社会系ショック',title:'パンデミック再来による働き方の強制変化',
-     description:'突然の社会的制約で、対面前提のキャリアが機能不全に陥った。',
-     triggerPhases:['phase_2','phase_3','phase_4'],
-     choices:[
-       {id:'ev3_a',text:'デジタル・リモート環境での価値発揮にフルシフトする',addTag:'ai-native',eraFitCorrection:7},
-       {id:'ev3_b',text:'対面でしかできない価値を守り、制約が解けるまで耐える',addTag:'specialization',eraFitCorrection:2},
-     ]},
-    {id:'ev4',category:'🏢 組織系ショック',title:'所属組織の縮小・吸収合併',
-     description:'少子化と経営難で、勤め先が突然再編された。役割が大幅に変わる。',
-     triggerPhases:['phase_3','phase_4','phase_5'],
-     choices:[
-       {id:'ev4_a',text:'新組織に適応し、変化をチャンスとして活かす',addTag:'strategic',eraFitCorrection:6},
-       {id:'ev4_b',text:'独立・転職のきっかけとして、新しい場に移る',addTag:'independent',eraFitCorrection:5},
-     ]},
-  ],
-  tagDefinitions:{
-    'specialization':{eraFitMultiplier:{phase_1:1.2,phase_2:0.8,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:1.0}},
-    'ai-native':     {eraFitMultiplier:{phase_1:1.2,phase_2:1.2,phase_3:1.1,phase_4:0.9,phase_5:0.8,phase_6:0.8}},
-    'strategic':     {eraFitMultiplier:{phase_1:1.0,phase_2:1.2,phase_3:1.2,phase_4:1.2,phase_5:1.1,phase_6:1.0}},
-    'independent':   {eraFitMultiplier:{phase_1:0.9,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.1,phase_6:1.0}},
-    'rare-combination':{eraFitMultiplier:{phase_1:0.8,phase_2:1.0,phase_3:1.3,phase_4:1.2,phase_5:1.1,phase_6:1.0}},
-    'leadership':    {eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.3,phase_5:1.1,phase_6:1.0}},
-    'community-builder':{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.1,phase_5:1.3,phase_6:1.2}},
-    'global':        {eraFitMultiplier:{phase_1:1.0,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:0.9}},
-    'legacy':        {eraFitMultiplier:{phase_1:0.7,phase_2:0.8,phase_3:0.9,phase_4:1.1,phase_5:1.2,phase_6:1.3}},
-  },
-  feedbackTemplates:{
-    先駆者:{headline:'あなたはAI時代の波を自ら作り出す側にいます',body:'時代適合度と選択の一貫性・発展性が高水準で両立しています。特に{tag}を軸にした選択が時代の需要と高くフィットしていました。',action:'今のあなたに必要なのは、この強みをより大きなスケールで発揮する場を見つけることです。まず自分の強みを言語化してみてください。'},
-    適応者:{headline:'あなたはAI時代を着実に生き抜く柔軟性を持っています',body:'変化への対応力は高いですが、軸の深さという観点でさらに投資をすることで次のステージに上がれる可能性があります。',action:'今のあなたに必要なのは、器用さを活かしつつ、1つの軸での「深さ」を意識的に作ることです。今週、自分の専門分野を1つ決めてみてください。'},
-    模索者:{headline:'あなたはまだ自分の軸を探している途中です',body:'選択に一貫性を持たせることと、選択した道への意識的な投資がスコアを引き上げる鍵になります。探索は悪いことではありません。',action:'今のあなたに必要なのは、「どんな人間でありたいか」という問いに時間を使うことです。今週30分、書き出してみてください。'},
-    転換期:{headline:'あなたは今、大きな転換点の手前にいます',body:'現在の選択パターンは時代の需要とのズレが積み重なっています。ただし、これは今の選択を変えれば逆転できる状況です。',action:'今のあなたに必要なのは、「このままでいい」という前提を一度捨てる勇気です。まず1つだけ、違う選択をしてみてください。'},
-  }
-};
-
-// ================================================================
-// ゲーム状態
-// ================================================================
-let state={nickname:'',sessionId:'',currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
-
-// ================================================================
-// スコアエンジン（v3確定版）
-// ================================================================
+const GAS_URL='https://script.google.com/macros/s/AKfycbxmW1kE-CFbpUQwXzD_iaak0aOviXI395xDBT6KcttL5Jnv9om7a3QovceCi7avVD-9/exec';
 const PHASE_IDS=['phase_1','phase_2','phase_3','phase_4','phase_5','phase_6'];
 
-function getPhaseRanges(){
-  const r={};
-  SCHEMA.phases.forEach(p=>{
-    const s=p.choices.map(c=>c.eraFitScore*(SCHEMA.tagDefinitions[c.tags[0]]?.eraFitMultiplier[p.id]??1));
-    r[p.id]={min:Math.min(...s),max:Math.max(...s)};
-  });
-  return r;
-}
-const PR=getPhaseRanges();
+let G={
+  nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',
+  currentPhase:0,currentQ:0,
+  choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],
+  radarChart:null,data:null,config:{}
+};
 
-function calcEraFit(choices,tags){
-  const pw=SCHEMA.config.scoreWeights.phaseWeights;
-  return choices.reduce((t,cid,i)=>{
-    const pid=PHASE_IDS[i];
-    const phase=SCHEMA.phases.find(p=>p.id===pid);
-    const choice=phase.choices.find(c=>c.id===cid);
-    const tag=tags[i][0];
-    const raw=choice.eraFitScore*(SCHEMA.tagDefinitions[tag]?.eraFitMultiplier[pid]??1);
-    const r=PR[pid];
-    const norm=r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10;
-    return t+norm*pw[pid];
-  },0);
-}
-
-function calcChainBonus(allTags){
-  const tags=allTags.map(t=>t[0]);
-  if((tags[0]==='specialization'||tags[1]==='specialization')&&tags[2]==='rare-combination')
-    return {bonus:1.6,rule:'multiplication'};
-  let maxS=1,cur=1,sTag=tags[0],sStart=0,tStart=0;
-  for(let i=1;i<tags.length;i++){
-    if(tags[i]===tags[i-1]){cur++;if(cur>maxS){maxS=cur;sTag=tags[i];sStart=tStart;}}
-    else{cur=1;tStart=i;}
-  }
-  if(maxS>=3){
-    const end=sStart+maxS;
-    return(end<tags.length&&tags[end]!==sTag)
-      ?{bonus:1.5,rule:'consistent+pivot'}
-      :{bonus:1.0,rule:'consistent'};
-  }
-  if(new Set(tags).size>=5)return {bonus:-0.5,rule:'scattered'};
-  return {bonus:0,rule:'none'};
-}
-
-function calcCtxBonus(allTags){
-  const tags=allTags.map(t=>t[0]);
-  const map={'specialization:ai-native':0.5,'ai-native:strategic':0.4,'independent:community-builder':0.4,'leadership:legacy':0.5,'strategic:strategic':0.3};
-  return tags.slice(1).reduce((b,t,i)=>{const k=`${tags[i]}:${t}`;return b+(map[k]||0);},0);
-}
-
-function calcFinalScore(choices,tags){
-  return Math.min(100,Math.max(0,Math.round((calcEraFit(choices,tags)+calcChainBonus(tags).bonus+calcCtxBonus(tags))*10)));
-}
-
-function getDominantTag(tags){
-  const c={};tags.flat().forEach(t=>{c[t]=(c[t]||0)+1;});
-  return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
-}
-
-const TAG_LABELS={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
-
-// ================================================================
-// ゲーム制御
-// ================================================================
-function startGame(){
-  const nick=document.getElementById('nickname-input').value.trim();
-  if(!nick){document.getElementById('nickname-input').focus();return;}
-  state={nickname:nick,sessionId:crypto.randomUUID(),currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
-  showScreen('screen-phase');
-  renderPhase();
+// ── 起動 ────────────────────────────────────────────────────────
+async function init(){
+  let w=0;const bar=document.getElementById('loading-bar');
+  const t=setInterval(()=>{w=Math.min(w+Math.random()*15,90);bar.style.width=w+'%';if(w>=90)clearInterval(t);},150);
+  try{
+    const res=await fetch(`${GAS_URL}?action=contents`);
+    const json=await res.json();
+    if(!json.ok)throw new Error('fail');
+    G.data=json;G.config=json.config||{};
+  }catch(e){G.data=FB;G.config=FB.config||{};}
+  bar.style.width='100%';
+  setTimeout(()=>{document.getElementById('loading-overlay').classList.add('hide');showScreen('screen-start');},600);
 }
 
 function showScreen(id){
@@ -419,217 +327,398 @@ function showScreen(id){
   window.scrollTo(0,0);
 }
 
-function renderPhase(){
-  const phase=SCHEMA.phases[state.currentPhase];
-  const pNum=state.currentPhase+1;
-  document.getElementById('progress-fill').style.width=`${(pNum-1)/6*100}%`;
-  document.getElementById('phase-counter').textContent=`PHASE ${pNum} / 6`;
-  document.getElementById('phase-year-label').textContent=phase.yearRange;
-  document.getElementById('phase-meta').innerHTML=`
-    <span class="phase-tag era">${phase.era}</span>
-    <span class="phase-tag age">${phase.ageRange}</span>
-    <span class="phase-tag year">${phase.yearRange}</span>`;
-  document.getElementById('era-description').textContent=phase.eraDescription;
-  document.getElementById('era-stats').innerHTML=phase.eraStats.map(s=>`
-    <div class="era-stat">
-      <div class="era-stat-value">${s.value}</div>
-      <div class="era-stat-label">${s.label}</div>
-      <div class="era-stat-source">${s.source}</div>
-    </div>`).join('');
-  document.getElementById('phase-question').textContent=phase.question;
-  document.getElementById('choices').innerHTML=phase.choices.map(c=>`
-    <button class="choice-btn" onclick="selectChoice('${c.id}',this)">
-      <span class="choice-label">${c.label}</span>
-      <div class="choice-content">
-        <div class="choice-text">${c.text}</div>
-        <div class="choice-example">${c.example}</div>
-      </div>
-    </button>`).join('');
+// ── START ────────────────────────────────────────────────────────
+function goStart(){
+  const nick=document.getElementById('nickname-input').value.trim();
+  if(!nick){document.getElementById('nickname-input').focus();return;}
+  G.nickname=nick;G.sessionId=crypto.randomUUID();G.obStep=0;
+  renderOb();showScreen('screen-onboard');
 }
 
-function selectChoice(choiceId,btn){
-  document.querySelectorAll('.choice-btn').forEach(b=>b.classList.remove('selected'));
+// ── オンボーディング ─────────────────────────────────────────────
+const OBQ=[
+  {ey:'Q-A',q:'変化が起きたとき、あなたはどちらに近い？',
+   a:{lbl:'まず動く',sub:'動きながら考え、修正する',val:{change:'action'}},
+   b:{lbl:'まず考える',sub:'確信を持ってから動く',val:{change:'thought'}}},
+  {ey:'Q-B',q:'自分が最も力を発揮できるのはどちら？',
+   a:{lbl:'専門を深める',sub:'自分の得意を極める',val:{value:'deep'}},
+   b:{lbl:'組み合わせる',sub:'異なるものを統合する',val:{value:'combine'}}},
+  {ey:'Q-C',q:'重要な判断をするとき、より重視するのは？',
+   a:{lbl:'データと論理',sub:'根拠を積み上げて判断',val:{decide:'logic'}},
+   b:{lbl:'直感と経験',sub:'感覚と経験で判断',val:{decide:'intuition'}}},
+  {ey:'Q-D',q:'自分が充電されるのはどちら？',
+   a:{lbl:'一人で作業',sub:'深く集中して考えるとき',val:{energy:'solo'}},
+   b:{lbl:'人と話して',sub:'議論や対話のなかで',val:{energy:'social'}}},
+];
+
+function renderOb(){
+  const s=G.obStep,q=OBQ[s];
+  document.getElementById('ob-step-label').textContent=`STEP ${s+2} / 6`;
+  document.getElementById('ob-progress').style.width=`${((s+1)/6)*100}%`;
+  document.getElementById('ob-eyebrow').textContent=q.ey;
+  document.getElementById('ob-question').textContent=q.q;
+  document.getElementById('ob-back').style.display=s===0?'none':'inline-block';
+  const wrap=document.getElementById('ob-choices');
+  wrap.innerHTML='';
+  [[q.a,'A'],[q.b,'B']].forEach(([opt,lbl])=>{
+    const btn=document.createElement('button');
+    btn.className='choice2-btn';
+    btn.innerHTML=`<span class="choice2-label">${lbl}</span>${opt.lbl}<br><small style="color:var(--gray);font-size:.75rem">${opt.sub}</small>`;
+    btn.onclick=()=>selectOb(opt.val,btn);
+    wrap.appendChild(btn);
+  });
+}
+
+function selectOb(val,btn){
+  document.querySelectorAll('.choice2-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
-  setTimeout(()=>proceedAfterChoice(choiceId),400);
+  Object.assign(G.profile,val);
+  setTimeout(()=>{
+    G.obStep++;
+    if(G.obStep<OBQ.length){renderOb();}
+    else{
+      G.profileCode=`${G.profile.change}-${G.profile.value}-${G.profile.decide}-${G.profile.energy}`;
+      renderIndScreen();showScreen('screen-industry');
+    }
+  },280);
 }
 
-function proceedAfterChoice(choiceId){
-  const phase=SCHEMA.phases[state.currentPhase];
-  const choice=phase.choices.find(c=>c.id===choiceId);
-  state.choices.push(choiceId);
-  state.tags.push([...choice.tags]);
-  const event=tryTriggerEvent(phase.id);
-  if(event)showEvent(event);
+function obBack(){
+  const cur=document.querySelector('.screen.active');
+  if(cur.id==='screen-industry'){G.obStep=3;renderOb();showScreen('screen-onboard');return;}
+  if(G.obStep>0){G.obStep--;renderOb();}else showScreen('screen-start');
+}
+
+// ── 業種選択 ─────────────────────────────────────────────────────
+function renderIndScreen(){
+  const inds=G.data.industries||[];
+  const myStars=(G.data.profileIndustry||{})[G.profileCode]||{};
+  const sorted=inds.map(n=>({name:n,star:myStars[n]||1})).sort((a,b)=>b.star-a.star).slice(0,3);
+
+  const recList=document.getElementById('recommend-list');
+  recList.innerHTML='';
+  sorted.forEach((item,i)=>{
+    const card=document.createElement('div');
+    card.className='recommend-card';card.dataset.ind=item.name;
+    card.innerHTML=`<div class="recommend-rank">${i+1}</div><div style="flex:1"><div class="recommend-name">${item.name}</div><div class="recommend-stars">${'★'.repeat(item.star)}${'☆'.repeat(5-item.star)}</div></div>`;
+    card.onclick=()=>selectInd(item.name,card);
+    recList.appendChild(card);
+  });
+
+  const grid=document.getElementById('industry-grid');
+  grid.innerHTML='';
+  inds.forEach(ind=>{
+    const btn=document.createElement('button');
+    btn.className='industry-btn';btn.textContent=ind;btn.dataset.ind=ind;
+    btn.onclick=()=>selectInd(ind,btn);
+    grid.appendChild(btn);
+  });
+
+  const nb=document.getElementById('ind-next-btn');nb.disabled=true;
+}
+
+function selectInd(name,el){
+  document.querySelectorAll('.recommend-card,.industry-btn').forEach(e=>e.classList.remove('selected'));
+  el.classList.add('selected');G.selectedIndustry=name;
+  document.getElementById('ind-next-btn').disabled=false;
+}
+
+function showAllInd(){
+  document.getElementById('recommend-section').style.display='none';
+  document.getElementById('all-industry-section').style.display='block';
+}
+
+function goIndNext(){if(G.selectedIndustry)showScreen('screen-departure');}
+
+// ── ゲーム開始 ────────────────────────────────────────────────────
+function startGame(){
+  G.currentPhase=0;G.currentQ=0;
+  G.choices=[];G.q1Choices=[];G.q3Choices=[];G.tags=[];G.eventChoices=[];
+  renderPhase();showScreen('screen-phase');
+}
+
+// ── フェーズ描画 ──────────────────────────────────────────────────
+function renderPhase(){
+  const phases=G.data.phases||[];
+  const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
+  if(!phase)return;
+
+  const curStep=G.currentPhase*3+G.currentQ+1;
+  document.getElementById('phase-step').textContent=`PHASE ${G.currentPhase+1}/6 — Q${G.currentQ+1}/3`;
+  document.getElementById('phase-year').textContent=phase.yearRange;
+  document.getElementById('phase-prog').style.width=`${(curStep-1)/18*100}%`;
+
+  if(G.currentQ===0){
+    document.getElementById('era-tags').innerHTML=`<span class="era-tag t-era">${phase.era}</span><span class="era-tag t-age">${phase.ageRange}</span><span class="era-tag t-year">${phase.yearRange}</span>`;
+    document.getElementById('era-desc').textContent=phase.eraDescription;
+    document.getElementById('era-stats').innerHTML=`
+      <div class="era-stat"><div class="era-stat-val">${phase.stat1_value}</div><div class="era-stat-lbl">${phase.stat1_label}</div><div class="era-stat-src">${phase.stat1_source}</div></div>
+      <div class="era-stat"><div class="era-stat-val">${phase.stat2_value}</div><div class="era-stat-lbl">${phase.stat2_label}</div><div class="era-stat-src">${phase.stat2_source}</div></div>`;
+  }else{
+    document.getElementById('era-tags').innerHTML=`<span class="era-tag t-era">${phase.era}</span><span class="era-tag t-year">${phase.yearRange}</span>`;
+    document.getElementById('era-desc').textContent='';
+    document.getElementById('era-stats').innerHTML='';
+  }
+  document.getElementById('mirror-area').innerHTML='';
+
+  if(G.currentQ===0)renderQ1(phase);
+  else if(G.currentQ===1)renderQ2(phase);
+  else renderQ3();
+}
+
+function makeChoices4(choices,onClick){
+  const wrap=document.getElementById('choices4');
+  wrap.innerHTML='';
+  choices.forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='choice4-btn';
+    btn.innerHTML=`<span class="choice4-lbl">${c.label}</span><div class="choice4-body"><div class="choice4-text">${c.text}</div>${c.sub?`<div class="choice4-ex">${c.sub}</div>`:''}</div>`;
+    btn.onclick=()=>{
+      document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      setTimeout(()=>onClick(c),300);
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+function renderQ1(phase){
+  const q1=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
+  if(!q1)return;
+  document.getElementById('q-ind').textContent='Q1 — 環境認識';
+  document.getElementById('q-l1').textContent=q1.layer1;
+  document.getElementById('q-l2').textContent=q1.layer2;
+  makeChoices4([
+    {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
+    {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
+    {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
+    {label:'D',text:q1.choice_d_text,erafit:Number(q1.choice_d_erafit)},
+  ],c=>{G.q1Choices[G.currentPhase]={label:c.label,erafit:c.erafit};G.currentQ=1;renderPhase();});
+}
+
+function renderQ2(phase){
+  const q2=(G.data.q2||[]).find(q=>q.phase_id===phase.id);
+  if(!q2)return;
+  document.getElementById('q-ind').textContent='Q2 — 行動選択';
+  document.getElementById('q-l1').textContent='';
+  document.getElementById('q-l2').textContent=q2.question;
+  makeChoices4([
+    {label:'A',text:q2.choice_a_text,sub:q2.choice_a_example,tag:q2.choice_a_tag},
+    {label:'B',text:q2.choice_b_text,sub:q2.choice_b_example,tag:q2.choice_b_tag},
+    {label:'C',text:q2.choice_c_text,sub:q2.choice_c_example,tag:q2.choice_c_tag},
+    {label:'D',text:q2.choice_d_text,sub:q2.choice_d_example,tag:q2.choice_d_tag},
+  ],c=>{
+    G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
+    const mirror={specialization:'あなたは深く掘り下げることに価値を見出す思考を持っています。','ai-native':'あなたは新しいツールを武器に変える適応力を持っています。',strategic:'あなたは全体を俯瞰して動く意思決定の姿勢を持っています。',independent:'あなたは自律的に動き組織に縛られない発想を持っています。','rare-combination':'あなたは異なるものを掛け合わせて価値を作る思考を持っています。',leadership:'あなたは人を育て引っ張ることに喜びを見出す姿勢を持っています。','community-builder':'あなたはつながりの中に価値を生み出す思考を持っています。',global:'あなたは境界を越えて動くことを恐れない姿勢を持っています。',legacy:'あなたは自分の経験を次世代に渡すことに意義を感じています。'};
+    const msg=mirror[c.tag];
+    if(msg)document.getElementById('mirror-area').innerHTML=`<div class="mirror-msg">${msg}</div>`;
+    G.currentQ=2;renderPhase();
+  });
+}
+
+function renderQ3(){
+  const q3=(G.data.q3||[])[0];
+  if(!q3)return;
+  document.getElementById('q-ind').textContent='Q3 — 投資配分';
+  document.getElementById('q-l1').textContent='';
+  document.getElementById('q-l2').textContent='この時期、あなたは何に時間・エネルギーを使う？';
+  makeChoices4([
+    {label:'A',text:q3.choice_a_text,invest:q3.choice_a_invest},
+    {label:'B',text:q3.choice_b_text,invest:q3.choice_b_invest},
+    {label:'C',text:q3.choice_c_text,invest:q3.choice_c_invest},
+    {label:'D',text:q3.choice_d_text,invest:q3.choice_d_invest},
+  ],c=>{G.q3Choices[G.currentPhase]=c.invest;proceedPhase();});
+}
+
+// ── イベント ─────────────────────────────────────────────────────
+function proceedPhase(){
+  const pid=PHASE_IDS[G.currentPhase];
+  const prob=G.config.eventTriggerProbability??0.35;
+  const evs=(G.data.events||[]).filter(e=>{
+    const tp=Array.isArray(e.trigger_phases)?e.trigger_phases:String(e.trigger_phases).split(',').map(s=>s.trim());
+    return tp.includes(pid);
+  });
+  if(evs.length&&Math.random()<prob){showEvent(evs[Math.floor(Math.random()*evs.length)]);}
   else nextPhase();
 }
 
-function tryTriggerEvent(phaseId){
-  if(Math.random()>SCHEMA.config.eventTriggerProbability)return null;
-  const av=SCHEMA.randomEvents.filter(e=>e.triggerPhases.includes(phaseId));
-  return av.length?av[Math.floor(Math.random()*av.length)]:null;
+function showEvent(ev){
+  const ol=document.createElement('div');ol.className='event-overlay';ol.id='event-overlay';
+  ol.innerHTML=`<div class="event-card">
+    <div class="event-cat">${ev.category}</div>
+    <div class="event-title">${ev.title}</div>
+    <div class="event-desc">${ev.description}</div>
+    <div class="event-choices">
+      <button class="event-choice-btn" onclick="selectEv('${ev.id}','a','${ev.choice_a_tag}',${ev.choice_a_correction})">${ev.choice_a_text}</button>
+      <button class="event-choice-btn" onclick="selectEv('${ev.id}','b','${ev.choice_b_tag}',${ev.choice_b_correction})">${ev.choice_b_text}</button>
+    </div></div>`;
+  document.body.appendChild(ol);
 }
 
-function showEvent(event){
-  const el=document.createElement('div');
-  el.className='event-overlay';el.id='event-overlay';
-  el.innerHTML=`
-    <div class="event-card">
-      <div class="event-eyebrow">${event.category}</div>
-      <div class="event-title">${event.title}</div>
-      <div class="event-desc">${event.description}</div>
-      <div class="event-choices">
-        ${event.choices.map(c=>`
-          <button class="event-choice-btn" onclick="selectEventChoice('${event.id}','${c.id}','${c.addTag||''}',${c.eraFitCorrection||0})">${c.text}</button>`).join('')}
-      </div>
-    </div>`;
-  document.body.appendChild(el);
-}
-
-function selectEventChoice(eventId,choiceId,addTag,correction){
-  state.eventChoices.push({eventId,choiceId,addTag,correction});
-  if(addTag){const last=state.tags[state.tags.length-1];if(!last.includes(addTag))last.push(addTag);}
+function selectEv(id,ch,tag,corr){
+  G.eventChoices.push({id,ch,tag,corr:Number(corr)});
   document.getElementById('event-overlay')?.remove();
   nextPhase();
 }
 
-function nextPhase(){
-  state.currentPhase++;
-  if(state.currentPhase>=SCHEMA.phases.length){
-    showLoading(true);
-    setTimeout(async()=>{await showResult();showLoading(false);},600);
-  }else renderPhase();
+function nextPhase(){G.currentPhase++;G.currentQ=0;if(G.currentPhase>=6)showResult();else renderPhase();}
+
+// ── スコアエンジン v4 ─────────────────────────────────────────────
+function getPW(){const c=G.config;return{phase_1:c.phaseWeight_1_g2??0.20,phase_2:c.phaseWeight_2_g2??0.22,phase_3:c.phaseWeight_3_g2??0.18,phase_4:c.phaseWeight_4_g2??0.16,phase_5:c.phaseWeight_5_g2??0.13,phase_6:c.phaseWeight_6_g2??0.11};}
+
+function calcEra(){
+  const pw=getPW(),td=G.data.tagDefinitions||{};
+  const q2d=G.data.q2||[];
+  const ranges={};
+  PHASE_IDS.forEach(pid=>{
+    const ph=q2d.find(q=>q.phase_id===pid);
+    if(!ph){ranges[pid]={min:4,max:6};return;}
+    const sc=[ph.choice_a_tag,ph.choice_b_tag,ph.choice_c_tag,ph.choice_d_tag].map(t=>(td[t]?.eraFitMultiplier?.[pid]??1)*5);
+    ranges[pid]={min:Math.min(...sc),max:Math.max(...sc)};
+  });
+  return G.tags.reduce((tot,tag,i)=>{
+    const pid=PHASE_IDS[i];
+    const raw=(td[tag]?.eraFitMultiplier?.[pid]??1)*5;
+    const r=ranges[pid];
+    const norm=r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10;
+    return tot+norm*(pw[pid]||0);
+  },0);
 }
 
-// ================================================================
-// 結果
-// ================================================================
-async function showResult(){
-  const score=calcFinalScore(state.choices,state.tags);
-  const chain=calcChainBonus(state.tags);
-  const tier=SCHEMA.config.resultTiers.find(t=>score>=t.min&&score<=t.max);
-  const domTag=getDominantTag(state.tags);
-  const fb=SCHEMA.feedbackTemplates[tier?.label]||SCHEMA.feedbackTemplates['模索者'];
+function calcChain(){
+  const t=G.tags,c=G.config;
+  if((t[0]==='specialization'||t[1]==='specialization')&&t[2]==='rare-combination')return{bonus:c.multiplicationBonus??1.6,rule:'multiplication'};
+  let maxS=1,cur=1,sT=t[0],sS=0,tS=0;
+  for(let i=1;i<t.length;i++){if(t[i]===t[i-1]){cur++;if(cur>maxS){maxS=cur;sT=t[i];sS=tS;}}else{cur=1;tS=i;}}
+  if(maxS>=3){const end=sS+maxS;return end<t.length&&t[end]!==sT?{bonus:c.consistentPivotBonus??1.5,rule:'consistent+pivot'}:{bonus:c.consistentBonus??1.0,rule:'consistent'};}
+  if(new Set(t).size>=(c.scatteredThreshold??5))return{bonus:c.scatteredPenalty??-0.5,rule:'scattered'};
+  return{bonus:0,rule:'none'};
+}
 
-  document.getElementById('result-score').textContent=score;
-  document.getElementById('result-tier').textContent=tier?.label||'--';
-  document.getElementById('result-tier').style.color=tier?.color||'#fff';
-  document.getElementById('result-headline').textContent=fb.headline;
-  document.getElementById('result-body').textContent=fb.body.replace('{tag}',TAG_LABELS[domTag]||domTag);
-  document.getElementById('result-action').textContent=fb.action;
+function calcCtx(){
+  const c=G.config,map={'specialization:ai-native':c.ctx_specialization_ainative??0.5,'ai-native:strategic':c.ctx_ainative_strategic??0.4,'independent:community-builder':c.ctx_independent_community??0.4,'leadership:legacy':c.ctx_leadership_legacy??0.5,'strategic:strategic':c.ctx_strategic_strategic??0.3};
+  return G.tags.slice(1).reduce((b,t,i)=>b+(map[`${G.tags[i]}:${t}`]||0),0);
+}
+
+function calcQ1B(){
+  const pw=getPW(),mx=G.config.q1BonusMax??0.22;
+  return G.q1Choices.reduce((b,q,i)=>q?.erafit>=8?b+mx*(pw[PHASE_IDS[i]]||0)*5:b,0);
+}
+
+function calcQ2Q3B(){
+  const c=G.config,mm=c.q2q3MatchBonus??0.3,mp=c.q2q3MismatchPenalty??-0.4,lm=c.q2q3LightMismatch??-0.2;
+  const map={'ai-native:skill':mm,'independent:experiment':mm,'specialization:current_job':mm,'strategic:network':mm,'rare-combination:experiment':mm,'leadership:network':mm,'community-builder:network':mm,'global:experiment':mm,'legacy:current_job':mm,'independent:current_job':mp,'specialization:experiment':mp,'ai-native:network':lm};
+  return G.tags.reduce((b,tag,i)=>b+(map[`${tag}:${G.q3Choices[i]}`]||0),0);
+}
+
+function calcScore(){
+  const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
+  const cap=G.config.bonusCap??2.5;
+  return Math.min(100,Math.max(0,Math.round((era+Math.min(chain.bonus+ctx+q1+q2q3,cap))*10)));
+}
+
+function calcIndScores(){
+  const ta=G.data.tagIndustry||{},pa=G.data.profileIndustry||{},inds=G.data.industries||[];
+  const gp={};inds.forEach(n=>{gp[n]=0;});
+  G.tags.forEach(tag=>{const a=ta[tag]||{};inds.forEach(n=>{gp[n]+=(a[n]||0);});});
+  const mxG=60;const myS=(pa[G.profileCode]||{});
+  return inds.map(n=>({name:n,score:Math.min(100,Math.round((gp[n]/(6*10))*mxG)+Math.round(((myS[n]||1)/5)*40))})).sort((a,b)=>b.score-a.score);
+}
+
+function calcRadar(){
+  const exp_tags=['specialization','rare-combination','leadership','legacy'];
+  const adp_tags=['ai-native','independent','strategic','global','community-builder'];
+  const pw=getPW();
+  let exp=0,adp=0,era=0;
+  G.tags.forEach((tag,i)=>{const w=(pw[PHASE_IDS[i]]||0)*6;if(exp_tags.includes(tag))exp+=10*w;if(adp_tags.includes(tag))adp+=10*w;era+=7*w;});
+  const ch=calcChain();
+  const cons=ch.rule.includes('consistent')||ch.rule==='multiplication'?85:ch.rule==='scattered'?30:55;
+  const crisis=G.eventChoices.length?Math.min(100,50+G.eventChoices.length*15):50;
+  const inv=Math.max(0,Math.round(50+calcQ2Q3B()*25));
+  return[Math.min(100,Math.round(exp)),Math.min(100,Math.round(adp)),Math.min(100,Math.round(era)),crisis,cons,Math.min(100,inv)];
+}
+
+function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
+
+function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label:'先駆者',color:'#e94560'};if(s>=(c.tier_adapter_min??60))return{label:'適応者',color:'#4fc3f7'};if(s>=(c.tier_seeker_min??40))return{label:'模索者',color:'#81c784'};return{label:'転換期',color:'#ff8a65'};}
+
+// ── 結果 ─────────────────────────────────────────────────────────
+async function showResult(){
+  const score=calcScore(),chain=calcChain(),tier=getTier(score),domTag=getDomTag();
+  const indScores=calcIndScores(),radar=calcRadar();
+  const fb=(G.data.feedback||{})[tier.label]||{};
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+
+  document.getElementById('res-score').textContent=score;
+  document.getElementById('res-tier').textContent=tier.label;
+  document.getElementById('res-tier').style.color=tier.color;
+  document.getElementById('res-headline').textContent=fb.headline||'';
+  document.getElementById('res-body').textContent=(fb.body||'').replace('{dominantTag}',TL[domTag]||domTag);
+  document.getElementById('ending-copy').textContent=`未来から見えたこと——あなたは${TL[domTag]||domTag}として価値を発揮できる。そして今、2026年から歩み出す。`;
+
+  // 業種バー（上位7）
+  const colors=['#e94560','#f5a623','#00d4ff','#666','#666','#666','#666'];
+  document.getElementById('ind-bars').innerHTML=indScores.slice(0,7).map((item,i)=>`
+    <div class="industry-bar-row">
+      <div class="industry-bar-name ${i===0?'top1':''}">${item.name}</div>
+      <div class="industry-bar-track"><div class="industry-bar-fill" style="width:${item.score}%;background:${colors[i]}"></div></div>
+      <div class="industry-bar-pct">${item.score}%</div>
+    </div>`).join('');
 
   // レーダー
-  renderRadar(calcRadarScores(),tier?.color||'#e94560');
-
-  // GAS
-  await saveToGAS(score,tier?.label,domTag,chain.rule);
-  fetchStats(score);
-
-  showScreen('screen-result');
-  document.getElementById('progress-fill').style.width='100%';
-}
-
-function calcRadarScores(){
-  const tags=state.tags.map(t=>t[0]);
-  const expertTags=['specialization','rare-combination','leadership','legacy'];
-  const adaptTags=['ai-native','independent','strategic','global','community-builder'];
-  let exp=0,adp=0,era=0;
-  tags.forEach((tag,i)=>{
-    const pid=PHASE_IDS[i];
-    const w=SCHEMA.config.scoreWeights.phaseWeights[pid]*6;
-    if(expertTags.includes(tag))exp+=10*w;
-    if(adaptTags.includes(tag))adp+=10*w;
-    const phase=SCHEMA.phases.find(p=>p.id===pid);
-    const choice=phase.choices.find(c=>c.id===state.choices[i]);
-    const raw=choice.eraFitScore*(SCHEMA.tagDefinitions[tag]?.eraFitMultiplier[pid]??1);
-    const r=PR[pid];
-    era+=(r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10)*w;
-  });
-  const chain=calcChainBonus(state.tags);
-  const consistency=chain.rule.includes('consistent')||chain.rule==='multiplication'?85:chain.rule==='scattered'?30:55;
-  const crisis=state.eventChoices.length>0?Math.min(100,50+state.eventChoices.length*15):50;
-  return [Math.min(100,Math.round(exp)),Math.min(100,Math.round(adp)),Math.min(100,Math.round(era*10)),crisis,consistency];
-}
-
-function renderRadar(data,color){
-  if(state.radarChart)state.radarChart.destroy();
-  const ctx=document.getElementById('radar-chart').getContext('2d');
-  state.radarChart=new Chart(ctx,{
+  if(G.radarChart)G.radarChart.destroy();
+  G.radarChart=new Chart(document.getElementById('radar-chart').getContext('2d'),{
     type:'radar',
-    data:{
-      labels:['専門性','適応力','時代適合性','危機対応力','一貫性'],
-      datasets:[{data,borderColor:color,backgroundColor:color+'22',borderWidth:2,pointBackgroundColor:color,pointRadius:4}]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,0.08)'},angleLines:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#888',font:{family:"'Noto Sans JP'",size:11}}}},
-      plugins:{legend:{display:false}}
-    }
+    data:{labels:['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'],datasets:[{data:radar,borderColor:tier.color,backgroundColor:tier.color+'22',borderWidth:2,pointBackgroundColor:tier.color,pointRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,0.07)'},angleLines:{color:'rgba(255,255,255,0.07)'},pointLabels:{color:'#888',font:{family:"'Noto Sans JP'",size:11}}}},plugins:{legend:{display:false}}}
   });
+
+  // アクション
+  const actionPool={
+    先駆者:['あなたの強みを1枚のスライドで言語化してみる。「自分は何者か」を言葉にする練習を今週始めよう。','同じ業界・職種の先輩に話を聞く機会を1つ作る。自分の方向性を外部の視点で検証しよう。','今週、自分のキャリアビジョンを200字で書いてみる。'],
+    適応者:['今週、自分の専門分野を1つ決めて、その分野の本を1冊選ぶ。軸を作る第一歩を踏み出そう。','気になっている業界の企業を3社調べてみる。具体的な企業名まで落とし込もう。','今持っているスキルと、目指したいキャリアのギャップを書き出してみる。'],
+    模索者:['「どんな人間でありたいか」を30分かけて書き出してみる。軸を見つけるための問いに向き合おう。','興味があることを3つ書き出し、それぞれが仕事になる可能性を調べてみる。','就活イベントや説明会に1つ参加してみる。情報ではなく、自分の反応を観察しよう。'],
+    転換期:['「このままでいい」という前提を一度捨てて、全く違う業界を1つ調べてみる。','信頼できる人に「自分の強みは何か」を聞いてみる。自己認識のズレを発見しよう。','今週1つだけ、いつもと違う選択をしてみる。小さな変化が大きな転換の始まりになる。'],
+  };
+  const acts=actionPool[tier.label]||actionPool['模索者'];
+  document.getElementById('action-list').innerHTML=acts.map(a=>`<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`).join('');
+
+  await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
+  fetchStats(score,tier.label);
+  showScreen('screen-result');
 }
 
-// ================================================================
-// GAS通信
-// ================================================================
-async function saveToGAS(score,tier,dominantTag,chainRule){
-  if(!GAS_URL||GAS_URL==='YOUR_GAS_ENDPOINT_URL')return;
+async function saveToGAS(score,tier,domTag,chainRule,indScores){
   try{
-    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'save',sessionId:state.sessionId,nickname:state.nickname,score,tier,dominantTag,chainRule,choices:state.choices,eventChoices:state.eventChoices,phaseTags:state.tags})});
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'save',sessionId:G.sessionId,nickname:G.nickname,score,tier,dominantTag:domTag,chainRule,profileCode:G.profileCode,choices:G.choices.map(c=>c?.label||''),eventChoices:G.eventChoices,phaseTags:G.tags,q1Choices:G.q1Choices.map(q=>q?.label||''),q3Choices:G.q3Choices,industryScores:indScores.slice(0,3)})});
   }catch(e){console.warn('GAS save:',e);}
 }
 
-async function fetchStats(myScore){
-  if(!GAS_URL||GAS_URL==='YOUR_GAS_ENDPOINT_URL'){document.getElementById('compare-block').style.display='none';return;}
+async function fetchStats(myScore,myTier){
   try{
     const res=await fetch(`${GAS_URL}?action=stats`);
     const data=await res.json();
     if(!data.ok||!data.total){document.getElementById('compare-block').style.display='none';return;}
     document.getElementById('cmp-total').textContent=data.total;
     document.getElementById('cmp-avg').textContent=data.avgScore;
-    // 上位%（ティア分布から概算）
-    const tier=SCHEMA.config.resultTiers.find(t=>myScore>=t.min&&myScore<=t.max);
-    const aboveTiers=SCHEMA.config.resultTiers.filter(t=>t.min>tier?.min);
-    const aboveCnt=aboveTiers.reduce((s,t)=>s+(data.tiers[t.label]||0),0);
-    const beatPct=data.total>1?Math.round((1-aboveCnt/data.total)*100):100;
-    document.getElementById('cmp-beat').textContent=`${beatPct}%`;
-    // ティアバー
-    const colors={先駆者:'#e94560',適応者:'#4fc3f7',模索者:'#81c784',転換期:'#ff8a65'};
-    document.getElementById('tier-bar').innerHTML=Object.entries(colors).map(([label,color])=>{
-      const cnt=data.tiers[label]||0;
-      const pct=data.total>0?Math.round(cnt/data.total*100):0;
-      return `<div class="tier-bar-row">
-        <span class="tier-bar-label">${label}</span>
-        <div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${color}"></div></div>
-        <span class="tier-bar-pct">${pct}%</span>
-      </div>`;
-    }).join('');
+    const to=['先駆者','適応者','模索者','転換期'];
+    const above=to.slice(0,to.indexOf(myTier)).reduce((s,t)=>s+(data.tiers[t]||0),0);
+    document.getElementById('cmp-beat').textContent=Math.round((1-above/data.total)*100)+'%';
+    const clr={先駆者:'#e94560',適応者:'#4fc3f7',模索者:'#81c784',転換期:'#ff8a65'};
+    document.getElementById('tier-bars').innerHTML=to.map(t=>{const cnt=data.tiers[t]||0;const pct=Math.round(cnt/data.total*100);return`<div class="tier-bar-row"><span class="tier-bar-lbl">${t}</span><div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${clr[t]}"></div></div><span class="tier-bar-pct">${pct}%</span></div>`;}).join('');
   }catch(e){document.getElementById('compare-block').style.display='none';}
 }
 
-// ================================================================
-// シェア
-// ================================================================
-function shareX(){
-  const score=document.getElementById('result-score').textContent;
-  const tier=document.getElementById('result-tier').textContent;
-  const text=encodeURIComponent(`LIFE SHIFT SIMULATOR 2075\n\nValue Score：${score}点 [${tier}]\nAI時代の50年を疑似体験👉`);
-  const url=encodeURIComponent('https://agent-network-alp.github.io/life-shift-simulator-2075/');
-  window.open(`https://x.com/intent/tweet?text=${text}&url=${url}`,'_blank');
-}
+function shareX(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\n未来へ旅して、答えを見つけた。\nby 株式会社エージェント`)}&url=${encodeURIComponent('https://agent-network-alp.github.io/life-shift-simulator-2075/')}`);}
 
-function copyResult(){
-  const score=document.getElementById('result-score').textContent;
-  const tier=document.getElementById('result-tier').textContent;
-  navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nValue Score：${score}点 [${tier}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/`).then(()=>alert('コピーしました！'));
-}
+function copyRes(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/\nby 株式会社エージェント`).then(()=>alert('コピーしました！'));}
 
-function resetGame(){
-  if(state.radarChart){state.radarChart.destroy();}
-  state={nickname:'',sessionId:'',currentPhase:0,choices:[],tags:[],eventChoices:[],radarChart:null};
-  document.getElementById('nickname-input').value='';
-  showScreen('screen-start');
-}
+function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:0,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');}
 
-function showLoading(show){document.getElementById('loading').classList.toggle('show',show);}
+// ── フォールバック ─────────────────────────────────────────────────
+const FB={phases:[{id:'phase_1',order:1,ageRange:'20〜25歳',yearRange:'2025〜2030年',era:'AI実装期',eraDescription:'生成AIが業務に普及し始め、定型業務の約30%が自動化される。採用評価軸が「即戦力」から「学習速度」に移行しつつある。',stat1_label:'AI・自動化の影響が大きい職種割合',stat1_value:'約27%',stat1_source:'OECD 2023',stat2_label:'2030年までに既存技能の変化割合',stat2_value:'39%',stat2_source:'WEF 2025'},{id:'phase_2',order:2,ageRange:'25〜30歳',yearRange:'2030〜2035年',era:'AGI移行期',eraDescription:'汎用AIの登場により専門職の一部が代替される。新たな職種が急増し転職市場が活性化。',stat1_label:'消滅リスクの高い職種割合',stat1_value:'約23%',stat1_source:'WEF 2025',stat2_label:'新規創出が見込まれる職種数',stat2_value:'+1700万人分',stat2_source:'WEF 2025'},{id:'phase_3',order:3,ageRange:'30〜40歳',yearRange:'2035〜2045年',era:'産業再編期',eraDescription:'業界の境界が崩壊し掛け算型人材の需要が急増。事業開発者はAIが最も代替しにくい職種の一つ。',stat1_label:'複数スキル保有者の年収プレミアム',stat1_value:'+34%',stat1_source:'McKinsey 2024',stat2_label:'リモート・ハイブリッド就労者割合',stat2_value:'約58%',stat2_source:'OECD 2024'},{id:'phase_4',order:4,ageRange:'40〜50歳',yearRange:'2045〜2055年',era:'人機協働成熟期',eraDescription:'人とAIの役割分担が定着。後進育成が社会的急務に。',stat1_label:'管理職・育成職の需要増加率',stat1_value:'+41%',stat1_source:'内閣府 2024',stat2_label:'AI意思決定支援ツール導入企業割合',stat2_value:'約79%',stat2_source:'McKinsey 2024'},{id:'phase_5',order:5,ageRange:'50〜60歳',yearRange:'2055〜2065年',era:'社会構造変容期',eraDescription:'労働の定義が拡張されコミュニティが生存基盤に。',stat1_label:'週4日労働制導入企業割合',stat1_value:'約44%',stat1_source:'OECD 2024',stat2_label:'社会的孤立リスクの高い中高年割合',stat2_value:'約31%',stat2_source:'内閣府 2023'},{id:'phase_6',order:6,ageRange:'60〜70歳',yearRange:'2065〜2075年',era:'ポスト労働期',eraDescription:'BI的制度が普及。「何のためにするか」が問われる最終章。',stat1_label:'65歳以上就労継続希望者割合',stat1_value:'約67%',stat1_source:'内閣府 2023',stat2_label:'BI・類似制度の導入国・地域数',stat2_value:'40以上',stat2_source:'Stanford Basic Income Lab 2024'}],q1:[{phase_id:'phase_1',layer1:'生成AIが職場に浸透し始めた。この変化をどう読む？',layer2:'キャリアの基盤を作るこの時期に、あなたは何に賭ける？',choice_a_text:'AIの浸透で5年以内に大半が自動化される。',choice_a_erafit:3,choice_b_text:'定型業務はAIに移行するが判断・創造は残る。AIを使える人と使えない人に分かれる。',choice_b_erafit:8,choice_c_text:'AIは強力だが最終判断は人間。専門性の価値は形を変えながら続く。',choice_c_erafit:5,choice_d_text:'重要なのは技術より人間性。コミュ力の希少価値が上がる。',choice_d_erafit:2,high_erafit_label:'B'},{phase_id:'phase_2',layer1:'汎用AIが登場し専門職の一部が代替され始めた。',layer2:'この波をどう読む？',choice_a_text:'実際には補助ツール止まり。人間の判断は残る。',choice_a_erafit:4,choice_b_text:'規制でコントロールすれば影響は限定的にできる。',choice_b_erafit:2,choice_c_text:'専門職の価値が根本から崩壊する。',choice_c_erafit:3,choice_d_text:'新しい役割に移行できるかどうかが重要だ。',choice_d_erafit:8,high_erafit_label:'D'},{phase_id:'phase_3',layer1:'業界の境界が崩壊し掛け算型人材の需要が急増。',layer2:'この変化をどう読む？',choice_a_text:'専門×別領域の掛け算ができる人間が最も評価される。',choice_a_erafit:8,choice_b_text:'専門性を深めることが依然として最重要。',choice_b_erafit:4,choice_c_text:'結局は人脈。誰を知っているかの時代になる。',choice_c_erafit:2,choice_d_text:'何でもできるゼネラリストが最強の時代だ。',choice_d_erafit:3,high_erafit_label:'A'},{phase_id:'phase_4',layer1:'人とAIの役割分担が定着し育成が急務に。',layer2:'この変化をどう読む？',choice_a_text:'個人が単独で大きな価値を生み出せる時代になった。',choice_a_erafit:2,choice_b_text:'AIが全判断を担い人間は目標設定だけでいい。',choice_b_erafit:3,choice_c_text:'人間は判断・育成・関係構築に集中できる時代になった。',choice_c_erafit:8,choice_d_text:'自分のスキルを磨き続けることが依然最重要。',choice_d_erafit:4,high_erafit_label:'C'},{phase_id:'phase_5',layer1:'コミュニティが生存基盤になりつつある。',layer2:'この変化をどう読む？',choice_a_text:'貨幣経済が薄れコミュニティの外では何も成立しない。',choice_a_erafit:3,choice_b_text:'有償労働だけが価値でなくなる中でコミュニティに根を張ることが重要。',choice_b_erafit:8,choice_c_text:'結局は経済力。資産形成が最重要戦略。',choice_c_erafit:2,choice_d_text:'既存の繋がりを大切にすることが今も最善。',choice_d_erafit:4,high_erafit_label:'B'},{phase_id:'phase_6',layer1:'働かなくていい社会が来た。',layer2:'この変化をどう読む？',choice_a_text:'自己実現を優先。社会貢献より自分が楽しむべき時代だ。',choice_a_erafit:2,choice_b_text:'経済的不安があるので働き続けることが現実的。',choice_b_erafit:4,choice_c_text:'AIに仕事を奪われ人間は機能不全に陥るリスクが高い。',choice_c_erafit:3,choice_d_text:'人間は意味と貢献を求め続ける。「何のためにするか」が問いだ。',choice_d_erafit:8,high_erafit_label:'D'}],q2:[{phase_id:'phase_1',question:'AIが多くの業務を自動化し始めた。あなたはどこに張る？',choice_a_text:'AIが苦手な領域に特化する',choice_a_tag:'specialization',choice_a_example:'医療・介護・教育など',choice_b_text:'AIを使いこなす側になる',choice_b_tag:'ai-native',choice_b_example:'プロンプト設計・AI導入コンサルなど',choice_c_text:'意思決定側に移る',choice_c_tag:'strategic',choice_c_example:'企画・事業開発など',choice_d_text:'職人的水準を目指す',choice_d_tag:'specialization',choice_d_example:'弁護士・エンジニア・研究者など'},{phase_id:'phase_2',question:'AGIの台頭でスキルが陳腐化しつつある。どう動く？',choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_example:'経営企画・渉外など',choice_b_text:'AIの橋渡し役になる',choice_b_tag:'ai-native',choice_b_example:'DX推進・AIプロジェクトマネージャーなど',choice_c_text:'副業・個人事業を立ち上げる',choice_c_tag:'independent',choice_c_example:'フリーランス・スタートアップなど',choice_d_text:'異業種転職を検討する',choice_d_tag:'specialization',choice_d_example:'インフラ・医療・公共など'},{phase_id:'phase_3',question:'30代。掛け算の時代。どう自分をデザインする？',choice_a_text:'専門×専門の掛け算で希少人材になる',choice_a_tag:'rare-combination',choice_a_example:'医療×AI・法律×テックなど',choice_b_text:'チームを率いる側に移行する',choice_b_tag:'leadership',choice_b_example:'テックリード・プロダクトオーナーなど',choice_c_text:'個人ブランドを構築する',choice_c_tag:'community-builder',choice_c_example:'コミュニティマネージャーなど',choice_d_text:'グローバル市場に場を広げる',choice_d_tag:'global',choice_d_example:'海外就労・グローバル企業転職など'},{phase_id:'phase_4',question:'40代。何を次の世代に渡すか？',choice_a_text:'後進の育成に注力する',choice_a_tag:'leadership',choice_a_example:'メンター・教育職など',choice_b_text:'知見を体系化してコンテンツに残す',choice_b_tag:'legacy',choice_b_example:'著書・SaaS・フレームワーク設計など',choice_c_text:'経営・意思決定層に入る',choice_c_tag:'strategic',choice_c_example:'役員・取締役など',choice_d_text:'第一線の専門家として残る',choice_d_tag:'specialization',choice_d_example:'スペシャリスト・顧問など'},{phase_id:'phase_5',question:'50代。コミュニティとの関係をどう設計する？',choice_a_text:'ローカルなコミュニティに根を張る',choice_a_tag:'community-builder',choice_a_example:'地域創生・NPOなど',choice_b_text:'グローバルなネットワークで価値を生む',choice_b_tag:'global',choice_b_example:'国際機関・越境コンサルなど',choice_c_text:'個人の創作・研究に集中する',choice_c_tag:'legacy',choice_c_example:'作家・研究者・アーティストなど',choice_d_text:'コミュニティをつなぐ触媒として動く',choice_d_tag:'community-builder',choice_d_example:'コネクター・コミュニティデザイナーなど'},{phase_id:'phase_6',question:'60代。働かなくてもいい時代に何を選ぶ？',choice_a_text:'現役を続け経験を社会に還元する',choice_a_tag:'leadership',choice_a_example:'顧問・ボランティアリーダーなど',choice_b_text:'人生を総括する作品・記録を残す',choice_b_tag:'legacy',choice_b_example:'回顧録・アーカイブなど',choice_c_text:'次世代に資産・知見を譲渡する',choice_c_tag:'legacy',choice_c_example:'寄付・奨学金設立など',choice_d_text:'探求・学習・創造を楽しむ',choice_d_tag:'specialization',choice_d_example:'生涯学習・DIY研究など'}],q3:[{choice_a_text:'スキル・学習への集中投資',choice_a_invest:'skill',choice_b_text:'人脈・ネットワーク構築',choice_b_invest:'network',choice_c_text:'副業・実験・小さな挑戦',choice_c_invest:'experiment',choice_d_text:'現職での実績と評価の積み上げ',choice_d_invest:'current_job'}],events:[{id:'ev1',category:'⚡ 技術系ショック',title:'AIが法務・財務の定型業務を完全代替',description:'担当業務の約60%が自動化された。役割を見直す必要がある。',trigger_phases:['phase_2','phase_3'],choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_correction:5,choice_b_text:'自動化ツールの管理側に回る',choice_b_tag:'ai-native',choice_b_correction:6},{id:'ev2',category:'📉 経済系ショック',title:'グローバル景気後退による昇進凍結',description:'2年間キャリアアップの機会が消えた。',trigger_phases:['phase_1','phase_2','phase_3'],choice_a_text:'スキル投資に時間を使う',choice_a_tag:'specialization',choice_a_correction:5,choice_b_text:'影響の少ない業界に移動する',choice_b_tag:'independent',choice_b_correction:4}],feedback:{先駆者:{headline:'あなたはAI時代の波を自ら作り出す側にいます',body:'時代適合度と選択の一貫性が高水準で両立しています。特に{dominantTag}を軸にした選択が時代の需要と高くフィットしていました。'},適応者:{headline:'あなたはAI時代を着実に生き抜く柔軟性を持っています',body:'変化への対応力は高いですが、軸の深さという観点でさらに投資することで次のステージに上がれます。'},模索者:{headline:'あなたはまだ自分の軸を探している途中です',body:'選択に一貫性を持たせることと、選択した道への意識的な投資がスコアを引き上げる鍵になります。'},転換期:{headline:'あなたは今、大きな転換点の手前にいます',body:'現在の選択パターンは時代の需要とのズレが積み重なっています。今の選択を変えれば逆転できます。'}},config:{eventTriggerProbability:0.35,bonusCap:2.5,multiplicationBonus:1.6,consistentPivotBonus:1.5,consistentBonus:1.0,scatteredPenalty:-0.5,scatteredThreshold:5,ctx_specialization_ainative:0.5,ctx_ainative_strategic:0.4,ctx_independent_community:0.4,ctx_leadership_legacy:0.5,ctx_strategic_strategic:0.3,q1BonusMax:0.22,q2q3MatchBonus:0.3,q2q3MismatchPenalty:-0.4,q2q3LightMismatch:-0.2,tier_pioneer_min:80,tier_adapter_min:60,tier_seeker_min:40,phaseWeight_1_g2:0.20,phaseWeight_2_g2:0.22,phaseWeight_3_g2:0.18,phaseWeight_4_g2:0.16,phaseWeight_5_g2:0.13,phaseWeight_6_g2:0.11},tagDefinitions:{specialization:{eraFitMultiplier:{phase_1:1.2,phase_2:0.8,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:1.0}},'ai-native':{eraFitMultiplier:{phase_1:1.2,phase_2:1.2,phase_3:1.1,phase_4:0.9,phase_5:0.8,phase_6:0.8}},strategic:{eraFitMultiplier:{phase_1:1.0,phase_2:1.2,phase_3:1.2,phase_4:1.2,phase_5:1.1,phase_6:1.0}},independent:{eraFitMultiplier:{phase_1:0.9,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.1,phase_6:1.0}},'rare-combination':{eraFitMultiplier:{phase_1:0.8,phase_2:1.0,phase_3:1.3,phase_4:1.2,phase_5:1.1,phase_6:1.0}},leadership:{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.3,phase_5:1.1,phase_6:1.0}},'community-builder':{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.1,phase_5:1.3,phase_6:1.2}},global:{eraFitMultiplier:{phase_1:1.0,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:0.9}},legacy:{eraFitMultiplier:{phase_1:0.7,phase_2:0.8,phase_3:0.9,phase_4:1.1,phase_5:1.2,phase_6:1.3}}},tagIndustry:{},profileIndustry:{},industries:['事業開発・新規事業','コンサルティング','ITサービス・SaaS','総合商社','投資銀行・証券','メガバンク・金融','広告・マーケティング','スタートアップ・VC','メーカー（製造業）','医療・ヘルスケア','教育・EdTech','公務員・公共政策','インフラ・エネルギー','メディア・エンタメ','研究・アカデミア']};
+
+init();
 </script>
 </body>
 </html>
