@@ -603,8 +603,6 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
 function renderQ1(phase){
   const q1=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
   if(!q1)return;
-  const question=q1.layer1+(q1.layer2?'
-'+q1.layer2:'');
   buildQPage(1,'環境認識',q1.layer2||q1.layer1,[
     {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
     {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
