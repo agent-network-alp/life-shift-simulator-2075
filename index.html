@@ -158,7 +158,13 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:4px;cursor:pointer;font-size:.85rem;line-height:1.5;transition:border-color .2s,background .2s;width:100%}
 .event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.08)}
 
-/* ── 結果画面 ── */
+/* ── 結果ローディング ── */
+#result-loading{display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
+#result-loading.show{display:flex}
+.rl-msg{font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.8rem);letter-spacing:3px;color:var(--white);animation:pulse 1.2s infinite;text-align:center;padding:0 20px}
+.rl-sub{font-size:.8rem;color:var(--w70);letter-spacing:2px;animation:pulse 1.2s infinite .3s}
+.rl-bar-wrap{width:280px;height:3px;background:var(--border);border-radius:2px}
+.rl-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;width:0%;transition:width .4s ease}
 #screen-result{padding:0;align-items:stretch}
 .result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%}
 .ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
@@ -305,6 +311,13 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   <div class="phase-body" id="phase-body-inner">
     <!-- JS で時代背景ページ or Q1/Q2/Q3ページを動的描画 -->
   </div>
+</div>
+
+<!-- RESULT LOADING -->
+<div id="result-loading">
+  <div class="rl-msg">お疲れさまでした！</div>
+  <div class="rl-sub">レポートを作成しています。少々お待ちください</div>
+  <div class="rl-bar-wrap"><div class="rl-bar" id="rl-bar"></div></div>
 </div>
 
 <!-- RESULT -->
@@ -723,7 +736,9 @@ function calcQ2Q3B(){
 function calcScore(){
   const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
   const cap=G.config.bonusCap??2.5;
-  return Math.min(100,Math.max(0,Math.round((era+Math.min(chain.bonus+ctx+q1+q2q3,cap))*10)));
+  const allBonus=Math.min(chain.bonus+ctx+q1+q2q3,cap);
+  // 修正: 15(ベース) + era(0-10)×6(0-60) + bonus(0-2.5)×10(0-25) = 15〜100点
+  return Math.min(100,Math.max(0,Math.round(15+era*6+allBonus*10)));
 }
 
 function calcIndScores(){
@@ -753,6 +768,16 @@ function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label
 
 // ── 結果 ─────────────────────────────────────────────────────────
 async function showResult(){
+  // ローディング演出開始
+  const rl=document.getElementById('result-loading');
+  const rlBar=document.getElementById('rl-bar');
+  rl.classList.add('show');
+  let progress=0;
+  const progressTimer=setInterval(()=>{
+    progress=Math.min(progress+Math.random()*12,90);
+    rlBar.style.width=progress+'%';
+  },200);
+
   const score=calcScore(),chain=calcChain(),tier=getTier(score),domTag=getDomTag();
   const indScores=calcIndScores(),radar=calcRadar();
   const fb=(G.data.feedback||{})[tier.label]||{};
@@ -794,6 +819,13 @@ async function showResult(){
 
   await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
   fetchStats(score,tier.label);
+
+  // ローディング終了
+  clearInterval(progressTimer);
+  rlBar.style.width='100%';
+  await new Promise(r=>setTimeout(r,400));
+  rl.classList.remove('show');
+
   showScreen('screen-result');
 }
 
