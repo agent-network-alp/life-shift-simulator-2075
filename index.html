@@ -11,142 +11,201 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0d0d1a;--navy2:#12122a;--accent:#e94560;--gold:#f5a623;
-  --cyan:#00d4ff;--white:#f0f0f0;--gray:#888;--lgray:#555;
-  --card:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);
+  --bg:#000000;--accent:#e94560;--gold:#f5a623;--cyan:#00d4ff;
+  --white:#ffffff;--w90:rgba(255,255,255,.9);--w70:rgba(255,255,255,.7);
+  --card:rgba(255,255,255,0.06);--card2:rgba(255,255,255,0.10);
+  --border:rgba(255,255,255,0.15);--border2:rgba(255,255,255,0.25);
   --ff-head:'Bebas Neue',sans-serif;--ff-body:'Noto Sans JP',sans-serif;
 }
 html{scroll-behavior:smooth}
-body{background:var(--navy);color:var(--white);font-family:var(--ff-body);min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
-.screen{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .35s ease}
+body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-height:100vh;overflow-x:hidden}
+.screen{display:none;min-height:100vh;position:relative;z-index:1;animation:fadeIn .3s ease}
 .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-#loading-overlay{position:fixed;inset:0;background:var(--navy);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── ローディング ── */
+#loading-overlay{position:fixed;inset:0;background:#000;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;transition:opacity .5s ease}
 #loading-overlay.hide{opacity:0;pointer-events:none}
-.loading-logo{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3rem);letter-spacing:4px;color:var(--accent)}
-.loading-bar-wrap{width:200px;height:2px;background:var(--border)}
+.loading-logo{font-family:var(--ff-head);font-size:clamp(2rem,6vw,3.2rem);letter-spacing:6px;color:var(--accent)}
+.loading-bar-wrap{width:240px;height:2px;background:var(--border)}
 .loading-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0%;transition:width .3s ease}
-.loading-text{font-size:.75rem;color:var(--gray);letter-spacing:3px;animation:pulse 1.5s infinite}
-.top-bar{width:100%;position:sticky;top:0;z-index:100;background:rgba(13,13,26,.92);backdrop-filter:blur(8px)}
-.top-bar-inner{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
-.top-logo{font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;color:var(--accent)}
-.top-step{font-size:.72rem;color:var(--gray);margin-left:auto}
-.top-year{font-size:.72rem;color:var(--cyan)}
-.progress-bar{width:100%;height:2px;background:var(--border)}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .5s ease}
-.onboard-wrap{width:100%;max-width:540px;padding:40px 24px;text-align:center}
-.onboard-eyebrow{font-size:.65rem;letter-spacing:4px;color:var(--accent);margin-bottom:20px;text-transform:uppercase}
-.onboard-title{font-family:var(--ff-head);font-size:clamp(2rem,8vw,3.5rem);line-height:.95;letter-spacing:2px;margin-bottom:16px}
+.loading-text{font-size:.72rem;color:var(--w70);letter-spacing:3px;animation:pulse 1.5s infinite}
+
+/* ── トップバー（共通） ── */
+.top-bar{width:100%;background:rgba(0,0,0,.95);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.top-bar-inner{display:flex;align-items:center;gap:0;padding:0 20px;height:52px}
+.top-logo{font-family:var(--ff-head);font-size:1rem;letter-spacing:3px;color:var(--accent)}
+.top-phase-info{display:flex;align-items:center;gap:12px;margin-left:auto}
+.top-phase-badge{font-family:var(--ff-head);font-size:.85rem;letter-spacing:2px;color:var(--white);background:var(--card2);padding:4px 10px;border-radius:2px;border:1px solid var(--border2)}
+.top-era-name{font-size:.72rem;color:var(--accent);letter-spacing:1px}
+.top-year-badge{font-size:.72rem;color:var(--cyan);background:rgba(0,212,255,.1);padding:3px 8px;border-radius:2px;border:1px solid rgba(0,212,255,.25)}
+.progress-bar{width:100%;height:3px;background:rgba(255,255,255,.08)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .4s ease}
+
+/* ── オンボーディング共通 ── */
+.onboard-wrap{width:100%;max-width:560px;padding:40px 24px;text-align:center}
+.onboard-eyebrow{font-size:.65rem;letter-spacing:4px;color:var(--accent);margin-bottom:16px;text-transform:uppercase}
+.onboard-title{font-family:var(--ff-head);font-size:clamp(2.2rem,9vw,4rem);line-height:.92;letter-spacing:2px;margin-bottom:16px;color:var(--white)}
 .onboard-title span{color:var(--accent)}
-.onboard-sub{font-size:.88rem;color:var(--gray);line-height:1.8;margin-bottom:40px}
-.onboard-hint{font-size:.7rem;color:var(--lgray);margin-bottom:32px;letter-spacing:1px}
-.input-box{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.1rem;padding:14px 20px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s;margin-bottom:8px}
+.onboard-sub{font-size:.9rem;color:var(--w90);line-height:1.9;margin-bottom:40px}
+.onboard-hint{font-size:.72rem;color:var(--w70);margin-bottom:28px;letter-spacing:1px}
+.input-box{width:100%;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.1rem;padding:16px 20px;border-radius:4px;text-align:center;outline:none;transition:border-color .2s;margin-bottom:8px}
 .input-box:focus{border-color:var(--accent)}
-.input-box::placeholder{color:var(--lgray)}
+.input-box::placeholder{color:rgba(255,255,255,.35)}
+
+/* ── 2択ボタン ── */
 .choice2-wrap{display:flex;gap:12px;width:100%;margin-bottom:8px;flex-wrap:wrap}
-.choice2-btn{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:20px 16px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;font-size:.9rem;line-height:1.5;text-align:center}
-.choice2-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08);transform:translateY(-2px)}
+.choice2-btn{flex:1;min-width:140px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:20px 16px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .15s;font-size:.9rem;line-height:1.6;text-align:center}
+.choice2-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.1);transform:translateY(-2px)}
 .choice2-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
 .choice2-label{font-family:var(--ff-head);font-size:1.1rem;color:var(--accent);display:block;margin-bottom:6px}
-.btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;padding:16px 48px;border-radius:4px;transition:transform .15s,box-shadow .15s;margin-top:8px}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,69,96,.4)}
-.btn-primary:disabled{opacity:.4;cursor:default;transform:none;box-shadow:none}
-.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--gray);cursor:pointer;font-family:var(--ff-body);font-size:.85rem;padding:10px 24px;border-radius:4px;transition:border-color .2s;margin-top:8px}
+
+/* ── ボタン類 ── */
+.btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;padding:18px 52px;border-radius:4px;transition:transform .15s,box-shadow .15s;margin-top:8px;display:inline-block}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(233,69,96,.45)}
+.btn-primary:disabled{opacity:.35;cursor:default;transform:none;box-shadow:none}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--w90);cursor:pointer;font-family:var(--ff-body);font-size:.85rem;padding:10px 24px;border-radius:4px;transition:border-color .2s,color .2s;margin-top:8px}
 .btn-secondary:hover{border-color:var(--white);color:var(--white)}
-.industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;width:100%;margin-bottom:16px;max-height:340px;overflow-y:auto}
+
+/* ── 業種選択 ── */
+.industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:8px;width:100%;margin-bottom:16px;max-height:340px;overflow-y:auto}
 .industry-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:12px 10px;border-radius:4px;cursor:pointer;font-size:.82rem;text-align:center;transition:border-color .2s,background .2s;line-height:1.4}
-.industry-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.06)}
-.industry-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
-.recommend-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,background .2s;text-align:left;display:flex;align-items:center;gap:16px}
-.recommend-card:hover{border-color:var(--accent);background:rgba(233,69,96,.06)}
-.recommend-card.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
-.recommend-rank{font-family:var(--ff-head);font-size:1.8rem;color:var(--accent);min-width:32px}
-.recommend-name{font-size:.95rem;font-weight:700;margin-bottom:4px}
+.industry-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08)}
+.industry-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.18)}
+.recommend-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:border-color .2s,background .2s;text-align:left;display:flex;align-items:center;gap:16px}
+.recommend-card:hover{border-color:var(--accent);background:rgba(233,69,96,.08)}
+.recommend-card.selected{border-color:var(--accent);background:rgba(233,69,96,.18)}
+.recommend-rank{font-family:var(--ff-head);font-size:2rem;color:var(--accent);min-width:32px}
+.recommend-name{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:4px}
 .recommend-stars{color:var(--gold);font-size:1rem;letter-spacing:2px}
-#screen-departure{background:var(--navy)}
-.departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:.08;position:absolute;top:50%;left:50%;transform:translate(-50%,-60%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
+
+/* ── 旅立ち ── */
+.departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
 .departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
 .departure-tag{font-size:.65rem;letter-spacing:4px;color:var(--accent);margin-bottom:20px}
-.departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px}
+.departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px;color:var(--white)}
 .departure-copy span{color:var(--cyan)}
-.departure-desc{font-size:.88rem;color:var(--gray);line-height:1.9;margin-bottom:40px}
+.departure-desc{font-size:.9rem;color:var(--w90);line-height:2;margin-bottom:40px}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   フェーズ：時代背景ページ
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 #screen-phase{display:none;flex-direction:column;min-height:100vh}
 #screen-phase.active{display:flex}
-.phase-body{flex:1;display:flex;flex-direction:column;max-width:720px;margin:0 auto;padding:28px 20px;width:100%}
-.era-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.era-tag{font-size:.62rem;letter-spacing:2px;padding:4px 10px;border-radius:2px;text-transform:uppercase}
-.era-tag.t-era{background:rgba(233,69,96,.12);color:var(--accent);border:1px solid rgba(233,69,96,.25)}
-.era-tag.t-age{background:rgba(0,212,255,.08);color:var(--cyan);border:1px solid rgba(0,212,255,.18)}
-.era-tag.t-year{background:var(--card);color:var(--gray);border:1px solid var(--border)}
-.era-desc{font-size:.8rem;color:var(--gray);line-height:1.8;padding:10px 14px;border-left:2px solid var(--accent);background:var(--card);border-radius:0 4px 4px 0;margin-bottom:10px}
-.era-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
-.era-stat{flex:1;min-width:130px;background:var(--card);border:1px solid var(--border);border-radius:4px;padding:10px 12px}
-.era-stat-val{font-family:var(--ff-head);font-size:1.3rem;color:var(--gold)}
-.era-stat-lbl{font-size:.68rem;color:var(--gray)}
-.era-stat-src{font-size:.58rem;color:rgba(136,136,136,.55);margin-top:2px}
-.q-indicator{font-size:.62rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px}
-.q-layer1{font-size:.8rem;color:var(--gray);margin-bottom:4px;line-height:1.6}
-.q-layer2{font-size:clamp(.95rem,2.5vw,1.15rem);font-weight:700;line-height:1.6;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.phase-body{flex:1;display:flex;flex-direction:column;max-width:680px;margin:0 auto;padding:28px 20px 40px;width:100%}
+
+/* 時代背景ページ */
+.era-page{display:flex;flex-direction:column;gap:0}
+
+/* あなたは今XX歳 */
+.age-hero{margin-bottom:28px}
+.age-hero-label{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
+.age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,10vw,5rem);line-height:1;color:var(--white);letter-spacing:2px}
+.age-hero-num span{color:var(--accent)}
+
+/* 時代説明ブロック */
+.era-desc-block{border-left:3px solid var(--accent);padding:14px 18px;background:var(--card);border-radius:0 6px 6px 0;margin-bottom:20px}
+.era-desc-text{font-size:.88rem;color:var(--white);line-height:1.9}
+
+/* 統計カード */
+.era-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+.era-stat-card{background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:14px 16px}
+.era-stat-val{font-family:var(--ff-head);font-size:1.6rem;color:var(--gold);margin-bottom:4px}
+.era-stat-lbl{font-size:.75rem;color:var(--white);line-height:1.4;margin-bottom:4px}
+.era-stat-src{font-size:.6rem;color:var(--w70);letter-spacing:.5px}
+
+/* 意思決定のヒント */
+.decision-hint{background:rgba(233,69,96,.08);border:1px solid rgba(233,69,96,.25);border-radius:6px;padding:14px 18px;margin-bottom:28px}
+.decision-hint-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
+.decision-hint-text{font-size:.85rem;color:var(--white);line-height:1.8}
+
+/* CTAボタン：意思決定へ進む */
+.era-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-body);font-size:1rem;font-weight:700;padding:20px 24px;border-radius:6px;transition:transform .15s,box-shadow .15s;text-align:left;display:flex;align-items:center;justify-content:space-between;line-height:1.5}
+.era-cta:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(233,69,96,.4)}
+.era-cta-arrow{font-size:1.2rem;font-weight:400;margin-left:8px;flex-shrink:0}
+
+/* ━━━ Q1/Q2/Q3ページ ━━━ */
+.q-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.q-context-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:var(--white);background:var(--card2);padding:5px 12px;border-radius:3px;border:1px solid var(--border2)}
+.q-era-badge{font-size:.72rem;color:var(--accent);background:rgba(233,69,96,.12);padding:4px 10px;border-radius:3px;border:1px solid rgba(233,69,96,.3);letter-spacing:1px}
+.q-year-badge{font-size:.72rem;color:var(--cyan);background:rgba(0,212,255,.08);padding:4px 10px;border-radius:3px;border:1px solid rgba(0,212,255,.2)}
+.q-num{font-family:var(--ff-head);font-size:.8rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
+.q-text{font-size:clamp(1rem,2.8vw,1.2rem);font-weight:700;color:var(--white);line-height:1.7}
+
+/* 選択肢 */
 .choices4{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.choice4-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:5px;cursor:pointer;transition:border-color .2s,background .2s,transform .12s;display:flex;gap:14px;align-items:flex-start}
-.choice4-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.07);transform:translateX(3px)}
-.choice4-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.14)}
-.choice4-lbl{font-family:var(--ff-head);font-size:1.3rem;color:var(--accent);min-width:20px;line-height:1}
+.choice4-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:16px 18px;border-radius:6px;cursor:pointer;transition:border-color .2s,background .2s,transform .12s;display:flex;gap:14px;align-items:flex-start;width:100%}
+.choice4-btn:hover{border-color:var(--accent);background:rgba(233,69,96,.08);transform:translateX(4px)}
+.choice4-btn.selected{border-color:var(--accent);background:rgba(233,69,96,.15)}
+.choice4-lbl{font-family:var(--ff-head);font-size:1.4rem;color:var(--accent);min-width:22px;line-height:1;flex-shrink:0}
 .choice4-body{flex:1}
-.choice4-text{font-size:.88rem;font-weight:700;margin-bottom:3px;line-height:1.5}
-.choice4-ex{font-size:.72rem;color:var(--gray)}
-.mirror-msg{background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.15);border-radius:4px;padding:10px 14px;font-size:.8rem;color:var(--cyan);margin-top:8px;animation:slideUp .3s ease}
-.event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;animation:fadeIn .25s ease}
-.event-card{background:var(--navy2);border:1px solid var(--accent);border-radius:8px;padding:28px;max-width:520px;width:100%;box-shadow:0 0 50px rgba(233,69,96,.18)}
+.choice4-text{font-size:.9rem;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.5}
+.choice4-ex{font-size:.73rem;color:var(--w70);line-height:1.4}
+
+/* ミラーリング */
+.mirror-msg{background:rgba(0,212,255,.07);border:1px solid rgba(0,212,255,.2);border-radius:4px;padding:10px 14px;font-size:.82rem;color:var(--cyan);margin-top:8px;animation:slideUp .3s ease}
+
+/* ── イベントオーバーレイ ── */
+.event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;animation:fadeIn .25s ease}
+.event-card{background:#0a0a0a;border:1px solid var(--accent);border-radius:8px;padding:28px;max-width:520px;width:100%;box-shadow:0 0 60px rgba(233,69,96,.2)}
 .event-cat{font-size:.62rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px}
-.event-title{font-family:var(--ff-head);font-size:1.5rem;margin-bottom:10px}
-.event-desc{font-size:.82rem;color:var(--gray);line-height:1.7;margin-bottom:20px}
+.event-title{font-family:var(--ff-head);font-size:1.5rem;color:var(--white);margin-bottom:10px}
+.event-desc{font-size:.85rem;color:var(--w90);line-height:1.8;margin-bottom:20px}
 .event-choices{display:flex;flex-direction:column;gap:8px}
-.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:12px 16px;border-radius:4px;cursor:pointer;font-size:.83rem;line-height:1.5;transition:border-color .2s,background .2s}
-.event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.07)}
+.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:4px;cursor:pointer;font-size:.85rem;line-height:1.5;transition:border-color .2s,background .2s;width:100%}
+.event-choice-btn:hover{border-color:var(--gold);background:rgba(245,166,35,.08)}
+
+/* ── 結果画面 ── */
 #screen-result{padding:0;align-items:stretch}
 .result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%}
-.ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;background:linear-gradient(180deg,rgba(233,69,96,.05) 0%,transparent 100%);border-radius:8px;position:relative;overflow:hidden}
-.ending-year-bg{font-family:var(--ff-head);font-size:clamp(4rem,15vw,10rem);line-height:1;color:var(--accent);opacity:.08;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
-.ending-title{font-family:var(--ff-head);font-size:clamp(1.4rem,5vw,2.4rem);letter-spacing:3px;margin-bottom:16px;position:relative}
-.ending-copy{font-size:.9rem;color:var(--gray);line-height:1.9;max-width:480px;margin:0 auto;position:relative}
+.ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
+.ending-year-bg{font-family:var(--ff-head);font-size:clamp(4rem,15vw,10rem);line-height:1;color:var(--accent);opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
+.ending-title{font-family:var(--ff-head);font-size:clamp(1.4rem,5vw,2.4rem);letter-spacing:3px;margin-bottom:16px;position:relative;color:var(--white)}
+.ending-copy{font-size:.9rem;color:var(--w90);line-height:1.9;max-width:480px;margin:0 auto;position:relative}
 .score-block{text-align:center;margin-bottom:40px}
 .score-num{font-family:var(--ff-head);font-size:clamp(4rem,14vw,7rem);line-height:1;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.score-tier{font-family:var(--ff-head);font-size:1.6rem;letter-spacing:4px;margin-top:6px}
-.score-headline{font-size:.9rem;color:var(--gray);line-height:1.8;margin-top:12px;max-width:440px;margin-inline:auto}
+.score-tier{font-family:var(--ff-head);font-size:1.6rem;letter-spacing:4px;margin-top:6px;color:var(--white)}
+.score-headline{font-size:.92rem;color:var(--w90);line-height:1.8;margin-top:12px;max-width:440px;margin-inline:auto}
 .result-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:24px}
 .result-card h3{font-size:.62rem;letter-spacing:3px;margin-bottom:14px}
-.industry-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.industry-bar-name{font-size:.8rem;width:160px;flex-shrink:0}
+.industry-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
+.industry-bar-name{font-size:.8rem;width:160px;flex-shrink:0;color:var(--white)}
 .industry-bar-name.top1{color:var(--gold);font-weight:700}
-.industry-bar-track{flex:1;height:6px;background:var(--border);border-radius:3px}
+.industry-bar-track{flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:3px}
 .industry-bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
-.industry-bar-pct{font-size:.75rem;width:36px;text-align:right;color:var(--gray)}
+.industry-bar-pct{font-size:.75rem;width:36px;text-align:right;color:var(--w90)}
 .radar-wrap{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px;margin-bottom:24px;height:260px;position:relative}
-.action-block{background:rgba(233,69,96,.06);border:1px solid rgba(233,69,96,.25);border-radius:8px;padding:20px 22px;margin-bottom:32px}
+.action-block{background:rgba(233,69,96,.07);border:1px solid rgba(233,69,96,.3);border-radius:8px;padding:20px 22px;margin-bottom:32px}
 .action-block h3{font-size:.62rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
-.action-item{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:12px 16px;cursor:pointer;font-size:.85rem;line-height:1.6;transition:border-color .2s,background .2s;text-align:left;color:var(--white);font-family:var(--ff-body);width:100%;margin-bottom:8px;display:block}
+.action-item{background:var(--card);border:1px solid var(--border);border-radius:4px;padding:14px 16px;cursor:pointer;font-size:.86rem;line-height:1.7;transition:border-color .2s,background .2s;text-align:left;color:var(--white);font-family:var(--ff-body);width:100%;margin-bottom:8px;display:block}
 .action-item:hover{border-color:var(--gold);background:rgba(245,166,35,.06)}
 .action-item.picked{border-color:var(--gold);background:rgba(245,166,35,.1)}
 .compare-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .compare-item{flex:1;min-width:90px;text-align:center}
-.compare-num{font-family:var(--ff-head);font-size:1.8rem}
-.compare-lbl{font-size:.68rem;color:var(--gray)}
+.compare-num{font-family:var(--ff-head);font-size:1.8rem;color:var(--white)}
+.compare-lbl{font-size:.68rem;color:var(--w90)}
 .tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.72rem}
-.tier-bar-lbl{width:46px;text-align:right;color:var(--gray)}
-.tier-bar-track{flex:1;height:5px;background:var(--border);border-radius:3px}
+.tier-bar-lbl{width:46px;text-align:right;color:var(--w90)}
+.tier-bar-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px}
 .tier-bar-fill{height:100%;border-radius:3px;transition:width .8s ease}
-.tier-bar-pct{width:32px;text-align:right;color:var(--gray);font-size:.68rem}
+.tier-bar-pct{width:32px;text-align:right;color:var(--w90);font-size:.68rem}
 .share-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px}
-.btn-share{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:11px 16px;border-radius:4px;cursor:pointer;font-size:.82rem;transition:border-color .2s}
-.btn-share:hover{border-color:var(--cyan)}
-.btn-retry{display:block;width:100%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--ff-head);font-size:.95rem;letter-spacing:3px;padding:13px;border-radius:4px;cursor:pointer;transition:background .2s;margin-bottom:24px}
-.btn-retry:hover{background:rgba(233,69,96,.08)}
-.brand-footer{text-align:center;font-size:.7rem;color:var(--lgray);letter-spacing:2px;padding-bottom:40px}
-@media(max-width:480px){.phase-body{padding:16px}.era-stats{flex-direction:column}.radar-wrap{height:210px}.industry-bar-name{width:120px;font-size:.72rem}.choice2-wrap{flex-direction:column}}
+.btn-share{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border2);color:var(--white);font-family:var(--ff-body);padding:12px 16px;border-radius:4px;cursor:pointer;font-size:.85rem;transition:border-color .2s,background .2s}
+.btn-share:hover{border-color:var(--cyan);background:rgba(0,212,255,.06)}
+.btn-retry{display:block;width:100%;background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:var(--ff-head);font-size:.95rem;letter-spacing:3px;padding:14px;border-radius:4px;cursor:pointer;transition:background .2s;margin-bottom:24px}
+.btn-retry:hover{background:rgba(233,69,96,.1)}
+.brand-footer{text-align:center;font-size:.7rem;color:var(--w70);letter-spacing:2px;padding-bottom:40px}
+@media(max-width:480px){
+  .phase-body{padding:16px 14px 32px}
+  .era-stats-grid{grid-template-columns:1fr}
+  .radar-wrap{height:220px}
+  .industry-bar-name{width:120px;font-size:.72rem}
+  .choice2-wrap{flex-direction:column}
+  .top-phase-info{gap:6px}
+}
 </style>
 </head>
 <body>
@@ -165,7 +224,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <p class="onboard-sub">未来へ旅して、戻ってきた君はどこへ向かう。<br>6つの時代の岐路で選択を重ね、<br>あなたの価値とキャリアの方向性を確かめよう。</p>
     <p class="onboard-hint">ニックネームを入力してスタート</p>
     <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
-    <p style="font-size:.68rem;color:var(--lgray);margin-bottom:20px">ニックネームと選択結果はイベント分析のために保存されます</p>
+    <p style="font-size:.68rem;color:var(--w70);margin-bottom:20px">ニックネームと選択結果はイベント分析のために保存されます</p>
     <button class="btn-primary" onclick="goStart()">はじめる →</button>
   </div>
 </div>
@@ -204,7 +263,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="onboard-wrap" style="padding-top:28px;max-width:600px">
     <p class="onboard-eyebrow">INDUSTRY</p>
     <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.8rem);margin-bottom:8px">気になる業種を選んでください</h2>
-    <p style="font-size:.78rem;color:var(--gray);margin-bottom:20px">AIがあなたの回答から3業種を推薦しています</p>
+    <p style="font-size:.78rem;color:var(--w90);margin-bottom:20px">AIがあなたの回答から3業種を推薦しています</p>
     <div id="recommend-section">
       <p style="font-size:.62rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">AI RECOMMEND</p>
       <div id="recommend-list"></div>
@@ -235,20 +294,16 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="top-bar">
     <div class="top-bar-inner">
       <span class="top-logo">LSS 2075</span>
-      <span class="top-step" id="phase-step"></span>
-      <span class="top-year" id="phase-year"></span>
+      <div class="top-phase-info">
+        <span class="top-phase-badge" id="phase-badge">PHASE 1/6</span>
+        <span class="top-era-name" id="phase-era-name"></span>
+        <span class="top-year-badge" id="phase-year-badge"></span>
+      </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="phase-prog"></div></div>
   </div>
-  <div class="phase-body">
-    <div class="era-tags" id="era-tags"></div>
-    <div class="era-desc" id="era-desc"></div>
-    <div class="era-stats" id="era-stats"></div>
-    <div class="q-indicator" id="q-ind"></div>
-    <div class="q-layer1" id="q-l1"></div>
-    <div class="q-layer2" id="q-l2"></div>
-    <div class="choices4" id="choices4"></div>
-    <div id="mirror-area"></div>
+  <div class="phase-body" id="phase-body-inner">
+    <!-- JS で時代背景ページ or Q1/Q2/Q3ページを動的描画 -->
   </div>
 </div>
 
@@ -363,7 +418,7 @@ function renderOb(){
   [[q.a,'A'],[q.b,'B']].forEach(([opt,lbl])=>{
     const btn=document.createElement('button');
     btn.className='choice2-btn';
-    btn.innerHTML=`<span class="choice2-label">${lbl}</span>${opt.lbl}<br><small style="color:var(--gray);font-size:.75rem">${opt.sub}</small>`;
+    btn.innerHTML=`<span class="choice2-label">${lbl}</span>${opt.lbl}<br><small style="color:var(--w70);font-size:.75rem">${opt.sub}</small>`;
     btn.onclick=()=>selectOb(opt.val,btn);
     wrap.appendChild(btn);
   });
@@ -432,51 +487,114 @@ function goIndNext(){if(G.selectedIndustry)showScreen('screen-departure');}
 
 // ── ゲーム開始 ────────────────────────────────────────────────────
 function startGame(){
-  G.currentPhase=0;G.currentQ=0;
+  G.currentPhase=0;G.currentQ=-1;
   G.choices=[];G.q1Choices=[];G.q3Choices=[];G.tags=[];G.eventChoices=[];
   renderPhase();showScreen('screen-phase');
 }
 
-// ── フェーズ描画 ──────────────────────────────────────────────────
+// ── フェーズ描画（新UI） ─────────────────────────────────────────
+// currentQ: -1=時代背景ページ, 0=Q1, 1=Q2, 2=Q3
 function renderPhase(){
   const phases=G.data.phases||[];
   const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
   if(!phase)return;
 
-  const curStep=G.currentPhase*3+G.currentQ+1;
-  document.getElementById('phase-step').textContent=`PHASE ${G.currentPhase+1}/6 — Q${G.currentQ+1}/3`;
-  document.getElementById('phase-year').textContent=phase.yearRange;
-  document.getElementById('phase-prog').style.width=`${(curStep-1)/18*100}%`;
+  // プログレス計算（時代背景ページ含む: 1フェーズ=4ページ）
+  const totalPages=6*4;
+  const curPage=G.currentPhase*4+(G.currentQ+1)+1;
+  document.getElementById('phase-prog').style.width=`${(curPage-1)/totalPages*100}%`;
 
-  if(G.currentQ===0){
-    document.getElementById('era-tags').innerHTML=`<span class="era-tag t-era">${phase.era}</span><span class="era-tag t-age">${phase.ageRange}</span><span class="era-tag t-year">${phase.yearRange}</span>`;
-    document.getElementById('era-desc').textContent=phase.eraDescription;
-    document.getElementById('era-stats').innerHTML=`
-      <div class="era-stat"><div class="era-stat-val">${phase.stat1_value}</div><div class="era-stat-lbl">${phase.stat1_label}</div><div class="era-stat-src">${phase.stat1_source}</div></div>
-      <div class="era-stat"><div class="era-stat-val">${phase.stat2_value}</div><div class="era-stat-lbl">${phase.stat2_label}</div><div class="era-stat-src">${phase.stat2_source}</div></div>`;
-  }else{
-    document.getElementById('era-tags').innerHTML=`<span class="era-tag t-era">${phase.era}</span><span class="era-tag t-year">${phase.yearRange}</span>`;
-    document.getElementById('era-desc').textContent='';
-    document.getElementById('era-stats').innerHTML='';
-  }
-  document.getElementById('mirror-area').innerHTML='';
+  // トップバー更新
+  document.getElementById('phase-badge').textContent=`PHASE ${G.currentPhase+1}/6`;
+  document.getElementById('phase-era-name').textContent=phase.era;
+  document.getElementById('phase-year-badge').textContent=phase.yearRange;
 
-  if(G.currentQ===0)renderQ1(phase);
-  else if(G.currentQ===1)renderQ2(phase);
-  else renderQ3();
+  if(G.currentQ===-1) renderEraPage(phase);
+  else if(G.currentQ===0) renderQ1(phase);
+  else if(G.currentQ===1) renderQ2(phase);
+  else renderQ3(phase);
 }
 
-function makeChoices4(choices,onClick){
+// 時代背景ページ
+function renderEraPage(phase){
+  // 現在の年齢計算（20歳スタート想定）
+  const ageStart=20;
+  const phaseAges=[20,25,30,40,50,60];
+  const age=phaseAges[G.currentPhase];
+
+  // 意思決定ヒントをフェーズごとに生成
+  const hints=[
+    'AI活用スキルへの投資判断、専門領域の選定、キャリアの方向性——このフェーズの選択が10年後の土台を決める。',
+    '既存のスキルをどう活かすか、新しい役割にいかに移行するか——変化の速さに対応できるかどうかが問われる。',
+    '複数の強みをどう組み合わせるか、自分のブランドをどう構築するか——掛け算の設計が差をつける10年。',
+    '自分の知見を次世代にどう渡すか、AIと人間の協働をどう設計するか——影響力の源泉が変わる時代。',
+    '労働の定義が変わる中で、自分はどのコミュニティに価値を生み出すか——居場所の設計が問われる。',
+    '経済的必要性ではなく意味で動く時代——あなたは何のために、誰のために動き続けるか。',
+  ];
+
+  const body=document.getElementById('phase-body-inner');
+  body.innerHTML=`
+    <div class="era-page">
+      <div class="age-hero">
+        <div class="age-hero-label">あなたは今</div>
+        <div class="age-hero-num"><span>${age}</span>歳</div>
+      </div>
+      <div class="era-desc-block">
+        <div class="era-desc-text">${phase.eraDescription}</div>
+      </div>
+      <div class="era-stats-grid">
+        <div class="era-stat-card">
+          <div class="era-stat-val">${phase.stat1_value}</div>
+          <div class="era-stat-lbl">${phase.stat1_label}</div>
+          <div class="era-stat-src">${phase.stat1_source}</div>
+        </div>
+        <div class="era-stat-card">
+          <div class="era-stat-val">${phase.stat2_value}</div>
+          <div class="era-stat-lbl">${phase.stat2_label}</div>
+          <div class="era-stat-src">${phase.stat2_source}</div>
+        </div>
+      </div>
+      <div class="decision-hint">
+        <div class="decision-hint-label">意思決定のポイント</div>
+        <div class="decision-hint-text">${hints[G.currentPhase]||''}</div>
+      </div>
+      <button class="era-cta" onclick="G.currentQ=0;renderPhase()">
+        <span>${G.nickname}さんはどのように意思決定し、行動しますか？</span>
+        <span class="era-cta-arrow">→</span>
+      </button>
+    </div>`;
+}
+
+// Q共通：ヘッダとボディを構築
+function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
+  const phases=G.data.phases||[];
+  const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
+  const phaseAges=[20,25,30,40,50,60];
+  const age=phaseAges[G.currentPhase];
+
+  const body=document.getElementById('phase-body-inner');
+  body.innerHTML=`
+    <div class="q-header">
+      <div class="q-context-bar">
+        <span class="q-age-badge">${age}歳</span>
+        <span class="q-era-badge">${phase.era}</span>
+        <span class="q-year-badge">${phase.yearRange}</span>
+      </div>
+      <div class="q-num">Q${qNum} / 3 — ${qLabel}</div>
+      <div class="q-text">${questionText}</div>
+    </div>
+    <div class="choices4" id="choices4"></div>
+    <div id="mirror-area"></div>`;
+
   const wrap=document.getElementById('choices4');
-  wrap.innerHTML='';
-  choices.forEach(c=>{
+  choiceData.forEach(c=>{
     const btn=document.createElement('button');
     btn.className='choice4-btn';
     btn.innerHTML=`<span class="choice4-lbl">${c.label}</span><div class="choice4-body"><div class="choice4-text">${c.text}</div>${c.sub?`<div class="choice4-ex">${c.sub}</div>`:''}</div>`;
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
-      setTimeout(()=>onClick(c),300);
+      setTimeout(()=>onSelect(c),300);
     };
     wrap.appendChild(btn);
   });
@@ -485,10 +603,9 @@ function makeChoices4(choices,onClick){
 function renderQ1(phase){
   const q1=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
   if(!q1)return;
-  document.getElementById('q-ind').textContent='Q1 — 環境認識';
-  document.getElementById('q-l1').textContent=q1.layer1;
-  document.getElementById('q-l2').textContent=q1.layer2;
-  makeChoices4([
+  const question=q1.layer1+(q1.layer2?'
+'+q1.layer2:'');
+  buildQPage(1,'環境認識',q1.layer2||q1.layer1,[
     {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
     {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
     {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
@@ -499,10 +616,7 @@ function renderQ1(phase){
 function renderQ2(phase){
   const q2=(G.data.q2||[]).find(q=>q.phase_id===phase.id);
   if(!q2)return;
-  document.getElementById('q-ind').textContent='Q2 — 行動選択';
-  document.getElementById('q-l1').textContent='';
-  document.getElementById('q-l2').textContent=q2.question;
-  makeChoices4([
+  buildQPage(2,'行動選択',q2.question,[
     {label:'A',text:q2.choice_a_text,sub:q2.choice_a_example,tag:q2.choice_a_tag},
     {label:'B',text:q2.choice_b_text,sub:q2.choice_b_example,tag:q2.choice_b_tag},
     {label:'C',text:q2.choice_c_text,sub:q2.choice_c_example,tag:q2.choice_c_tag},
@@ -511,18 +625,15 @@ function renderQ2(phase){
     G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
     const mirror={specialization:'あなたは深く掘り下げることに価値を見出す思考を持っています。','ai-native':'あなたは新しいツールを武器に変える適応力を持っています。',strategic:'あなたは全体を俯瞰して動く意思決定の姿勢を持っています。',independent:'あなたは自律的に動き組織に縛られない発想を持っています。','rare-combination':'あなたは異なるものを掛け合わせて価値を作る思考を持っています。',leadership:'あなたは人を育て引っ張ることに喜びを見出す姿勢を持っています。','community-builder':'あなたはつながりの中に価値を生み出す思考を持っています。',global:'あなたは境界を越えて動くことを恐れない姿勢を持っています。',legacy:'あなたは自分の経験を次世代に渡すことに意義を感じています。'};
     const msg=mirror[c.tag];
-    if(msg)document.getElementById('mirror-area').innerHTML=`<div class="mirror-msg">${msg}</div>`;
-    G.currentQ=2;renderPhase();
+    if(msg){const ma=document.getElementById('mirror-area');if(ma)ma.innerHTML=`<div class="mirror-msg">${msg}</div>`;}
+    setTimeout(()=>{G.currentQ=2;renderPhase();},400);
   });
 }
 
-function renderQ3(){
+function renderQ3(phase){
   const q3=(G.data.q3||[])[0];
   if(!q3)return;
-  document.getElementById('q-ind').textContent='Q3 — 投資配分';
-  document.getElementById('q-l1').textContent='';
-  document.getElementById('q-l2').textContent='この時期、あなたは何に時間・エネルギーを使う？';
-  makeChoices4([
+  buildQPage(3,'投資配分','この時期、あなたは何に時間・エネルギーを集中させる？',[
     {label:'A',text:q3.choice_a_text,invest:q3.choice_a_invest},
     {label:'B',text:q3.choice_b_text,invest:q3.choice_b_invest},
     {label:'C',text:q3.choice_c_text,invest:q3.choice_c_invest},
@@ -561,7 +672,7 @@ function selectEv(id,ch,tag,corr){
   nextPhase();
 }
 
-function nextPhase(){G.currentPhase++;G.currentQ=0;if(G.currentPhase>=6)showResult();else renderPhase();}
+function nextPhase(){G.currentPhase++;G.currentQ=-1;if(G.currentPhase>=6)showResult();else renderPhase();}
 
 // ── スコアエンジン v4 ─────────────────────────────────────────────
 function getPW(){const c=G.config;return{phase_1:c.phaseWeight_1_g2??0.20,phase_2:c.phaseWeight_2_g2??0.22,phase_3:c.phaseWeight_3_g2??0.18,phase_4:c.phaseWeight_4_g2??0.16,phase_5:c.phaseWeight_5_g2??0.13,phase_6:c.phaseWeight_6_g2??0.11};}
