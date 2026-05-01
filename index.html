@@ -679,17 +679,12 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
     btn.className='choice4-btn';
     btn.innerHTML=`<span class="choice4-lbl">${ch.label}</span><div class="choice4-body"><div class="choice4-text">${ch.text}</div>${ch.sub?`<div class="choice4-ex">${ch.sub}</div>`:''}</div>`;
 
-    // ホバー/タッチでVALUE METERプレビュー（Q2選択肢のみタグあり）
-    if(ch.tag){
-      btn.addEventListener('mouseenter',()=>renderValueMeter(ch.tag));
-      btn.addEventListener('mouseleave',()=>renderValueMeter(null));
-      btn.addEventListener('touchstart',()=>renderValueMeter(ch.tag),{passive:true});
-    }
+    // ホバー/タッチのプレビューは廃止（選択前に変化量がわかるのを防ぐ）
 
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
-      if(ch.tag) applyValueMeterChoice(ch.tag);
+      if(ch.tag) applyValueMeterChoice(ch.tag); // 選択後に反映
       setTimeout(()=>onSelect(ch),300);
     };
     wrap.appendChild(btn);
@@ -1213,10 +1208,14 @@ function renderValueMeter(previewTag){
 
 function applyValueMeterChoice(tag){
   const impact=TAG_AXIS_IMPACT[tag]||{};
-  Object.keys(impact).forEach(k=>{
-    vmState[k]=Math.min(100,Math.max(0,vmState[k]+impact[k]));
-  });
-  renderValueMeter(null);
+  // まず変化量プレビューを表示（0.8秒）してから確定
+  renderValueMeter(tag);
+  setTimeout(()=>{
+    Object.keys(impact).forEach(k=>{
+      vmState[k]=Math.min(100,Math.max(0,vmState[k]+impact[k]));
+    });
+    renderValueMeter(null); // 確定値で再描画（delta非表示）
+  },800);
 }
 
 function injectValueMeter(){
