@@ -89,6 +89,20 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .departure-copy span{color:var(--cyan)}
 .departure-desc{font-size:.9rem;color:var(--w90);line-height:2;margin-bottom:40px}
 
+/* ━━━ カラーテーマ変数 ━━━ */
+/* レポートページ（アイボリー） */
+.theme-ivory{
+  --bg-page:#f8f4ed;--fg-page:#1a1a1a;--border-page:rgba(0,0,0,.1);
+  --card-page:rgba(0,0,0,.04);--card2-page:rgba(0,0,0,.07);
+}
+/* 時代背景ページ（エージェントカラー） */
+.theme-era-0{background:linear-gradient(135deg,#0d2137 0%,#0a3d52 100%)}
+.theme-era-1{background:linear-gradient(135deg,#052e2e 0%,#0a4a3a 100%)}
+.theme-era-2{background:linear-gradient(135deg,#0a2a1a 0%,#0d4030 100%)}
+.theme-era-3{background:linear-gradient(135deg,#1a1a3a 0%,#0d2850 100%)}
+.theme-era-4{background:linear-gradient(135deg,#0a1f3a 0%,#103555 100%)}
+.theme-era-5{background:linear-gradient(135deg,#1a0a2e 0%,#2a1048 100%)}
+
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    フェーズ：時代背景ページ
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -102,24 +116,24 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 /* あなたは今XX歳 */
 .age-hero{margin-bottom:28px}
 .age-hero-label{font-size:.65rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
-.age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,10vw,5rem);line-height:1;color:var(--white);letter-spacing:2px}
+.age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,10vw,5rem);line-height:1;color:#1a1a1a;letter-spacing:2px}
 .age-hero-num span{color:var(--accent)}
 
 /* 時代説明ブロック */
-.era-desc-block{border-left:3px solid var(--accent);padding:14px 18px;background:var(--card);border-radius:0 6px 6px 0;margin-bottom:20px}
-.era-desc-text{font-size:.88rem;color:var(--white);line-height:1.9}
+.era-desc-block{border-left:3px solid var(--accent);padding:14px 18px;background:rgba(0,0,0,.08);border-radius:0 6px 6px 0;margin-bottom:20px}
+.era-desc-text{font-size:.88rem;color:#1a1a1a;line-height:1.9}
 
 /* 統計カード */
 .era-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
-.era-stat-card{background:var(--card2);border:1px solid var(--border2);border-radius:6px;padding:14px 16px}
-.era-stat-val{font-family:var(--ff-head);font-size:1.6rem;color:var(--gold);margin-bottom:4px}
-.era-stat-lbl{font-size:.75rem;color:var(--white);line-height:1.4;margin-bottom:4px}
-.era-stat-src{font-size:.6rem;color:var(--w70);letter-spacing:.5px}
+.era-stat-card{background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.12);border-radius:6px;padding:14px 16px}
+.era-stat-val{font-family:var(--ff-head);font-size:1.6rem;color:#8b4513;margin-bottom:4px}
+.era-stat-lbl{font-size:.75rem;color:#1a1a1a;line-height:1.4;margin-bottom:4px}
+.era-stat-src{font-size:.6rem;color:#555;letter-spacing:.5px}
 
 /* 意思決定のヒント */
-.decision-hint{background:rgba(233,69,96,.08);border:1px solid rgba(233,69,96,.25);border-radius:6px;padding:14px 18px;margin-bottom:28px}
+.decision-hint{background:rgba(233,69,96,.1);border:1px solid rgba(233,69,96,.3);border-radius:6px;padding:14px 18px;margin-bottom:28px}
 .decision-hint-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
-.decision-hint-text{font-size:.85rem;color:var(--white);line-height:1.8}
+.decision-hint-text{font-size:.85rem;color:#1a1a1a;line-height:1.8}
 
 /* CTAボタン：意思決定へ進む */
 .era-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-body);font-size:1rem;font-weight:700;padding:20px 24px;border-radius:6px;transition:transform .15s,box-shadow .15s;text-align:left;display:flex;align-items:center;justify-content:space-between;line-height:1.5}
@@ -208,12 +222,44 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .narrative-next:hover{border-color:var(--accent);background:rgba(233,69,96,.08)}
 
 /* ── MY STORY（最終レポート） ── */
-.story-block{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px}
+.story-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:24px}
 .story-block h3{font-size:.62rem;letter-spacing:3px;color:var(--gold);margin-bottom:16px}
 .story-entry{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
 .story-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .story-entry-phase{font-size:.62rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px}
 .story-entry-text{font-size:.88rem;color:var(--white);line-height:1.9}
+
+/* ── レポートページ（アイボリー） ── */
+#screen-result{background:#f7f2e8}
+.result-inner{color:#1a1a1a}
+.result-inner .result-card{background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.result-inner .result-card h3{color:#8b6914}
+.result-inner .story-block{background:rgba(255,255,255,.85);border:1px solid rgba(0,0,0,.1)}
+.result-inner .story-block h3{color:#8b6914}
+.result-inner .story-entry{border-bottom-color:rgba(0,0,0,.1)}
+.result-inner .story-entry-phase{color:#c0392b}
+.result-inner .story-entry-text{color:#2c2c2c}
+.result-inner .action-block{background:rgba(180,50,30,.07);border-color:rgba(180,50,30,.25)}
+.result-inner .action-block h3{color:#8b4513}
+.result-inner .action-item{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.15);color:#1a1a1a}
+.result-inner .action-item:hover{border-color:#c0392b;background:#fff}
+.result-inner .action-item.picked{border-color:#c0392b;background:rgba(192,57,43,.08)}
+.result-inner .compare-lbl{color:#555}
+.result-inner .tier-bar-lbl{color:#555}
+.result-inner .tier-bar-pct{color:#555}
+.result-inner .tier-bar-track{background:rgba(0,0,0,.1)}
+.result-inner .radar-wrap{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.1)}
+.result-inner .industry-bar-track{background:rgba(0,0,0,.1)}
+.result-inner .industry-bar-pct{color:#555}
+.result-inner .brand-footer{color:#999}
+.result-inner .score-headline{color:#444}
+.result-inner .ending-copy{color:#444}
+.result-inner #res-body{color:#2c2c2c}
+.result-inner .compare-num{color:#1a1a1a !important}
+.result-inner .btn-share{background:rgba(255,255,255,.85);border-color:rgba(0,0,0,.2);color:#1a1a1a}
+.result-inner .btn-share:hover{border-color:#c0392b}
+.result-inner .btn-retry{border-color:#c0392b;color:#c0392b}
+.result-inner .btn-retry:hover{background:rgba(192,57,43,.08)}
 
 /* ── 結果ローディング ── */
 #result-loading{display:none;position:fixed;inset:0;background:#000;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
@@ -600,10 +646,23 @@ function renderPhase(){
 
 // 時代背景ページ
 function renderEraPage(phase){
-  // 現在の年齢計算（20歳スタート想定）
-  const ageStart=20;
   const phaseAges=[20,25,30,40,50,60];
   const age=phaseAges[G.currentPhase];
+  const pi=G.currentPhase;
+
+  // エージェントカラーテーマをphase-body-innerに適用
+  const body=document.getElementById('phase-body-inner');
+  // 親のscreen-phaseにもグラデーション背景を適用
+  const phaseScreen=document.getElementById('screen-phase');
+  const eraGrads=[
+    'linear-gradient(160deg,#e8f4f8 0%,#b8ddf0 100%)',  // P1 スカイブルー
+    'linear-gradient(160deg,#e8f5f0 0%,#a8e0c8 100%)',  // P2 エメラルドグリーン
+    'linear-gradient(160deg,#f0f5e8 0%,#c8dda8 100%)',  // P3 ライトグリーン
+    'linear-gradient(160deg,#e8eef8 0%,#b0c8e8 100%)',  // P4 ライトネイビー
+    'linear-gradient(160deg,#f5f0e8 0%,#e0d0b0 100%)',  // P5 アイボリー
+    'linear-gradient(160deg,#f8f4ee 0%,#e8dcc8 100%)',  // P6 ウォームアイボリー
+  ];
+  phaseScreen.style.background=eraGrads[pi]||eraGrads[0];
 
   // 意思決定ヒントをフェーズごとに生成
   const hints=[
@@ -615,7 +674,6 @@ function renderEraPage(phase){
     '経済的必要性ではなく意味で動く時代——あなたは何のために、誰のために動き続けるか。',
   ];
 
-  const body=document.getElementById('phase-body-inner');
   body.innerHTML=`
     <div class="era-page">
       <div class="age-hero">
@@ -656,6 +714,9 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   const phaseAges=[20,25,30,40,50,60];
   const age=phaseAges[G.currentPhase];
 
+  // Q1〜Q3は黒背景に戻す
+  document.getElementById('screen-phase').style.background='#000';
+
   const body=document.getElementById('phase-body-inner');
   body.innerHTML=`
     <div class="q-header">
@@ -684,7 +745,23 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
-      if(ch.tag) applyValueMeterChoice(ch.tag); // 選択後に反映
+      // Q2はタグで反映、Q1はerafitで反映、Q3はinvestで反映
+      if(ch.tag){
+        applyValueMeterChoice(ch.tag);
+      }else if(ch.erafit!=null){
+        // Q1：erafitの高低に応じてeraFit軸を変化
+        const delta=ch.erafit>=8?+10:ch.erafit>=5?0:-8;
+        applyValueMeterDelta({eraFit:delta});
+      }else if(ch.invest){
+        // Q3：投資先に応じた軸変化
+        const investImpact={
+          skill:     {expertise:+8, adaptability:+4},
+          network:   {adaptability:+6,'consistency':+4},
+          experiment:{adaptability:+10,crisis:+6},
+          current_job:{expertise:+6, consistency:+8},
+        };
+        applyValueMeterDelta(investImpact[ch.invest]||{});
+      }
       setTimeout(()=>onSelect(ch),300);
     };
     wrap.appendChild(btn);
@@ -735,10 +812,12 @@ function renderQ3(phase){
 
 // ── イベント ─────────────────────────────────────────────────────
 function proceedPhase(){
-  // Q3選択後はダイスロール演出を経由してイベント判定
-  showDice((result)=>{
-    // closeDice内で処理するため、ここでは何もしない
-  });
+  // 33%の確率でダイスロール演出、それ以外は直接次フェーズへ
+  if(Math.random()<0.33){
+    showDice(()=>{});
+  }else{
+    nextPhase();
+  }
 }
 
 function showEvent(ev){
@@ -777,85 +856,201 @@ const PHASE_AGES=[20,25,30,40,50,60];
 const PHASE_END_AGES=[25,30,40,50,60,70];
 const PHASE_YEARS=['2025〜2030年','2030〜2035年','2035〜2045年','2045〜2055年','2055〜2065年','2065〜2075年'];
 
-// タグ×フェーズ→一人称ナラティブ文（前半）
-const NARRATIVE_OPENING={
+// タグ×フェーズ→ナラティブ（3バリエーション配列）
+const NARRATIVE_POOL={
   specialization:{
-    0:'20代前半、私はまず「深さ」を選んだ。',
-    1:'25歳を過ぎた頃、AIが専門家の仕事に迫り始めた。それでも私は自分の専門性を磨くことをやめなかった。',
-    2:'30代、産業の境界が崩れていく中で、私は自分の専門性が武器になる組み合わせを探し続けた。',
-    3:'40代に入った私は、現場の第一線に立ち続けることを選んだ。',
-    4:'50代、私はこれまで積み上げてきた知見を、具体的な形として残し始めた。',
-    5:'60代、私はまだ動き続けた。専門家として、自分の経験を社会に渡すために。',
+    0:['20代前半、私はまず「深さ」を選んだ。広く浅くではなく、一点を掘り続けることに賭けた。',
+       '20歳の私は、自分の専門性を武器にすることに決めた。AIが広まる時代だからこそ、誰にも真似できない水準を目指した。',
+       '最初の数年間、私はひたすら自分の専門を極めた。周りが横に広がる中で、私は縦に掘り続けた。'],
+    1:['25歳を過ぎた頃、AIが専門家の仕事に迫り始めた。それでも私は自分の専門性を磨くことをやめなかった。',
+       'AGIが登場し、多くの同期が方向転換する中で、私は自分の道を貫いた。深さこそが私の盾だと信じた。',
+       '時代が揺れるほど、私は自分の専門性という錨を手放さなかった。それが私の選んだ戦略だった。'],
+    2:['30代、産業の境界が崩れていく中で、私は自分の専門性が武器になる組み合わせを探し続けた。',
+       '掛け算の時代が来た。私は専門性を深めながら、それを活かせる新しい文脈を探した。',
+       '産業が再編される中、私の専門性はある分野で希少な武器になっていた。'],
+    3:['40代に入った私は、現場の第一線に立ち続けることを選んだ。管理職より、専門家として価値を出し続けることを選んだ。',
+       '40歳になっても、私の現場への情熱は衰えなかった。AIに替えられない水準を維持することが私の誇りだった。',
+       '人機協働の時代、私はAIには任せられない判断を担う専門家として、自分の価値を高め続けた。'],
+    4:['50代、私はこれまで積み上げてきた知見を、具体的な形として残し始めた。',
+       '長年の専門性が、一つの体系として整理できる年齢になった。私はそれを世に出すことにした。',
+       '50歳を過ぎて、私の経験は他者には替えられない財産になっていた。それをどう渡すかを考えた。'],
+    5:['60代、私はまだ動き続けた。専門家として、自分の経験を社会に渡すために。',
+       '引退という言葉は私の辞書にはなかった。60代も、私は現場の専門家として価値を出し続けた。',
+       '60歳になっても、私の専門性への探求は終わらなかった。それが私の生き方だった。'],
   },
   'ai-native':{
-    0:'20代、私はAIを道具として使いこなすことに全力を注いだ。',
-    1:'AGIが台頭する時代に、私は組織とAIをつなぐ役割を担った。',
-    2:'産業が再編されるこの10年、私はAIと人間の掛け算を設計する側に回った。',
-    3:'40代、人とAIが当たり前に協働する時代に、私はその最適な形を問い続けた。',
-    4:'50代、AIが標準化された社会で、私は自分だけにしかできない価値を探した。',
-    5:'60代、私はAIと共に歩んできた人生を、次世代への橋として使うことにした。',
+    0:['20代、私はAIを道具として使いこなすことに全力を注いだ。道具の使い方が、これからの差を生むと信じた。',
+       '最初から私は「AIを使う側」であることを選んだ。波に乗ることを恐れなかった。',
+       '20歳の頃、AIが広まり始めた。私はいち早くその波に乗り、使い倒すことを覚えた。'],
+    1:['AGIが台頭する時代に、私は組織とAIをつなぐ役割を担った。変化の橋渡しができる人間は少なかった。',
+       'AGI移行期、私は「AIを理解して使いこなす人間」として、組織の中で独自の立場を築いた。',
+       'AIがさらに賢くなる中、私は人間にしかできない判断を担い、AIが得意なことを任せる設計をした。'],
+    2:['産業が再編されるこの10年、私はAIと人間の掛け算を設計する側に回った。',
+       'AIの活用が当たり前になった時代、私は「どう使うか」より「何を生み出すか」を問い続けた。',
+       '30代の私は、AIを使いこなす力と業界の知識を組み合わせた希少な存在になっていた。'],
+    3:['40代、人とAIが当たり前に協働する時代に、私はその最適な形を問い続けた。',
+       '人機協働が成熟した時代、私はAIが得意なことと人間が得意なことを見極め、チームを設計した。',
+       '40歳を過ぎた私は、AIを武器に使うことから、AIと共に創ることへと進化していた。'],
+    4:['50代、AIが標準化された社会で、私は自分だけにしかできない価値を探した。',
+       'AIが普通になった時代に、私は「AIでは代替できない経験と判断」を持つ人間として存在した。',
+       '50歳の私には、AIと共に歩んできた蓄積があった。それが若い世代への橋渡しになった。'],
+    5:['60代、私はAIと共に歩んできた人生を、次世代への橋として使うことにした。',
+       '60歳になった私は、AI黎明期から変化を見てきた人間として、若者たちに伝えるべきことがあった。',
+       'AI時代の始まりから関わってきた私には、誰も持っていない視点があった。それを残すことにした。'],
   },
   strategic:{
-    0:'20代、私は「何を作るか」を決める側になることを選んだ。',
-    1:'AGI移行期、私は上流から課題を定義する力を磨いた。',
-    2:'産業再編の時代、私は全体を見渡して意思決定する立場へと移行した。',
-    3:'40代、私は組織の方向性を決める側として、より大きな責任を引き受けた。',
-    4:'50代、私の判断力と俯瞰力は、多くの場面で頼りにされるようになった。',
-    5:'60代、私は自分が積み上げてきた意思決定の経験を、後継者たちに渡した。',
+    0:['20代、私は「何を作るか」を決める側になることを選んだ。実行よりも、方向を定めることに価値を見出した。',
+       '最初から私は全体を見たかった。個別のスキルより、何を目指すかを問い続けることを選んだ。',
+       '20歳の頃、私は「戦略的に動ける人間」になることを決めた。それが最もAIに代替されない領域だと直感した。'],
+    1:['AGI移行期、私は上流から課題を定義する力を磨いた。何を解くべきかを決める人間は、AIに替えられなかった。',
+       '変化が激しい時代に、私は状況を整理して「何が本質的な問いか」を見極める力を鍛えた。',
+       'AGIが台頭する中、私は意思決定の上流に居続けることで、自分の価値を守った。'],
+    2:['産業再編の時代、私は全体を見渡して意思決定する立場へと移行した。',
+       '30代の私は、個別の専門知識だけでなく、複雑な状況を整理して進む方向を示す力を持つようになった。',
+       '業界の境界が崩れる中で、私は異なる分野をつなぐ戦略的思考を武器にした。'],
+    3:['40代、私は組織の方向性を決める側として、より大きな責任を引き受けた。',
+       '人機協働の時代、私はAIが出せる答えと人間が出すべき答えを見極め、組織を導いた。',
+       '40歳の私は、経営の中枢に入り、大きな意思決定に向き合うようになっていた。'],
+    4:['50代、私の判断力と俯瞰力は、多くの場面で頼りにされるようになった。',
+       '長年積み上げた戦略的思考は、50代になって初めて本当の威力を発揮し始めた。',
+       '複雑な社会課題に向き合う中で、私の「全体を見る目」が最も必要とされた時代だった。'],
+    5:['60代、私は自分が積み上げてきた意思決定の経験を、後継者たちに渡した。',
+       '60歳になった私は、何十年もの判断の蓄積を次の世代に渡す時が来たと感じた。',
+       'キャリアの最後に、私は自分の判断力の源泉を言語化し、組織に残すことにした。'],
   },
   independent:{
-    0:'20代、私は組織に依存しない働き方への道を歩み始めた。',
-    1:'AGIが台頭するこの時期、私は個人として事業を立ち上げることを選んだ。',
-    2:'産業の境界が溶けた30代、私はどこにも縛られず複数の場所で価値を生み出した。',
-    3:'40代、私は自分で作り上げてきたものを、より多くの人に届けることに集中した。',
-    4:'50代、私は個人として積み上げてきた信頼が、最大の資産になっていることに気づいた。',
-    5:'60代、私は自分のペースで、自分が意味を感じることだけをやり続けた。',
+    0:['20代、私は組織に依存しない働き方への道を歩み始めた。自分の軸で動くことが、何より大切だと思った。',
+       '最初から私は「自分で決める」ことにこだわった。誰かの指示を待つのではなく、自ら動くことを選んだ。',
+       '20歳の頃から、私は組織の中でも個人として価値を出すことを意識していた。'],
+    1:['AGIが台頭するこの時期、私は個人として事業を立ち上げることを選んだ。組織の外に出ることを恐れなかった。',
+       '変化の時代に、私は「組織に守られる」より「自分の力で立つ」ことを選んだ。',
+       'AGI移行期、私は副業から始めた個人事業が、本業を超える可能性を持ち始めたことに気づいた。'],
+    2:['産業の境界が溶けた30代、私はどこにも縛られず複数の場所で価値を生み出した。',
+       '30代の私は、一つの組織に属するより複数の場所で動く方が自分らしいと確信した。',
+       '掛け算の時代、私は自分自身がプラットフォームになることを目指した。'],
+    3:['40代、私は自分で作り上げてきたものを、より多くの人に届けることに集中した。',
+       '40歳になった私は、個人としての信頼と実績が何よりの資産になっていることに気づいた。',
+       '人機協働の時代、私は独立した個人として、組織の外からも大きな価値を生み出した。'],
+    4:['50代、私は個人として積み上げてきた信頼が、最大の資産になっていることに気づいた。',
+       '長年の独立した活動が、50代になって初めて真の意味でのブランドになった。',
+       '50歳の私は、自分のペースで、自分が信じる仕事だけを続ける自由を手に入れていた。'],
+    5:['60代、私は自分のペースで、自分が意味を感じることだけをやり続けた。',
+       '60歳になっても、私は誰かに雇われることを選ばなかった。自分の軸で動き続けた。',
+       'キャリアの最後まで、私は「自分が選んだ仕事」だけをやり続けた。それが私の誇りだった。'],
   },
   'rare-combination':{
-    0:'20代、私は1つの道を深めながら、もう1つの扉を開けることを選んだ。',
-    1:'25歳を過ぎた頃から、私は2つの専門性を掛け合わせる準備を始めた。',
-    2:'30代、私はこの掛け算が機能し始めたのを実感した。誰も真似できない組み合わせがあった。',
-    3:'40代、希少な掛け算を持つ人間として、私はより大きな舞台に呼ばれるようになった。',
-    4:'50代、私の掛け算は、一つの分野では解けない問題を解く力になっていた。',
-    5:'60代、私は自分が歩んできた組み合わせの旅を、一つの物語として編んだ。',
+    0:['20代、私は1つの道を深めながら、もう1つの扉を開けることを選んだ。掛け算の準備を最初から始めていた。',
+       '最初から私は「一つの専門性では足りない」と直感していた。組み合わせることで希少になれると信じた。',
+       '20歳の頃、私は二つの異なる分野に同時に足を踏み入れた。非効率に見えたが、それが後の武器になった。'],
+    1:['25歳を過ぎた頃から、私は2つの専門性を掛け合わせる準備を始めた。それぞれを深めながら、接点を探し続けた。',
+       'AGI移行期、私は「二つの分野を知っている人間」として、独自のポジションを獲得し始めた。',
+       '変化の時代に、私の掛け算は徐々に輝き始めた。一つの分野で代替されても、組み合わせは代替できなかった。'],
+    2:['30代、私はこの掛け算が機能し始めたのを実感した。誰も真似できない組み合わせがあった。',
+       '産業再編期、私の二つの専門性は、業界の境界が消えた場所で爆発的な価値を生み出した。',
+       '30代の私は、二つの分野をつなぐ唯一の存在として、多くの場面で求められるようになった。'],
+    3:['40代、希少な掛け算を持つ人間として、私はより大きな舞台に呼ばれるようになった。',
+       '40歳を過ぎた頃、私の掛け算は「一つの新しい分野」として認識されるようになっていた。',
+       '人機協働の時代、私のような掛け算型人材はAIが最も代替しにくい存在だと証明されていた。'],
+    4:['50代、私の掛け算は、一つの分野では解けない問題を解く力になっていた。',
+       '長年かけて育てた掛け算が、50代になって本当の意味で花開いた。',
+       '50歳の私は、二つの専門性を持つ人間として、社会のあちこちから声がかかるようになった。'],
+    5:['60代、私は自分が歩んできた組み合わせの旅を、一つの物語として編んだ。',
+       '60歳になった私は、「希少な掛け算」として生きてきた人生を次の世代に伝えることにした。',
+       'キャリアの最後に、私の掛け算は一冊の本になった。それが私の残したものだった。'],
   },
   leadership:{
-    0:'20代、私はすでに「誰かの力になりたい」という衝動を持っていた。',
-    1:'25歳以降、私はチームを束ね、人を育てる役割に引き寄せられていった。',
-    2:'30代、私はチームを率いながら、自分にしかできないリーダーシップを探した。',
-    3:'40代、私の最も大きな仕事は、次の世代を育てることになった。',
-    4:'50代、私が育てた人たちが、それぞれの場所で活躍し始めた。',
-    5:'60代、私は組織や肩書を外れても、誰かの背中を押し続けた。',
+    0:['20代の私は、すでに「誰かの力になりたい」という衝動を持っていた。人を引っ張ることに喜びを感じた。',
+       '最初から私はリーダーシップに引き寄せられていた。チームを動かすことに純粋な楽しさを感じた。',
+       '20歳の頃、私は自分より他者の成長を喜べる人間だと気づいた。それがこのキャリアの出発点だった。'],
+    1:['25歳以降、私はチームを束ね、人を育てる役割に引き寄せられていった。',
+       'AGI移行期、私は技術の変化より「人間のやる気と方向性を揃えること」に価値があると確信した。',
+       '変化の時代こそ、リーダーシップが最も必要だった。私はその役割を引き受けた。'],
+    2:['30代、私はチームを率いながら、自分にしかできないリーダーシップを探した。',
+       '産業再編の混乱の中で、私は人々の不安を受け止め、方向性を示し続けた。',
+       '30代の私には、チームを動かすことへの情熱があった。それが私の最大の武器だった。'],
+    3:['40代、私の最も大きな仕事は、次の世代を育てることになった。',
+       '人機協働の時代、私は「人間の力を最大限に引き出す」ことを自分の使命とした。',
+       '40歳になった私は、自分が受けた育てのバトンを次世代に渡し始めた。'],
+    4:['50代、私が育てた人たちが、それぞれの場所で活躍し始めた。それが最大の喜びだった。',
+       '50歳の私は、組織の規模より「どれだけ多くの人を育てられたか」を自分の成果として見ていた。',
+       '長年のリーダーシップが、50代になって最も大きな果実をもたらした。'],
+    5:['60代、私は組織や肩書を外れても、誰かの背中を押し続けた。',
+       '60歳になっても、私は人を育てることをやめなかった。それが私の生きる理由だった。',
+       'キャリアの最後まで、私は誰かのリーダーであり続けた。'],
   },
   'community-builder':{
-    0:'20代、私は「つながり」の中に仕事の意味を見出していた。',
-    1:'25歳を過ぎた頃、私は個人として動きながら、コミュニティをつくる力を育てていた。',
-    2:'産業の再編が進む中で、私は人と人をつなぐことで新しい価値を生み出した。',
-    3:'40代、私のコミュニティは一つの生態系のように機能するようになっていた。',
-    4:'50代、私はローカルでもグローバルでも、つながりの触媒であり続けた。',
-    5:'60代、私が作ったつながりは、私がいなくても動き続けていた。',
+    0:['20代、私は「つながり」の中に仕事の意味を見出していた。人と人を結ぶことが、自分の強みだと知っていた。',
+       '最初から私はコミュニティを作ることに情熱を感じた。一人では生み出せない価値がつながりにあると信じた。',
+       '20歳の頃、私は「誰と働くか」を何より大切にしていた。そのこだわりが後の強みになった。'],
+    1:['25歳を過ぎた頃、私は個人として動きながら、コミュニティをつくる力を育てていた。',
+       'AGI移行期、私は「人とのつながり」がAIに替えられない最後の砦だと確信した。',
+       '変化の時代に、私はコミュニティという安心の場を作ることで、多くの人の力になった。'],
+    2:['産業の再編が進む中で、私は人と人をつなぐことで新しい価値を生み出した。',
+       '30代の私は、業界の境界が崩れる中で、異なる分野の人々をつなぐ触媒になった。',
+       '掛け算の時代に、私は「人の掛け算」を作ることで誰にも真似できない価値を生み出した。'],
+    3:['40代、私のコミュニティは一つの生態系のように機能するようになっていた。',
+       '人機協働の時代、私は人間同士のつながりがより一層重要になることを先読みしていた。',
+       '40歳の私のコミュニティは、単なる人脈を超えて、一つの力ある集団になっていた。'],
+    4:['50代、私はローカルでもグローバルでも、つながりの触媒であり続けた。',
+       '社会が分断されがちな時代に、私のコミュニティは多くの人の居場所になっていた。',
+       '50歳の私は、自分が作ったつながりが社会の課題を解決し始めていることを目の当たりにした。'],
+    5:['60代、私が作ったつながりは、私がいなくても動き続けていた。それが真のコミュニティだった。',
+       '60歳になった私は、自分が作ったコミュニティが次世代に引き継がれていく様子を見ていた。',
+       'キャリアの最後に、私は自分の最大の作品がコミュニティだったと確信した。'],
   },
   global:{
-    0:'20代、私は最初から世界を視野に入れていた。',
-    1:'25歳を過ぎた頃、私は国境を越えて動くことを選んだ。',
-    2:'産業再編の波の中で、私はグローバルな掛け算を手に入れた。',
-    3:'40代、私は世界を舞台に、自分の力を試し続けた。',
-    4:'50代、私のネットワークは国境を越えて広がっていた。',
-    5:'60代、私は世界を旅してきた自分の経験を、日本に持ち帰って渡した。',
+    0:['20代、私は最初から世界を視野に入れていた。日本だけに留まることは、選択肢の一つでしかなかった。',
+       '最初から私はグローバルに動くことを当然のことと思っていた。境界は自分で引くものだと信じた。',
+       '20歳の頃、私は「日本語だけでは戦えない時代が来る」と直感し、動き始めた。'],
+    1:['25歳を過ぎた頃、私は国境を越えて動くことを選んだ。それが自分のキャリアを広げる最善の道だった。',
+       'AGI移行期、私はグローバルな視点でAIの変化を捉え、日本にはない知見を積み上げた。',
+       '変化が加速する時代、私は世界の最先端で何が起きているかを直接見ることを選んだ。'],
+    2:['産業再編の波の中で、私はグローバルな掛け算を手に入れた。国内だけでは気づけない組み合わせがあった。',
+       '30代の私は、国境を越えることで、国内にとどまる人には見えない景色を手に入れた。',
+       '産業の境界が崩れた30代、私のグローバルな経験は最も希少な武器の一つになっていた。'],
+    3:['40代、私は世界を舞台に、自分の力を試し続けた。',
+       '人機協働の時代、私はグローバルな舞台でAIと人間の協働を設計した。',
+       '40歳の私は、国境を越えて積み上げてきた信頼とネットワークが最大の資産になっていた。'],
+    4:['50代、私のネットワークは国境を越えて広がっていた。それが私の強みだった。',
+       '50歳になった私は、世界各地に信頼できる仲間を持つ希少な人間になっていた。',
+       'グローバルな視点とローカルな実践を組み合わせることが、50代の私の強みだった。'],
+    5:['60代、私は世界を旅してきた自分の経験を、日本に持ち帰って渡した。',
+       '60歳になった私は、グローバルに生きてきた人生を一冊の物語として残すことにした。',
+       'キャリアの最後に、私は世界と日本をつなぐ橋であり続けることを選んだ。'],
   },
   legacy:{
-    0:'20代の私は、将来「何かを残したい」という予感をすでに持っていた。',
-    1:'25歳以降、私は自分の知見を体系化することを意識し始めた。',
-    2:'30代、私は自分の経験を形として残すことに、少しずつ取り組み始めた。',
-    3:'40代、私は自分の知見をツール・コンテンツ・仕組みとして世に出した。',
-    4:'50代、私の残してきたものが、多くの人に使われ続けていた。',
-    5:'60代、私は自分の人生を一つの作品として完成させた。',
+    0:['20代の私は、将来「何かを残したい」という予感をすでに持っていた。形として残るものを作りたかった。',
+       '最初から私は「残るものを作ること」に価値を置いていた。消えてしまう仕事より残り続けるものが作りたかった。',
+       '20歳の頃から、私は自分の仕事が「誰かの役に立ち続けること」を夢見ていた。'],
+    1:['25歳以降、私は自分の知見を体系化することを意識し始めた。経験を消費するだけでなく、蓄積することを学んだ。',
+       'AGI移行期、私は「知識を残すこと」の価値を再認識した。人間が体系化する方が意味を持つと気づいた。',
+       '変化の時代に、私は自分の経験を整理して次に生かすことを何より大切にした。'],
+    2:['30代、私は自分の経験を形として残すことに、少しずつ取り組み始めた。',
+       '産業再編の30代、私は自分の知見を体系化し、形として世に出すことを使命としていた。',
+       '掛け算の時代に、私が作るものは「知識の掛け算」だった。経験×体系化が私の強みだった。'],
+    3:['40代、私は自分の知見をツール・コンテンツ・仕組みとして世に出した。',
+       '人機協働の時代、私は自分の経験をAIと人間の両方が使える形に変換することに取り組んだ。',
+       '40歳の私は、自分が積み上げてきたものを「形として残すこと」を最大の仕事にした。'],
+    4:['50代、私の残してきたものが、多くの人に使われ続けていた。それが最大の喜びだった。',
+       '50歳になった私には、何年も前に作ったものがまだ多くの人の役に立っている実感があった。',
+       '長年かけて残してきたものが、50代になって本当の意味で「生き続けている」ことを実感した。'],
+    5:['60代、私は自分の人生を一つの作品として完成させた。',
+       '60歳になった私は、これまで残してきたものを一つの体系として整理し次世代に渡した。',
+       'キャリアの最後に、私は自分の「知的遺産」が形になっていることを確認した。それが私の生きた証だった。'],
   },
 };
 
+// ランダムにバリエーションを選択
+function pickNarrative(tag,phaseIdx){
+  const pool=NARRATIVE_POOL[tag]?.[phaseIdx];
+  if(!pool||!pool.length)return`${PHASE_AGES[phaseIdx]}歳の私は、自分の道を選んだ。`;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+
 // イベント発生有無によるナラティブ後半
 function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
-  const opening=NARRATIVE_OPENING[tag]?.[phaseIdx]||`${PHASE_AGES[phaseIdx]}歳の私は、自分の道を選んだ。`;
+  const opening=pickNarrative(tag,phaseIdx);
 
   // イベント描写
   let eventStr='';
@@ -1208,13 +1403,27 @@ function renderValueMeter(previewTag){
 
 function applyValueMeterChoice(tag){
   const impact=TAG_AXIS_IMPACT[tag]||{};
-  // まず変化量プレビューを表示（0.8秒）してから確定
   renderValueMeter(tag);
   setTimeout(()=>{
     Object.keys(impact).forEach(k=>{
       vmState[k]=Math.min(100,Math.max(0,vmState[k]+impact[k]));
     });
-    renderValueMeter(null); // 確定値で再描画（delta非表示）
+    renderValueMeter(null);
+  },800);
+}
+
+function applyValueMeterDelta(delta){
+  // タグなし選択肢（Q1・Q3）用：deltaオブジェクトで直接変化量を指定
+  // まず変化量を一時表示してから確定
+  const tempTag='_delta';
+  TAG_AXIS_IMPACT[tempTag]=delta;
+  renderValueMeter(tempTag);
+  setTimeout(()=>{
+    Object.keys(delta).forEach(k=>{
+      vmState[k]=Math.min(100,Math.max(0,vmState[k]+(delta[k]||0)));
+    });
+    delete TAG_AXIS_IMPACT[tempTag];
+    renderValueMeter(null);
   },800);
 }
 
