@@ -262,6 +262,43 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .term{border-bottom:1px dotted var(--accent);color:var(--accent2);cursor:help;position:relative;display:inline}
 .term::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#111;color:var(--w90);font-size:.73rem;line-height:1.6;font-weight:400;padding:8px 12px;border-radius:6px;border:1px solid var(--border2);width:220px;text-align:left;pointer-events:none;opacity:0;transition:opacity .2s;z-index:999;white-space:normal;font-family:var(--ff-body);letter-spacing:0}
 .term:hover::after,.term.tip-visible::after{opacity:1}
+/* ━━━ MBTI選択画面 ━━━ */
+.mbti-section-label{font-size:.58rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.8}
+.mbti-groups{display:flex;flex-direction:column;gap:16px;width:100%;margin-bottom:20px}
+.mbti-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.mbti-group-title{font-size:.65rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px}
+.mbti-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.mbti-type-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:10px 6px;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
+.mbti-type-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.1);color:var(--white)}
+.mbti-type-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.18);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
+.mbti-type-sub{font-size:.6rem;color:var(--w40);display:block;margin-top:2px;font-weight:400}
+.mbti-divider{display:flex;align-items:center;gap:12px;color:var(--w40);font-size:.75rem;margin:4px 0}
+.mbti-divider::before,.mbti-divider::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ━━━ メールアドレス入力（レポート画面） ━━━ */
+.email-block{background:rgba(232,98,26,.07);border:1px solid rgba(232,98,26,.22);border-radius:10px;padding:22px;margin-bottom:24px}
+.email-block h3{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
+.email-block p{font-size:.82rem;color:var(--w90);line-height:1.7;margin-bottom:14px}
+.email-input-row{display:flex;gap:8px;flex-wrap:wrap}
+.email-input{flex:1;min-width:200px;background:rgba(255,255,255,.08);border:1px solid var(--border2);color:var(--white);font-family:var(--ff-body);font-size:.9rem;padding:12px 16px;border-radius:6px;outline:none;transition:border-color .2s}
+.email-input:focus{border-color:var(--accent)}
+.email-input::placeholder{color:var(--w40)}
+.btn-email-send{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:.88rem;letter-spacing:2px;padding:12px 20px;border-radius:6px;transition:all .2s;white-space:nowrap}
+.btn-email-send:hover{background:var(--accent2);transform:translateY(-1px)}
+.btn-email-send:disabled{opacity:.4;cursor:default;transform:none}
+.email-sent-msg{font-size:.8rem;color:var(--cyan);margin-top:10px;display:none;animation:slideUp .3s ease}
+
+/* ━━━ X サマリ ━━━ */
+.x-summary-block{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+.x-summary-text{font-size:.82rem;color:var(--w90);line-height:1.8;white-space:pre-line;word-break:break-word}
+
+/* ━━━ 業種説明（AIリッチ版） ━━━ */
+.industry-detail{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.industry-detail-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
+.industry-detail-name{font-size:.78rem;font-weight:700;color:var(--white);margin-bottom:4px}
+.industry-detail-score{font-family:var(--ff-head);font-size:1.3rem;color:var(--accent);margin-bottom:6px}
+.industry-detail-text{font-size:.78rem;color:var(--w70);line-height:1.8}
+
 @media(max-width:480px){
   .phase-body{padding:14px 14px 36px}
   .era-stats-grid{grid-template-columns:1fr}
@@ -270,6 +307,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   .choice2-wrap{flex-direction:column}
   .top-phase-info{gap:6px}
   .top-era-name{display:none}
+  .mbti-types{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -291,6 +329,66 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
     <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
     <p style="font-size:.68rem;color:var(--w70);margin-bottom:20px">ニックネームと選択結果はイベント分析のために保存されます</p>
     <button class="btn-primary" onclick="goStart()">はじめる →</button>
+  </div>
+</div>
+
+<!-- MBTI選択 -->
+<div class="screen" id="screen-mbti">
+  <div style="width:100%">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <span class="top-logo">LSS 2075</span>
+        <span class="top-step">STEP 2 / 6</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:22%"></div></div>
+    </div>
+  </div>
+  <div class="onboard-wrap" style="padding-top:28px;max-width:580px">
+    <p class="onboard-eyebrow">PERSONALITY</p>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.9rem);margin-bottom:10px;line-height:1.1">あなたのMBTIタイプは？</h2>
+    <p style="font-size:.78rem;color:var(--w70);line-height:1.7;margin-bottom:20px">登録するとレポートがあなたの個性に最適化されます。<br>わからない場合は「簡易診断でスタート」を選んでください。</p>
+    <div class="mbti-groups">
+      <div class="mbti-group">
+        <div class="mbti-group-title">分析家グループ</div>
+        <div class="mbti-types">
+          <button class="mbti-type-btn" onclick="selectMBTI('INTJ',this)">INTJ<span class="mbti-type-sub">建築家</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('INTP',this)">INTP<span class="mbti-type-sub">論理学者</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ENTJ',this)">ENTJ<span class="mbti-type-sub">指揮官</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ENTP',this)">ENTP<span class="mbti-type-sub">討論者</span></button>
+        </div>
+      </div>
+      <div class="mbti-group">
+        <div class="mbti-group-title">外交官グループ</div>
+        <div class="mbti-types">
+          <button class="mbti-type-btn" onclick="selectMBTI('INFJ',this)">INFJ<span class="mbti-type-sub">提唱者</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('INFP',this)">INFP<span class="mbti-type-sub">仲介者</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ENFJ',this)">ENFJ<span class="mbti-type-sub">主人公</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ENFP',this)">ENFP<span class="mbti-type-sub">運動家</span></button>
+        </div>
+      </div>
+      <div class="mbti-group">
+        <div class="mbti-group-title">番人グループ</div>
+        <div class="mbti-types">
+          <button class="mbti-type-btn" onclick="selectMBTI('ISTJ',this)">ISTJ<span class="mbti-type-sub">管理者</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ISFJ',this)">ISFJ<span class="mbti-type-sub">擁護者</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ESTJ',this)">ESTJ<span class="mbti-type-sub">幹部</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ESFJ',this)">ESFJ<span class="mbti-type-sub">領事</span></button>
+        </div>
+      </div>
+      <div class="mbti-group">
+        <div class="mbti-group-title">探検家グループ</div>
+        <div class="mbti-types">
+          <button class="mbti-type-btn" onclick="selectMBTI('ISTP',this)">ISTP<span class="mbti-type-sub">巨匠</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ISFP',this)">ISFP<span class="mbti-type-sub">冒険家</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ESTP',this)">ESTP<span class="mbti-type-sub">起業家</span></button>
+          <button class="mbti-type-btn" onclick="selectMBTI('ESFP',this)">ESFP<span class="mbti-type-sub">エンターテイナー</span></button>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" id="mbti-next-btn" onclick="goMBTINext()" disabled style="opacity:.3;width:100%;margin-bottom:10px">このタイプでスタート →</button>
+    <div class="mbti-divider">または</div>
+    <button class="btn-secondary" onclick="skipMBTI()" style="width:100%;margin-top:8px">簡易診断でスタート（4問）</button>
+    <button class="btn-secondary" onclick="obBack()" style="margin-top:6px">← 戻る</button>
   </div>
 </div>
 
@@ -395,6 +493,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
     <div class="result-card">
       <h3 style="color:var(--cyan)">INDUSTRY FIT</h3>
       <div id="ind-bars"></div>
+      <div class="industry-detail" id="industry-detail"></div>
     </div>
     <div class="radar-wrap"><canvas id="radar-chart"></canvas></div>
     <div class="result-card">
@@ -418,10 +517,27 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
       </div>
       <div id="tier-bars"></div>
     </div>
-    <div class="share-row">
-      <button class="btn-share" onclick="shareX()">𝕏 シェア</button>
-      <button class="btn-share" onclick="copyRes()">コピー</button>
+    <!-- X サマリ -->
+    <div class="x-summary-block" id="x-summary-block" style="display:none">
+      <h3 style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin-bottom:10px">𝕏 SHARE SUMMARY</h3>
+      <div class="x-summary-text" id="x-summary-text"></div>
+      <div class="share-row" style="margin-top:12px;margin-bottom:0">
+        <button class="btn-share" onclick="shareXSummary()">𝕏 シェア</button>
+        <button class="btn-share" onclick="copySummary()">コピー</button>
+      </div>
     </div>
+
+    <!-- メール送信 -->
+    <div class="email-block" id="email-block">
+      <h3>レポートをPDFで受け取る</h3>
+      <p>メールアドレスを登録すると、このレポートをPDFで送付します。<br>就活・自己分析の資料としてご活用ください。</p>
+      <div class="email-input-row">
+        <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
+        <button class="btn-email-send" id="email-send-btn" onclick="sendReportEmail()">PDF送信</button>
+      </div>
+      <div class="email-sent-msg" id="email-sent-msg">✓ 送信しました！数分以内にメールをご確認ください。</div>
+    </div>
+
     <button class="btn-retry" onclick="resetGame()">▶ もう一度プレイ</button>
     <div class="brand-footer">by 株式会社エージェント</div>
   </div>
@@ -429,13 +545,76 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 
 <script>
 const GAS_URL='https://script.google.com/macros/s/AKfycbxmW1kE-CFbpUQwXzD_iaak0aOviXI395xDBT6KcttL5Jnv9om7a3QovceCi7avVD-9/exec';
+
+// ━━━ MBTI定義 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const MBTI_MAP={
+  INTJ:{code:'thought-deep-logic-solo',    label:'建築家',   desc:'戦略的・独立的・長期視点',
+        tagBonus:{strategic:.15,specialization:.1},
+        feedbackStyle:'logic', industryBoost:{コンサルティング:1.15,'ITサービス・SaaS':1.1,'研究・アカデミア':1.1}},
+  INTP:{code:'thought-deep-logic-solo',    label:'論理学者', desc:'革新的・客観的・理論探求',
+        tagBonus:{specialization:.2,'rare-combination':.1},
+        feedbackStyle:'logic', industryBoost:{'ITサービス・SaaS':1.2,'研究・アカデミア':1.15,コンサルティング:1.1}},
+  ENTJ:{code:'action-combine-logic-social',label:'指揮官',   desc:'決断力・リーダーシップ・効率重視',
+        tagBonus:{strategic:.2,leadership:.1},
+        feedbackStyle:'action', industryBoost:{'事業開発・新規事業':1.2,コンサルティング:1.15,'投資銀行・証券':1.1}},
+  ENTP:{code:'action-combine-intuition-social',label:'討論者',desc:'独創的・論争好き・多才',
+        tagBonus:{'rare-combination':.2,strategic:.1},
+        feedbackStyle:'action', industryBoost:{'事業開発・新規事業':1.2,'スタートアップ・VC':1.15,コンサルティング:1.1}},
+  INFJ:{code:'thought-deep-intuition-solo',label:'提唱者',   desc:'洞察力・理想主義・思いやり',
+        tagBonus:{legacy:.15,'community-builder':.1},
+        feedbackStyle:'vision', industryBoost:{'教育・EdTech':1.15,'医療・ヘルスケア':1.1,'公務員・公共政策':1.1}},
+  INFP:{code:'thought-combine-intuition-solo',label:'仲介者',desc:'理想主義・誠実・創造的',
+        tagBonus:{legacy:.2,'community-builder':.1},
+        feedbackStyle:'vision', industryBoost:{'教育・EdTech':1.2,'メディア・エンタメ':1.1,'研究・アカデミア':1.1}},
+  ENFJ:{code:'action-combine-intuition-social',label:'主人公',desc:'カリスマ・共感力・人を鼓舞',
+        tagBonus:{leadership:.2,'community-builder':.1},
+        feedbackStyle:'action', industryBoost:{コンサルティング:1.15,'教育・EdTech':1.15,'事業開発・新規事業':1.1}},
+  ENFP:{code:'action-combine-intuition-social',label:'運動家',desc:'熱情的・創造的・人と繋がる',
+        tagBonus:{'rare-combination':.15,'community-builder':.1},
+        feedbackStyle:'action', industryBoost:{'スタートアップ・VC':1.15,'広告・マーケティング':1.15,'事業開発・新規事業':1.1}},
+  ISTJ:{code:'thought-deep-logic-solo',    label:'管理者',   desc:'誠実・責任感・信頼性',
+        tagBonus:{specialization:.2,legacy:.1},
+        feedbackStyle:'steady', industryBoost:{'メガバンク・金融':1.2,'インフラ・エネルギー':1.1,'公務員・公共政策':1.1}},
+  ISFJ:{code:'thought-deep-intuition-solo',label:'擁護者',   desc:'献身的・忍耐強い・細部重視',
+        tagBonus:{legacy:.15,leadership:.1},
+        feedbackStyle:'steady', industryBoost:{'医療・ヘルスケア':1.2,'教育・EdTech':1.1,'メガバンク・金融':1.1}},
+  ESTJ:{code:'thought-deep-logic-social',  label:'幹部',     desc:'管理能力・秩序・実行力',
+        tagBonus:{leadership:.2,strategic:.1},
+        feedbackStyle:'action', industryBoost:{'メガバンク・金融':1.15,'公務員・公共政策':1.15,'インフラ・エネルギー':1.1}},
+  ESFJ:{code:'action-deep-intuition-social',label:'領事',    desc:'社交的・思いやり・協調性',
+        tagBonus:{leadership:.15,'community-builder':.15},
+        feedbackStyle:'action', industryBoost:{'医療・ヘルスケア':1.15,'教育・EdTech':1.15,'メガバンク・金融':1.1}},
+  ISTP:{code:'thought-deep-logic-solo',    label:'巨匠',     desc:'大胆・実践的・問題解決',
+        tagBonus:{specialization:.15,independent:.1},
+        feedbackStyle:'logic', industryBoost:{'ITサービス・SaaS':1.15,'メーカー（製造業）':1.1,'インフラ・エネルギー':1.1}},
+  ISFP:{code:'action-deep-intuition-solo', label:'冒険家',   desc:'柔軟・魅力的・現在を生きる',
+        tagBonus:{independent:.15,'rare-combination':.1},
+        feedbackStyle:'vision', industryBoost:{'メディア・エンタメ':1.15,'広告・マーケティング':1.1,'医療・ヘルスケア':1.1}},
+  ESTP:{code:'action-combine-logic-social',label:'起業家',   desc:'エネルギッシュ・知覚的・大胆',
+        tagBonus:{independent:.2,'ai-native':.1},
+        feedbackStyle:'action', industryBoost:{'スタートアップ・VC':1.2,'事業開発・新規事業':1.15,'広告・マーケティング':1.1}},
+  ESFP:{code:'action-combine-intuition-social',label:'エンターテイナー',desc:'自発的・活発・楽しませる',
+        tagBonus:{'community-builder':.2,independent:.1},
+        feedbackStyle:'action', industryBoost:{'メディア・エンタメ':1.2,'広告・マーケティング':1.15,'教育・EdTech':1.1}},
+};
+
+// MBTIフィードバックスタイル別の文体設定
+const FEEDBACK_STYLE={
+  logic:  {prefix:'データが示す通り、',   suffix:'論理的な裏付けがあります。'},
+  action: {prefix:'あなたの行動力は、',   suffix:'大きな推進力になります。'},
+  vision: {prefix:'あなたの洞察力は、',   suffix:'独自の価値を生み出します。'},
+  steady: {prefix:'積み上げてきた信頼は、',suffix:'長期的な強さになります。'},
+};
 const PHASE_IDS=['phase_1','phase_2','phase_3','phase_4','phase_5','phase_6'];
 
 let G={
   nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',
   currentPhase:0,currentQ:0,
   choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],
-  narratives:[],  // フェーズ間ナラティブ蓄積
+  narratives:[],
+  mbtiType:null,   // 'INTJ' など or null（簡易診断）
+  mbtiData:null,   // MBTI_MAPの該当エントリ
+  email:'',
   radarChart:null,data:null,config:{}
 };
 
@@ -463,8 +642,37 @@ function showScreen(id){
 function goStart(){
   const nick=document.getElementById('nickname-input').value.trim();
   if(!nick){document.getElementById('nickname-input').focus();return;}
-  G.nickname=nick;G.sessionId=crypto.randomUUID();G.obStep=0;
-  renderOb();showScreen('screen-onboard');
+  G.nickname=nick;G.sessionId=crypto.randomUUID();
+  // MBTIスクリーンへ
+  showScreen('screen-mbti');
+}
+
+// ━━━ MBTI関連 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function selectMBTI(type, el){
+  document.querySelectorAll('.mbti-type-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  G.mbtiType=type;
+  G.mbtiData=MBTI_MAP[type]||null;
+  const btn=document.getElementById('mbti-next-btn');
+  btn.disabled=false;btn.style.opacity='1';
+}
+
+function goMBTINext(){
+  if(!G.mbtiType)return;
+  // MBTIからプロファイルを設定（4問スキップ）
+  const md=G.mbtiData;
+  if(md){
+    G.profileCode=md.code;
+    const parts=md.code.split('-');
+    G.profile={change:parts[0],value:parts[1],decide:parts[2],energy:parts[3]};
+  }
+  renderIndScreen();
+  showScreen('screen-industry');
+}
+
+function skipMBTI(){
+  G.mbtiType=null;G.mbtiData=null;
+  G.obStep=0;renderOb();showScreen('screen-onboard');
 }
 
 // ── オンボーディング ─────────────────────────────────────────────
@@ -518,7 +726,18 @@ function selectOb(val,btn){
 
 function obBack(){
   const cur=document.querySelector('.screen.active');
-  if(cur.id==='screen-industry'){G.obStep=3;renderOb();showScreen('screen-onboard');return;}
+  if(cur.id==='screen-industry'){
+    // 業種選択 → MBTI画面 or オンボーディング最終問
+    if(G.mbtiType){showScreen('screen-mbti');}
+    else{G.obStep=3;renderOb();showScreen('screen-onboard');}
+    return;
+  }
+  if(cur.id==='screen-onboard'){
+    if(G.obStep>0){G.obStep--;renderOb();}
+    else showScreen('screen-mbti');
+    return;
+  }
+  if(cur.id==='screen-mbti'){showScreen('screen-start');return;}
   if(G.obStep>0){G.obStep--;renderOb();}else showScreen('screen-start');
 }
 
@@ -1182,11 +1401,20 @@ function calcQ2Q3B(){
   return G.tags.reduce((b,tag,i)=>b+(map[`${tag}:${G.q3Choices[i]}`]||0),0);
 }
 
+// MBTIタグボーナスを計算（タグ選択の重みづけ）
+function getMBTITagBonus(){
+  if(!G.mbtiData)return 0;
+  const bonus=G.mbtiData.tagBonus||{};
+  // 選択したタグとMBTIの相性スコアを集計
+  return G.tags.reduce((sum,tag)=>sum+(bonus[tag]||0),0)*0.3;
+}
+
 function calcScore(){
   const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
-  const ownership=calcOwnershipBonus(); // Q1感情軸ボーナス
+  const ownership=calcOwnershipBonus();
+  const mbtiBonus=getMBTITagBonus(); // MBTIによるタグ重みづけ
   const cap=G.config.bonusCap??2.5;
-  const allBonus=Math.min(chain.bonus+ctx+q1+q2q3+ownership,cap);
+  const allBonus=Math.min(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus,cap);
   return Math.min(100,Math.max(0,Math.round(15+era*6+allBonus*10)));
 }
 
@@ -1195,20 +1423,25 @@ function calcIndScores(){
   const gp={};inds.forEach(n=>{gp[n]=0;});
   G.tags.forEach(tag=>{const a=ta[tag]||{};inds.forEach(n=>{gp[n]+=(a[n]||0);});});
   const mxG=60;const myS=(pa[G.profileCode]||{});
-  return inds.map(n=>({name:n,score:Math.min(100,Math.round((gp[n]/(6*10))*mxG)+Math.round(((myS[n]||1)/5)*40))})).sort((a,b)=>b.score-a.score);
+  // MBTIの業種ブーストを適用
+  const mbtiBoost=G.mbtiData?.industryBoost||{};
+  return inds.map(n=>{
+    const base=Math.min(100,Math.round((gp[n]/(6*10))*mxG)+Math.round(((myS[n]||1)/5)*40));
+    const boosted=Math.min(100,Math.round(base*(mbtiBoost[n]||1.0)));
+    return {name:n,score:boosted};
+  }).sort((a,b)=>b.score-a.score);
 }
 
 function calcRadar(){
-  const exp_tags=['specialization','rare-combination','leadership','legacy'];
-  const adp_tags=['ai-native','independent','strategic','global','community-builder'];
-  const pw=getPW();
-  let exp=0,adp=0,era=0;
-  G.tags.forEach((tag,i)=>{const w=(pw[PHASE_IDS[i]]||0)*6;if(exp_tags.includes(tag))exp+=10*w;if(adp_tags.includes(tag))adp+=10*w;era+=7*w;});
-  const ch=calcChain();
-  const cons=ch.rule.includes('consistent')||ch.rule==='multiplication'?85:ch.rule==='scattered'?30:55;
-  const crisis=G.eventChoices.length?Math.min(100,50+G.eventChoices.length*15):50;
-  const inv=Math.max(0,Math.round(50+calcQ2Q3B()*25));
-  return[Math.min(100,Math.round(exp)),Math.min(100,Math.round(adp)),Math.min(100,Math.round(era)),crisis,cons,Math.min(100,inv)];
+  // vmStateの最終値をレーダーチャートに反映（ゲージと統一）
+  const expertise   = Math.min(100, Math.max(0, vmState.expertise));
+  const adaptability= Math.min(100, Math.max(0, vmState.adaptability));
+  const eraFitVal   = Math.min(100, Math.max(0, vmState.eraFit));
+  const crisis      = Math.min(100, Math.max(0, vmState.crisis));
+  const consistency = Math.min(100, Math.max(0, vmState.consistency));
+  // 投資効率のみQ3選択から計算（vmStateにない軸）
+  const inv = Math.max(0,Math.min(100,Math.round(50+calcQ2Q3B()*25)));
+  return[expertise, adaptability, eraFitVal, crisis, consistency, inv];
 }
 
 function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
@@ -1236,8 +1469,24 @@ async function showResult(){
   document.getElementById('res-tier').textContent=tier.label;
   document.getElementById('res-tier').style.color=tier.color;
   document.getElementById('res-headline').textContent=fb.headline||'';
-  document.getElementById('res-body').textContent=(fb.body||'').replace('{dominantTag}',TL[domTag]||domTag);
+  // フィードバック本文はMBTI最適化後に設定（下記参照）
   document.getElementById('ending-copy').textContent=`未来から見えたこと——あなたは${TL[domTag]||domTag}として価値を発揮できる。そして今、2026年から歩み出す。`;
+
+  // MBTI最適化フィードバック
+  const mbtiStyle=G.mbtiData?FEEDBACK_STYLE[G.mbtiData.feedbackStyle]||{}:{};
+  const rawBody=(fb.body||'').replace('{dominantTag}',TL[domTag]||domTag);
+  const optimizedBody=mbtiStyle.prefix
+    ? mbtiStyle.prefix+rawBody+mbtiStyle.suffix
+    : rawBody;
+  document.getElementById('res-body').textContent=optimizedBody;
+
+  // MBTI表示（存在する場合）
+  if(G.mbtiType){
+    const mbtiBadge=document.createElement('div');
+    mbtiBadge.style.cssText='font-size:.72rem;color:var(--cyan);margin-top:8px;letter-spacing:2px';
+    mbtiBadge.textContent=`MBTI: ${G.mbtiType} (${G.mbtiData?.label||''})  |  ${G.mbtiData?.desc||''}`;
+    document.getElementById('res-body').after(mbtiBadge);
+  }
 
   // MY STORY（ナラティブ一覧）
   const storyEl=document.getElementById('story-entries');
@@ -1248,6 +1497,12 @@ async function showResult(){
         <div class="story-entry-text">${n.text.replace(/\n/g,'<br>')}</div>
       </div>`).join('');
   }
+
+  // 業種詳細（上位3業種の説明）
+  renderIndustryDetails(indScores.slice(0,3));
+
+  // Xサマリ生成
+  renderXSummary(score,tier.label,domTag,indScores[0]);
 
   // 業種バー（上位7）
   const colors=['#e94560','#f5a623','#00d4ff','#666','#666','#666','#666'];
@@ -1309,11 +1564,140 @@ async function fetchStats(myScore,myTier){
   }catch(e){document.getElementById('compare-block').style.display='none';}
 }
 
+// ━━━ 業種詳細レンダリング ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderIndustryDetails(top3){
+  const el=document.getElementById('industry-detail');
+  if(!el)return;
+  const TL_IND={
+    '事業開発・新規事業':'新しい事業の仕組みを作り、社会の課題に挑む領域。AIが最も代替しにくく、掛け算型の思考が最も活きる職種です。',
+    'コンサルティング':'企業の課題を診断し、解決策を設計・実行支援する知的専門職。論理思考と対人スキルの両立が求められます。',
+    'ITサービス・SaaS':'AIやソフトウェアで社会インフラを支える領域。技術の進化が最も速く、学習速度が最大の武器になります。',
+    '総合商社':'国内外のビジネスを多角的につなぐ掛け算の仕事。グローバル視点と異業種理解が差別化になります。',
+    '投資銀行・証券':'企業価値の評価と資本提供を担う専門職。論理的思考と高負荷耐性が問われます。',
+    'メガバンク・金融':'社会の資金循環を支える基盤産業。安定性と専門性の掛け算がキャリアを作ります。',
+    '広告・マーケティング':'人の行動変容を設計するクリエイティブ×データの領域。AI活用で急速に変化中です。',
+    'スタートアップ・VC':'0から1を生み出す事業創造の最前線。高いリスクと引き換えに最大の成長環境があります。',
+    'メーカー（製造業）':'ものづくりとデジタル技術の融合が加速中。専門性と継続性が強みになる安定した領域です。',
+    '医療・ヘルスケア':'人の命と健康を支える社会の根幹。AIとの協働で急速に変革が進んでいます。',
+    '教育・EdTech':'次世代を育てるとともにAIで再定義される領域。人間にしかできない関わりが最大の価値です。',
+    '公務員・公共政策':'社会の仕組みを設計・運用する安定した使命。AIが行政を効率化する中、政策立案の重要性は増します。',
+    'インフラ・エネルギー':'社会を動かすライフラインを担う堅牢な領域。持続可能性への転換が最大のテーマです。',
+    'メディア・エンタメ':'人の感情と文化を動かすコンテンツ産業。AI生成との共存が問われる創造の時代です。',
+    '研究・アカデミア':'知の最前線を開拓する深い専門性の世界。長期的な探求心と専門的卓越性が問われます。',
+  };
+
+  el.innerHTML='<div style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 INDUSTRY — あなたが輝ける領域</div>'+
+    top3.map((item,i)=>`
+      <div class="industry-detail-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div class="industry-detail-name">${i===0?'🥇 ':i===1?'🥈 ':i===2?'🥉 ':''}${item.name}</div>
+          <div class="industry-detail-score">${item.score}%</div>
+        </div>
+        <div class="industry-detail-text">${TL_IND[item.name]||'あなたの選択パターンと高い親和性を持つ業種です。'}</div>
+        ${G.mbtiType?`<div style="font-size:.68rem;color:var(--accent);margin-top:6px;opacity:.8">▍ ${G.mbtiType}（${G.mbtiData?.label}）として：${getMBTIIndustryComment(G.mbtiType,item.name)}</div>`:''}
+      </div>`).join('');
+}
+
+function getMBTIIndustryComment(mbti,industry){
+  const comments={
+    INTJ:{'事業開発・新規事業':'長期戦略と独自ビジョンで組織を牽引できます。',コンサルティング:'体系的な問題解決が最大の武器になります。'},
+    ENTJ:{'事業開発・新規事業':'強い決断力でチームを動かし事業を加速させます。',コンサルティング:'リーダーシップと戦略眼が高く評価されます。'},
+    ENFP:{'スタートアップ・VC':'熱意と創造性で周囲を巻き込む力があります。','事業開発・新規事業':'可能性を見出すアンテナが最大の強みです。'},
+    INFJ:{'教育・EdTech':'深い洞察で一人ひとりの可能性を引き出せます。','医療・ヘルスケア':'使命感と共感力で信頼される存在になります。'},
+    ISTJ:{'メガバンク・金融':'誠実さと正確性が長期的な信頼を生み出します。','インフラ・エネルギー':'責任感と継続力が安定した価値を作ります。'},
+  };
+  return (comments[mbti]&&comments[mbti][industry])
+    || `${G.mbtiData?.desc||'あなたの特性'}が活きる環境です。`;
+}
+
+// ━━━ Xサマリ ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderXSummary(score,tierLabel,domTag,top1){
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',
+    independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理',
+    'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  const mbtiStr=G.mbtiType?`\nMBTI: ${G.mbtiType}（${G.mbtiData?.label||''}）`:'';
+  const summary=`【LIFE SHIFT SIMULATOR 2075】
+私の50年シミュレーション結果${mbtiStr}
+
+AI時代適合スコア：${score}点 [${tierLabel}]
+最も輝ける業種：${top1?.name||''} ${top1?.score||''}%
+キャリアの軸：${TL[domTag]||domTag}
+
+6つの時代を旅して、答えが見えた。
+あなたもやってみて👇
+
+https://agent-network-alp.github.io/life-shift-simulator-2075/
+by 株式会社エージェント
+
+#LIFESHIFTSIMULATOR2075 #AI時代のキャリア診断`;
+
+  const block=document.getElementById('x-summary-block');
+  const textEl=document.getElementById('x-summary-text');
+  if(block&&textEl){
+    textEl.textContent=summary;
+    block.style.display='block';
+  }
+  // Xシェアボタンを非表示（share-rowは削除済み）
+  window._xSummary=summary;
+}
+
+function shareXSummary(){
+  const url='https://agent-network-alp.github.io/life-shift-simulator-2075/';
+  window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(window._xSummary||'')}`,'_blank');
+}
+
+function copySummary(){
+  navigator.clipboard.writeText(window._xSummary||'').then(()=>alert('コピーしました！'));
+}
+
+// ━━━ PDF送信（GAS経由） ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+async function sendReportEmail(){
+  const emailInput=document.getElementById('email-input');
+  const email=emailInput.value.trim();
+  if(!email||!email.includes('@')){emailInput.focus();return;}
+
+  const btn=document.getElementById('email-send-btn');
+  btn.disabled=true;btn.textContent='送信中...';
+
+  // レポートデータを収集
+  const reportData={
+    action:'sendReport',
+    email,
+    nickname:G.nickname,
+    mbtiType:G.mbtiType||null,
+    mbtiLabel:G.mbtiData?.label||null,
+    score:document.getElementById('res-score').textContent,
+    tier:document.getElementById('res-tier').textContent,
+    headline:document.getElementById('res-headline').textContent,
+    analysis:document.getElementById('res-body').textContent,
+    narratives:G.narratives.map(n=>({phase:n.era,age:n.ageRange,text:n.text})),
+    xSummary:window._xSummary||'',
+    sessionId:G.sessionId,
+  };
+
+  try{
+    const res=await fetch(GAS_URL,{method:'POST',body:JSON.stringify(reportData)});
+    const data=await res.json();
+    if(data.ok){
+      const msg=document.getElementById('email-sent-msg');
+      msg.style.display='block';
+      btn.textContent='✓ 送信済み';
+      G.email=email;
+    }else{
+      btn.disabled=false;btn.textContent='PDF送信';
+      alert('送信に失敗しました。もう一度お試しください。');
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent='PDF送信';
+    alert('通信エラーが発生しました。');
+  }
+}
+
 function shareX(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\n未来へ旅して、答えを見つけた。\nby 株式会社エージェント`)}&url=${encodeURIComponent('https://agent-network-alp.github.io/life-shift-simulator-2075/')}`);}
 
 function copyRes(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/\nby 株式会社エージェント`).then(()=>alert('コピーしました！'));}
 
-function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:0,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');}
+function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:0,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');}
 
 // ── フォールバック ─────────────────────────────────────────────────
 const FB={phases:[{id:'phase_1',order:1,ageRange:'20〜25歳',yearRange:'2025〜2030年',era:'AI実装期',eraDescription:'生成AIが業務に普及し始め、定型業務の約30%が自動化される。採用評価軸が「即戦力」から「学習速度」に移行しつつある。',stat1_label:'AI・自動化の影響が大きい職種割合',stat1_value:'約27%',stat1_source:'OECD 2023',stat2_label:'2030年までに既存技能の変化割合',stat2_value:'39%',stat2_source:'WEF 2025'},{id:'phase_2',order:2,ageRange:'25〜30歳',yearRange:'2030〜2035年',era:'AGI移行期',eraDescription:'汎用AIの登場により専門職の一部が代替される。新たな職種が急増し転職市場が活性化。',stat1_label:'消滅リスクの高い職種割合',stat1_value:'約23%',stat1_source:'WEF 2025',stat2_label:'新規創出が見込まれる職種数',stat2_value:'+1700万人分',stat2_source:'WEF 2025'},{id:'phase_3',order:3,ageRange:'30〜40歳',yearRange:'2035〜2045年',era:'産業再編期',eraDescription:'業界の境界が崩壊し掛け算型人材の需要が急増。事業開発者はAIが最も代替しにくい職種の一つ。',stat1_label:'複数スキル保有者の年収プレミアム',stat1_value:'+34%',stat1_source:'McKinsey 2024',stat2_label:'リモート・ハイブリッド就労者割合',stat2_value:'約58%',stat2_source:'OECD 2024'},{id:'phase_4',order:4,ageRange:'40〜50歳',yearRange:'2045〜2055年',era:'人機協働成熟期',eraDescription:'人とAIの役割分担が定着。後進育成が社会的急務に。',stat1_label:'管理職・育成職の需要増加率',stat1_value:'+41%',stat1_source:'内閣府 2024',stat2_label:'AI意思決定支援ツール導入企業割合',stat2_value:'約79%',stat2_source:'McKinsey 2024'},{id:'phase_5',order:5,ageRange:'50〜60歳',yearRange:'2055〜2065年',era:'社会構造変容期',eraDescription:'労働の定義が拡張されコミュニティが生存基盤に。',stat1_label:'週4日労働制導入企業割合',stat1_value:'約44%',stat1_source:'OECD 2024',stat2_label:'社会的孤立リスクの高い中高年割合',stat2_value:'約31%',stat2_source:'内閣府 2023'},{id:'phase_6',order:6,ageRange:'60〜70歳',yearRange:'2065〜2075年',era:'ポスト労働期',eraDescription:'BI的制度が普及。「何のためにするか」が問われる最終章。',stat1_label:'65歳以上就労継続希望者割合',stat1_value:'約67%',stat1_source:'内閣府 2023',stat2_label:'BI・類似制度の導入国・地域数',stat2_value:'40以上',stat2_source:'Stanford Basic Income Lab 2024'}],q1:[{phase_id:'phase_1',layer1:'生成AIが職場に浸透し始めた。この変化をどう読む？',layer2:'キャリアの基盤を作るこの時期に、あなたは何に賭ける？',choice_a_text:'AIの浸透で5年以内に大半が自動化される。',choice_a_erafit:3,choice_b_text:'定型業務はAIに移行するが判断・創造は残る。AIを使える人と使えない人に分かれる。',choice_b_erafit:8,choice_c_text:'AIは強力だが最終判断は人間。専門性の価値は形を変えながら続く。',choice_c_erafit:5,choice_d_text:'重要なのは技術より人間性。コミュ力の希少価値が上がる。',choice_d_erafit:2,high_erafit_label:'B'},{phase_id:'phase_2',layer1:'汎用AIが登場し専門職の一部が代替され始めた。',layer2:'この波をどう読む？',choice_a_text:'実際には補助ツール止まり。人間の判断は残る。',choice_a_erafit:4,choice_b_text:'規制でコントロールすれば影響は限定的にできる。',choice_b_erafit:2,choice_c_text:'専門職の価値が根本から崩壊する。',choice_c_erafit:3,choice_d_text:'新しい役割に移行できるかどうかが重要だ。',choice_d_erafit:8,high_erafit_label:'D'},{phase_id:'phase_3',layer1:'業界の境界が崩壊し掛け算型人材の需要が急増。',layer2:'この変化をどう読む？',choice_a_text:'専門×別領域の掛け算ができる人間が最も評価される。',choice_a_erafit:8,choice_b_text:'専門性を深めることが依然として最重要。',choice_b_erafit:4,choice_c_text:'結局は人脈。誰を知っているかの時代になる。',choice_c_erafit:2,choice_d_text:'何でもできるゼネラリストが最強の時代だ。',choice_d_erafit:3,high_erafit_label:'A'},{phase_id:'phase_4',layer1:'人とAIの役割分担が定着し育成が急務に。',layer2:'この変化をどう読む？',choice_a_text:'個人が単独で大きな価値を生み出せる時代になった。',choice_a_erafit:2,choice_b_text:'AIが全判断を担い人間は目標設定だけでいい。',choice_b_erafit:3,choice_c_text:'人間は判断・育成・関係構築に集中できる時代になった。',choice_c_erafit:8,choice_d_text:'自分のスキルを磨き続けることが依然最重要。',choice_d_erafit:4,high_erafit_label:'C'},{phase_id:'phase_5',layer1:'コミュニティが生存基盤になりつつある。',layer2:'この変化をどう読む？',choice_a_text:'貨幣経済が薄れコミュニティの外では何も成立しない。',choice_a_erafit:3,choice_b_text:'有償労働だけが価値でなくなる中でコミュニティに根を張ることが重要。',choice_b_erafit:8,choice_c_text:'結局は経済力。資産形成が最重要戦略。',choice_c_erafit:2,choice_d_text:'既存の繋がりを大切にすることが今も最善。',choice_d_erafit:4,high_erafit_label:'B'},{phase_id:'phase_6',layer1:'働かなくていい社会が来た。',layer2:'この変化をどう読む？',choice_a_text:'自己実現を優先。社会貢献より自分が楽しむべき時代だ。',choice_a_erafit:2,choice_b_text:'経済的不安があるので働き続けることが現実的。',choice_b_erafit:4,choice_c_text:'AIに仕事を奪われ人間は機能不全に陥るリスクが高い。',choice_c_erafit:3,choice_d_text:'人間は意味と貢献を求め続ける。「何のためにするか」が問いだ。',choice_d_erafit:8,high_erafit_label:'D'}],q2:[{phase_id:'phase_1',question:'AIが多くの業務を自動化し始めた。あなたはどこに張る？',choice_a_text:'AIが苦手な領域に特化する',choice_a_tag:'specialization',choice_a_example:'医療・介護・教育など',choice_b_text:'AIを使いこなす側になる',choice_b_tag:'ai-native',choice_b_example:'プロンプト設計・AI導入コンサルなど',choice_c_text:'意思決定側に移る',choice_c_tag:'strategic',choice_c_example:'企画・事業開発など',choice_d_text:'職人的水準を目指す',choice_d_tag:'specialization',choice_d_example:'弁護士・エンジニア・研究者など'},{phase_id:'phase_2',question:'AGIの台頭でスキルが陳腐化しつつある。どう動く？',choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_example:'経営企画・渉外など',choice_b_text:'AIの橋渡し役になる',choice_b_tag:'ai-native',choice_b_example:'DX推進・AIプロジェクトマネージャーなど',choice_c_text:'副業・個人事業を立ち上げる',choice_c_tag:'independent',choice_c_example:'フリーランス・スタートアップなど',choice_d_text:'異業種転職を検討する',choice_d_tag:'specialization',choice_d_example:'インフラ・医療・公共など'},{phase_id:'phase_3',question:'30代。掛け算の時代。どう自分をデザインする？',choice_a_text:'専門×専門の掛け算で希少人材になる',choice_a_tag:'rare-combination',choice_a_example:'医療×AI・法律×テックなど',choice_b_text:'チームを率いる側に移行する',choice_b_tag:'leadership',choice_b_example:'テックリード・プロダクトオーナーなど',choice_c_text:'個人ブランドを構築する',choice_c_tag:'community-builder',choice_c_example:'コミュニティマネージャーなど',choice_d_text:'グローバル市場に場を広げる',choice_d_tag:'global',choice_d_example:'海外就労・グローバル企業転職など'},{phase_id:'phase_4',question:'40代。何を次の世代に渡すか？',choice_a_text:'後進の育成に注力する',choice_a_tag:'leadership',choice_a_example:'メンター・教育職など',choice_b_text:'知見を体系化してコンテンツに残す',choice_b_tag:'legacy',choice_b_example:'著書・SaaS・フレームワーク設計など',choice_c_text:'経営・意思決定層に入る',choice_c_tag:'strategic',choice_c_example:'役員・取締役など',choice_d_text:'第一線の専門家として残る',choice_d_tag:'specialization',choice_d_example:'スペシャリスト・顧問など'},{phase_id:'phase_5',question:'50代。コミュニティとの関係をどう設計する？',choice_a_text:'ローカルなコミュニティに根を張る',choice_a_tag:'community-builder',choice_a_example:'地域創生・NPOなど',choice_b_text:'グローバルなネットワークで価値を生む',choice_b_tag:'global',choice_b_example:'国際機関・越境コンサルなど',choice_c_text:'個人の創作・研究に集中する',choice_c_tag:'legacy',choice_c_example:'作家・研究者・アーティストなど',choice_d_text:'コミュニティをつなぐ触媒として動く',choice_d_tag:'community-builder',choice_d_example:'コネクター・コミュニティデザイナーなど'},{phase_id:'phase_6',question:'60代。働かなくてもいい時代に何を選ぶ？',choice_a_text:'現役を続け経験を社会に還元する',choice_a_tag:'leadership',choice_a_example:'顧問・ボランティアリーダーなど',choice_b_text:'人生を総括する作品・記録を残す',choice_b_tag:'legacy',choice_b_example:'回顧録・アーカイブなど',choice_c_text:'次世代に資産・知見を譲渡する',choice_c_tag:'legacy',choice_c_example:'寄付・奨学金設立など',choice_d_text:'探求・学習・創造を楽しむ',choice_d_tag:'specialization',choice_d_example:'生涯学習・DIY研究など'}],q3:[{choice_a_text:'スキル・学習への集中投資',choice_a_invest:'skill',choice_b_text:'人脈・ネットワーク構築',choice_b_invest:'network',choice_c_text:'副業・実験・小さな挑戦',choice_c_invest:'experiment',choice_d_text:'現職での実績と評価の積み上げ',choice_d_invest:'current_job'}],events:[{id:'ev1',category:'⚡ 技術系ショック',title:'AIが法務・財務の定型業務を完全代替',description:'担当業務の約60%が自動化された。役割を見直す必要がある。',trigger_phases:['phase_2','phase_3'],choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_correction:5,choice_b_text:'自動化ツールの管理側に回る',choice_b_tag:'ai-native',choice_b_correction:6},{id:'ev2',category:'📉 経済系ショック',title:'グローバル景気後退による昇進凍結',description:'2年間キャリアアップの機会が消えた。',trigger_phases:['phase_1','phase_2','phase_3'],choice_a_text:'スキル投資に時間を使う',choice_a_tag:'specialization',choice_a_correction:5,choice_b_text:'影響の少ない業界に移動する',choice_b_tag:'independent',choice_b_correction:4}],feedback:{先駆者:{headline:'あなたはAI時代の波を自ら作り出す側にいます',body:'時代適合度と選択の一貫性が高水準で両立しています。特に{dominantTag}を軸にした選択が時代の需要と高くフィットしていました。'},適応者:{headline:'あなたはAI時代を着実に生き抜く柔軟性を持っています',body:'変化への対応力は高いですが、軸の深さという観点でさらに投資することで次のステージに上がれます。'},模索者:{headline:'あなたはまだ自分の軸を探している途中です',body:'選択に一貫性を持たせることと、選択した道への意識的な投資がスコアを引き上げる鍵になります。'},転換期:{headline:'あなたは今、大きな転換点の手前にいます',body:'現在の選択パターンは時代の需要とのズレが積み重なっています。今の選択を変えれば逆転できます。'}},config:{eventTriggerProbability:0.35,bonusCap:2.5,multiplicationBonus:1.6,consistentPivotBonus:1.5,consistentBonus:1.0,scatteredPenalty:-0.5,scatteredThreshold:5,ctx_specialization_ainative:0.5,ctx_ainative_strategic:0.4,ctx_independent_community:0.4,ctx_leadership_legacy:0.5,ctx_strategic_strategic:0.3,q1BonusMax:0.22,q2q3MatchBonus:0.3,q2q3MismatchPenalty:-0.4,q2q3LightMismatch:-0.2,tier_pioneer_min:80,tier_adapter_min:60,tier_seeker_min:40,phaseWeight_1_g2:0.20,phaseWeight_2_g2:0.22,phaseWeight_3_g2:0.18,phaseWeight_4_g2:0.16,phaseWeight_5_g2:0.13,phaseWeight_6_g2:0.11},tagDefinitions:{specialization:{eraFitMultiplier:{phase_1:1.2,phase_2:0.8,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:1.0}},'ai-native':{eraFitMultiplier:{phase_1:1.2,phase_2:1.2,phase_3:1.1,phase_4:0.9,phase_5:0.8,phase_6:0.8}},strategic:{eraFitMultiplier:{phase_1:1.0,phase_2:1.2,phase_3:1.2,phase_4:1.2,phase_5:1.1,phase_6:1.0}},independent:{eraFitMultiplier:{phase_1:0.9,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.1,phase_6:1.0}},'rare-combination':{eraFitMultiplier:{phase_1:0.8,phase_2:1.0,phase_3:1.3,phase_4:1.2,phase_5:1.1,phase_6:1.0}},leadership:{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.3,phase_5:1.1,phase_6:1.0}},'community-builder':{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.1,phase_5:1.3,phase_6:1.2}},global:{eraFitMultiplier:{phase_1:1.0,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:0.9}},legacy:{eraFitMultiplier:{phase_1:0.7,phase_2:0.8,phase_3:0.9,phase_4:1.1,phase_5:1.2,phase_6:1.3}}},tagIndustry:{},profileIndustry:{},industries:['事業開発・新規事業','コンサルティング','ITサービス・SaaS','総合商社','投資銀行・証券','メガバンク・金融','広告・マーケティング','スタートアップ・VC','メーカー（製造業）','医療・ヘルスケア','教育・EdTech','公務員・公共政策','インフラ・エネルギー','メディア・エンタメ','研究・アカデミア']};
