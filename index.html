@@ -237,6 +237,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .story-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
 .story-entry-phase{font-size:.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px;opacity:.85}
 .story-entry-text{font-size:.86rem;color:var(--w90);line-height:1.95}
+.story-50years p{font-size:.88rem;line-height:2.1;color:var(--w90)}
+.result-inner .story-50years p{color:#2c2c3e}
 #screen-result{background:#f5f0e6;padding:0;align-items:stretch}
 .result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%;color:#1c1c2e}
 .result-inner .ending-block{border-bottom-color:rgba(0,0,0,.08)}
@@ -314,6 +316,16 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .btn-retry{display:block;width:100%;background:transparent;border:1px solid rgba(232,98,26,.5);color:var(--accent);font-family:var(--ff-head);font-size:.92rem;letter-spacing:3px;padding:14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:24px}
 .btn-retry:hover{background:rgba(232,98,26,.1);border-color:var(--accent)}
 .brand-footer{text-align:center;font-size:.68rem;color:var(--w40);letter-spacing:3px;padding-bottom:40px}
+/* 就活ワンシート */
+.job-sheet{background:rgba(255,255,255,.95);border:2px solid rgba(232,98,26,.3);border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.job-sheet-title{font-size:.62rem;letter-spacing:4px;color:var(--accent);margin-bottom:16px;font-weight:700}
+.job-sheet-row{display:flex;gap:8px;margin-bottom:12px;align-items:flex-start}
+.job-sheet-label{font-size:.68rem;color:#888;min-width:90px;flex-shrink:0;padding-top:3px;font-weight:700;letter-spacing:.5px}
+.job-sheet-value{font-size:.84rem;color:#1c1c2e;line-height:1.7;flex:1}
+.job-sheet-value strong{color:var(--accent)}
+.job-sheet-pr{background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.84rem;color:#1c1c2e;line-height:1.8;margin-top:4px}
+.job-sheet-copy-btn{display:block;width:100%;background:transparent;border:1px solid rgba(0,0,0,.15);color:#555;font-family:var(--ff-body);font-size:.78rem;padding:10px;border-radius:6px;cursor:pointer;margin-top:14px;transition:all .2s}
+.job-sheet-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
 .term{border-bottom:1px dotted var(--accent);color:var(--accent2);cursor:help;position:relative;display:inline}
 .term::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#111;color:var(--w90);font-size:.73rem;line-height:1.6;font-weight:400;padding:8px 12px;border-radius:6px;border:1px solid var(--border2);width:220px;text-align:left;pointer-events:none;opacity:0;transition:opacity .2s;z-index:999;white-space:normal;font-family:var(--ff-body);letter-spacing:0}
 .term:hover::after,.term.tip-visible::after{opacity:1}
@@ -335,8 +347,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .email-block h3{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
 .email-block p{font-size:.82rem;color:#2c2c3e;line-height:1.7;margin-bottom:14px}
 .email-input-row{display:flex;gap:8px;flex-wrap:wrap}
-.email-input{flex:1;min-width:200px;background:rgba(255,255,255,.08);border:1px solid var(--border2);color:var(--white);font-family:var(--ff-body);font-size:.9rem;padding:12px 16px;border-radius:6px;outline:none;transition:border-color .2s}
-.email-input:focus{border-color:var(--accent)}
+.email-input{flex:1;min-width:200px;background:#fff;border:1px solid rgba(0,0,0,.2);color:#1c1c2e;font-family:var(--ff-body);font-size:.9rem;padding:12px 16px;border-radius:6px;outline:none;transition:border-color .2s}
+.email-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,98,26,.15)}
 .email-input::placeholder{color:var(--w40)}
 .btn-email-send{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:.88rem;letter-spacing:2px;padding:12px 20px;border-radius:6px;transition:all .2s;white-space:nowrap}
 .btn-email-send:hover{background:var(--accent2);transform:translateY(-1px)}
@@ -613,6 +625,36 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
       <h3>MY STORY — あなたの50年</h3>
       <div id="story-entries"></div>
     </div>
+    <!-- 就活ワンシート -->
+    <div class="job-sheet" id="job-sheet" style="display:none">
+      <div class="job-sheet-title">📋 就活ワンシート — 今日から使える</div>
+      <div class="job-sheet-row">
+        <span class="job-sheet-label">キャリアの軸</span>
+        <span class="job-sheet-value" id="jws-axis">--</span>
+      </div>
+      <div class="job-sheet-row">
+        <span class="job-sheet-label">第一志望業種</span>
+        <span class="job-sheet-value" id="jws-industry">--</span>
+      </div>
+      <div class="job-sheet-row">
+        <span class="job-sheet-label">AI代替リスク</span>
+        <span class="job-sheet-value" id="jws-risk">--</span>
+      </div>
+      <div class="job-sheet-row" style="flex-direction:column">
+        <span class="job-sheet-label" style="margin-bottom:6px">自己PRの核心</span>
+        <div class="job-sheet-pr" id="jws-pr">生成中...</div>
+      </div>
+      <div class="job-sheet-row" style="flex-direction:column">
+        <span class="job-sheet-label" style="margin-bottom:6px">面接エピソードの型</span>
+        <div class="job-sheet-value" id="jws-episode" style="background:rgba(56,189,248,.05);border-radius:6px;padding:10px 12px;border:1px solid rgba(56,189,248,.15)">生成中...</div>
+      </div>
+      <button class="job-sheet-copy-btn" onclick="copyJobSheet()">📋 このシートをコピーする</button>
+    </div>
+
+    <!-- エージェント適性 -->
+    <div class="result-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.25)">
+    </div>
+
     <div class="action-block">
       <h3>TODAY'S ACTION — 3つから選ぶ</h3>
       <div id="action-list"></div>
@@ -1099,10 +1141,79 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   setTimeout(applyTooltipsToPage,50);
 }
 
+// MBTIごとの問い視点プレフィックス
+const MBTI_Q1_PREFIX={
+  INTJ:'建築家として、この変化の構造をどう読む？',
+  INTP:'論理学者として、この現象をどう分析する？',
+  ENTJ:'指揮官として、この変化をどう戦略に変える？',
+  ENTP:'討論者として、この変化の可能性をどう見る？',
+  INFJ:'提唱者として、この時代に何が本質的な問いか？',
+  INFP:'仲介者として、この変化の中で何を守るか？',
+  ENFJ:'主人公として、この変化をどう人々と向き合うか？',
+  ENFP:'運動家として、この時代に何を信じて動くか？',
+  ISTJ:'管理者として、この変化をどう体系的に捉えるか？',
+  ISFJ:'擁護者として、この変化の中で何を守るべきか？',
+  ESTJ:'幹部として、この変化をどう組織の力に変えるか？',
+  ESFJ:'領事として、周囲の人たちとこの変化をどう乗り越えるか？',
+  ISTP:'巨匠として、この変化を実践的にどう活用するか？',
+  ISFP:'冒険家として、この変化の中にどんな新しい道を見るか？',
+  ESTP:'起業家として、この変化をどうビジネスチャンスに変えるか？',
+  ESFP:'エンターテイナーとして、この変化の中でどう輝くか？',
+};
+
+const MBTI_Q2_PREFIX={
+  INTJ:'長期戦略の観点から、あなたはどこに投資する？',
+  INTP:'知的好奇心の向かう先として、どこを選ぶ？',
+  ENTJ:'組織を動かす立場として、あなたはどこで勝負する？',
+  ENTP:'可能性を広げるために、あなたはどこを選ぶ？',
+  INFJ:'使命感を軸に、あなたはどこで価値を作る？',
+  INFP:'自分らしさを保ちながら、どこで力を発揮する？',
+  ENFJ:'人を引っ張る立場として、あなたはどこで勝負する？',
+  ENFP:'情熱の向かう先として、あなたはどこを選ぶ？',
+  ISTJ:'責任感を軸に、あなたはどこで実績を作る？',
+  ISFJ:'信頼される存在として、あなたはどこで貢献する？',
+  ESTJ:'実行力を活かして、あなたはどこで結果を出す？',
+  ESFJ:'人のために動く力を、あなたはどこで活かす？',
+  ISTP:'問題解決の実践者として、あなたはどこを選ぶ？',
+  ISFP:'自分のペースで、あなたはどこで価値を作る？',
+  ESTP:'行動の速さを武器に、あなたはどこで勝負する？',
+  ESFP:'エネルギーを活かして、あなたはどこを選ぶ？',
+};
+
+const MBTI_Q3_PREFIX={
+  INTJ:'長期的な視点で、今この時期に何に投資すべきか？',
+  INTP:'知識の深さを育てるために、どこにエネルギーを注ぐ？',
+  ENTJ:'勝ちに行くために、今この瞬間の最善の投資先は？',
+  ENTP:'可能性を最大化するために、何に賭けるか？',
+  INFJ:'意味のある未来のために、今何を育てるか？',
+  INFP:'自分の物語のために、今何を選ぶ？',
+  ENFJ:'影響力を広げるために、今何に投資するか？',
+  ENFP:'情熱を形にするために、今どこにエネルギーを使う？',
+  ISTJ:'確実な成果のために、今何を積み上げるか？',
+  ISFJ:'長く貢献し続けるために、今何を育てる？',
+  ESTJ:'結果を出すために、今この時期の最善の投資先は？',
+  ESFJ:'人とのつながりを深めるために、今何に投資するか？',
+  ISTP:'実践力を高めるために、今何にエネルギーを注ぐ？',
+  ISFP:'自分らしいキャリアのために、今何を選ぶ？',
+  ESTP:'チャンスを掴むために、今何に全力を注ぐ？',
+  ESFP:'自分の強みを育てるために、今何に投資するか？',
+};
+
+function getMBTIQuestionPrefix(qNum){
+  if(!G.mbtiType)return null;
+  const maps=[null, MBTI_Q1_PREFIX, MBTI_Q2_PREFIX, MBTI_Q3_PREFIX];
+  return maps[qNum]?.[G.mbtiType]||null;
+}
+
 function renderQ1(phase){
   const q1=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
   if(!q1)return;
-  buildQPage(1,'環境認識',q1.layer2||q1.layer1,[
+  // MBTI視点プレフィックスを問い文に追加
+  const prefix=getMBTIQuestionPrefix(1);
+  const questionText=prefix
+    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix}</span>${q1.layer2||q1.layer1}`
+    : (q1.layer2||q1.layer1);
+  buildQPage(1,'環境認識',questionText,[
     {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
     {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
     {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
@@ -1113,7 +1224,11 @@ function renderQ1(phase){
 function renderQ2(phase){
   const q2=(G.data.q2||[]).find(q=>q.phase_id===phase.id);
   if(!q2)return;
-  buildQPage(2,'行動選択',q2.question,[
+  const prefix2=getMBTIQuestionPrefix(2);
+  const q2text=prefix2
+    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix2}</span>${q2.question}`
+    : q2.question;
+  buildQPage(2,'行動選択',q2text,[
     {label:'A',text:q2.choice_a_text,sub:q2.choice_a_example,tag:q2.choice_a_tag},
     {label:'B',text:q2.choice_b_text,sub:q2.choice_b_example,tag:q2.choice_b_tag},
     {label:'C',text:q2.choice_c_text,sub:q2.choice_c_example,tag:q2.choice_c_tag},
@@ -1207,7 +1322,11 @@ function renderQ3(phase){
   const q3=(G.data.q3||[])[0];
   if(!q3)return;
   // フェーズ別問い文を使用
-  const question=Q3_PHASE_QUESTIONS[G.currentPhase]||'この時期、あなたは何に時間・エネルギーを集中させる？';
+  const q3base=Q3_PHASE_QUESTIONS[G.currentPhase]||'この時期、あなたは何に時間・エネルギーを集中させる？';
+  const prefix3=getMBTIQuestionPrefix(3);
+  const question=prefix3
+    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix3}</span>${q3base}`
+    : q3base;
   buildQPage(3,'投資配分',question,[
     {label:'A',text:q3.choice_a_text,invest:q3.choice_a_invest},
     {label:'B',text:q3.choice_b_text,invest:q3.choice_b_invest},
@@ -1240,7 +1359,7 @@ function showEvent(ev){
 }
 
 function selectEv(id,ch,tag,corr){
-  G.eventChoices.push({id,ch,tag,corr:Number(corr)});
+  G.eventChoices.push({id,ch,tag,corr:Number(corr),phaseIdx:G.currentPhase});
   document.getElementById('event-overlay')?.remove();
   nextPhase();
 }
@@ -1501,10 +1620,17 @@ function showNarrative(completedPhaseIdx, onNext){
   const tag=G.tags[completedPhaseIdx]||'strategic';
   const phase=(G.data.phases||[]).find(p=>p.id===PHASE_IDS[completedPhaseIdx]);
 
-  // イベント発生確認
-  const ev=G.eventChoices.find(e=>e.id&&e.id.includes&&!e.id.startsWith('bonus'));
-  const hadEvent=ev?(ev.corr&&ev.corr>0?'good':'bad'):null;
-  const eventTag=ev?.tag||null;
+  // イベント発生確認（このフェーズのイベントのみ）
+  // eventChoicesにはフェーズ情報がないため、追加時にphaseIdxを記録するよう後で修正
+  // 暫定：最後に追加されたeventChoiceがこのフェーズのものと仮定
+  const phaseEvents=G.eventChoices.filter(e=>
+    e.phaseIdx===completedPhaseIdx ||
+    (e.phaseIdx===undefined && G.eventChoices.indexOf(e)===G.eventChoices.length-1 && completedPhaseIdx===G.currentPhase-1)
+  );
+  const ev=phaseEvents.find(e=>!String(e.id||'').startsWith('bonus'));
+  const bonusEv=phaseEvents.find(e=>String(e.id||'').startsWith('bonus'));
+  const hadEvent=ev?(ev.corr&&ev.corr>0?'good':'bad'):bonusEv?'good':null;
+  const eventTag=ev?.tag||bonusEv?.tag||null;
 
   const text=buildNarrativeText(completedPhaseIdx,tag,hadEvent,eventTag);
 
@@ -1734,24 +1860,62 @@ async function showResult(){
   document.getElementById('res-tier').style.color=tier.color;
   document.getElementById('res-headline').textContent=fb.headline||'';
   // フィードバック本文はMBTI最適化後に設定（下記参照）
-  // F：スコア文脈説明
+  // 3. スコア就活言語翻訳
   const scorePercentile=score>=80?'上位18%':score>=60?'上位42%':score>=40?'上位65%':'下位35%';
-  // 最もスコアに貢献したフェーズを特定
-  const pw=getPW();
-  const phaseContribs=G.tags.map((tag,i)=>{
-    const pid=PHASE_IDS[i];
-    return{idx:i,w:pw[pid]||0,tag};
-  }).sort((a,b)=>b.w-a.w);
+  const pw2=getPW();
+  const phaseContribs=G.tags.map((tag,i)=>({idx:i,w:pw2[PHASE_IDS[i]]||0,tag})).sort((a,b)=>b.w-a.w);
   const topPhase=phaseContribs[0];
   const topPhaseNames=['20代前半（AI実装期）','25〜30歳（AGI移行期）','30代（産業再編期）','40代（人機協働期）','50代（社会変容期）','60代（ポスト労働期）'];
-  const scoreContext=topPhase
-    ? `特に${topPhaseNames[topPhase.idx]}での${TL[topPhase.tag]||topPhase.tag}の選択が、スコアを大きく押し上げました。`
-    : '';
-  const chainContext=chain.rule==='multiplication'?'専門特化から掛け算希少への連携が、最大のボーナスを生み出しました。':chain.rule==='consistent+pivot'?'一貫した軸を持ちながら、途中で新しい道に踏み出す選択が高く評価されました。':chain.rule==='consistent'?`${TL[G.tags[0]]||G.tags[0]}の一貫した積み上げが、信頼性のボーナスをもたらしました。`:'';
+  const scoreContext=topPhase?`特に${topPhaseNames[topPhase.idx]}での${TL[topPhase.tag]||topPhase.tag}の選択が大きく貢献。`:'';
+  const chainContext=chain.rule==='multiplication'?'専門特化×掛け算希少の連携ボーナス獲得。':chain.rule==='consistent+pivot'?'一貫性＋転換のボーナス獲得。':chain.rule==='consistent'?`${TL[G.tags[0]]||G.tags[0]}の一貫性ボーナス獲得。`:'';
+
+  // 就活言語翻訳テーブル
+  const JOB_TRANSLATION={
+    先駆者:{
+      risk:'AIに代替されるリスク：<strong style="color:var(--accent)">低</strong>（上位水準）',
+      env:'最も活きる就職先：<strong>外資コンサル・事業開発・スタートアップ・総合商社</strong>',
+      career:`このスコア帯の先輩のキャリア例：<strong>新卒でコンサル → 30代でスタートアップ参画 → 40代で独立</strong>`,
+      pr:`自己PRの核心：「AI時代の変化を先読みし、${TL[domTag]||domTag}で価値を作り続ける人間」`,
+    },
+    適応者:{
+      risk:'AIに代替されるリスク：<strong style="color:var(--gold)">中</strong>（適切な対処で回避可能）',
+      env:'最も活きる就職先：<strong>大手メーカー・総合商社・ITサービス・コンサルティング</strong>',
+      career:'このスコア帯の先輩のキャリア例：<strong>大手で経験を積む → 30代で専門性を確立 → 40代で管理職</strong>',
+      pr:`自己PRの核心：「変化への適応力と${TL[domTag]||domTag}の掛け算で継続的に価値を生み出す人間」`,
+    },
+    模索者:{
+      risk:'AIに代替されるリスク：<strong style="color:#888">要注意</strong>（軸の確立が急務）',
+      env:'最も活きる就職先：<strong>成長環境のある中堅企業・職種を幅広く試せる総合職</strong>',
+      career:'このスコア帯の先輩のキャリア例：<strong>総合職で複数の仕事を経験 → 30代で自分の軸を発見 → 再成長</strong>',
+      pr:`自己PRの核心：「まだ成長途中だが、${TL[domTag]||domTag}の方向性が見えてきた人間」`,
+    },
+    転換期:{
+      risk:'AIに代替されるリスク：<strong style="color:var(--accent)">高</strong>（今すぐ行動が必要）',
+      env:'最も活きる就職先：<strong>教育研修が充実した企業・メンターがいる環境</strong>',
+      career:'このスコア帯の先輩のキャリア例：<strong>新卒の環境で気づきを得る → 25歳で大きな方向転換 → 再成長</strong>',
+      pr:`自己PRの核心：「現時点の選択より、変化への意欲と${TL[domTag]||domTag}の可能性を伝える」`,
+    },
+  };
+  const jt=JOB_TRANSLATION[tier.label]||JOB_TRANSLATION['模索者'];
 
   document.getElementById('ending-copy').innerHTML=
     `未来から見えたこと——あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。<br>
-     <span style="font-size:.82rem;opacity:.8">同世代の${scorePercentile}に相当するスコアです。${scoreContext}${chainContext}</span>`;
+     <span style="font-size:.8rem;opacity:.85">同世代の${scorePercentile}に相当するスコア。${scoreContext}${chainContext}</span>`;
+
+  // スコア就活翻訳カードをscore-blockの後に追加
+  const scoreTransBlock=document.createElement('div');
+  scoreTransBlock.style.cssText='margin-bottom:24px';
+  scoreTransBlock.innerHTML=`
+    <div style="background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+      <div style="font-size:.58rem;letter-spacing:3px;color:#a05c14;margin-bottom:14px">CAREER TRANSLATION — 就活言語に翻訳</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.risk}</div>
+        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.env}</div>
+        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.career}</div>
+        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7;background:rgba(232,98,26,.06);border-radius:6px;padding:10px 12px;border-left:3px solid var(--accent)">${jt.pr}</div>
+      </div>
+    </div>`;
+  document.querySelector('.score-block').after(scoreTransBlock);
 
   // MBTI最適化フィードバック
   const mbtiStyle=G.mbtiData?FEEDBACK_STYLE[G.mbtiData.feedbackStyle]||{}:{};
@@ -1761,75 +1925,113 @@ async function showResult(){
     : rawBody;
   document.getElementById('res-body').textContent=optimizedBody;
 
-  // H：MBTI×選択相性分析
+  // 2. MBTI分析（自己一致・意識的拡張・メタ認知）
   if(G.mbtiType&&G.mbtiData){
     const mbtiTagBonus=G.mbtiData.tagBonus||{};
-    const alignedTags=G.tags.filter(t=>mbtiTagBonus[t]>0);
-    const uniqueAligned=[...new Set(alignedTags)];
-    const alignedPhases=G.tags.map((t,i)=>mbtiTagBonus[t]>0?i:-1).filter(i=>i>=0);
-    const matchPct=Math.round((alignedTags.length/Math.max(G.tags.length,1))*100);
 
-    // MBTI×投資先の相性
-    const mbtiInvestMatch={
-      INTJ:{skill:'◎',network:'△',experiment:'○',current_job:'○'},
-      INTP:{skill:'◎',network:'△',experiment:'◎',current_job:'△'},
-      ENTJ:{skill:'○',network:'◎',experiment:'◎',current_job:'○'},
-      ENTP:{skill:'○',network:'○',experiment:'◎',current_job:'△'},
-      INFJ:{skill:'◎',network:'○',experiment:'○',current_job:'○'},
-      INFP:{skill:'◎',network:'△',experiment:'○',current_job:'○'},
-      ENFJ:{skill:'○',network:'◎',experiment:'○',current_job:'○'},
-      ENFP:{skill:'○',network:'◎',experiment:'◎',current_job:'△'},
-      ISTJ:{skill:'◎',network:'△',experiment:'△',current_job:'◎'},
-      ISFJ:{skill:'◎',network:'○',experiment:'△',current_job:'◎'},
-      ESTJ:{skill:'○',network:'◎',experiment:'△',current_job:'◎'},
-      ESFJ:{skill:'○',network:'◎',experiment:'△',current_job:'◎'},
-      ISTP:{skill:'◎',network:'△',experiment:'◎',current_job:'○'},
-      ISFP:{skill:'○',network:'△',experiment:'◎',current_job:'○'},
-      ESTP:{skill:'△',network:'○',experiment:'◎',current_job:'△'},
-      ESFP:{skill:'△',network:'◎',experiment:'◎',current_job:'△'},
+    // 自己一致：MBTIの強みタグと一致した選択
+    const alignedTags=G.tags.filter(t=>(mbtiTagBonus[t]||0)>0);
+    const uniqueAligned=[...new Set(alignedTags)];
+
+    // 意識的拡張：MBTIの傾向を超えた（弱みを補った）選択
+    // E/I軸・J/P軸・S/N軸・T/F軸のそれぞれの逆側タグを「拡張」と定義
+    const MBTI_EXPANSION_TAGS={
+      // I型（内向）が外向的選択をした
+      INTJ:['community-builder','leadership','global'],
+      INTP:['community-builder','leadership','global'],
+      INFJ:['independent','global','strategic'],
+      INFP:['independent','strategic','global'],
+      ISTJ:['independent','rare-combination','global'],
+      ISFJ:['independent','rare-combination','strategic'],
+      ISTP:['community-builder','leadership','legacy'],
+      ISFP:['strategic','leadership','global'],
+      // E型（外向）が内向的選択をした
+      ENTJ:['specialization','legacy','independent'],
+      ENTP:['specialization','legacy','independent'],
+      ENFJ:['specialization','independent','strategic'],
+      ENFP:['specialization','legacy','independent'],
+      ESTJ:['independent','legacy','specialization'],
+      ESFJ:['independent','strategic','specialization'],
+      ESTP:['specialization','legacy','community-builder'],
+      ESFP:['strategic','specialization','legacy'],
     };
-    const investMatchMap=mbtiInvestMatch[G.mbtiType]||{};
-    const q3Matches=G.q3Choices.map(inv=>investMatchMap[inv]||'○');
-    const highInvest=G.q3Choices.filter(inv=>investMatchMap[inv]==='◎').length;
+    const expansionTags=MBTI_EXPANSION_TAGS[G.mbtiType]||[];
+    const expandedTags=G.tags.filter(t=>expansionTags.includes(t));
+    const uniqueExpanded=[...new Set(expandedTags)];
+
+    // メタ認知スコア：Q1での適正認識率
+    const correctQ1=G.q1Choices.filter(q=>q&&q.erafit>=8).length;
+    const metacogScore=Math.round((correctQ1/Math.max(G.q1Choices.length,1))*100);
+
+    // 総合メッセージ
+    const metacogMsg=metacogScore>=67
+      ? 'AI時代の変化を正確に捉える認知力が高く、自分の選択を客観視できています。'
+      : metacogScore>=33
+      ? 'AI時代の変化への認識は平均的。より客観的な視点を育てると選択の質が上がります。'
+      : '変化への認識にズレがありましたが、そのギャップに気づけたことが最大の収穫です。';
 
     const mbtiBadge=document.createElement('div');
-    mbtiBadge.style.cssText='margin-top:16px';
+    mbtiBadge.style.cssText='margin-top:20px';
     mbtiBadge.innerHTML=`
-      <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:14px 16px">
-        <div style="font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:10px">MBTI ALIGNMENT ANALYSIS</div>
-        <div style="font-size:.8rem;color:#2c2c3e;margin-bottom:6px">
-          <strong style="color:var(--accent)">${G.mbtiType}（${G.mbtiData.label}）</strong>との選択一致度：
-          <strong style="color:var(--accent);font-size:1rem">${matchPct}%</strong>
+      <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:18px 20px">
+        <div style="font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:14px">MBTI SELF-AWARENESS REPORT</div>
+
+        <!-- 自己一致 -->
+        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
+          <div style="font-size:.7rem;color:var(--cyan);margin-bottom:6px;font-weight:700">▍ 強みの発揮</div>
+          <div style="font-size:.82rem;color:#2c2c3e;line-height:1.7">
+            ${uniqueAligned.length>0
+              ? `${G.mbtiType}（${G.mbtiData.label}）の強みである
+                <strong style="color:var(--accent)">${uniqueAligned.map(t=>TL[t]||t).join('・')}</strong>
+                を軸にした選択を<strong>${alignedTags.length}回</strong>行いました。
+                MBTIの傾向が自然にキャリア選択に現れています。`
+              : `今回の選択はMBTIの典型的な強みとは異なるルートでした。それは弱点ではなく、意識的な多様性です。`
+            }
+          </div>
         </div>
-        ${uniqueAligned.length>0?`
-        <div style="font-size:.75rem;color:#555;margin-bottom:6px">
-          ✓ MBTIの強みを活かした選択：
-          ${uniqueAligned.map(t=>`<span style="color:var(--accent);font-weight:700">${TL[t]||t}</span>`).join('・')}
-        </div>`:''}
-        ${highInvest>0?`
-        <div style="font-size:.75rem;color:#555">
-          ✓ ${G.mbtiType}らしい投資先選択：${highInvest}回（スキル投資・人脈など）
-        </div>`:''}
-        ${matchPct<50?`
-        <div style="font-size:.75rem;color:#888;margin-top:6px">
-          △ MBTIと異なる選択もありましたが、それが独自のキャリアを作ることもあります。
-        </div>`:''}
+
+        <!-- 意識的拡張 -->
+        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
+          <div style="font-size:.7rem;color:var(--gold);margin-bottom:6px;font-weight:700">▍ 意識的な拡張</div>
+          <div style="font-size:.82rem;color:#2c2c3e;line-height:1.7">
+            ${uniqueExpanded.length>0
+              ? `${G.mbtiType}が苦手とする傾向の
+                <strong style="color:var(--gold)">${uniqueExpanded.map(t=>TL[t]||t).join('・')}</strong>
+                を<strong>${expandedTags.length}回</strong>意識的に選択しました。
+                自分の傾向を超えた選択は、<strong>AI時代に最も求められる成長の証</strong>です。`
+              : `今回はMBTIの強みに沿った選択が中心でした。次回は意識的に苦手領域に挑戦すると、さらなる成長が見込めます。`
+            }
+          </div>
+        </div>
+
+        <!-- メタ認知 -->
+        <div>
+          <div style="font-size:.7rem;color:var(--accent);margin-bottom:6px;font-weight:700">▍ メタ認知力</div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <div style="font-family:var(--ff-head);font-size:1.8rem;color:var(--accent)">${metacogScore}%</div>
+            <div style="font-size:.72rem;color:#555">AI時代の変化を正確に捉えた割合<br>（Q1の適正認識率）</div>
+          </div>
+          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.7;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
+            ${metacogMsg}<br>
+            <span style="font-size:.72rem;color:#888">メタ認知力——自分の思考パターンを客観視できる力——は、AIに代替されない最後の人間固有の力です。</span>
+          </div>
+        </div>
       </div>`;
     document.getElementById('res-body').after(mbtiBadge);
   }
 
-  // MY STORY（ナラティブ一覧）
+  // MY STORY（50年まとめストーリー）
   const storyEl=document.getElementById('story-entries');
   if(storyEl&&G.narratives.length){
-    storyEl.innerHTML=G.narratives.map(n=>`
-      <div class="story-entry">
-        <div class="story-entry-phase">${n.ageRange} | ${n.era} | ${n.yearRange}</div>
-        <div class="story-entry-text">${n.text.replace(/\n/g,'<br>')}</div>
-      </div>`).join('');
+    const previewStory=buildPreviewStory(G.narratives,domTag,TL);
+    storyEl.innerHTML=`<div class="story-50years" id="story-50years">${previewStory}</div>`;
   }
 
   // 業種詳細（上位3業種の説明）
   renderIndustryDetails(indScores.slice(0,3));
+
+  // ⑤ エージェント適性診断
+  renderAgentFit(score,tier.label,domTag,indScores,radar);
 
   // Xサマリ生成
   renderXSummary(score,tier.label,domTag,indScores[0]);
@@ -1925,16 +2127,22 @@ async function showResult(){
     if(aiResult){
       // AIナラティブでMY STORYを上書き
       if(aiResult.myStory && storyEl){
-        storyEl.innerHTML = aiResult.myStory.map((entry,i)=>`
-          <div class="story-entry">
-            <div class="story-entry-phase">${G.narratives[i]?.ageRange||''} | ${G.narratives[i]?.era||''}</div>
-            <div class="story-entry-text">${entry.replace(/\n/g,'<br>')}</div>
-          </div>`).join('');
+        // AIが生成した6フェーズのテキストを1つの流れるストーリーに統合
+        const el=document.getElementById('story-50years');
+        if(el){
+          const story=aiResult.myStory;
+          el.innerHTML=buildAIStory50(story, G.narratives);
+        }
       }
       // AI業種説明文を上書き
       if(aiResult.industryComments){
         G.aiIndustryComments = aiResult.industryComments;
         renderIndustryDetailsWithAI(indScores.slice(0,3), aiResult.industryComments);
+      }
+      // AI生成自己PR文
+      if(aiResult.selfPR){
+        G.aiSelfPR=aiResult.selfPR;
+        // 就活ワンシートに反映（後で生成）
       }
       // J：AI生成の就活アクションで上書き
       if(aiResult.jobActions&&aiResult.jobActions.length){
@@ -1945,9 +2153,13 @@ async function showResult(){
           ).join('');
         }
       }
+      // 就活ワンシート生成（AI結果が揃ってから）
+      renderJobSheet(score,tier.label,domTag,indScores,aiResult);
     }
   }catch(e){
     console.warn('Gemini生成エラー（フォールバック継続）:', e);
+    // Gemini失敗時もフォールバックで就活ワンシートを表示
+    renderJobSheet(score,tier.label,domTag,indScores,null);
   }
 
   await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
@@ -1995,56 +2207,69 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     return 'P'+(i+1)+'('+_ages[i]+'/'+_eras[i]+'): 行動='+(_TLtag[tag]||tag)+' Q1='+(q1l==='B'||q1l==='D'?'適正':'過大過小')+' 投資='+(_imap[inv]||inv);
   }).join(', ');
 
-  const prompt = `あなたは就活生向けキャリア診断の専門家です。以下のシミュレーション結果を分析し、日本語で回答してください。
+  // Q1認識タイプを物語化のために渡す
+  const q1Types=G.q1Choices.map(q=>{
+    if(!q)return'不明';
+    return q.erafit>=8?'適正認識（変化を正確に捉えた）':q.erafit>=5?'やや楽観視':q.erafit>=3?'過小評価':'過大評価';
+  });
+
+  const prompt = `あなたは就活生向けキャリア診断の専門家です。以下のシミュレーション結果を分析し、日本語で返答してください。
 
 【プレイヤー情報】
-- ニックネーム: ${G.nickname}
-- ${mbtiDesc}
-- AI時代適合スコア: ${score}点（${tierLabel}）
-- キャリアの軸: ${TL[domTag]||domTag}
-- 業種適合上位: ${industryList}
+ニックネーム: ${G.nickname}
+${mbtiDesc}
+AI時代適合スコア: ${score}点（${tierLabel}）
+キャリアの軸: ${TL[domTag]||domTag}
+業種適合上位: ${industryList}
 
 【6フェーズの選択詳細】
 ${phaseDetails}
+
+【Q1（環境認識）の認識タイプ：変化をどう捉えたか】
+${q1Types.map((t,i)=>'P'+(i+1)+': '+t).join(', ')}
 
 ---
 
 【依頼1】個別最適化された自分史（MY STORY）
 
-以下の条件で、6フェーズ分の一人称ナラティブを書いてください。
-
 条件：
-- 完全な一人称・過去形（「私は〜した」「〜だった」）
-- プレイヤーの選択タイプを具体的に描写（専門特化なら「一点を掘り続けた」等）
-- MBTIの特性（${G.mbtiData?.label||'不明'}型）を自然に盛り込む
-- 各フェーズで起きた葛藤・決断・手応えを具体的に
-- テンプレート感を排除し、この人だけの物語にする
-- 各フェーズ120〜160字程度
+- 完全な一人称・過去形
+- 各フェーズで「Q1認識タイプ」を物語に組み込む
+  例）過小評価だったPhase1→「当時の私はAIの影響を甘く見ていた。3年後にその認識の甘さを思い知ることになる」
+  例）適正認識だったPhase2→「変化の本質が見えていたから、周囲より早く動けた」
+- MBTIの特性を自然に反映（${G.mbtiData?.label||''}型の思考・行動パターン）
+- 葛藤・決断の瞬間を1フェーズに最低1つ描写
+- テンプレート排除：この人だけの物語
+- 各フェーズ130〜180字
 
-JSON配列で返す: {"myStory": ["Phase1","Phase2","Phase3","Phase4","Phase5","Phase6"]}
+JSON: {"myStory": ["P1","P2","P3","P4","P5","P6"]}
 
-【依頼2】業種の未来予測インサイト（G案）
+【依頼2】業種インサイト（3問形式）
 
-上位3業種それぞれについて、以下の構成で書いてください：
-1. 2030〜2040年のその業種の変化予測（1文）
-2. このプレイヤーの選択パターンとMBTIを踏まえた「なぜ向いているか」（1文）
-3. その業種でのリスクと対策（1文）
+上位3業種それぞれを以下の構成で：
+① 2030〜2040年のその業種の変化（具体的に1文）
+② このプレイヤーの選択パターン・MBTIから見た「なぜ向いているか」（具体的に1文）
+③ この業種特有のリスクと、このプレイヤーが取るべき対策（1文）
+合計100〜120字。抽象表現禁止。
 
-合計80〜100字程度。抽象的な表現を避け、具体的に。
+JSON: {"industryComments": {"業種名": "①〜③の文章", ...}}
 
-JSON形式で返す: {"industryComments": {"業種名": "インサイト文章", ...}}
+【依頼3】就活ワンシート用の自己PR文
 
-【依頼3】就活への具体的アクション（J案）
+このプレイヤーのスコア・タグ・MBTIを踏まえた自己PR文を書いてください。
+- 「私は学生時代に〜」で始まる
+- キャリアの軸（${TL[domTag]||domTag}）を中心に
+- 100字程度、面接で使えるレベルの具体性
 
-このプレイヤーのスコア・タグ・業種適合を踏まえ、
-「今すぐできる就活アクション」を3つ、それぞれ1文で書いてください。
-- 業種名や職種名など固有名詞を含める
-- 「〜してみる」「〜を調べる」など具体的な動詞で終わる
-- 抽象的なアドバイスではなく、明日から実行できる行動
+JSON: {"selfPR": "自己PR文"}
 
-JSON形式で返す: {"jobActions": ["アクション1", "アクション2", "アクション3"]}
+【依頼4】今すぐできる就活アクション3つ
 
-上記3つをまとめた1つのJSONのみ返してください。説明文不要。`;
+業種名・職種名の固有名詞を含め、明日から実行できる行動を3つ。
+
+JSON: {"jobActions": ["アクション1","アクション2","アクション3"]}
+
+上記4つをまとめた1つのJSONのみ返してください。説明文不要。`;
 
   try{
     const res = await fetch(GAS_URL, {
@@ -2113,6 +2338,256 @@ function renderIndustryDetailsWithAI(top3, aiComments){
         </div>`:''}
       </div>`;
     }).join('');
+}
+
+// ━━━ 就活ワンシート生成 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function renderJobSheet(score, tierLabel, domTag, indScores, aiResult){
+  const TL_inner={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',
+    independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理',
+    'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+
+  const sheet=document.getElementById('job-sheet');
+  if(!sheet)return;
+  sheet.style.display='block';
+
+  // キャリアの軸
+  const axisEl=document.getElementById('jws-axis');
+  if(axisEl) axisEl.innerHTML=`<strong>${TL_inner[domTag]||domTag}</strong>`;
+
+  // 第一志望業種（上位2つ）
+  const indEl=document.getElementById('jws-industry');
+  if(indEl&&indScores.length){
+    indEl.innerHTML=indScores.slice(0,2).map((s,i)=>
+      `<strong${i===0?' style="color:var(--accent)"':''}>${s.name}</strong>${i===0?`（${s.score}%）`:''}`
+    ).join(' ／ ');
+  }
+
+  // AI代替リスク
+  const riskEl=document.getElementById('jws-risk');
+  const riskMap={
+    先駆者:'<strong style="color:var(--accent)">低リスク</strong> — 選択パターンがAI時代の需要と高い親和性',
+    適応者:'<strong style="color:var(--gold)">中リスク</strong> — 専門性の強化で回避可能',
+    模索者:'<strong style="color:#888">要注意</strong> — 早期の軸づくりが優先課題',
+    転換期:'<strong style="color:var(--accent)">高リスク</strong> — 今すぐ選択の見直しを',
+  };
+  if(riskEl) riskEl.innerHTML=riskMap[tierLabel]||riskMap['模索者'];
+
+  // 自己PR（AI生成優先、なければフォールバック）
+  const prEl=document.getElementById('jws-pr');
+  if(prEl){
+    if(aiResult?.selfPR){
+      prEl.textContent=aiResult.selfPR;
+    }else{
+      // フォールバック自己PR
+      const fallbackPR={
+        specialization:`私は${TL_inner[domTag]}を軸に、AIが広まる時代においても代替されない専門性を育ててきました。変化の速い時代に、深さで差別化できる人材として貢献します。`,
+        'ai-native':`私はAI活用を軸に、デジタルツールを武器として自らの生産性と創造性を高めてきました。AI時代の最前線で、技術と人間の橋渡しができる人材として貢献します。`,
+        strategic:`私は意思決定力を軸に、状況を俯瞰して本質的な課題を特定する力を育ててきました。複雑な問題をシンプルに解決できる人材として組織に貢献します。`,
+        independent:`私は自律的な行動力を軸に、組織の枠を超えて価値を創出する力を育ててきました。変化への対応力と実行力で、どんな環境でも成果を出せる人材として貢献します。`,
+        'rare-combination':`私は異なる領域を掛け合わせる力を軸に、誰も真似できない希少な組み合わせを育ててきました。業界の境界が崩れる時代に、掛け算で新しい価値を生み出す人材として貢献します。`,
+        leadership:`私は人を育て引っ張る力を軸に、チームの可能性を最大化してきました。AI時代に最も希少な「人間を動かす力」を持つ人材として、組織に貢献します。`,
+        'community-builder':`私はつながりを作る力を軸に、人と人をつなぐことで価値を生み出してきました。AIが代替できない「関係性の構築」を得意とする人材として貢献します。`,
+        global:`私はグローバルな視野を軸に、境界を越えて動く力を育ててきました。日本と世界をつなぐ視点で、組織の国際的な価値を高める人材として貢献します。`,
+        legacy:`私は知見を残す力を軸に、経験を形にして次世代に渡す力を育ててきました。組織の知的資産を積み上げ、長期的な価値を生み出す人材として貢献します。`,
+      };
+      prEl.textContent=fallbackPR[domTag]||fallbackPR['strategic'];
+    }
+  }
+
+  // 面接エピソードの型（MBTI×タグ）
+  const episodeEl=document.getElementById('jws-episode');
+  if(episodeEl){
+    const mbtiLabel=G.mbtiData?.label||'';
+    const episodeTemplate=`「私は${mbtiLabel?mbtiLabel+'として、':''}${TL_inner[domTag]||domTag}の力を[具体的な場面]で発揮しました。その結果[成果・変化]が生まれました。この経験から[学んだこと・強み]に自信を持っています。」`;
+    episodeEl.innerHTML=`<span style="color:#888;font-size:.72rem">テンプレート（[ ]内を自分のエピソードで埋める）</span><br><br>${episodeTemplate}`;
+  }
+}
+
+function copyJobSheet(){
+  const axis=document.getElementById('jws-axis')?.textContent||'';
+  const ind=document.getElementById('jws-industry')?.textContent||'';
+  const risk=document.getElementById('jws-risk')?.textContent||'';
+  const pr=document.getElementById('jws-pr')?.textContent||'';
+  const ep=document.getElementById('jws-episode')?.textContent||'';
+  const text=`【就活ワンシート - LIFE SHIFT SIMULATOR 2075】
+
+キャリアの軸：${axis}
+第一志望業種：${ind}
+AI代替リスク：${risk}
+
+自己PRの核心：
+${pr}
+
+面接エピソードの型：
+${ep}`;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.querySelector('.job-sheet-copy-btn');
+    if(btn){btn.textContent='✓ コピーしました！';setTimeout(()=>{btn.textContent='📋 このシートをコピーする';},2000);}
+  });
+}
+
+// ━━━ MY STORY：50年ストーリー生成 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// フォールバック：テンプレートで50年ストーリーを1本化
+function buildPreviewStory(narratives, domTag, TL){
+  const tags=narratives.map(n=>n.tag).filter(Boolean);
+  const dominant=domTag;
+  const hasEvent=narratives.some(n=>n.text.includes('試練')||n.text.includes('追い風'));
+
+  const opening=`20歳から50年間、私は${TL[dominant]||dominant}という軸を核に、6つの時代の岐路を歩んできた。`;
+
+  const phases=narratives.map((n,i)=>{
+    const short=n.text.split('\n')[0].slice(0,80);
+    return short;
+  });
+
+  const body=phases.join(' そして、');
+
+  const tagSet=[...new Set(tags)];
+  const closing=tagSet.length>=2
+    ? `振り返れば、${tagSet.map(t=>TL[t]||t).join('と')}が交差した50年だった。この旅が終わって、2026年に戻ってきた今——次の選択は、あなた自身が決める。`
+    : `振り返れば、${TL[tags[0]]||tags[0]||'自分の軸'}を磨き続けた50年だった。この旅が終わって、2026年に戻ってきた今——次の選択は、あなた自身が決める。`;
+
+  return `<div style="font-size:.9rem;color:var(--w90);line-height:2.1">
+    <p style="margin-bottom:16px">${opening}</p>
+    <p style="margin-bottom:16px">${body}</p>
+    <p style="color:var(--accent2);font-style:italic">${closing}</p>
+    <div style="font-size:.68rem;color:var(--w40);margin-top:16px;letter-spacing:1px">※ AIによる個別最適化を生成中…</div>
+  </div>`;
+}
+
+// AI生成6フェーズを1本の流れるストーリーに統合
+function buildAIStory50(storyArr, narratives){
+  if(!storyArr||!storyArr.length)return'';
+
+  // 1〜6フェーズを「起承転結」構造で結合
+  const p=(i)=>storyArr[i]||'';
+  const ages=['20代','25歳','30代','40代','50代','60代'];
+
+  // 段落区切りを自然な接続詞でつなぐ
+  const connectors=['','——やがて、','それから、','そして、','歳月が流れ、','最後の章に、'];
+
+  const paragraphs=storyArr.map((text,i)=>{
+    const conn=i===0?'':connectors[i]||'';
+    return `<p style="margin-bottom:20px">${conn}${text}</p>`;
+  });
+
+  return `<div style="font-size:.9rem;line-height:2.1">
+    ${paragraphs.join('')}
+  </div>`;
+}
+
+// ━━━ エージェント適性診断 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function renderAgentFit(score, tier, domTag, indScores, radar){
+  // 株式会社エージェントが求める人材像との適性を評価
+  // エージェントの事業：人材・採用支援・キャリア支援
+  const AGENT_IDEAL_TAGS=['community-builder','leadership','strategic','independent'];
+  const AGENT_IDEAL_INDUSTRIES=['事業開発・新規事業','コンサルティング','スタートアップ・VC','総合商社'];
+
+  // タグ一致スコア
+  const tagMatch=G.tags.filter(t=>AGENT_IDEAL_TAGS.includes(t)).length;
+  const tagScore=Math.round((tagMatch/Math.max(G.tags.length,1))*100);
+
+  // 業種一致スコア（上位3業種がエージェント向き業種と重なるか）
+  const indMatch=indScores.slice(0,3).filter(s=>AGENT_IDEAL_INDUSTRIES.includes(s.name)).length;
+  const indScore=indMatch>=2?'◎':indMatch===1?'○':'△';
+
+  // レーダー軸スコアから適性スコアを計算
+  // [専門性,適応力,時代適合,危機対応,一貫性,投資効率]
+  const [exp,adp,era,cri,con,inv]=radar;
+  const agentFitScore=Math.round((
+    (adp||50)*0.3+   // 適応力：エージェントで最重要
+    (era||50)*0.25+  // 時代適合：AI時代の人材業界必須
+    (con||50)*0.2+   // 一貫性：長期的な顧客との関係
+    (exp||50)*0.15+  // 専門性
+    (cri||50)*0.1    // 危機対応
+  )/100*100);
+
+  // 総合適性ランク
+  const fitRank=agentFitScore>=75?{label:'高い適性',color:'var(--accent)',icon:'🔥'}
+    :agentFitScore>=55?{label:'一定の適性',color:'var(--gold)',icon:'✨'}
+    :{label:'可能性あり',color:'#888',icon:'🌱'};
+
+  // エージェントで活かせる強みのコメント
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  const tagComments={
+    'community-builder':'人と人をつなぐ力は、採用・キャリア支援の核心です。',
+    leadership:'人を育て引っ張る力は、キャリアコンサルタントとして直接活きます。',
+    strategic:'意思決定を支援する力は、企業の採用戦略立案で発揮できます。',
+    independent:'自律的に動く力は、個人の裁量が大きいエージェントの仕事に向いています。',
+    'ai-native':'AI活用力は、採用DXが加速するエージェント業界で希少な武器になります。',
+    'rare-combination':'掛け算の思考は、異業種の人材をつなぐコンサルティングで活きます。',
+    global:'グローバル視点は、外資系企業への転職支援やグローバル人材採用で強みになります。',
+    specialization:'深い専門性は、特定業界に特化した採用支援で最大の価値を発揮します。',
+    legacy:'知見を残す力は、採用ノウハウの体系化やナレッジマネジメントで活きます。',
+  };
+  const mainComment=tagComments[domTag]||'あなたの選択パターンは、エージェントの仕事に活かせる可能性を持っています。';
+
+  // 適性スコアの就活言語翻訳
+  const fitAdvice=agentFitScore>=75
+    ? `${G.nickname}さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に${TL[domTag]||domTag}軸が、採用支援の仕事の本質と重なっています。`
+    : agentFitScore>=55
+    ? `${G.nickname}さんは一定の適性を持っています。${TL[domTag]||domTag}の強みを採用・人材領域でどう活かすかを言語化することで、さらに適性が高まるでしょう。`
+    : `エージェントの仕事は、あなたの現在の強みとは異なる方向性ですが、${TL[domTag]||domTag}の力が人材・採用領域で新しい価値を生む可能性があります。`;
+
+  const el=document.getElementById('agent-fit-block');
+  if(!el)return;
+  el.innerHTML=`
+    <div style="font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>
+
+    <!-- 総合スコア -->
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(0,0,0,.08)">
+      <div style="text-align:center">
+        <div style="font-family:var(--ff-head);font-size:2.8rem;color:${fitRank.color};line-height:1">${agentFitScore}</div>
+        <div style="font-size:.6rem;color:#888;margin-top:2px">適性スコア</div>
+      </div>
+      <div>
+        <div style="font-size:.88rem;font-weight:700;color:#1c1c2e;margin-bottom:4px">${fitRank.icon} ${fitRank.label}</div>
+        <div style="font-size:.78rem;color:#555;line-height:1.6">${fitAdvice}</div>
+      </div>
+    </div>
+
+    <!-- 強みの詳細 -->
+    <div style="margin-bottom:14px">
+      <div style="font-size:.68rem;color:var(--accent);font-weight:700;margin-bottom:8px">あなたの強みがエージェントで活きる理由</div>
+      <div style="font-size:.82rem;color:#1c1c2e;line-height:1.8;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
+        ${mainComment}
+      </div>
+    </div>
+
+    <!-- 適性指標 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      <div style="background:rgba(255,255,255,.6);border-radius:6px;padding:10px 12px;border:1px solid rgba(0,0,0,.08)">
+        <div style="font-size:.6rem;color:#888;margin-bottom:4px">行動パターン一致</div>
+        <div style="font-size:1.1rem;font-weight:700;color:${tagMatch>=3?'var(--accent)':tagMatch>=1?'var(--gold)':'#aaa'}">${tagMatch}/6フェーズ</div>
+      </div>
+      <div style="background:rgba(255,255,255,.6);border-radius:6px;padding:10px 12px;border:1px solid rgba(0,0,0,.08)">
+        <div style="font-size:.6rem;color:#888;margin-bottom:4px">業種親和性</div>
+        <div style="font-size:1.1rem;font-weight:700;color:${indMatch>=2?'var(--accent)':indMatch===1?'var(--gold)':'#aaa'}">${indScore}</div>
+      </div>
+    </div>
+
+    <!-- 適応力・時代適合スコア（エージェントで重要な2軸） -->
+    <div style="font-size:.68rem;color:#888;margin-bottom:6px">エージェントで特に重要な2軸</div>
+    ${[['適応力（変化への対応力）',adp||50],['時代適合（AI時代の感覚）',era||50]].map(([lbl,val])=>`
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-size:.72rem;color:#555;width:150px;flex-shrink:0">${lbl}</div>
+        <div style="flex:1;height:5px;background:rgba(0,0,0,.09);border-radius:3px;overflow:hidden">
+          <div style="height:100%;width:${val}%;background:var(--accent);border-radius:3px;transition:width 1s ease"></div>
+        </div>
+        <div style="font-size:.72rem;color:var(--accent);font-weight:700;width:32px;text-align:right">${val}</div>
+      </div>`).join('')}
+
+    <!-- CTA -->
+    <div style="margin-top:14px;padding:12px 14px;background:rgba(232,98,26,.08);border-radius:6px;border:1px solid rgba(232,98,26,.2)">
+      <div style="font-size:.78rem;color:#1c1c2e;line-height:1.7">
+        このレポートを持って、株式会社エージェントのキャリア相談へ。<br>
+        <span style="font-size:.72rem;color:#888">診断結果をもとに、あなたのキャリアをより深く分析します。</span>
+      </div>
+    </div>
+  `;
 }
 
 async function saveToGAS(score,tier,domTag,chainRule,indScores){
@@ -2245,6 +2720,13 @@ async function sendReportEmail(){
     narratives:G.narratives.map(n=>({phase:n.era,age:n.ageRange,text:n.text})),
     xSummary:window._xSummary||'',
     sessionId:G.sessionId,
+    // 就活ワンシートデータ
+    jobSheet:{
+      axis:document.getElementById('jws-axis')?.textContent||'',
+      industry:document.getElementById('jws-industry')?.textContent||'',
+      selfPR:document.getElementById('jws-pr')?.textContent||'',
+      episode:document.getElementById('jws-episode')?.textContent||'',
+    },
   };
 
   try{
@@ -2257,11 +2739,19 @@ async function sendReportEmail(){
       G.email=email;
     }else{
       btn.disabled=false;btn.textContent='PDF送信';
-      alert('送信に失敗しました。もう一度お試しください。');
+      // エラー種別に応じてメッセージを出し分け
+      const errMsg=data.error||'';
+      if(errMsg.includes('Drive')||errMsg.includes('MimeType')){
+        alert('PDFの生成に失敗しました。GASエディタでDrive APIサービスが追加されているか確認してください。');
+      }else if(errMsg.includes('Gmail')){
+        alert('メール送信に失敗しました。GASの実行アカウントのGmail権限を確認してください。');
+      }else{
+        alert('送信に失敗しました（'+errMsg.slice(0,80)+'）\nGASのログを確認してください。');
+      }
     }
   }catch(e){
     btn.disabled=false;btn.textContent='PDF送信';
-    alert('通信エラーが発生しました。');
+    alert('通信エラーが発生しました。GAS URLが正しく設定されているか確認してください。');
   }
 }
 
@@ -2506,7 +2996,7 @@ function closeDice(){
   if(result?.type==='bad'&&result.event){
     showEvent(result.event); // 既存のイベント表示
   }else if(result?.type==='good'&&result.bonus){
-    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:result.bonus.correction});
+    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:result.bonus.correction,phaseIdx:G.currentPhase});
     applyValueMeterChoice(result.bonus.tag);
     nextPhase();
   }else{
