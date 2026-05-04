@@ -90,9 +90,9 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 #screen-phase.active{display:flex}
 .phase-body{flex:1;display:flex;flex-direction:column;max-width:660px;margin:0 auto;padding:24px 20px 48px;width:100%}
 .era-page{display:flex;flex-direction:column;gap:0}
-.age-hero{margin-bottom:20px}
-.age-hero-frame{display:inline-flex;align-items:baseline;gap:12px;background:rgba(0,0,0,.18);border:2px solid rgba(232,98,26,.45);border-radius:10px;padding:12px 24px;margin-bottom:4px;position:relative}
-.age-hero-frame::before{content:'あなたは今';position:absolute;top:-9px;left:14px;font-size:.58rem;letter-spacing:3px;color:var(--accent);background:transparent;padding:0 4px}
+.age-hero{margin-bottom:20px;padding-top:8px}
+.age-hero-frame{display:inline-flex;align-items:baseline;gap:8px;background:rgba(0,0,0,.18);border:2px solid rgba(232,98,26,.45);border-radius:10px;padding:10px 20px 10px 20px;margin-top:12px;margin-bottom:4px;position:relative;white-space:nowrap}
+.age-hero-frame::before{content:'あなたは今';position:absolute;top:-8px;left:12px;font-size:.55rem;letter-spacing:2px;color:var(--accent);background:linear-gradient(150deg,#e8f4f8,#b8ddf0);padding:0 6px;white-space:nowrap}
 .age-hero-label{font-size:.6rem;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
 .age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,9vw,4.8rem);line-height:1;color:#1c1c2e;letter-spacing:1px}
 .age-hero-num span{color:var(--accent)}
@@ -1458,15 +1458,21 @@ function calcEra(){
   PHASE_IDS.forEach(pid=>{
     const ph=q2d.find(q=>q.phase_id===pid);
     if(!ph){ranges[pid]={min:4,max:6};return;}
-    const sc=[ph.choice_a_tag,ph.choice_b_tag,ph.choice_c_tag,ph.choice_d_tag].map(t=>(td[t]?.eraFitMultiplier?.[pid]??1)*5);
+    const sc=[ph.choice_a_tag,ph.choice_b_tag,ph.choice_c_tag,ph.choice_d_tag]
+      .map(t=>(td[t]?.eraFitMultiplier?.[pid]??1)*5)
+      .filter(v=>!isNaN(v));
+    if(!sc.length){ranges[pid]={min:4,max:6};return;}
     ranges[pid]={min:Math.min(...sc),max:Math.max(...sc)};
   });
+  if(!G.tags||!G.tags.length)return 5; // フォールバック
   return G.tags.reduce((tot,tag,i)=>{
     const pid=PHASE_IDS[i];
+    if(!pid)return tot;
     const raw=(td[tag]?.eraFitMultiplier?.[pid]??1)*5;
-    const r=ranges[pid];
+    const r=ranges[pid]||{min:4,max:6};
     const norm=r.max===r.min?5:(raw-r.min)/(r.max-r.min)*10;
-    return tot+norm*(pw[pid]||0);
+    const v=isNaN(norm)?5:norm;
+    return tot+v*(pw[pid]||0);
   },0);
 }
 
@@ -1551,7 +1557,7 @@ async function showResult(){
   rl.classList.add('show');
   let progress=0;
   const progressTimer=setInterval(()=>{
-    progress=Math.min(progress+Math.random()*12,90);
+    progress=Math.min(progress+Math.random()*8,85);
     rlBar.style.width=progress+'%';
   },200);
 
@@ -1626,6 +1632,28 @@ async function showResult(){
   const acts=actionPool[tier.label]||actionPool['模索者'];
   document.getElementById('action-list').innerHTML=acts.map(a=>`<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`).join('');
 
+  // Gemini AIでナラティブと業種説明文を生成
+  try{
+    const aiResult = await generateWithGemini(score,tier.label,domTag,indScores.slice(0,3));
+    if(aiResult){
+      // AIナラティブでMY STORYを上書き
+      if(aiResult.myStory && storyEl){
+        storyEl.innerHTML = aiResult.myStory.map((entry,i)=>`
+          <div class="story-entry">
+            <div class="story-entry-phase">${G.narratives[i]?.ageRange||''} | ${G.narratives[i]?.era||''}</div>
+            <div class="story-entry-text">${entry.replace(/\n/g,'<br>')}</div>
+          </div>`).join('');
+      }
+      // AI業種説明文を上書き
+      if(aiResult.industryComments){
+        G.aiIndustryComments = aiResult.industryComments;
+        renderIndustryDetailsWithAI(indScores.slice(0,3), aiResult.industryComments);
+      }
+    }
+  }catch(e){
+    console.warn('Gemini生成エラー（フォールバック継続）:', e);
+  }
+
   await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
   fetchStats(score,tier.label);
 
@@ -1635,7 +1663,121 @@ async function showResult(){
   await new Promise(r=>setTimeout(r,400));
   rl.classList.remove('show');
 
+  // レポート画面ではVALUE METERを非表示
+  const vmEl=document.getElementById('value-meter');
+  if(vmEl)vmEl.classList.remove('vm-visible');
   showScreen('screen-result');
+}
+
+// ━━━ Gemini AI生成（GASプロキシ経由） ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+async function generateWithGemini(score, tierLabel, domTag, top3){
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',
+    independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理',
+    'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+
+  const mbtiDesc = G.mbtiData
+    ? `MBTIタイプ: ${G.mbtiType}（${G.mbtiData.label}）- ${G.mbtiData.desc}`
+    : '（MBTIなし・簡易診断）';
+
+  // ナラティブの要約（プロンプトに渡す）
+  const narrativeSummary = G.narratives.map((n,i)=>
+    `Phase${i+1}（${n.ageRange}/${n.era}）: ${n.text.slice(0,60)}...`
+  ).join('\n');
+
+  // 業種上位3つ
+  const industryList = top3.map(t=>`${t.name}（${t.score}%）`).join('、');
+
+  const prompt = `あなたはキャリアアドバイザーです。以下のシミュレーション結果を元に、日本語で回答してください。
+
+【プレイヤー情報】
+- ニックネーム: ${G.nickname}
+- ${mbtiDesc}
+- AI時代適合スコア: ${score}点（${tierLabel}）
+- キャリアの軸（dominantTag）: ${TL[domTag]||domTag}
+- 業種適合上位: ${industryList}
+
+【各フェーズの選択サマリー】
+${narrativeSummary}
+
+【依頼1】MY STORY（一人称・過去形）
+6フェーズそれぞれについて、このプレイヤーの選択と${mbtiDesc}の特性を踏まえた一人称ナラティブを各80字程度で書いてください。
+プレイヤーの個性が感じられる、具体的で感情的な文章にしてください。
+JSON配列で返してください: {"myStory": ["Phase1の文章","Phase2の文章",...,"Phase6の文章"]}
+
+【依頼2】業種適合コメント
+上位3業種それぞれについて、このプレイヤーのMBTIと選択傾向を踏まえた50字程度の具体的なコメントを書いてください。
+JSON形式で返してください: {"industryComments": {"業種名": "コメント文", ...}}
+
+上記2つをまとめて1つのJSONオブジェクトで返してください。余分な説明は不要です。`;
+
+  try{
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'gemini',
+        prompt,
+        sessionId: G.sessionId,
+      })
+    });
+    const data = await res.json();
+    if(!data.ok) throw new Error(data.error||'GAS Gemini error');
+
+    // JSONパース
+    let parsed = data.result;
+    if(typeof parsed === 'string'){
+      // コードブロック除去
+      parsed = parsed.replace(/```json|```/g,'').trim();
+      parsed = JSON.parse(parsed);
+    }
+    return parsed;
+  }catch(e){
+    console.warn('Gemini API error:', e);
+    return null;
+  }
+}
+
+// AI生成業種説明付きレンダリング
+function renderIndustryDetailsWithAI(top3, aiComments){
+  const el=document.getElementById('industry-detail');
+  if(!el)return;
+
+  const TL_IND={
+    '事業開発・新規事業':'新しい事業の仕組みを作り、社会の課題に挑む領域。AIが最も代替しにくく、掛け算型の思考が最も活きる職種です。',
+    'コンサルティング':'企業の課題を診断し、解決策を設計・実行支援する知的専門職。論理思考と対人スキルの両立が求められます。',
+    'ITサービス・SaaS':'AIやソフトウェアで社会インフラを支える領域。技術の進化が最も速く、学習速度が最大の武器になります。',
+    '総合商社':'国内外のビジネスを多角的につなぐ掛け算の仕事。グローバル視点と異業種理解が差別化になります。',
+    '投資銀行・証券':'企業価値の評価と資本提供を担う専門職。論理的思考と高負荷耐性が問われます。',
+    'メガバンク・金融':'社会の資金循環を支える基盤産業。安定性と専門性の掛け算がキャリアを作ります。',
+    '広告・マーケティング':'人の行動変容を設計するクリエイティブ×データの領域。AI活用で急速に変化中です。',
+    'スタートアップ・VC':'0から1を生み出す事業創造の最前線。高いリスクと引き換えに最大の成長環境があります。',
+    'メーカー（製造業）':'ものづくりとデジタル技術の融合が加速中。専門性と継続性が強みになる安定した領域です。',
+    '医療・ヘルスケア':'人の命と健康を支える社会の根幹。AIとの協働で急速に変革が進んでいます。',
+    '教育・EdTech':'次世代を育てるとともにAIで再定義される領域。人間にしかできない関わりが最大の価値です。',
+    '公務員・公共政策':'社会の仕組みを設計・運用する安定した使命。AIが行政を効率化する中、政策立案の重要性は増します。',
+    'インフラ・エネルギー':'社会を動かすライフラインを担う堅牢な領域。持続可能性への転換が最大のテーマです。',
+    'メディア・エンタメ':'人の感情と文化を動かすコンテンツ産業。AI生成との共存が問われる創造の時代です。',
+    '研究・アカデミア':'知の最前線を開拓する深い専門性の世界。長期的な探求心と専門的卓越性が問われます。',
+  };
+
+  el.innerHTML='<div style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 — あなたが輝ける業種</div>'+
+    top3.map((item,i)=>{
+      const aiComment = aiComments?.[item.name];
+      const baseDesc = TL_IND[item.name]||'あなたの選択パターンと高い親和性を持つ業種です。';
+      return `
+      <div class="industry-detail-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <div class="industry-detail-name">${i===0?'🥇':i===1?'🥈':'🥉'} ${item.name}</div>
+          <div class="industry-detail-score">${item.score}%</div>
+        </div>
+        <div class="industry-detail-text">${baseDesc}</div>
+        ${aiComment?`
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(56,189,248,.2)">
+          <div style="font-size:.58rem;letter-spacing:2px;color:var(--cyan);margin-bottom:4px">✦ AI INSIGHT</div>
+          <div style="font-size:.8rem;color:var(--w90);line-height:1.8">${aiComment}</div>
+        </div>`:''}
+      </div>`;
+    }).join('');
 }
 
 async function saveToGAS(score,tier,domTag,chainRule,indScores){
