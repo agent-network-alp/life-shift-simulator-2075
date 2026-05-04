@@ -154,12 +154,21 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .dice-cta.show{opacity:1;pointer-events:auto}
 .dice-cta:hover{transform:translateY(-1px)}
 .dice-tap-hint{font-size:.68rem;color:var(--w40);letter-spacing:2px;margin-top:12px;animation:pulse 1.5s infinite}
-.q-header{margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.q-context-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.q-age-badge{font-family:var(--ff-head);font-size:1.05rem;color:var(--white);background:var(--card2);padding:4px 12px;border-radius:4px;border:1px solid var(--border)}
-.q-era-badge{font-size:.68rem;color:var(--accent2);background:rgba(232,98,26,.1);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.25);letter-spacing:.5px}
-.q-year-badge{font-size:.68rem;color:var(--cyan);background:rgba(56,189,248,.07);padding:4px 10px;border-radius:4px;border:1px solid rgba(56,189,248,.18)}
-.q-num{font-family:var(--ff-head);font-size:.78rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px;opacity:.85}
+.q-header{margin-bottom:0;padding-bottom:0;border-bottom:none}
+/* q-context-bar：上部固定 */
+.q-context-bar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  position:sticky;top:50px;z-index:80;
+  background:rgba(10,10,10,.96);backdrop-filter:blur(10px);
+  padding:10px 20px;
+  margin:0 -20px 16px;
+  border-bottom:1px solid var(--border);
+}
+.q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:var(--white);background:var(--card2);padding:4px 12px;border-radius:4px;border:1px solid var(--border)}
+.q-era-badge{font-size:.72rem;color:var(--accent2);background:rgba(232,98,26,.1);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.25);letter-spacing:.5px}
+.q-year-badge{font-size:.72rem;color:var(--cyan);background:rgba(56,189,248,.07);padding:4px 10px;border-radius:4px;border:1px solid rgba(56,189,248,.18)}
+/* ③ Q番号ラベルを大きく太字に */
+.q-num{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px;font-weight:700;opacity:1;padding-top:4px}
 .q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--white);line-height:1.75}
 .choices4{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
 .choice4-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:16px 18px;border-radius:8px;cursor:pointer;transition:all .18s;display:flex;gap:14px;align-items:flex-start;width:100%}
@@ -534,7 +543,6 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
       <div class="top-phase-info">
         <span class="top-phase-badge" id="phase-badge">PHASE 1/6</span>
         <span class="top-era-name" id="phase-era-name"></span>
-        <span class="top-year-badge" id="phase-year-badge"></span>
       </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="phase-prog"></div></div>
@@ -896,7 +904,7 @@ function renderPhase(){
   // トップバー更新
   document.getElementById('phase-badge').textContent=`PHASE ${G.currentPhase+1}/6`;
   document.getElementById('phase-era-name').textContent=phase.era;
-  document.getElementById('phase-year-badge').textContent=phase.yearRange;
+  // phase-year-badge は削除済み（q-context-barに統一）
 
   if(G.currentQ===-1) renderEraPage(phase);
   else if(G.currentQ===0) renderQ1(phase);
