@@ -90,9 +90,11 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 #screen-phase.active{display:flex}
 .phase-body{flex:1;display:flex;flex-direction:column;max-width:660px;margin:0 auto;padding:24px 20px 48px;width:100%}
 .era-page{display:flex;flex-direction:column;gap:0}
-.age-hero{margin-bottom:24px}
+.age-hero{margin-bottom:20px}
+.age-hero-frame{display:inline-flex;align-items:baseline;gap:12px;background:rgba(0,0,0,.18);border:2px solid rgba(232,98,26,.45);border-radius:10px;padding:12px 24px;margin-bottom:4px;position:relative}
+.age-hero-frame::before{content:'あなたは今';position:absolute;top:-9px;left:14px;font-size:.58rem;letter-spacing:3px;color:var(--accent);background:transparent;padding:0 4px}
 .age-hero-label{font-size:.6rem;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
-.age-hero-num{font-family:var(--ff-head);font-size:clamp(2.6rem,9vw,4.5rem);line-height:1;color:#1c1c2e;letter-spacing:1px}
+.age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,9vw,4.8rem);line-height:1;color:#1c1c2e;letter-spacing:1px}
 .age-hero-num span{color:var(--accent)}
 .era-desc-block{border-left:3px solid var(--accent);padding:14px 18px;background:rgba(0,0,0,.06);border-radius:0 8px 8px 0;margin-bottom:18px}
 .era-desc-text{font-size:.86rem;color:#1c1c2e;line-height:1.95}
@@ -101,23 +103,40 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .era-stat-val{font-family:var(--ff-head);font-size:1.55rem;color:var(--accent);margin-bottom:4px}
 .era-stat-lbl{font-size:.73rem;color:#2c2c3e;line-height:1.4;margin-bottom:3px}
 .era-stat-src{font-size:.58rem;color:#777;letter-spacing:.3px}
-.decision-hint{background:rgba(232,98,26,.09);border:1px solid rgba(232,98,26,.25);border-radius:8px;padding:14px 18px;margin-bottom:24px}
-.decision-hint-label{font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
-.decision-hint-text{font-size:.84rem;color:#1c1c2e;line-height:1.85}
+.decision-hint{background:rgba(255,255,255,.82);border:2px solid var(--accent);border-radius:10px;padding:16px 20px;margin-bottom:24px;box-shadow:0 2px 12px rgba(232,98,26,.15)}
+.decision-hint-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px;font-weight:700;display:flex;align-items:center;gap:6px}
+.decision-hint-label::before{content:'💡';font-size:.9rem}
+.decision-hint-text{font-size:.86rem;color:#1a1a1a;line-height:1.9;font-weight:500}
 .era-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-body);font-size:.96rem;font-weight:700;padding:20px 24px;border-radius:8px;transition:all .2s;text-align:left;display:flex;align-items:center;justify-content:space-between;line-height:1.5;box-shadow:0 4px 24px rgba(232,98,26,.3)}
 .era-cta:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(232,98,26,.45);background:var(--accent2)}
 .era-cta-arrow{font-size:1.2rem;margin-left:8px;flex-shrink:0;transition:transform .2s}
 .era-cta:hover .era-cta-arrow{transform:translateX(4px)}
-.value-meter{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:16px}
-.vm-title{font-size:.58rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.9}
-.vm-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.vm-label{font-size:.7rem;color:var(--w70);width:68px;flex-shrink:0}
-.vm-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
-.vm-fill{height:100%;border-radius:3px;transition:width .45s cubic-bezier(.4,0,.2,1)}
-.vm-delta{font-size:.68rem;font-weight:700;width:34px;text-align:right;transition:color .3s}
+/* VALUE METER固定フローティング */
+#value-meter{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:90;
+  background:rgba(10,10,10,.96);
+  border-top:1px solid var(--border);
+  padding:10px 20px 12px;
+  backdrop-filter:blur(12px);
+  display:none; /* injectValueMeterで表示 */
+  max-width:100%;
+}
+#value-meter.vm-visible{display:block}
+.vm-inner{max-width:660px;margin:0 auto}
+.vm-title{font-size:.55rem;letter-spacing:4px;color:var(--accent);margin-bottom:8px;opacity:.9}
+.vm-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.vm-row{display:flex;flex-direction:column;gap:3px}
+.vm-label{font-size:.62rem;color:var(--w40);text-align:center}
+.vm-track{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.vm-fill{height:100%;border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
+.vm-delta{font-size:.64rem;font-weight:700;text-align:center;transition:color .3s;min-height:14px}
 .vm-delta.up{color:var(--cyan)}
 .vm-delta.down{color:var(--accent)}
-.vm-delta.zero{color:var(--w40)}
+.vm-delta.zero{color:transparent}
+/* Q1〜Q3ページはVALUE METER分の余白を確保 */
+.phase-body{padding-bottom:96px}
 .dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .25s ease}
 .dice-card{background:#0d0d0d;border:1px solid var(--border2);border-radius:14px;padding:36px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,0,0,.9)}
 .dice-intro{font-size:.62rem;letter-spacing:4px;color:var(--w40);margin-bottom:24px}
@@ -313,6 +332,9 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 </head>
 <body>
 
+<!-- VALUE METER固定フローティング（JS制御） -->
+<div id="value-meter"></div>
+
 <div id="loading-overlay">
   <div class="loading-logo">LSS 2075</div>
   <div class="loading-bar-wrap"><div class="loading-bar" id="loading-bar"></div></div>
@@ -321,14 +343,46 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 
 <!-- START -->
 <div class="screen" id="screen-start">
-  <div class="onboard-wrap">
-    <p class="onboard-eyebrow">AI時代を生き残る50年の疑似体験</p>
+  <div class="onboard-wrap" style="max-width:520px">
+    <p class="onboard-eyebrow">株式会社エージェント presents</p>
     <h1 class="onboard-title">LIFE SHIFT<br><span>SIMULATOR</span><br>2075</h1>
-    <p class="onboard-sub">未来へ旅して、戻ってきた君はどこへ向かう。<br>6つの時代の岐路で選択を重ね、<br>あなたの価値とキャリアの方向性を確かめよう。</p>
+
+    <!-- ゲーム説明 -->
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:24px;text-align:left">
+      <p style="font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">WHAT IS THIS?</p>
+      <p style="font-size:.84rem;color:var(--w90);line-height:1.9;margin-bottom:10px">
+        <strong style="color:var(--white)">AI時代のキャリア診断ゲームです。</strong><br>
+        2025年〜2075年の6つの時代を舞台に、各フェーズで「どう働くか」「何に投資するか」を選択します。
+      </p>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+          <span style="color:var(--accent);font-weight:700">①</span> 18問に答えて50年のキャリアを疑似体験（約5〜10分）
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+          <span style="color:var(--accent);font-weight:700">②</span> AI時代適合スコアと業種適合度を診断
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+          <span style="color:var(--accent);font-weight:700">③</span> あなた専用のキャリアレポートを生成
+        </div>
+      </div>
+    </div>
+
     <p class="onboard-hint">ニックネームを入力してスタート</p>
     <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
-    <p style="font-size:.68rem;color:var(--w70);margin-bottom:20px">ニックネームと選択結果はイベント分析のために保存されます</p>
-    <button class="btn-primary" onclick="goStart()">はじめる →</button>
+
+    <!-- 個人情報同意 -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:14px 0 20px;text-align:left">
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
+        <input type="checkbox" id="privacy-check" onchange="updateStartBtn()" style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);flex-shrink:0">
+        <span style="font-size:.75rem;color:var(--w70);line-height:1.7">
+          <a href="https://agent-network.co.jp/privacy-policy/" target="_blank" rel="noopener"
+             style="color:var(--cyan);text-decoration:underline">プライバシーポリシー</a>に同意します。<br>
+          <span style="font-size:.68rem;color:var(--w40)">収集情報：ニックネーム・MBTI・選択内容・スコア。利用目的：サービス改善・統計分析のみ。第三者提供なし。</span>
+        </span>
+      </label>
+    </div>
+
+    <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
   </div>
 </div>
 
@@ -447,8 +501,28 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   <div class="departure-main">
     <p class="departure-tag">DEPARTURE — 2026</p>
     <h2 class="departure-copy">未来へ旅立て。<br><span>2075年まで。</span></h2>
-    <p class="departure-desc">あなたは今、就活生だ。<br>未来を見ずに選択するのか？<br><br>6つの時代を旅して、戻ってきたとき——<br>答えが見える。</p>
-    <button class="btn-primary" onclick="startGame()">旅に出る →</button>
+    <div style="background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:18px 20px;margin-bottom:28px;text-align:left;backdrop-filter:blur(4px)">
+      <p style="font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">GAME FLOW</p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+          <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">1</span>
+          各フェーズで<strong>時代の状況</strong>を読み、3つの問いに答える
+        </div>
+        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+          <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">2</span>
+          選択のたびに<strong>VALUE METER</strong>が変動する
+        </div>
+        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+          <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">3</span>
+          フェーズ後に<strong>ランダムイベント</strong>（運）が発生することも
+        </div>
+        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+          <span style="color:var(--gold);font-family:var(--ff-head);font-size:1rem;margin-right:8px">→</span>
+          6フェーズ完了後、<strong>AI時代適合スコア</strong>と<strong>業種適合レポート</strong>を生成
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="startGame()" style="width:100%">シミュレーション開始 →</button>
   </div>
 </div>
 
@@ -629,6 +703,13 @@ async function init(){
     G.data=json;G.config=json.config||{};
   }catch(e){G.data=FB;G.config=FB.config||{};}
   bar.style.width='100%';
+  // ENTERキー対応
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      const cur=document.querySelector('.screen.active');
+      if(cur?.id==='screen-start')goStart();
+    }
+  });
   setTimeout(()=>{document.getElementById('loading-overlay').classList.add('hide');showScreen('screen-start');},600);
 }
 
@@ -639,11 +720,17 @@ function showScreen(id){
 }
 
 // ── START ────────────────────────────────────────────────────────
+function updateStartBtn(){
+  const checked=document.getElementById('privacy-check')?.checked;
+  const btn=document.getElementById('start-btn');
+  if(btn){btn.disabled=!checked;btn.style.opacity=checked?'1':'.35';}
+}
+
 function goStart(){
   const nick=document.getElementById('nickname-input').value.trim();
   if(!nick){document.getElementById('nickname-input').focus();return;}
+  if(!document.getElementById('privacy-check')?.checked)return;
   G.nickname=nick;G.sessionId=crypto.randomUUID();
-  // MBTIスクリーンへ
   showScreen('screen-mbti');
 }
 
@@ -787,8 +874,10 @@ function startGame(){
   G.currentPhase=0;G.currentQ=-1;
   G.choices=[];G.q1Choices=[];G.q3Choices=[];G.tags=[];G.eventChoices=[];
   G.narratives=[];
-  // VALUE METERリセット
   vmState={expertise:50,adaptability:50,eraFit:50,crisis:50,consistency:50};
+  // VALUE METERを一旦非表示
+  const vmEl=document.getElementById('value-meter');
+  if(vmEl)vmEl.classList.remove('vm-visible');
   renderPhase();showScreen('screen-phase');
 }
 
@@ -861,8 +950,10 @@ function renderEraPage(phase){
   body.innerHTML=`
     <div class="era-page">
       <div class="age-hero">
-        <div class="age-hero-label">あなたは今</div>
-        <div class="age-hero-num"><span>${age}</span>歳</div>
+        <div class="age-hero-frame">
+          <div class="age-hero-num"><span>${age}</span></div>
+          <div style="font-family:var(--ff-head);font-size:clamp(1.4rem,4vw,2rem);color:#1c1c2e;letter-spacing:1px">歳</div>
+        </div>
       </div>
       <div class="era-desc-block">
         <div class="era-desc-text">${phase.eraDescription}</div>
@@ -889,6 +980,9 @@ function renderEraPage(phase){
       </button>
     </div>`;
   applyTooltipsToPage();
+  // 時代背景ページではVALUE METERを非表示
+  const vmEl=document.getElementById('value-meter');
+  if(vmEl)vmEl.classList.remove('vm-visible');
 }
 
 // Q共通：ヘッダとボディを構築
@@ -904,6 +998,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   ps.style.backgroundImage='none';
   const ov=document.getElementById('era-bg-overlay');
   if(ov)ov.style.background='none';
+  // VALUE METERは表示（Q1〜Q3ページで表示）
 
   const body=document.getElementById('phase-body-inner');
   body.innerHTML=`
@@ -1726,32 +1821,32 @@ function renderValueMeter(previewTag){
   if(!el)return;
 
   const axes=[
-    {key:'expertise',label:'専門性',color:'#f5a623'},
-    {key:'adaptability',label:'適応力',color:'#00d4ff'},
-    {key:'eraFit',label:'時代適合',color:'#e94560'},
-    {key:'crisis',label:'危機対応',color:'#81c784'},
-    {key:'consistency',label:'一貫性',color:'#bb86fc'},
+    {key:'expertise',  label:'専門性', color:'#f0b429'},
+    {key:'adaptability',label:'適応力',color:'#38bdf8'},
+    {key:'eraFit',     label:'時代適合',color:'#e8621a'},
+    {key:'crisis',     label:'危機対応',color:'#34d399'},
+    {key:'consistency',label:'一貫性', color:'#a78bfa'},
   ];
 
   const impact=previewTag?TAG_AXIS_IMPACT[previewTag]||{}:{};
 
-  el.innerHTML=`<div class="vm-title">VALUE METER</div>`+
+  el.innerHTML=`<div class="vm-inner">
+    <div class="vm-title">VALUE METER</div>
+    <div class="vm-grid">`+
     axes.map(a=>{
       const base=Math.min(100,Math.max(0,vmState[a.key]));
       const delta=impact[a.key]||0;
-      const preview=Math.min(100,Math.max(0,base+delta));
-      const pct=previewTag?preview:base;
-      const sign=delta>0?'+':delta<0?'':' ';
+      const pct=previewTag?Math.min(100,Math.max(0,base+delta)):base;
+      const sign=delta>0?'+':delta<0?'':'+';
       const cls=delta>0?'up':delta<0?'down':'zero';
-      const dtext=previewTag?(delta!==0?`${sign}${delta}`:'±0'):'';
+      const dtext=previewTag&&delta!==0?`${sign}${delta}`:'';
       return `<div class="vm-row">
-        <div class="vm-label">${a.label}</div>
-        <div class="vm-track">
-          <div class="vm-fill" style="width:${pct}%;background:${a.color}"></div>
-        </div>
+        <div class="vm-track"><div class="vm-fill" style="width:${pct}%;background:${a.color}"></div></div>
+        <div class="vm-label">${a.label} <span style="color:${a.color};font-weight:700">${Math.round(pct)}</span></div>
         <div class="vm-delta ${cls}">${dtext}</div>
       </div>`;
-    }).join('');
+    }).join('')+
+    `</div></div>`;
 }
 
 function applyValueMeterChoice(tag){
@@ -1781,12 +1876,18 @@ function applyValueMeterDelta(delta){
 }
 
 function injectValueMeter(){
-  if(document.getElementById('value-meter'))return;
-  const wrap=document.getElementById('phase-body-inner');
-  if(!wrap)return;
-  const el=document.createElement('div');
-  el.id='value-meter';el.className='value-meter';
-  wrap.insertBefore(el,wrap.firstChild);
+  // 固定フローティングVALUE METERを表示
+  const el=document.getElementById('value-meter');
+  if(el){
+    el.classList.add('vm-visible');
+    renderValueMeter(null);
+    return;
+  }
+  // 初回：bodyに固定要素を作成
+  const newEl=document.createElement('div');
+  newEl.id='value-meter';
+  newEl.classList.add('vm-visible');
+  document.body.appendChild(newEl);
   renderValueMeter(null);
 }
 
