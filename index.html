@@ -86,9 +86,26 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px;color:var(--white)}
 .departure-copy span{color:var(--cyan)}
 .departure-desc{font-size:.88rem;color:var(--w70);line-height:2.1;margin-bottom:40px}
-#screen-phase{display:none;flex-direction:column;min-height:100vh}
+#screen-phase{display:none;flex-direction:column;height:100vh;overflow:hidden}
 #screen-phase.active{display:flex}
-.phase-body{flex:1;display:flex;flex-direction:column;max-width:660px;margin:0 auto;padding:24px 20px 48px;width:100%}
+/* phase-bodyは固定ヘッダー＋スクロール領域の2層 */
+.phase-body{
+  flex:1;display:flex;flex-direction:column;
+  max-width:660px;margin:0 auto;width:100%;
+  overflow:hidden; /* 子要素でスクロール管理 */
+}
+/* 固定ヘッダー部分（年齢・時代・Q番号・設問文） */
+.q-fixed-header{
+  flex-shrink:0;
+  padding:16px 20px 0;
+}
+/* スクロール可能な選択肢エリア */
+.q-scroll-body{
+  flex:1;
+  overflow-y:auto;
+  padding:12px 20px 120px; /* 下部VALUE METER分の余白 */
+  -webkit-overflow-scrolling:touch;
+}
 .era-page{display:flex;flex-direction:column;gap:0}
 .age-hero{margin-bottom:20px;padding-top:8px}
 .age-hero-frame{display:inline-flex;align-items:baseline;gap:8px;background:rgba(0,0,0,.18);border:2px solid rgba(232,98,26,.45);border-radius:10px;padding:10px 20px 10px 20px;margin-top:12px;margin-bottom:4px;position:relative;white-space:nowrap}
@@ -135,8 +152,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .vm-delta.up{color:var(--cyan)}
 .vm-delta.down{color:var(--accent)}
 .vm-delta.zero{color:transparent}
-/* Q1〜Q3ページはVALUE METER分の余白を確保 */
-.phase-body{padding-bottom:96px}
+/* VALUE METER分の余白はq-scroll-bodyで管理 */
 .dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .25s ease}
 .dice-card{background:#0d0d0d;border:1px solid var(--border2);border-radius:14px;padding:36px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,0,0,.9)}
 .dice-intro{font-size:.62rem;letter-spacing:4px;color:var(--w40);margin-bottom:24px}
@@ -158,11 +174,9 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 /* q-context-bar：上部固定 */
 .q-context-bar{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  position:sticky;top:50px;z-index:80;
-  background:rgba(10,10,10,.96);backdrop-filter:blur(10px);
-  padding:10px 20px;
-  margin:0 -20px 16px;
+  padding:10px 0 12px;
   border-bottom:1px solid var(--border);
+  margin-bottom:12px;
 }
 .q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:var(--white);background:var(--card2);padding:4px 12px;border-radius:4px;border:1px solid var(--border)}
 .q-era-badge{font-size:.72rem;color:var(--accent2);background:rgba(232,98,26,.1);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.25);letter-spacing:.5px}
@@ -1010,7 +1024,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
 
   const body=document.getElementById('phase-body-inner');
   body.innerHTML=`
-    <div class="q-header">
+    <div class="q-fixed-header">
       <div class="q-context-bar">
         <span class="q-age-badge">${age}歳</span>
         <span class="q-era-badge">${phase.era}</span>
@@ -1019,8 +1033,10 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
       <div class="q-num">Q${qNum} / 3 — ${qLabel}</div>
       <div class="q-text">${questionText}</div>
     </div>
-    <div class="choices4" id="choices4"></div>
-    <div id="mirror-area"></div>`;
+    <div class="q-scroll-body">
+      <div class="choices4" id="choices4"></div>
+      <div id="mirror-area"></div>
+    </div>`;
 
   // VALUE METER 注入
   injectValueMeter();
