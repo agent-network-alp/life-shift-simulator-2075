@@ -127,6 +127,11 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .era-stat-val{font-family:var(--ff-head);font-size:1.55rem;color:var(--accent);margin-bottom:4px}
 .era-stat-lbl{font-size:.73rem;color:#2c2c3e;line-height:1.4;margin-bottom:3px}
 .era-stat-src{font-size:.58rem;color:#777;letter-spacing:.3px}
+.prev-phase-recap{background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:12px 16px;margin-bottom:14px;border-left:3px solid var(--cyan)}
+.prev-phase-label{font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:6px}
+.prev-phase-content{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.prev-phase-tag{font-size:.75rem;font-weight:700;color:var(--accent);background:rgba(232,98,26,.1);padding:2px 10px;border-radius:12px;border:1px solid rgba(232,98,26,.3)}
+.prev-phase-result{font-size:.78rem;color:#2c2c3e;line-height:1.6}
 .decision-hint{background:rgba(255,255,255,.82);border:2px solid var(--accent);border-radius:10px;padding:16px 20px;margin-bottom:24px;box-shadow:0 2px 12px rgba(232,98,26,.15)}
 .decision-hint-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px;font-weight:700;display:flex;align-items:center;gap:6px}
 .decision-hint-label::before{content:'💡';font-size:.9rem}
@@ -176,6 +181,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .dice-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;padding:14px;border-radius:6px;opacity:0;transition:opacity .3s,transform .15s;pointer-events:none}
 .dice-cta.show{opacity:1;pointer-events:auto}
 .dice-cta:hover{transform:translateY(-1px)}
+.dice-event-text{font-size:.84rem;color:var(--w90);line-height:1.8;margin-bottom:16px;min-height:40px;opacity:0;transition:opacity .4s ease .2s;padding:0 4px;font-style:italic}
 .dice-tap-hint{font-size:.68rem;color:var(--w40);letter-spacing:2px;margin-top:12px;animation:pulse 1.5s infinite}
 .q-header{margin-bottom:0;padding-bottom:0;border-bottom:none}
 /* q-context-bar：上部固定 */
@@ -1000,6 +1006,14 @@ function renderEraPage(phase){
           <div class="era-stat-src">${phase.stat2_source}</div>
         </div>
       </div>
+      ${G.currentPhase>0&&G.tags[G.currentPhase-1]?`
+      <div class="prev-phase-recap">
+        <div class="prev-phase-label">◀ PHASE ${G.currentPhase} の選択</div>
+        <div class="prev-phase-content">
+          <span class="prev-phase-tag">${{specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[G.tags[G.currentPhase-1]]||G.tags[G.currentPhase-1]}</span>
+          <span class="prev-phase-result">${({specialization:'専門性を極める道を選んだ。その選択が今も積み上がっている。','ai-native':'AIと共に進む道を選んだ。変化への適応力が磨かれている。',strategic:'意思決定の上流に立つ道を選んだ。視野が広がっている。',independent:'組織に依存しない道を選んだ。自律性が育っている。','rare-combination':'掛け算の道を選んだ。希少な組み合わせが生まれつつある。',leadership:'人を育てる道を選んだ。影響力の輪が広がっている。','community-builder':'つながりを作る道を選んだ。ネットワークが資産になりつつある。',global:'境界を越える道を選んだ。視野がグローバルに広がっている。',legacy:'残すことを選んだ。蓄積が形になりつつある。'})[G.tags[G.currentPhase-1]]||'あなたの選択が積み上がっている。'}</span>
+        </div>
+      </div>`:''}
       <div class="decision-hint">
         <div class="decision-hint-label">意思決定のポイント</div>
         <div class="decision-hint-text">${hints[G.currentPhase]||''}</div>
@@ -1106,10 +1120,86 @@ function renderQ2(phase){
     {label:'D',text:q2.choice_d_text,sub:q2.choice_d_example,tag:q2.choice_d_tag},
   ],c=>{
     G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
-    const mirror={specialization:'あなたは深く掘り下げることに価値を見出す思考を持っています。','ai-native':'あなたは新しいツールを武器に変える適応力を持っています。',strategic:'あなたは全体を俯瞰して動く意思決定の姿勢を持っています。',independent:'あなたは自律的に動き組織に縛られない発想を持っています。','rare-combination':'あなたは異なるものを掛け合わせて価値を作る思考を持っています。',leadership:'あなたは人を育て引っ張ることに喜びを見出す姿勢を持っています。','community-builder':'あなたはつながりの中に価値を生み出す思考を持っています。',global:'あなたは境界を越えて動くことを恐れない姿勢を持っています。',legacy:'あなたは自分の経験を次世代に渡すことに意義を感じています。'};
-    const msg=mirror[c.tag];
-    if(msg){const ma=document.getElementById('mirror-area');if(ma)ma.innerHTML=`<div class="mirror-msg">${msg}</div>`;}
-    setTimeout(()=>{G.currentQ=2;renderPhase();},400);
+    // B：選択タグに応じた「連鎖反応の予告」を表示
+    const CHAIN_REACTION={
+      specialization:{
+        0:'→ 3年後、この専門性でスカウトが来るかもしれない。',
+        1:'→ AGI時代でも、本物の深さは代替されない。',
+        2:'→ 産業再編の中で、あなたの専門は希少価値を持ち始めた。',
+        3:'→ 現場を離れない選択が、後輩たちの指標になった。',
+        4:'→ 積み上げた知見が、一つの体系として見え始めた。',
+        5:'→ 現役を続ける選択が、社会への最後の贈り物になった。',
+      },
+      'ai-native':{
+        0:'→ 1年後、社内でAI推進リーダーに任命された。',
+        1:'→ AGI移行の混乱期に、あなたは橋渡し役として求められた。',
+        2:'→ 「AIと人間の掛け算」を設計できる人材は、まだ少ない。',
+        3:'→ AIが標準化された職場で、あなたは設計者として動いた。',
+        4:'→ 長年のAI活用経験が、次世代への指針になり始めた。',
+        5:'→ AI黎明期から歩んできた経験は、誰にも奪えない財産だ。',
+      },
+      strategic:{
+        0:'→ 「何を解くか」を決められる人間は、AIに替えられない。',
+        1:'→ 課題の定義ができる人間が、最も希少になり始めた。',
+        2:'→ 全体を見渡せる視点が、組織の中で唯一無二になっていた。',
+        3:'→ 大きな意思決定の場に、あなたの席が用意された。',
+        4:'→ 長年の判断経験が、組織の羅針盤として機能し始めた。',
+        5:'→ 意思決定の蓄積は、次世代への最大の贈り物になった。',
+      },
+      independent:{
+        0:'→ 半年後、最初のクライアントが獲得できた。',
+        1:'→ 組織を離れたことで、自分の市場価値が初めて見えた。',
+        2:'→ 複数の場所で動く選択が、リスク分散にもなっていた。',
+        3:'→ 個人としての信頼が、組織のブランドを超え始めた。',
+        4:'→ 自分のペースで働く自由が、最大の報酬になっていた。',
+        5:'→ 誰にも雇われない人生の最終章が、静かに輝いていた。',
+      },
+      'rare-combination':{
+        0:'→ 二つの分野を知っている人間は、まだほとんどいない。',
+        1:'→ 掛け算の準備が、AGI移行期に真価を発揮し始めた。',
+        2:'→ 業界の境界が消えた場所で、あなたの組み合わせが爆発した。',
+        3:'→ 誰も真似できない掛け算が、新しい職種を生み出した。',
+        4:'→ 二つの専門性を持つ人間として、社会のあちこちから声がかかった。',
+        5:'→ 希少な掛け算の人生が、一冊の本になるかもしれない。',
+      },
+      leadership:{
+        0:'→ あなたの言葉が、誰かの背中を押した最初の瞬間があった。',
+        1:'→ チームを率いる経験が、自分自身の軸を作っていた。',
+        2:'→ 混乱の時代に、方向性を示せる人間が最も求められた。',
+        3:'→ 育てた後輩が、今度はあなたを支える存在になった。',
+        4:'→ どれだけの人を育てたかが、あなたの最大の実績になった。',
+        5:'→ 組織を離れても、あなたの背中を見ていた人たちがいた。',
+      },
+      'community-builder':{
+        0:'→ 出会いの数が、将来の選択肢の数になっていった。',
+        1:'→ つながりは、変化の時代の最後の安全網になった。',
+        2:'→ 業界の境界を越えた場所で、あなたのネットワークが動いた。',
+        3:'→ コミュニティが、一つの生態系として機能し始めた。',
+        4:'→ あなたが作ったつながりが、社会課題を解決し始めた。',
+        5:'→ 自分がいなくても動き続けるコミュニティが、最大の作品だった。',
+      },
+      global:{
+        0:'→ 一歩踏み出した経験が、世界を小さく感じさせた。',
+        1:'→ 国境を越えた経験が、国内では見えなかった景色を見せた。',
+        2:'→ グローバルな掛け算が、国内だけのキャリアを大きく上回った。',
+        3:'→ 世界各地の仲間が、あなたの最大の財産になっていた。',
+        4:'→ グローバルな視点は、50代になっても最大の武器だった。',
+        5:'→ 世界を旅した経験が、日本への最後の贈り物になった。',
+      },
+      legacy:{
+        0:'→ 残したいという意志が、選択の質を変え始めた。',
+        1:'→ 体系化する習慣が、後の財産を少しずつ積み上げていた。',
+        2:'→ 形にしたものが、思わぬ場所で誰かの力になっていた。',
+        3:'→ ツールやコンテンツが、自分の分身として動き続けた。',
+        4:'→ 何年も前に作ったものが、まだ多くの人の役に立っていた。',
+        5:'→ 人生をまとめた作品が、知的遺産として次世代に渡った。',
+      },
+    };
+    const reactions=CHAIN_REACTION[c.tag];
+    const reactionText=reactions?reactions[G.currentPhase]||'→ あなたの選択が、未来の可能性を広げた。':'→ あなたの選択が、未来の可能性を広げた。';
+    const ma=document.getElementById('mirror-area');
+    if(ma)ma.innerHTML=`<div class="mirror-msg"><span style="color:var(--accent);font-weight:700">${reactionText}</span></div>`;
+    setTimeout(()=>{G.currentQ=2;renderPhase();},600);
   });
 }
 
@@ -1644,7 +1734,24 @@ async function showResult(){
   document.getElementById('res-tier').style.color=tier.color;
   document.getElementById('res-headline').textContent=fb.headline||'';
   // フィードバック本文はMBTI最適化後に設定（下記参照）
-  document.getElementById('ending-copy').textContent=`未来から見えたこと——あなたは${TL[domTag]||domTag}として価値を発揮できる。そして今、2026年から歩み出す。`;
+  // F：スコア文脈説明
+  const scorePercentile=score>=80?'上位18%':score>=60?'上位42%':score>=40?'上位65%':'下位35%';
+  // 最もスコアに貢献したフェーズを特定
+  const pw=getPW();
+  const phaseContribs=G.tags.map((tag,i)=>{
+    const pid=PHASE_IDS[i];
+    return{idx:i,w:pw[pid]||0,tag};
+  }).sort((a,b)=>b.w-a.w);
+  const topPhase=phaseContribs[0];
+  const topPhaseNames=['20代前半（AI実装期）','25〜30歳（AGI移行期）','30代（産業再編期）','40代（人機協働期）','50代（社会変容期）','60代（ポスト労働期）'];
+  const scoreContext=topPhase
+    ? `特に${topPhaseNames[topPhase.idx]}での${TL[topPhase.tag]||topPhase.tag}の選択が、スコアを大きく押し上げました。`
+    : '';
+  const chainContext=chain.rule==='multiplication'?'専門特化から掛け算希少への連携が、最大のボーナスを生み出しました。':chain.rule==='consistent+pivot'?'一貫した軸を持ちながら、途中で新しい道に踏み出す選択が高く評価されました。':chain.rule==='consistent'?`${TL[G.tags[0]]||G.tags[0]}の一貫した積み上げが、信頼性のボーナスをもたらしました。`:'';
+
+  document.getElementById('ending-copy').innerHTML=
+    `未来から見えたこと——あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。<br>
+     <span style="font-size:.82rem;opacity:.8">同世代の${scorePercentile}に相当するスコアです。${scoreContext}${chainContext}</span>`;
 
   // MBTI最適化フィードバック
   const mbtiStyle=G.mbtiData?FEEDBACK_STYLE[G.mbtiData.feedbackStyle]||{}:{};
@@ -1654,11 +1761,60 @@ async function showResult(){
     : rawBody;
   document.getElementById('res-body').textContent=optimizedBody;
 
-  // MBTI表示（存在する場合）
-  if(G.mbtiType){
+  // H：MBTI×選択相性分析
+  if(G.mbtiType&&G.mbtiData){
+    const mbtiTagBonus=G.mbtiData.tagBonus||{};
+    const alignedTags=G.tags.filter(t=>mbtiTagBonus[t]>0);
+    const uniqueAligned=[...new Set(alignedTags)];
+    const alignedPhases=G.tags.map((t,i)=>mbtiTagBonus[t]>0?i:-1).filter(i=>i>=0);
+    const matchPct=Math.round((alignedTags.length/Math.max(G.tags.length,1))*100);
+
+    // MBTI×投資先の相性
+    const mbtiInvestMatch={
+      INTJ:{skill:'◎',network:'△',experiment:'○',current_job:'○'},
+      INTP:{skill:'◎',network:'△',experiment:'◎',current_job:'△'},
+      ENTJ:{skill:'○',network:'◎',experiment:'◎',current_job:'○'},
+      ENTP:{skill:'○',network:'○',experiment:'◎',current_job:'△'},
+      INFJ:{skill:'◎',network:'○',experiment:'○',current_job:'○'},
+      INFP:{skill:'◎',network:'△',experiment:'○',current_job:'○'},
+      ENFJ:{skill:'○',network:'◎',experiment:'○',current_job:'○'},
+      ENFP:{skill:'○',network:'◎',experiment:'◎',current_job:'△'},
+      ISTJ:{skill:'◎',network:'△',experiment:'△',current_job:'◎'},
+      ISFJ:{skill:'◎',network:'○',experiment:'△',current_job:'◎'},
+      ESTJ:{skill:'○',network:'◎',experiment:'△',current_job:'◎'},
+      ESFJ:{skill:'○',network:'◎',experiment:'△',current_job:'◎'},
+      ISTP:{skill:'◎',network:'△',experiment:'◎',current_job:'○'},
+      ISFP:{skill:'○',network:'△',experiment:'◎',current_job:'○'},
+      ESTP:{skill:'△',network:'○',experiment:'◎',current_job:'△'},
+      ESFP:{skill:'△',network:'◎',experiment:'◎',current_job:'△'},
+    };
+    const investMatchMap=mbtiInvestMatch[G.mbtiType]||{};
+    const q3Matches=G.q3Choices.map(inv=>investMatchMap[inv]||'○');
+    const highInvest=G.q3Choices.filter(inv=>investMatchMap[inv]==='◎').length;
+
     const mbtiBadge=document.createElement('div');
-    mbtiBadge.style.cssText='font-size:.72rem;color:var(--cyan);margin-top:8px;letter-spacing:2px';
-    mbtiBadge.textContent=`MBTI: ${G.mbtiType} (${G.mbtiData?.label||''})  |  ${G.mbtiData?.desc||''}`;
+    mbtiBadge.style.cssText='margin-top:16px';
+    mbtiBadge.innerHTML=`
+      <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:8px;padding:14px 16px">
+        <div style="font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:10px">MBTI ALIGNMENT ANALYSIS</div>
+        <div style="font-size:.8rem;color:#2c2c3e;margin-bottom:6px">
+          <strong style="color:var(--accent)">${G.mbtiType}（${G.mbtiData.label}）</strong>との選択一致度：
+          <strong style="color:var(--accent);font-size:1rem">${matchPct}%</strong>
+        </div>
+        ${uniqueAligned.length>0?`
+        <div style="font-size:.75rem;color:#555;margin-bottom:6px">
+          ✓ MBTIの強みを活かした選択：
+          ${uniqueAligned.map(t=>`<span style="color:var(--accent);font-weight:700">${TL[t]||t}</span>`).join('・')}
+        </div>`:''}
+        ${highInvest>0?`
+        <div style="font-size:.75rem;color:#555">
+          ✓ ${G.mbtiType}らしい投資先選択：${highInvest}回（スキル投資・人脈など）
+        </div>`:''}
+        ${matchPct<50?`
+        <div style="font-size:.75rem;color:#888;margin-top:6px">
+          △ MBTIと異なる選択もありましたが、それが独自のキャリアを作ることもあります。
+        </div>`:''}
+      </div>`;
     document.getElementById('res-body').after(mbtiBadge);
   }
 
@@ -1734,11 +1890,31 @@ async function showResult(){
   });
 
   // アクション
+  // J：就活への具体的アクション（フォールバック版）
+  const TOP_IND=indScores[0]?.name||'事業開発';
+  const TOP2_IND=indScores[1]?.name||'コンサルティング';
+  const DOM_TAG_JP=TL[domTag]||domTag;
   const actionPool={
-    先駆者:['あなたの強みを1枚のスライドで言語化してみる。「自分は何者か」を言葉にする練習を今週始めよう。','同じ業界・職種の先輩に話を聞く機会を1つ作る。自分の方向性を外部の視点で検証しよう。','今週、自分のキャリアビジョンを200字で書いてみる。'],
-    適応者:['今週、自分の専門分野を1つ決めて、その分野の本を1冊選ぶ。軸を作る第一歩を踏み出そう。','気になっている業界の企業を3社調べてみる。具体的な企業名まで落とし込もう。','今持っているスキルと、目指したいキャリアのギャップを書き出してみる。'],
-    模索者:['「どんな人間でありたいか」を30分かけて書き出してみる。軸を見つけるための問いに向き合おう。','興味があることを3つ書き出し、それぞれが仕事になる可能性を調べてみる。','就活イベントや説明会に1つ参加してみる。情報ではなく、自分の反応を観察しよう。'],
-    転換期:['「このままでいい」という前提を一度捨てて、全く違う業界を1つ調べてみる。','信頼できる人に「自分の強みは何か」を聞いてみる。自己認識のズレを発見しよう。','今週1つだけ、いつもと違う選択をしてみる。小さな変化が大きな転換の始まりになる。'],
+    先駆者:[
+      `${TOP_IND}を中心に、OB・OG訪問を2〜3名アポイントしてみる。`,
+      `「${DOM_TAG_JP}」をキーワードにした自己PR文を200字で書いてみる。`,
+      `${TOP2_IND}の企業で、自分の強みを活かせる職種を3つ調べてみる。`,
+    ],
+    適応者:[
+      `${TOP_IND}の合同説明会やイベントに1つ参加してみる。`,
+      `今持っているスキルと${TOP_IND}が求める人材のギャップを書き出してみる。`,
+      `AIツール（ChatGPT等）を使った業務を1つ試して、自己PRに組み込んでみる。`,
+    ],
+    模索者:[
+      `${TOP_IND}と${TOP2_IND}の仕事内容を、具体的な求人票で比較してみる。`,
+      `「${DOM_TAG_JP}を軸にしたとき、どんな仕事ができるか」を30分考えてみる。`,
+      `就活エージェントや学校のキャリアセンターに1度相談してみる。`,
+    ],
+    転換期:[
+      `全く知らない業界（${TOP_IND}以外）の説明会に1つ参加して、自分の反応を観察してみる。`,
+      `信頼できる社会人に「自分の強みは何か」を率直に聞いてみる。`,
+      `「このままでいいのか」という問いを、紙に30分書き出してみる。`,
+    ],
   };
   const acts=actionPool[tier.label]||actionPool['模索者'];
   document.getElementById('action-list').innerHTML=acts.map(a=>`<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`).join('');
@@ -1759,6 +1935,15 @@ async function showResult(){
       if(aiResult.industryComments){
         G.aiIndustryComments = aiResult.industryComments;
         renderIndustryDetailsWithAI(indScores.slice(0,3), aiResult.industryComments);
+      }
+      // J：AI生成の就活アクションで上書き
+      if(aiResult.jobActions&&aiResult.jobActions.length){
+        const actionEl=document.getElementById('action-list');
+        if(actionEl){
+          actionEl.innerHTML=aiResult.jobActions.map(a=>
+            `<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`
+          ).join('');
+        }
       }
     }
   }catch(e){
@@ -1830,23 +2015,36 @@ ${phaseDetails}
 
 条件：
 - 完全な一人称・過去形（「私は〜した」「〜だった」）
-- プレイヤーの選択タイプ（専門特化/AI活用/意思決定など）を具体的に描写
-- MBTIの特性（${G.mbtiData?.label||'不明'}型の特徴）を自然に盛り込む
+- プレイヤーの選択タイプを具体的に描写（専門特化なら「一点を掘り続けた」等）
+- MBTIの特性（${G.mbtiData?.label||'不明'}型）を自然に盛り込む
 - 各フェーズで起きた葛藤・決断・手応えを具体的に
 - テンプレート感を排除し、この人だけの物語にする
-- 各フェーズ100〜150字程度
+- 各フェーズ120〜160字程度
 
 JSON配列で返す: {"myStory": ["Phase1","Phase2","Phase3","Phase4","Phase5","Phase6"]}
 
-【依頼2】業種適合インサイト
+【依頼2】業種の未来予測インサイト（G案）
 
-上位3業種それぞれについて、このプレイヤーの選択傾向とMBTIを踏まえ、
-「なぜこの人がこの業種に向いているか」を60〜80字で具体的に説明してください。
-抽象的な表現を避け、選択パターンと業種の接点を明示してください。
+上位3業種それぞれについて、以下の構成で書いてください：
+1. 2030〜2040年のその業種の変化予測（1文）
+2. このプレイヤーの選択パターンとMBTIを踏まえた「なぜ向いているか」（1文）
+3. その業種でのリスクと対策（1文）
 
-JSON形式で返す: {"industryComments": {"業種名": "コメント", ...}}
+合計80〜100字程度。抽象的な表現を避け、具体的に。
 
-上記2つをまとめた1つのJSONのみ返してください。説明文不要。`;
+JSON形式で返す: {"industryComments": {"業種名": "インサイト文章", ...}}
+
+【依頼3】就活への具体的アクション（J案）
+
+このプレイヤーのスコア・タグ・業種適合を踏まえ、
+「今すぐできる就活アクション」を3つ、それぞれ1文で書いてください。
+- 業種名や職種名など固有名詞を含める
+- 「〜してみる」「〜を調べる」など具体的な動詞で終わる
+- 抽象的なアドバイスではなく、明日から実行できる行動
+
+JSON形式で返す: {"jobActions": ["アクション1", "アクション2", "アクション3"]}
+
+上記3つをまとめた1つのJSONのみ返してください。説明文不要。`;
 
   try{
     const res = await fetch(GAS_URL, {
@@ -2181,16 +2379,51 @@ const BONUS_EVENTS=[
 
 let diceCallback=null;
 
+// D：フェーズ×結果別の具体的なイベントテキスト
+const DICE_EVENTS={
+  bad:{
+    0:['突然の業界再編。配属先の部署が縮小された。','新卒同期の3人がAI導入で仕事を失った。自分の番はいつか。','最初のプロジェクトが頓挫。自分の判断を疑い始めた。'],
+    1:['担当業務の60%がAIに置き換えられた。役割の再定義が急務になった。','景気後退で採用凍結。転職の道が一時的に閉ざされた。','信頼していた上司が突然退職。よりどころが消えた。'],
+    2:['メインクライアントが競合他社に流れた。実力を問い直す時間が来た。','業界の主要プレイヤーが統合・再編。自分のポジションが揺れた。','3年がかりのプロジェクトが中断。積み上げたものが白紙になった。'],
+    3:['組織が突然リストラを発表。あなたの部署も対象になった。','AIに意思決定の一部を奪われ始めた。人間の役割を再考する時が来た。','長年のパートナーとの決裂。関係性の作り直しを迫られた。'],
+    4:['健康上の問題が発生。働き方を根本から見直す必要が出てきた。','技術の急変で積み上げた専門性の一部が陳腐化した。','予期しない社会変動で、計画が大きく狂った。'],
+    5:['社会保障制度が大きく変わった。老後の設計を見直す必要が出た。','長年の仲間が急逝した。何のために働くかを、改めて問い直した。','最後の計画が崩れた。しかしそれが、新しい始まりになった。'],
+  },
+  good:{
+    0:['業界誌に書いたコラムがバズった。思わぬ場所から声がかかった。','偶然の出会いが、最初のメンターとの縁を作った。','社内ハッカソンで優秀賞。自分の可能性に気づいた瞬間だった。'],
+    1:['転職活動で、想定より高いオファーが届いた。市場価値が見えた。','副業で取り組んでいたプロジェクトが注目を集めた。','異業種のイベントで、後の仕事相手となる人物に出会った。'],
+    2:['取り組んでいた研究・プロジェクトが業界誌に掲載された。','掛け算が機能した。二つの専門性が交差する仕事が舞い込んだ。','海外からオファーが届いた。グローバルな評価を実感した。'],
+    3:['長年育てていた後輩が、大きなプロジェクトで結果を出した。','経営陣から直接声がかかった。意思決定の中枢に入る機会が来た。','コミュニティが動いた。自分の発信が、社会課題の解決につながった。'],
+    4:['積み上げてきた知見が、書籍として形になった。','コミュニティが自走し始めた。自分がいなくても動く仕組みができた。','若い世代から「あなたのようになりたい」という言葉をもらった。'],
+    5:['人生の集大成となるプロジェクトの話が舞い込んだ。','後進が自分を超えた瞬間を目撃した。それが最大の喜びだった。','長年の活動が、思わぬ形で社会に認められた。'],
+  },
+  none:{
+    0:['特に大きな出来事はなかった。静かに、着実に積み上げる時間が続いた。','波乱なく過ぎた日常の中で、小さな習慣が土台を作っていた。'],
+    1:['大きな変化はなかった。しかし、その「静けさ」が集中を生んだ。','特筆すべき出来事はなかった。それがむしろ、積み上げの時間になった。'],
+    2:['嵐の中の凪のような時期だった。静かに次の準備をする時間として使った。','業界が揺れる中で、自分の周辺は比較的穏やかだった。'],
+    3:['大きな波はなかった。その分、深く考え、内側を鍛える時間になった。','特別な出来事はなかった。ただ、確実に何かが育っていた。'],
+    4:['静かな時期が続いた。積み上げたものを整理し、言語化する時間になった。','波乱のない時間だった。それが、深く振り返るための余白になった。'],
+    5:['静かな最終章の始まりだった。自分の人生を、静かに俯瞰する時間。','大きな出来事はなかった。それが、穏やかな着地点への道になった。'],
+  },
+};
+
+function getDiceEventText(result){
+  const pi=Math.min(G.currentPhase,5);
+  const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
 function showDice(onResult){
   diceCallback=onResult;
   const ol=document.createElement('div');
   ol.className='dice-overlay';ol.id='dice-overlay';
   ol.innerHTML=`
     <div class="dice-card">
-      <div class="dice-intro">時代は、想定通りには動かない</div>
-      <div class="dice-face" id="dice-face" onclick="rollDice()">⚄</div>
-      <div class="dice-tap-hint" id="dice-tap-hint">タップして運命を試す</div>
+      <div class="dice-intro">FATE ROLL — 人生には選択だけでは決まらないことがある</div>
+      <div class="dice-face" id="dice-face" onclick="rollDice()">🎲</div>
+      <div class="dice-tap-hint" id="dice-tap-hint">TAP TO ROLL</div>
       <div class="dice-label" id="dice-label"></div>
+      <div class="dice-event-text" id="dice-event-text"></div>
       <div class="dice-result-badge" id="dice-badge"></div>
       <button class="dice-cta" id="dice-cta" onclick="closeDice()">次のフェーズへ →</button>
     </div>`;
@@ -2201,62 +2434,68 @@ function rollDice(){
   const face=document.getElementById('dice-face');
   const hint=document.getElementById('dice-tap-hint');
   const label=document.getElementById('dice-label');
+  const eventTextEl=document.getElementById('dice-event-text');
   const badge=document.getElementById('dice-badge');
   const cta=document.getElementById('dice-cta');
 
   if(face.classList.contains('rolling'))return;
   hint.style.display='none';
-
-  // アニメーション
   face.classList.add('rolling');
+
+  const FACES=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'];
   let count=0;
   const spin=setInterval(()=>{
-    face.textContent=DICE_FACES[Math.floor(Math.random()*6)];
+    face.textContent=FACES[Math.floor(Math.random()*6)];
     count++;
-    if(count>8){
+    if(count>12){
       clearInterval(spin);
       face.classList.remove('rolling');
-      // 最終目を確定
       const result=Math.ceil(Math.random()*6);
-      face.textContent=DICE_FACES[result-1];
 
-      // 結果判定
       setTimeout(()=>{
+        let type,badgeClass,badgeText,faceIcon,labelText;
         if(result<=2){
-          // ショックイベント
+          type='bad';badgeClass='event-bad';badgeText='⚡ SHOCK';faceIcon='2️⃣';
+          labelText='試練が訪れた。';
           const evs=(G.data.events||[]).filter(e=>{
             const tp=Array.isArray(e.trigger_phases)?e.trigger_phases:String(e.trigger_phases).split(',').map(s=>s.trim());
             return tp.includes(PHASE_IDS[G.currentPhase]);
           });
           if(evs.length){
-            badge.textContent='⚡ ショックイベント発生';
-            badge.className='dice-result-badge event-bad show';
             const ev=evs[Math.floor(Math.random()*evs.length)];
-            label.textContent=ev.title+'：'+ev.description;
             diceCallback={type:'bad',event:ev};
           }else{
-            badge.textContent='波乱なし';
-            badge.className='dice-result-badge event-none show';
-            label.textContent='このフェーズは穏やかに進んだ。';
+            type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
+            labelText='特に大きな変化はなかった。';
             diceCallback={type:'none'};
           }
         }else if(result<=4){
-          badge.textContent='平穏なフェーズ';
-          badge.className='dice-result-badge event-none show';
-          label.textContent='大きな波乱はなかった。着実に進めよう。';
+          type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
+          labelText='波乱のないフェーズだった。';
           diceCallback={type:'none'};
         }else{
-          // 追い風
+          type='good';badgeClass='event-good';badgeText='✨ TAILWIND';faceIcon='6️⃣';
+          labelText='追い風が吹いた。';
           const bonus=BONUS_EVENTS[Math.floor(Math.random()*BONUS_EVENTS.length)];
-          badge.textContent='✨ '+bonus.title;
-          badge.className='dice-result-badge event-good show';
-          label.textContent=bonus.desc;
           diceCallback={type:'good',bonus};
         }
+
+        face.textContent=faceIcon;
+        label.textContent=labelText;
+
+        // 具体的なイベントテキスト
+        const eventText=getDiceEventText(type==='bad'&&diceCallback.type==='none'?'none':type);
+        if(eventTextEl){
+          eventTextEl.textContent=eventText;
+          eventTextEl.style.opacity='1';
+        }
+
+        badge.className='dice-result-badge show '+badgeClass;
+        badge.textContent=badgeText;
         cta.className='dice-cta show';
       },200);
     }
-  },60);
+  },55);
 }
 
 function closeDice(){
