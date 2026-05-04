@@ -238,13 +238,16 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .story-entry-phase{font-size:.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px;opacity:.85}
 .story-entry-text{font-size:.86rem;color:var(--w90);line-height:1.95}
 .story-50years p{font-size:.88rem;line-height:2.1;color:var(--w90)}
-.result-inner .story-50years p{color:#2c2c3e}
+.result-inner .story-50years p{color:#2c2c3e;line-height:2.1}
+/* 旧result-cardをrpt-cardにマップ */
+.result-inner .result-card{display:none} /* 非表示（rpt-cardで代替） */
 #screen-result{background:#f5f0e6;padding:0;align-items:stretch}
 .result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%;color:#1c1c2e}
 .result-inner .ending-block{border-bottom-color:rgba(0,0,0,.08)}
 .result-inner .ending-title{color:#1c1c2e}
 .result-inner .ending-copy{color:#555}
 .result-inner .result-card{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09);border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+.result-inner .rpt-card{background:rgba(255,255,255,.88);border-color:rgba(0,0,0,.08)}
 .result-inner .result-card h3{color:#a05c14}
 .result-inner .story-block{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09)}
 .result-inner .story-block h3{color:#a05c14}
@@ -295,7 +298,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .industry-bar-track{flex:1;height:5px;background:rgba(255,255,255,.09);border-radius:3px}
 .industry-bar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
 .industry-bar-pct{font-size:.73rem;width:36px;text-align:right;color:var(--w70)}
-.radar-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:24px;height:260px;position:relative}
+.radar-wrap{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:20px;margin-bottom:18px;height:260px;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.05)}
 .action-block{background:rgba(232,98,26,.06);border:1px solid rgba(232,98,26,.22);border-radius:10px;padding:20px 22px;margin-bottom:32px}
 .action-block h3{font-size:.6rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
 .action-item{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:13px 16px;cursor:pointer;font-size:.84rem;line-height:1.7;transition:all .18s;text-align:left;color:var(--w90);font-family:var(--ff-body);width:100%;margin-bottom:8px;display:block}
@@ -316,6 +319,101 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .btn-retry{display:block;width:100%;background:transparent;border:1px solid rgba(232,98,26,.5);color:var(--accent);font-family:var(--ff-head);font-size:.92rem;letter-spacing:3px;padding:14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:24px}
 .btn-retry:hover{background:rgba(232,98,26,.1);border-color:var(--accent)}
 .brand-footer{text-align:center;font-size:.68rem;color:var(--w40);letter-spacing:3px;padding-bottom:40px}
+
+/* ━━━ レポート統一カード ━━━ */
+.rpt-part-label{
+  font-size:.58rem;letter-spacing:5px;color:var(--w40);
+  text-align:center;margin:32px 0 16px;
+  display:flex;align-items:center;gap:12px;
+}
+.rpt-part-label::before,.rpt-part-label::after{
+  content:'';flex:1;height:1px;background:var(--border);
+}
+.result-inner .rpt-part-label{color:#bbb}
+.result-inner .rpt-part-label::before,.result-inner .rpt-part-label::after{background:rgba(0,0,0,.1)}
+
+.rpt-card{
+  background:rgba(255,255,255,.88);
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:10px;padding:20px 22px;
+  margin-bottom:18px;
+  box-shadow:0 1px 6px rgba(0,0,0,.05);
+}
+.rpt-card-header{
+  font-size:.6rem;letter-spacing:4px;font-weight:700;
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid rgba(0,0,0,.07);
+}
+.rpt-card-header.accent{color:var(--accent)}
+.rpt-card-header.cyan{color:#2a8cc4}
+.rpt-card-header.gold{color:#8b6914}
+
+/* ━━━ 固定CTA ━━━ */
+.fixed-cta{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  display:flex;gap:8px;
+  padding:10px 16px 16px;
+  background:rgba(255,255,255,.97);
+  border-top:1px solid rgba(0,0,0,.1);
+  backdrop-filter:blur(12px);
+  box-shadow:0 -4px 20px rgba(0,0,0,.08);
+}
+.fcta-btn{
+  flex:1;padding:12px 8px;border-radius:8px;border:none;
+  cursor:pointer;font-family:var(--ff-head);font-size:.88rem;
+  letter-spacing:2px;transition:all .2s;
+  font-weight:700;
+}
+.fcta-x{background:#1c1c2e;color:#fff}
+.fcta-x:hover{background:#000}
+.fcta-pdf{background:var(--accent);color:#fff;box-shadow:0 2px 10px rgba(232,98,26,.3)}
+.fcta-pdf:hover{background:var(--accent2);transform:translateY(-1px)}
+.fcta-agent{background:var(--gold);color:#1c1c2e}
+.fcta-agent:hover{background:#e0a820;transform:translateY(-1px)}
+.fcta-retry{background:transparent;color:#888;border:1px solid rgba(0,0,0,.15)}
+.fcta-retry:hover{background:rgba(0,0,0,.05);color:#1c1c2e}
+
+/* ━━━ ポップアップ ━━━ */
+.popup-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  z-index:400;display:flex;align-items:flex-end;
+  animation:fadeIn .2s ease;
+}
+.popup-card{
+  width:100%;max-width:600px;margin:0 auto;
+  background:#fff;border-radius:16px 16px 0 0;
+  padding:24px 22px 32px;
+  max-height:85vh;overflow-y:auto;
+  position:relative;
+  animation:slideUp .25s ease;
+}
+.popup-close{
+  position:absolute;top:14px;right:16px;
+  background:rgba(0,0,0,.06);border:none;
+  width:28px;height:28px;border-radius:50%;
+  font-size:.88rem;cursor:pointer;color:#555;
+  display:flex;align-items:center;justify-content:center;
+}
+.popup-close:hover{background:rgba(0,0,0,.12)}
+.popup-title{
+  font-size:.82rem;font-weight:700;color:#1c1c2e;
+  letter-spacing:2px;margin-bottom:16px;padding-right:32px;
+}
+.popup-action-btn{
+  width:100%;background:var(--accent);color:#fff;border:none;
+  cursor:pointer;font-family:var(--ff-body);font-size:.88rem;
+  font-weight:700;padding:14px;border-radius:8px;
+  margin-bottom:8px;transition:all .2s;
+}
+.popup-action-btn:hover{background:var(--accent2)}
+.popup-action-btn.secondary{background:transparent;color:#555;border:1px solid rgba(0,0,0,.15)}
+.popup-action-btn.secondary:hover{background:rgba(0,0,0,.05)}
+.popup-back{
+  display:block;width:100%;background:transparent;border:none;
+  color:#aaa;font-family:var(--ff-body);font-size:.78rem;
+  cursor:pointer;padding:10px;text-align:center;margin-top:4px;
+}
+.popup-back:hover{color:#555}
 /* 就活ワンシート */
 .job-sheet{background:rgba(255,255,255,.95);border:2px solid rgba(232,98,26,.3);border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
 .job-sheet-title{font-size:.62rem;letter-spacing:4px;color:var(--accent);margin-bottom:16px;font-weight:700}
@@ -356,7 +454,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .email-sent-msg{font-size:.8rem;color:var(--cyan);margin-top:10px;display:none;animation:slideUp .3s ease}
 
 /* ━━━ X サマリ ━━━ */
-.x-summary-block{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:18px;margin-bottom:16px}
+.x-summary-block{display:none!important} /* popupに移行 */
 .x-summary-text{font-size:.82rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word}
 
 /* ━━━ 業種説明（AIリッチ版） ━━━ */
@@ -601,31 +699,61 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 <!-- RESULT -->
 <div class="screen" id="screen-result">
   <div class="result-inner">
+
+    <!-- ヒーロー -->
     <div class="ending-block">
       <div class="ending-year-bg">2075</div>
       <h2 class="ending-title">旅が終わった。<br>2026年に戻ってきた。</h2>
       <p class="ending-copy" id="ending-copy"></p>
     </div>
+
+    <!-- ━━━ スコアパート ━━━ -->
+    <div class="rpt-part-label">SCORE</div>
+
+    <!-- ①総合スコア -->
     <div class="score-block">
       <div class="score-num" id="res-score">--</div>
       <div class="score-tier" id="res-tier">--</div>
       <div class="score-headline" id="res-headline"></div>
     </div>
-    <div class="result-card">
-      <h3 style="color:var(--cyan)">INDUSTRY FIT</h3>
+
+    <!-- ②6角チャート -->
+    <div class="radar-wrap"><canvas id="radar-chart"></canvas></div>
+
+    <!-- ③ANALYSIS -->
+    <div class="rpt-card">
+      <div class="rpt-card-header accent">ANALYSIS</div>
+      <p id="res-body" style="font-size:.88rem;line-height:1.95;color:#2c2c3e"></p>
+    </div>
+
+    <!-- ④MY STORY -->
+    <div class="rpt-card">
+      <div class="rpt-card-header gold">MY STORY — あなたの50年</div>
+      <div id="story-entries"></div>
+    </div>
+
+    <!-- ⑤LIVE COMPARISON -->
+    <div class="rpt-card" id="compare-block">
+      <div class="rpt-card-header cyan">LIVE COMPARISON</div>
+      <div class="compare-stats">
+        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-lbl">参加者数</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-lbl">平均スコア</div></div>
+        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-lbl">上位</div></div>
+      </div>
+      <div id="tier-bars"></div>
+    </div>
+
+    <!-- ━━━ 就活パート ━━━ -->
+    <div class="rpt-part-label">CAREER</div>
+
+    <!-- ⑥INDUSTRY FIT -->
+    <div class="rpt-card">
+      <div class="rpt-card-header cyan">INDUSTRY FIT</div>
       <div id="ind-bars"></div>
       <div class="industry-detail" id="industry-detail"></div>
     </div>
-    <div class="radar-wrap"><canvas id="radar-chart"></canvas></div>
-    <div class="result-card">
-      <h3 style="color:var(--accent)">ANALYSIS</h3>
-      <p id="res-body" style="font-size:.88rem;line-height:1.9"></p>
-    </div>
-    <div class="story-block">
-      <h3>MY STORY — あなたの50年</h3>
-      <div id="story-entries"></div>
-    </div>
-    <!-- 就活ワンシート -->
+
+    <!-- 就活ワンシート（⑥の中） -->
     <div class="job-sheet" id="job-sheet" style="display:none">
       <div class="job-sheet-title">📋 就活ワンシート — 今日から使える</div>
       <div class="job-sheet-row">
@@ -646,51 +774,77 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
       </div>
       <div class="job-sheet-row" style="flex-direction:column">
         <span class="job-sheet-label" style="margin-bottom:6px">面接エピソードの型</span>
-        <div class="job-sheet-value" id="jws-episode" style="background:rgba(56,189,248,.05);border-radius:6px;padding:10px 12px;border:1px solid rgba(56,189,248,.15)">生成中...</div>
+        <div class="job-sheet-value" id="jws-episode" style="background:rgba(56,189,248,.06);border-radius:6px;padding:10px 12px;border:1px solid rgba(56,189,248,.15)">生成中...</div>
       </div>
       <button class="job-sheet-copy-btn" onclick="copyJobSheet()">📋 このシートをコピーする</button>
     </div>
 
-    <!-- エージェント適性 -->
-    <div class="result-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.25)">
-    </div>
-
-    <div class="action-block">
-      <h3>TODAY'S ACTION — 3つから選ぶ</h3>
+    <!-- ⑦TODAY'S ACTION -->
+    <div class="rpt-card" style="border-color:rgba(232,98,26,.2);background:rgba(232,98,26,.04)">
+      <div class="rpt-card-header accent">TODAY'S ACTION</div>
+      <p style="font-size:.75rem;color:#888;margin-bottom:12px">3つのアクションから今日やることを選ぼう</p>
       <div id="action-list"></div>
     </div>
-    <div class="result-card" id="compare-block">
-      <h3 style="color:var(--cyan)">LIVE COMPARISON</h3>
-      <div class="compare-stats">
-        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-lbl">参加者数</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-lbl">平均スコア</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-lbl">上位</div></div>
-      </div>
-      <div id="tier-bars"></div>
-    </div>
-    <!-- X サマリ -->
-    <div class="x-summary-block" id="x-summary-block" style="display:none">
-      <h3 style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin-bottom:10px">𝕏 SHARE SUMMARY</h3>
-      <div class="x-summary-text" id="x-summary-text"></div>
-      <div class="share-row" style="margin-top:12px;margin-bottom:0">
-        <button class="btn-share" onclick="shareXSummary()">𝕏 シェア</button>
-        <button class="btn-share" onclick="copySummary()">コピー</button>
-      </div>
+
+    <!-- ⑧AGENT FIT -->
+    <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2)">
     </div>
 
-    <!-- メール送信 -->
-    <div class="email-block" id="email-block">
-      <h3>レポートをPDFで受け取る</h3>
-      <p>メールアドレスを登録すると、このレポートをPDFで送付します。<br>就活・自己分析の資料としてご活用ください。</p>
-      <div class="email-input-row">
-        <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
-        <button class="btn-email-send" id="email-send-btn" onclick="sendReportEmail()">PDF送信</button>
-      </div>
-      <div class="email-sent-msg" id="email-sent-msg">✓ 送信しました！数分以内にメールをご確認ください。</div>
-    </div>
-
-    <button class="btn-retry" onclick="resetGame()">▶ もう一度プレイ</button>
     <div class="brand-footer">by 株式会社エージェント</div>
+
+    <!-- 固定CTA分の余白 -->
+    <div style="height:80px"></div>
+  </div>
+</div>
+
+<!-- 固定CTA（レポート画面専用） -->
+<div class="fixed-cta" id="fixed-cta" style="display:none">
+  <button class="fcta-btn fcta-x"      onclick="openPopup('popup-x')">𝕏</button>
+  <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">PDF</button>
+  <button class="fcta-btn fcta-agent"  onclick="openPopup('popup-agent')">AGENT</button>
+  <button class="fcta-btn fcta-retry"  onclick="resetGame()">NEW</button>
+</div>
+
+<!-- ポップアップ：Xサマリ -->
+<div class="popup-overlay" id="popup-x" style="display:none">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup('popup-x')">×</button>
+    <div class="popup-title">𝕏 シェア</div>
+    <div class="x-summary-text" id="x-summary-text" style="font-size:.82rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word;margin-bottom:16px"></div>
+    <div style="display:flex;gap:8px">
+      <button class="popup-action-btn" onclick="shareXSummary()">𝕏 シェアする</button>
+      <button class="popup-action-btn secondary" onclick="copySummary()">コピー</button>
+    </div>
+    <button class="popup-back" onclick="closePopup('popup-x')">← レポートに戻る</button>
+  </div>
+</div>
+
+<!-- ポップアップ：PDF送信 -->
+<div class="popup-overlay" id="popup-pdf" style="display:none">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup('popup-pdf')">×</button>
+    <div class="popup-title">レポートをPDFで受け取る</div>
+    <p style="font-size:.82rem;color:#555;line-height:1.7;margin-bottom:16px">メールアドレスを登録すると、就活ワンシート付きのレポートPDFを送付します。</p>
+    <div class="email-input-row">
+      <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
+      <button class="btn-email-send" id="email-send-btn" onclick="sendReportEmail()">送信</button>
+    </div>
+    <div class="email-sent-msg" id="email-sent-msg">✓ 送信しました！数分以内にご確認ください。</div>
+    <button class="popup-back" onclick="closePopup('popup-pdf')">← レポートに戻る</button>
+  </div>
+</div>
+
+<!-- ポップアップ：エージェント問い合わせ -->
+<div class="popup-overlay" id="popup-agent" style="display:none">
+  <div class="popup-card">
+    <button class="popup-close" onclick="closePopup('popup-agent')">×</button>
+    <div class="popup-title">株式会社エージェントに相談する</div>
+    <div id="popup-agent-content">
+      <p style="font-size:.84rem;color:#555;line-height:1.8;margin-bottom:16px">このレポートを持って、キャリア相談へ。あなたの診断結果をもとに、より深いキャリア分析を行います。</p>
+      <div id="agent-fit-popup-score" style="margin-bottom:16px"></div>
+    </div>
+    <button class="popup-action-btn" onclick="window.open('https://agent-network.co.jp','_blank')">エージェントに相談する →</button>
+    <button class="popup-back" onclick="closePopup('popup-agent')">← レポートに戻る</button>
   </div>
 </div>
 
@@ -1789,15 +1943,15 @@ function calcIndScores(){
 
   // tagIndustryが空の場合：タグ名から業種親和性をデフォルト推定
   const DEFAULT_AFFINITY={
-    specialization:  {コンサルティング:8,'ITサービス・SaaS':7,'研究・アカデミア':8,'メーカー（製造業）':6,'医療・ヘルスケア':7},
-    'ai-native':     {'ITサービス・SaaS':9,'事業開発・新規事業':8,コンサルティング:7,'スタートアップ・VC':8,'広告・マーケティング':7},
-    strategic:       {'事業開発・新規事業':9,コンサルティング:9,'投資銀行・証券':8,'総合商社':8,'スタートアップ・VC':7},
-    independent:     {'スタートアップ・VC':9,'事業開発・新規事業':8,'広告・マーケティング':7,'メディア・エンタメ':7,'ITサービス・SaaS':7},
-    'rare-combination':{'事業開発・新規事業':9,コンサルティング:8,'スタートアップ・VC':8,'ITサービス・SaaS':7,'総合商社':7},
-    leadership:      {'事業開発・新規事業':8,コンサルティング:8,'教育・EdTech':8,'メガバンク・金融':7,'公務員・公共政策':7},
-    'community-builder':{'事業開発・新規事業':8,'広告・マーケティング':8,'メディア・エンタメ':7,'教育・EdTech':8,'公務員・公共政策':7},
-    global:          {'総合商社':9,'投資銀行・証券':8,'コンサルティング':8,'スタートアップ・VC':7,'事業開発・新規事業':8},
-    legacy:          {'教育・EdTech':9,'研究・アカデミア':8,'メディア・エンタメ':7,'公務員・公共政策':7,'医療・ヘルスケア':7},
+    specialization:  {コンサルティング:6,'ITサービス・SaaS':5,'研究・アカデミア':6,'メーカー（製造業）':5,'医療・ヘルスケア':5},
+    'ai-native':     {'ITサービス・SaaS':6,'事業開発・新規事業':5,コンサルティング:5,'スタートアップ・VC':5,'広告・マーケティング':4},
+    strategic:       {'事業開発・新規事業':6,コンサルティング:6,'投資銀行・証券':5,'総合商社':5,'スタートアップ・VC':4},
+    independent:     {'スタートアップ・VC':6,'事業開発・新規事業':5,'広告・マーケティング':4,'メディア・エンタメ':4,'ITサービス・SaaS':4},
+    'rare-combination':{'事業開発・新規事業':6,コンサルティング:5,'スタートアップ・VC':5,'ITサービス・SaaS':4,'総合商社':4},
+    leadership:      {'事業開発・新規事業':5,コンサルティング:5,'教育・EdTech':6,'メガバンク・金融':4,'公務員・公共政策':4},
+    'community-builder':{'事業開発・新規事業':5,'広告・マーケティング':5,'メディア・エンタメ':4,'教育・EdTech':6,'公務員・公共政策':4},
+    global:          {'総合商社':6,'投資銀行・証券':5,'コンサルティング':5,'スタートアップ・VC':4,'事業開発・新規事業':5},
+    legacy:          {'教育・EdTech':6,'研究・アカデミア':5,'メディア・エンタメ':4,'公務員・公共政策':4,'医療・ヘルスケア':4},
   };
 
   const gp={};inds.forEach(n=>{gp[n]=0;});
@@ -1813,10 +1967,19 @@ function calcIndScores(){
   const hasProfData=Object.keys(pa).length>0;
 
   return inds.map(n=>{
+    // gameScore：タグの親和性を正規化（最大60点）
     const gameScore=mxG>0?Math.round((gp[n]/mxG)*60):0;
-    const obScore=hasProfData?Math.round(((myS[n]||1)/5)*40):20; // GASデータなし→デフォルト20点
-    const base=Math.min(100,gameScore+obScore);
-    const boosted=Math.min(100,Math.round(base*(mbtiBoost[n]||1.0)));
+    // obScore：プロファイル一致（GASデータがない場合は0）
+    const obScore=hasProfData?Math.round(((myS[n]||1)/5)*40):0;
+    // DEFAULT_AFFINITYの場合：親和性リストにない業種は低スコアに
+    const hasAffinity=hasTagData||(G.tags.some(t=>{
+      const da=DEFAULT_AFFINITY[t]||{};
+      return (da[n]||0)>0;
+    }));
+    const base=hasAffinity?Math.min(100,gameScore+obScore):Math.min(40,gameScore);
+    // MBTIブーストは+20%上限
+    const boostFactor=Math.min(mbtiBoost[n]||1.0, 1.2);
+    const boosted=Math.min(100,Math.round(base*boostFactor));
     return {name:n,score:Math.max(0,boosted)};
   }).sort((a,b)=>b.score-a.score);
 }
@@ -2008,12 +2171,17 @@ async function showResult(){
         <div>
           <div style="font-size:.7rem;color:var(--accent);margin-bottom:6px;font-weight:700">▍ メタ認知力</div>
           <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-            <div style="font-family:var(--ff-head);font-size:1.8rem;color:var(--accent)">${metacogScore}%</div>
-            <div style="font-size:.72rem;color:#555">AI時代の変化を正確に捉えた割合<br>（Q1の適正認識率）</div>
+            <div style="font-family:var(--ff-head);font-size:1.8rem;color:${metacogScore>=50?'var(--accent)':metacogScore>=25?'var(--gold)':'#aaa'}">${metacogScore}%</div>
+            <div style="font-size:.72rem;color:#555">
+              AI時代の変化を適正に認識できた割合<br>
+              （Q1で「適正認識型」を選んだ回数 ${correctQ1}/${G.q1Choices.length}回）
+            </div>
           </div>
-          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.7;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
-            ${metacogMsg}<br>
-            <span style="font-size:.72rem;color:#888">メタ認知力——自分の思考パターンを客観視できる力——は、AIに代替されない最後の人間固有の力です。</span>
+          <div style="font-size:.78rem;color:#2c2c3e;line-height:1.75;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
+            ${metacogScore===0
+              ? 'Q1ではAIの変化を「過大評価」または「過小評価」する選択が続きました。これはゲームの選択結果です。どの答えが「適正認識」だったか振り返ることで、AI時代の変化の見方が磨かれます。'
+              : metacogMsg}<br>
+            <span style="font-size:.7rem;color:#888;margin-top:4px;display:block">メタ認知力——自分の思考パターンを客観視する力——はAIに代替されない人間固有の能力です。</span>
           </div>
         </div>
       </div>`;
@@ -2175,6 +2343,8 @@ async function showResult(){
   const vmEl=document.getElementById('value-meter');
   if(vmEl)vmEl.classList.remove('vm-visible');
   showScreen('screen-result');
+  // 固定CTAを表示
+  document.getElementById('fixed-cta').style.display='flex';
 }
 
 // ━━━ Gemini AI生成（GASプロキシ経由） ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -2497,17 +2667,22 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   // レーダー軸スコアから適性スコアを計算
   // [専門性,適応力,時代適合,危機対応,一貫性,投資効率]
   const [exp,adp,era,cri,con,inv]=radar;
-  const agentFitScore=Math.round((
-    (adp||50)*0.3+   // 適応力：エージェントで最重要
-    (era||50)*0.25+  // 時代適合：AI時代の人材業界必須
-    (con||50)*0.2+   // 一貫性：長期的な顧客との関係
-    (exp||50)*0.15+  // 専門性
-    (cri||50)*0.1    // 危機対応
-  )/100*100);
+
+  // エージェント適性：選択パターンベースで計算（50点スタートのバイアスを排除）
+  // ① タグ一致ボーナス（4タグ×10点）
+  const tagBonus=Math.min(40, tagMatch*10);
+  // ② 業種一致ボーナス（3業種×10点）
+  const indBonus=Math.min(30, indMatch*10);
+  // ③ スコアによるベース（先駆者:30, 適応者:20, 模索者:10, 転換期:5）
+  const scoreBase=score>=80?30:score>=60?20:score>=40?10:5;
+  // ④ レーダーの相対的な高さ（平均50超えの軸1本=+3点、最大15点）
+  const radarBonus=Math.min(15,[adp,era,con].filter(v=>v>55).length*5);
+
+  const agentFitScore=Math.min(100, tagBonus+indBonus+scoreBase+radarBonus);
 
   // 総合適性ランク
-  const fitRank=agentFitScore>=75?{label:'高い適性',color:'var(--accent)',icon:'🔥'}
-    :agentFitScore>=55?{label:'一定の適性',color:'var(--gold)',icon:'✨'}
+  const fitRank=agentFitScore>=60?{label:'高い適性',color:'var(--accent)',icon:'🔥'}
+    :agentFitScore>=35?{label:'一定の適性',color:'var(--gold)',icon:'✨'}
     :{label:'可能性あり',color:'#888',icon:'🌱'};
 
   // エージェントで活かせる強みのコメント
@@ -2588,6 +2763,21 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
       </div>
     </div>
   `;
+}
+
+function openPopup(id){
+  const el=document.getElementById(id);
+  if(el){el.style.display='flex';document.body.style.overflow='hidden';}
+  // エージェントポップアップにスコアを表示
+  if(id==='popup-agent'){
+    const sc=document.getElementById('agent-fit-popup-score');
+    const af=document.getElementById('agent-fit-block');
+    if(sc&&af)sc.innerHTML=af.innerHTML;
+  }
+}
+function closePopup(id){
+  const el=document.getElementById(id);
+  if(el){el.style.display='none';document.body.style.overflow='';}
 }
 
 async function saveToGAS(score,tier,domTag,chainRule,indScores){
@@ -2759,7 +2949,7 @@ function shareX(){const s=document.getElementById('res-score').textContent,t=doc
 
 function copyRes(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/\nby 株式会社エージェント`).then(()=>alert('コピーしました！'));}
 
-function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');}
+function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
 
 // ── フォールバック ─────────────────────────────────────────────────
 const FB={phases:[{id:'phase_1',order:1,ageRange:'20〜25歳',yearRange:'2025〜2030年',era:'AI実装期',eraDescription:'生成AIが業務に普及し始め、定型業務の約30%が自動化される。採用評価軸が「即戦力」から「学習速度」に移行しつつある。',stat1_label:'AI・自動化の影響が大きい職種割合',stat1_value:'約27%',stat1_source:'OECD 2023',stat2_label:'2030年までに既存技能の変化割合',stat2_value:'39%',stat2_source:'WEF 2025'},{id:'phase_2',order:2,ageRange:'25〜30歳',yearRange:'2030〜2035年',era:'AGI移行期',eraDescription:'汎用AIの登場により専門職の一部が代替される。新たな職種が急増し転職市場が活性化。',stat1_label:'消滅リスクの高い職種割合',stat1_value:'約23%',stat1_source:'WEF 2025',stat2_label:'新規創出が見込まれる職種数',stat2_value:'+1700万人分',stat2_source:'WEF 2025'},{id:'phase_3',order:3,ageRange:'30〜40歳',yearRange:'2035〜2045年',era:'産業再編期',eraDescription:'業界の境界が崩壊し掛け算型人材の需要が急増。事業開発者はAIが最も代替しにくい職種の一つ。',stat1_label:'複数スキル保有者の年収プレミアム',stat1_value:'+34%',stat1_source:'McKinsey 2024',stat2_label:'リモート・ハイブリッド就労者割合',stat2_value:'約58%',stat2_source:'OECD 2024'},{id:'phase_4',order:4,ageRange:'40〜50歳',yearRange:'2045〜2055年',era:'人機協働成熟期',eraDescription:'人とAIの役割分担が定着。後進育成が社会的急務に。',stat1_label:'管理職・育成職の需要増加率',stat1_value:'+41%',stat1_source:'内閣府 2024',stat2_label:'AI意思決定支援ツール導入企業割合',stat2_value:'約79%',stat2_source:'McKinsey 2024'},{id:'phase_5',order:5,ageRange:'50〜60歳',yearRange:'2055〜2065年',era:'社会構造変容期',eraDescription:'労働の定義が拡張されコミュニティが生存基盤に。',stat1_label:'週4日労働制導入企業割合',stat1_value:'約44%',stat1_source:'OECD 2024',stat2_label:'社会的孤立リスクの高い中高年割合',stat2_value:'約31%',stat2_source:'内閣府 2023'},{id:'phase_6',order:6,ageRange:'60〜70歳',yearRange:'2065〜2075年',era:'ポスト労働期',eraDescription:'BI的制度が普及。「何のためにするか」が問われる最終章。',stat1_label:'65歳以上就労継続希望者割合',stat1_value:'約67%',stat1_source:'内閣府 2023',stat2_label:'BI・類似制度の導入国・地域数',stat2_value:'40以上',stat2_source:'Stanford Basic Income Lab 2024'}],q1:[{phase_id:'phase_1',layer1:'生成AIが職場に浸透し始めた。この変化をどう読む？',layer2:'キャリアの基盤を作るこの時期に、あなたは何に賭ける？',choice_a_text:'AIの浸透で5年以内に大半が自動化される。',choice_a_erafit:3,choice_b_text:'定型業務はAIに移行するが判断・創造は残る。AIを使える人と使えない人に分かれる。',choice_b_erafit:8,choice_c_text:'AIは強力だが最終判断は人間。専門性の価値は形を変えながら続く。',choice_c_erafit:5,choice_d_text:'重要なのは技術より人間性。コミュ力の希少価値が上がる。',choice_d_erafit:2,high_erafit_label:'B'},{phase_id:'phase_2',layer1:'汎用AIが登場し専門職の一部が代替され始めた。',layer2:'この波をどう読む？',choice_a_text:'実際には補助ツール止まり。人間の判断は残る。',choice_a_erafit:4,choice_b_text:'規制でコントロールすれば影響は限定的にできる。',choice_b_erafit:2,choice_c_text:'専門職の価値が根本から崩壊する。',choice_c_erafit:3,choice_d_text:'新しい役割に移行できるかどうかが重要だ。',choice_d_erafit:8,high_erafit_label:'D'},{phase_id:'phase_3',layer1:'業界の境界が崩壊し掛け算型人材の需要が急増。',layer2:'この変化をどう読む？',choice_a_text:'専門×別領域の掛け算ができる人間が最も評価される。',choice_a_erafit:8,choice_b_text:'専門性を深めることが依然として最重要。',choice_b_erafit:4,choice_c_text:'結局は人脈。誰を知っているかの時代になる。',choice_c_erafit:2,choice_d_text:'何でもできるゼネラリストが最強の時代だ。',choice_d_erafit:3,high_erafit_label:'A'},{phase_id:'phase_4',layer1:'人とAIの役割分担が定着し育成が急務に。',layer2:'この変化をどう読む？',choice_a_text:'個人が単独で大きな価値を生み出せる時代になった。',choice_a_erafit:2,choice_b_text:'AIが全判断を担い人間は目標設定だけでいい。',choice_b_erafit:3,choice_c_text:'人間は判断・育成・関係構築に集中できる時代になった。',choice_c_erafit:8,choice_d_text:'自分のスキルを磨き続けることが依然最重要。',choice_d_erafit:4,high_erafit_label:'C'},{phase_id:'phase_5',layer1:'コミュニティが生存基盤になりつつある。',layer2:'この変化をどう読む？',choice_a_text:'貨幣経済が薄れコミュニティの外では何も成立しない。',choice_a_erafit:3,choice_b_text:'有償労働だけが価値でなくなる中でコミュニティに根を張ることが重要。',choice_b_erafit:8,choice_c_text:'結局は経済力。資産形成が最重要戦略。',choice_c_erafit:2,choice_d_text:'既存の繋がりを大切にすることが今も最善。',choice_d_erafit:4,high_erafit_label:'B'},{phase_id:'phase_6',layer1:'働かなくていい社会が来た。',layer2:'この変化をどう読む？',choice_a_text:'自己実現を優先。社会貢献より自分が楽しむべき時代だ。',choice_a_erafit:2,choice_b_text:'経済的不安があるので働き続けることが現実的。',choice_b_erafit:4,choice_c_text:'AIに仕事を奪われ人間は機能不全に陥るリスクが高い。',choice_c_erafit:3,choice_d_text:'人間は意味と貢献を求め続ける。「何のためにするか」が問いだ。',choice_d_erafit:8,high_erafit_label:'D'}],q2:[{phase_id:'phase_1',question:'AIが多くの業務を自動化し始めた。あなたはどこに張る？',choice_a_text:'AIが苦手な領域に特化する',choice_a_tag:'specialization',choice_a_example:'医療・介護・教育など',choice_b_text:'AIを使いこなす側になる',choice_b_tag:'ai-native',choice_b_example:'プロンプト設計・AI導入コンサルなど',choice_c_text:'意思決定側に移る',choice_c_tag:'strategic',choice_c_example:'企画・事業開発など',choice_d_text:'職人的水準を目指す',choice_d_tag:'specialization',choice_d_example:'弁護士・エンジニア・研究者など'},{phase_id:'phase_2',question:'AGIの台頭でスキルが陳腐化しつつある。どう動く？',choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_example:'経営企画・渉外など',choice_b_text:'AIの橋渡し役になる',choice_b_tag:'ai-native',choice_b_example:'DX推進・AIプロジェクトマネージャーなど',choice_c_text:'副業・個人事業を立ち上げる',choice_c_tag:'independent',choice_c_example:'フリーランス・スタートアップなど',choice_d_text:'異業種転職を検討する',choice_d_tag:'specialization',choice_d_example:'インフラ・医療・公共など'},{phase_id:'phase_3',question:'30代。掛け算の時代。どう自分をデザインする？',choice_a_text:'専門×専門の掛け算で希少人材になる',choice_a_tag:'rare-combination',choice_a_example:'医療×AI・法律×テックなど',choice_b_text:'チームを率いる側に移行する',choice_b_tag:'leadership',choice_b_example:'テックリード・プロダクトオーナーなど',choice_c_text:'個人ブランドを構築する',choice_c_tag:'community-builder',choice_c_example:'コミュニティマネージャーなど',choice_d_text:'グローバル市場に場を広げる',choice_d_tag:'global',choice_d_example:'海外就労・グローバル企業転職など'},{phase_id:'phase_4',question:'40代。何を次の世代に渡すか？',choice_a_text:'後進の育成に注力する',choice_a_tag:'leadership',choice_a_example:'メンター・教育職など',choice_b_text:'知見を体系化してコンテンツに残す',choice_b_tag:'legacy',choice_b_example:'著書・SaaS・フレームワーク設計など',choice_c_text:'経営・意思決定層に入る',choice_c_tag:'strategic',choice_c_example:'役員・取締役など',choice_d_text:'第一線の専門家として残る',choice_d_tag:'specialization',choice_d_example:'スペシャリスト・顧問など'},{phase_id:'phase_5',question:'50代。コミュニティとの関係をどう設計する？',choice_a_text:'ローカルなコミュニティに根を張る',choice_a_tag:'community-builder',choice_a_example:'地域創生・NPOなど',choice_b_text:'グローバルなネットワークで価値を生む',choice_b_tag:'global',choice_b_example:'国際機関・越境コンサルなど',choice_c_text:'個人の創作・研究に集中する',choice_c_tag:'legacy',choice_c_example:'作家・研究者・アーティストなど',choice_d_text:'コミュニティをつなぐ触媒として動く',choice_d_tag:'community-builder',choice_d_example:'コネクター・コミュニティデザイナーなど'},{phase_id:'phase_6',question:'60代。働かなくてもいい時代に何を選ぶ？',choice_a_text:'現役を続け経験を社会に還元する',choice_a_tag:'leadership',choice_a_example:'顧問・ボランティアリーダーなど',choice_b_text:'人生を総括する作品・記録を残す',choice_b_tag:'legacy',choice_b_example:'回顧録・アーカイブなど',choice_c_text:'次世代に資産・知見を譲渡する',choice_c_tag:'legacy',choice_c_example:'寄付・奨学金設立など',choice_d_text:'探求・学習・創造を楽しむ',choice_d_tag:'specialization',choice_d_example:'生涯学習・DIY研究など'}],q3:[{choice_a_text:'スキル・学習への集中投資',choice_a_invest:'skill',choice_b_text:'人脈・ネットワーク構築',choice_b_invest:'network',choice_c_text:'副業・実験・小さな挑戦',choice_c_invest:'experiment',choice_d_text:'現職での実績と評価の積み上げ',choice_d_invest:'current_job'}],events:[{id:'ev1',category:'⚡ 技術系ショック',title:'AIが法務・財務の定型業務を完全代替',description:'担当業務の約60%が自動化された。役割を見直す必要がある。',trigger_phases:['phase_2','phase_3'],choice_a_text:'上流工程にシフトする',choice_a_tag:'strategic',choice_a_correction:5,choice_b_text:'自動化ツールの管理側に回る',choice_b_tag:'ai-native',choice_b_correction:6},{id:'ev2',category:'📉 経済系ショック',title:'グローバル景気後退による昇進凍結',description:'2年間キャリアアップの機会が消えた。',trigger_phases:['phase_1','phase_2','phase_3'],choice_a_text:'スキル投資に時間を使う',choice_a_tag:'specialization',choice_a_correction:5,choice_b_text:'影響の少ない業界に移動する',choice_b_tag:'independent',choice_b_correction:4}],feedback:{先駆者:{headline:'あなたはAI時代の波を自ら作り出す側にいます',body:'時代適合度と選択の一貫性が高水準で両立しています。特に{dominantTag}を軸にした選択が時代の需要と高くフィットしていました。'},適応者:{headline:'あなたはAI時代を着実に生き抜く柔軟性を持っています',body:'変化への対応力は高いですが、軸の深さという観点でさらに投資することで次のステージに上がれます。'},模索者:{headline:'あなたはまだ自分の軸を探している途中です',body:'選択に一貫性を持たせることと、選択した道への意識的な投資がスコアを引き上げる鍵になります。'},転換期:{headline:'あなたは今、大きな転換点の手前にいます',body:'現在の選択パターンは時代の需要とのズレが積み重なっています。今の選択を変えれば逆転できます。'}},config:{eventTriggerProbability:0.35,bonusCap:2.5,multiplicationBonus:1.6,consistentPivotBonus:1.5,consistentBonus:1.0,scatteredPenalty:-0.5,scatteredThreshold:5,ctx_specialization_ainative:0.5,ctx_ainative_strategic:0.4,ctx_independent_community:0.4,ctx_leadership_legacy:0.5,ctx_strategic_strategic:0.3,q1BonusMax:0.22,q2q3MatchBonus:0.3,q2q3MismatchPenalty:-0.4,q2q3LightMismatch:-0.2,tier_pioneer_min:80,tier_adapter_min:60,tier_seeker_min:40,phaseWeight_1_g2:0.20,phaseWeight_2_g2:0.22,phaseWeight_3_g2:0.18,phaseWeight_4_g2:0.16,phaseWeight_5_g2:0.13,phaseWeight_6_g2:0.11},tagDefinitions:{specialization:{eraFitMultiplier:{phase_1:1.2,phase_2:0.8,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:1.0}},'ai-native':{eraFitMultiplier:{phase_1:1.2,phase_2:1.2,phase_3:1.1,phase_4:0.9,phase_5:0.8,phase_6:0.8}},strategic:{eraFitMultiplier:{phase_1:1.0,phase_2:1.2,phase_3:1.2,phase_4:1.2,phase_5:1.1,phase_6:1.0}},independent:{eraFitMultiplier:{phase_1:0.9,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.1,phase_6:1.0}},'rare-combination':{eraFitMultiplier:{phase_1:0.8,phase_2:1.0,phase_3:1.3,phase_4:1.2,phase_5:1.1,phase_6:1.0}},leadership:{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.3,phase_5:1.1,phase_6:1.0}},'community-builder':{eraFitMultiplier:{phase_1:0.8,phase_2:0.9,phase_3:1.0,phase_4:1.1,phase_5:1.3,phase_6:1.2}},global:{eraFitMultiplier:{phase_1:1.0,phase_2:1.1,phase_3:1.2,phase_4:1.1,phase_5:1.0,phase_6:0.9}},legacy:{eraFitMultiplier:{phase_1:0.7,phase_2:0.8,phase_3:0.9,phase_4:1.1,phase_5:1.2,phase_6:1.3}}},tagIndustry:{},profileIndustry:{},industries:['事業開発・新規事業','コンサルティング','ITサービス・SaaS','総合商社','投資銀行・証券','メガバンク・金融','広告・マーケティング','スタートアップ・VC','メーカー（製造業）','医療・ヘルスケア','教育・EdTech','公務員・公共政策','インフラ・エネルギー','メディア・エンタメ','研究・アカデミア']};
