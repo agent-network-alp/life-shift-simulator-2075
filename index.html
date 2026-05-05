@@ -241,41 +241,242 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .result-inner .story-50years p{color:#2c2c3e;line-height:2.1}
 /* 旧result-cardをrpt-cardにマップ */
 .result-inner .result-card{display:none} /* 非表示（rpt-cardで代替） */
-#screen-result{background:#f5f0e6;padding:0;align-items:stretch}
-.result-inner{max-width:720px;margin:0 auto;padding:40px 20px 80px;width:100%;color:#1c1c2e}
-.result-inner .ending-block{border-bottom-color:rgba(0,0,0,.08)}
-.result-inner .ending-title{color:#1c1c2e}
-.result-inner .ending-copy{color:#555}
-.result-inner .result-card{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09);border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
-.result-inner .rpt-card{background:rgba(255,255,255,.88);border-color:rgba(0,0,0,.08)}
-.result-inner .result-card h3{color:#a05c14}
-.result-inner .story-block{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09)}
-.result-inner .story-block h3{color:#a05c14}
-.result-inner .story-entry{border-bottom-color:rgba(0,0,0,.08)}
-.result-inner .story-entry-phase{color:var(--accent)}
-.result-inner .story-entry-text{color:#2c2c3e}
-.result-inner .action-block{background:rgba(232,98,26,.07);border:1px solid rgba(232,98,26,.22);border-radius:10px}
-.result-inner .action-block h3{color:#8b4513}
-.result-inner .action-item{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.1);border-radius:8px;color:#1c1c2e;font-family:var(--ff-body)}
-.result-inner .action-item:hover{border-color:var(--accent);background:#fff}
-.result-inner .action-item.picked{border-color:var(--accent);background:rgba(232,98,26,.07)}
-.result-inner .compare-lbl{color:#666}
-.result-inner .tier-bar-lbl{color:#666}
-.result-inner .tier-bar-pct{color:#666}
-.result-inner .tier-bar-track{background:rgba(0,0,0,.09)}
-.result-inner .radar-wrap{background:rgba(255,255,255,.88);border-color:rgba(0,0,0,.09)}
-.result-inner .industry-bar-track{background:rgba(0,0,0,.09)}
-.result-inner .industry-bar-pct{color:#666}
-.result-inner .industry-bar-name{color:#1c1c2e}
-.result-inner .industry-bar-name.top1{color:#8b4513;font-weight:700}
-.result-inner .brand-footer{color:#aaa}
-.result-inner .score-headline{color:#555}
-.result-inner #res-body{color:#2c2c3e;line-height:2}
-.result-inner .compare-num{color:#1c1c2e!important}
-.result-inner .btn-share{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.15);color:#1c1c2e;border-radius:6px}
-.result-inner .btn-share:hover{border-color:var(--accent);background:#fff}
-.result-inner .btn-retry{border:1px solid var(--accent);color:var(--accent);border-radius:6px}
-.result-inner .btn-retry:hover{background:rgba(232,98,26,.08)}
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   RESULT SCREEN — デザイン刷新版
+   配色方針：
+     オレンジ  = スコア・アクション（主役）
+     ブルー    = 業種・比較データ（情報）
+     グリーン  = ポジティブ指標
+     アンバー  = 中間・注意
+     レッド    = 低スコア・リスク（警戒）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* レポート画面ベース */
+#screen-result{
+  background:#F2F4F8;  /* 淡いグレー背景で白カードを浮かせる */
+  padding:0;align-items:stretch;
+}
+.result-inner{
+  max-width:680px;margin:0 auto;
+  padding:0 0 100px;width:100%;color:#1A1A2E;
+}
+
+/* ヒーロー */
+.result-inner .ending-block{
+  background:linear-gradient(135deg,#1A1A2E 0%,#2d2d4e 100%);
+  border-bottom:none;padding:40px 24px 36px;
+  margin-bottom:0;border-radius:0 0 20px 20px;
+  box-shadow:0 4px 20px rgba(26,26,46,.2);
+}
+.result-inner .ending-year-bg{color:#fff;opacity:.04}
+.result-inner .ending-title{color:#fff;font-size:clamp(1.2rem,4vw,1.9rem)}
+.result-inner .ending-copy{color:rgba(255,255,255,.75);font-size:.84rem}
+
+/* パートラベル */
+.result-inner .rpt-part-label{
+  color:#9CA3AF;font-size:.6rem;letter-spacing:4px;
+  margin:28px 24px 12px;
+  border-color:transparent;
+}
+.result-inner .rpt-part-label::before,
+.result-inner .rpt-part-label::after{background:#D1D5DB}
+
+/* 共通カード */
+.result-inner .rpt-card{
+  background:#fff;border:none;border-radius:16px;
+  padding:20px 22px;margin:0 16px 14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+}
+
+/* カードヘッダー */
+.result-inner .rpt-card-header{
+  font-size:.58rem;letter-spacing:4px;font-weight:700;
+  margin-bottom:16px;padding-bottom:0;border-bottom:none;
+  display:flex;align-items:center;gap:8px;
+}
+.result-inner .rpt-card-header::before{
+  content:'';display:inline-block;
+  width:3px;height:14px;border-radius:2px;flex-shrink:0;
+}
+.result-inner .rpt-card-header.accent{color:#E8621A}
+.result-inner .rpt-card-header.accent::before{background:#E8621A}
+.result-inner .rpt-card-header.cyan{color:#2B8FC5}
+.result-inner .rpt-card-header.cyan::before{background:#2B8FC5}
+.result-inner .rpt-card-header.gold{color:#92680A}
+.result-inner .rpt-card-header.gold::before{background:#F59E0B}
+
+/* ━━━ スコアブロック ━━━ */
+.result-inner .score-block{
+  background:#fff;margin:14px 16px;border-radius:16px;
+  padding:28px 24px;text-align:center;
+  box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+}
+.result-inner .score-num{
+  font-size:clamp(5rem,16vw,8rem);
+  background:linear-gradient(135deg,#E8621A 0%,#F59E0B 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;line-height:1;
+}
+.result-inner .score-tier{
+  color:#1A1A2E;font-size:1.3rem;letter-spacing:4px;margin-top:6px;
+}
+.result-inner .score-headline{
+  color:#6B7280;font-size:.82rem;line-height:1.8;margin-top:10px;
+}
+
+/* スコア文脈翻訳カード */
+.result-inner .score-block + div .rpt-card,
+div[style*="CAREER TRANSLATION"] {
+  background:linear-gradient(135deg,rgba(232,98,26,.04) 0%,rgba(245,158,11,.04) 100%);
+  border:1px solid rgba(232,98,26,.15);
+}
+
+/* ━━━ レーダーチャート ━━━ */
+.result-inner .radar-wrap{
+  background:#fff;border:none;border-radius:16px;
+  padding:24px;margin:0 16px 14px;height:280px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+}
+
+/* ━━━ 業種バー ━━━ */
+.result-inner .industry-bar-row{margin-bottom:12px;gap:12px}
+.result-inner .industry-bar-name{
+  color:#374151;font-size:.78rem;width:150px;
+}
+.result-inner .industry-bar-name.top1{
+  color:#E8621A;font-weight:700;
+}
+.result-inner .industry-bar-track{
+  height:7px;background:#F3F4F6;border-radius:4px;
+}
+.result-inner .industry-bar-pct{
+  color:#6B7280;font-size:.72rem;font-weight:600;
+}
+
+/* ━━━ LIVE COMPARISON ━━━ */
+.result-inner .compare-stats{gap:0;margin-bottom:20px}
+.result-inner .compare-item{
+  flex:1;text-align:center;padding:16px 8px;
+  border-right:1px solid #F3F4F6;
+}
+.result-inner .compare-item:last-child{border-right:none}
+.result-inner .compare-num{
+  font-size:1.8rem;color:#1A1A2E;display:block;margin-bottom:4px;
+}
+.result-inner .compare-lbl{color:#9CA3AF;font-size:.68rem}
+.result-inner .tier-bar-lbl{color:#6B7280;font-size:.7rem}
+.result-inner .tier-bar-track{background:#F3F4F6;height:6px;border-radius:3px}
+.result-inner .tier-bar-pct{color:#6B7280;font-size:.68rem}
+
+/* ━━━ MY STORY ━━━ */
+.result-inner .story-50years{padding-top:4px}
+.result-inner .story-50years p{
+  font-size:.88rem;color:#374151;line-height:2.0;
+  margin-bottom:16px;
+}
+.result-inner .story-50years p strong{
+  color:#1A1A2E;font-weight:700;
+}
+
+/* ━━━ アクション ━━━ */
+.result-inner .action-item{
+  background:#F9FAFB;border:1.5px solid #E5E7EB;
+  border-radius:10px;color:#1A1A2E;padding:14px 16px;
+  font-size:.84rem;line-height:1.7;margin-bottom:8px;
+  transition:all .15s;
+}
+.result-inner .action-item:hover{
+  border-color:#E8621A;background:#fff;
+  box-shadow:0 2px 8px rgba(232,98,26,.1);
+}
+.result-inner .action-item.picked{
+  border-color:#E8621A;background:rgba(232,98,26,.05);
+  color:#1A1A2E;
+}
+
+/* ━━━ 就活ワンシート ━━━ */
+.result-inner .job-sheet{
+  margin:0 16px 14px;border-radius:16px;
+  border:1.5px solid rgba(232,98,26,.2);
+  background:#fff;
+  box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
+}
+.result-inner .job-sheet-label{color:#9CA3AF;font-size:.68rem;letter-spacing:.5px}
+.result-inner .job-sheet-value{color:#1A1A2E;font-size:.84rem}
+.result-inner .job-sheet-pr{
+  background:linear-gradient(135deg,rgba(232,98,26,.04),rgba(245,158,11,.04));
+  border-left:3px solid #E8621A;border-radius:0 8px 8px 0;
+  color:#1A1A2E;line-height:1.85;
+}
+.result-inner .job-sheet-copy-btn{
+  border:1.5px solid #E5E7EB;color:#6B7280;border-radius:8px;
+}
+.result-inner .job-sheet-copy-btn:hover{border-color:#E8621A;color:#E8621A}
+
+/* ━━━ フッター・ブランド ━━━ */
+.result-inner .brand-footer{color:#D1D5DB;letter-spacing:2px}
+
+/* ━━━ 固定CTAの刷新 ━━━ */
+.fixed-cta{
+  background:#fff;
+  border-top:1px solid #E5E7EB;
+  padding:10px 16px max(16px,env(safe-area-inset-bottom));
+  box-shadow:0 -8px 24px rgba(0,0,0,.08);
+}
+.fcta-btn{
+  padding:13px 8px;border-radius:10px;
+  font-size:.82rem;letter-spacing:1.5px;
+}
+.fcta-x{background:#1A1A2E;color:#fff}
+.fcta-pdf{
+  background:linear-gradient(135deg,#E8621A,#F59E0B);
+  color:#fff;box-shadow:0 3px 12px rgba(232,98,26,.35);
+}
+.fcta-agent{background:#1A1A2E;color:#F59E0B}
+.fcta-retry{background:#F3F4F6;color:#6B7280;border:none}
+.fcta-retry:hover{background:#E5E7EB;color:#374151}
+
+/* ━━━ ポップアップ刷新 ━━━ */
+.popup-card{
+  background:#F2F4F8;border-radius:20px 20px 0 0;
+  padding:28px 20px 36px;
+}
+.popup-title{
+  font-size:.9rem;font-weight:700;color:#1A1A2E;
+  letter-spacing:1px;margin-bottom:20px;
+}
+.popup-action-btn{
+  background:linear-gradient(135deg,#E8621A,#F59E0B);
+  border-radius:10px;font-weight:700;font-size:.88rem;
+  box-shadow:0 3px 12px rgba(232,98,26,.3);
+  padding:16px;
+}
+.popup-action-btn.secondary{
+  background:#fff;color:#6B7280;
+  border:1.5px solid #E5E7EB;box-shadow:none;
+}
+
+/* ━━━ スコアに応じた色分け（JS連携用クラス） ━━━ */
+.tier-pioneer .score-num{
+  background:linear-gradient(135deg,#E8621A,#F59E0B);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.tier-adapter .score-num{
+  background:linear-gradient(135deg,#2B8FC5,#34D399);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.tier-seeker .score-num{
+  background:linear-gradient(135deg,#6B7280,#9CA3AF);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.tier-transition .score-num{
+  background:linear-gradient(135deg,#EF4444,#F59E0B);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 #result-loading{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
 #result-loading.show{display:flex}
 .rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);animation:pulse 1.2s infinite;text-align:center;padding:0 20px;line-height:1.4}
@@ -2021,6 +2222,13 @@ async function showResult(){
   document.getElementById('res-score').textContent=safeScore;
   document.getElementById('res-tier').textContent=tier.label;
   document.getElementById('res-tier').style.color=tier.color;
+  // ティアクラスをresult-innerに付与（スコア色・グラフ色グループ化）
+  const ri=document.querySelector('.result-inner');
+  if(ri){
+    ri.classList.remove('tier-pioneer','tier-adapter','tier-seeker','tier-transition');
+    const tc={先駆者:'tier-pioneer',適応者:'tier-adapter',模索者:'tier-seeker',転換期:'tier-transition'};
+    ri.classList.add(tc[tier.label]||'tier-seeker');
+  }
   document.getElementById('res-headline').textContent=fb.headline||'';
   // フィードバック本文はMBTI最適化後に設定（下記参照）
   // 3. スコア就活言語翻訳
@@ -2206,23 +2414,26 @@ async function showResult(){
 
   // 業種バー（上位7）
   const colors=['#e94560','#f5a623','#00d4ff','#666','#666','#666','#666'];
-  document.getElementById('ind-bars').innerHTML=indScores.slice(0,7).map((item,i)=>`
-    <div class="industry-bar-row">
+  document.getElementById('ind-bars').innerHTML=indScores.slice(0,7).map((item,i)=>{
+    const barColor=i===0?'#2B8FC5':i===1?'#3BA0D4':i===2?'#4DB0E0':`rgba(43,143,197,${Math.max(0.25,0.55-i*0.06)})`;
+    return `<div class="industry-bar-row">
       <div class="industry-bar-name ${i===0?'top1':''}">${item.name}</div>
-      <div class="industry-bar-track"><div class="industry-bar-fill" style="width:${item.score}%;background:${colors[i]}"></div></div>
+      <div class="industry-bar-track"><div class="industry-bar-fill" style="width:${item.score}%;background:${barColor};border-radius:4px"></div></div>
       <div class="industry-bar-pct">${item.score}%</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 
   // レーダー
   if(G.radarChart)G.radarChart.destroy();
+  const radarColor=tier.label==='先駆者'?'#E8621A':tier.label==='適応者'?'#2B8FC5':tier.label==='転換期'?'#EF4444':'#9CA3AF';
   G.radarChart=new Chart(document.getElementById('radar-chart').getContext('2d'),{
     type:'radar',
     data:{
       labels:['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'],
       datasets:[{
         data:radar,
-        borderColor:tier.color,
-        backgroundColor:tier.color+'28',
+        borderColor:radarColor,
+        backgroundColor:radarColor+'22',
         borderWidth:2.5,
         pointBackgroundColor:'#fff',
         pointBorderColor:tier.color,
@@ -2870,8 +3081,17 @@ async function fetchStats(myScore,myTier){
     const to=['先駆者','適応者','模索者','転換期'];
     const above=to.slice(0,to.indexOf(myTier)).reduce((s,t)=>s+(data.tiers[t]||0),0);
     document.getElementById('cmp-beat').textContent=Math.round((1-above/data.total)*100)+'%';
-    const clr={先駆者:'#e94560',適応者:'#4fc3f7',模索者:'#81c784',転換期:'#ff8a65'};
-    document.getElementById('tier-bars').innerHTML=to.map(t=>{const cnt=data.tiers[t]||0;const pct=Math.round(cnt/data.total*100);return`<div class="tier-bar-row"><span class="tier-bar-lbl">${t}</span><div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${clr[t]}"></div></div><span class="tier-bar-pct">${pct}%</span></div>`;}).join('');
+    const clr={先駆者:'#E8621A',適応者:'#2B8FC5',模索者:'#9CA3AF',転換期:'#EF4444'};
+    document.getElementById('tier-bars').innerHTML=to.map(t=>{
+      const cnt=data.tiers[t]||0;
+      const pct=data.total>0?Math.round(cnt/data.total*100):0;
+      const isMe=t===myTier;
+      return`<div class="tier-bar-row">
+        <span class="tier-bar-lbl" style="${isMe?'font-weight:700;color:'+clr[t]:''}">${t}</span>
+        <div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${clr[t]};opacity:${isMe?1:0.4};border-radius:3px"></div></div>
+        <span class="tier-bar-pct">${pct}%</span>
+      </div>`;
+    }).join('');
   }catch(e){document.getElementById('compare-block').style.display='none';}
 }
 
