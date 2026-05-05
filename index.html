@@ -2554,8 +2554,8 @@ function renderIndustryDetailsWithAI(top3, aiComments){
         <div class="industry-detail-text">${baseDesc}</div>
         ${aiComment?`
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(56,189,248,.2)">
-          <div style="font-size:.58rem;letter-spacing:2px;color:var(--cyan);margin-bottom:4px">✦ AI INSIGHT</div>
-          <div style="font-size:.8rem;color:var(--w90);line-height:1.8">${aiComment}</div>
+          <div style="font-size:.58rem;letter-spacing:2px;color:#2a7ab5;font-weight:700;margin-bottom:4px">✦ AI INSIGHT</div>
+          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.8">${aiComment}</div>
         </div>`:''}
       </div>`;
     }).join('');
@@ -2673,25 +2673,48 @@ function buildPreviewStory(narratives, domTag, TL){
   return `<div style="font-size:.9rem;color:var(--w90);line-height:2.1">
     <p style="margin-bottom:16px">${opening}</p>
     <p style="margin-bottom:16px">${body}</p>
-    <p style="color:var(--accent2);font-style:italic">${closing}</p>
+    <p style="color:var(--accent2);font-style:italic">${emphasisStoryText(closing)}</p>
     <div style="font-size:.68rem;color:var(--w40);margin-top:16px;letter-spacing:1px">※ AIによる個別最適化を生成中…</div>
   </div>`;
+}
+
+// MY STORY用：強調すべきキーワードを自動太字化
+function emphasisStoryText(text){
+  if(!text)return text;
+  // 感情・決断・転換を表すキーワードパターン
+  const patterns=[
+    // 決断・選択の瞬間
+    /([^。]*?(選んだ|決めた|決断した|踏み出した|賭けた|諦めなかった|変えた)[^。]*。)/g,
+    // 葛藤・試練
+    /([^。]*?(迷った|悩んだ|苦しかった|試練|挫折|手放せなかった|問い直した)[^。]*。)/g,
+    // 手応え・確信
+    /([^。]*?(確信した|実感した|手応えを感じた|証明された|輝き始めた|機能し始めた)[^。]*。)/g,
+    // 転換点
+    /([^。]*?(転機|岐路|変わった|変化した|気づいた|見えてきた)[^。]*。)/g,
+  ];
+
+  let result=text;
+  patterns.forEach(pat=>{
+    result=result.replace(pat,(match)=>{
+      // すでに<strong>で囲まれている場合はスキップ
+      if(match.includes('<strong>'))return match;
+      return `<strong style="color:#1c1c2e;font-weight:700">${match}</strong>`;
+    });
+  });
+  return result;
 }
 
 // AI生成6フェーズを1本の流れるストーリーに統合
 function buildAIStory50(storyArr, narratives){
   if(!storyArr||!storyArr.length)return'';
 
-  // 1〜6フェーズを「起承転結」構造で結合
-  const p=(i)=>storyArr[i]||'';
-  const ages=['20代','25歳','30代','40代','50代','60代'];
-
-  // 段落区切りを自然な接続詞でつなぐ
   const connectors=['','——やがて、','それから、','そして、','歳月が流れ、','最後の章に、'];
 
   const paragraphs=storyArr.map((text,i)=>{
     const conn=i===0?'':connectors[i]||'';
-    return `<p style="margin-bottom:20px">${conn}${text}</p>`;
+    // 強調自動処理
+    const emphasized=emphasisStoryText(text);
+    return `<p style="margin-bottom:20px">${conn}${emphasized}</p>`;
   });
 
   return `<div style="font-size:.9rem;line-height:2.1">
