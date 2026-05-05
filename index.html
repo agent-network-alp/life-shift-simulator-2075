@@ -1142,7 +1142,15 @@ async function init(){
       if(cur?.id==='screen-start')goStart();
     }
   });
-  setTimeout(()=>{document.getElementById('loading-overlay').classList.add('hide');showScreen('screen-start');},600);
+  setTimeout(()=>{
+    document.getElementById('loading-overlay').classList.add('hide');
+    // ?demo=1 でレポートデモを直接表示
+    if(new URLSearchParams(location.search).get('demo')==='1'){
+      loadDemoReport();
+    }else{
+      showScreen('screen-start');
+    }
+  },600);
 }
 
 function showScreen(id){
@@ -3545,6 +3553,52 @@ function formatStatVal(val){
     return s;
   }
   return s;
+}
+
+// ━━━ デモモード（?demo=1 でレポートを直接表示） ━━━━━━━━━━━━━━━━━━━━
+function loadDemoReport(){
+  // デモ用のGステートを設定
+  G.nickname='デモ太郎';
+  G.sessionId='demo-session-001';
+  G.mbtiType='ENFJ';
+  G.mbtiData=MBTI_MAP['ENFJ'];
+  G.profileCode='action-combine-intuition-social';
+  G.profile={change:'action',value:'combine',decide:'intuition',energy:'social'};
+  G.tags=['ai-native','strategic','rare-combination','leadership','community-builder','legacy'];
+  G.q1Choices=[
+    {label:'B',erafit:8},{label:'D',erafit:8},{label:'A',erafit:8},
+    {label:'C',erafit:5},{label:'B',erafit:8},{label:'D',erafit:3}
+  ];
+  G.q3Choices=['skill','network','experiment','current_job','skill','network'];
+  G.eventChoices=[{id:'bonus_1',ch:'bonus',tag:'ai-native',corr:5,phaseIdx:2}];
+
+  const PHASE_AGES=['20〜25歳','25〜30歳','30〜40歳','40〜50歳','50〜60歳','60〜70歳'];
+  const PHASE_ERAS=['AI実装期','AGI移行期','産業再編期','人機協働成熟期','社会構造変容期','ポスト労働期'];
+  const PHASE_YEARS=['2025〜2030年','2030〜2035年','2035〜2045年','2045〜2055年','2055〜2065年','2065〜2075年'];
+  const DEMO_STORIES=[
+    'AIが職場に広まり始めた20代前半、私はいち早くAIを道具として使いこなすことを選んだ。周囲がまだ様子を見ている中で、私は新しいツールを積極的に試し続けた。ENFJとしての共感力を活かしながら、チームにAIの可能性を伝える役割を担うようになった。',
+    'AGI移行期の混乱の中で、私は「何を解くべきか」を定義する側に回ることを選んだ。技術が何でもできるようになった時代に、問いを立てられる人間の価値を信じていた。変化の激しさに戸惑う同期を横目に、私は次の方向性を見据えていた。',
+    '産業の境界が崩れ始めた30代、私はAI活用と戦略的思考を掛け合わせた希少な人材として認識されるようになった。二つの専門性が交差する瞬間に、誰も真似できない価値が生まれることを実感していた。',
+    '40代、私の最大の仕事は次の世代を育てることになった。人機協働が当たり前になった職場で、人間同士の関係性を大切にするENFJの特性が最も輝いた。育てた後輩たちが活躍する姿が、何よりの報酬だった。',
+    '社会の構造が大きく変わる50代、私はコミュニティの触媒として動き続けた。つながりが社会課題を解決し始めていることを目の当たりにし、自分の選択が正しかったと確信を深めた。',
+    '60代、私はこれまでの経験と知見を次世代に渡すことを使命とした。AI時代を生き抜いた先輩として、就活生たちに「答えではなく問いの立て方」を伝え続けた。それが私の最後の贈り物だった。',
+  ];
+  G.narratives=G.tags.map((tag,i)=>({
+    tag,text:DEMO_STORIES[i],
+    ageRange:PHASE_AGES[i],era:PHASE_ERAS[i],yearRange:PHASE_YEARS[i],
+    phaseIdx:i,hadEvent:i===2?'good':null
+  }));
+
+  // vmStateもデモ値に設定
+  vmState={expertise:72,adaptability:85,eraFit:78,crisis:64,consistency:68};
+
+  // フォールバックのデータがある場合そのまま使う
+  if(!G.data||!G.data.feedback){
+    G.data=FB;G.config=FB.config||{};
+  }
+  G.selectedIndustry='事業開発・新規事業';
+
+  showResult();
 }
 
 init();
