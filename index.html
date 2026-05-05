@@ -3225,12 +3225,14 @@ async function sendReportEmail(){
       btn.disabled=false;btn.textContent='PDF送信';
       // エラー種別に応じてメッセージを出し分け
       const errMsg=data.error||'';
-      if(errMsg.includes('Drive')||errMsg.includes('MimeType')){
-        alert('PDFの生成に失敗しました。GASエディタでDrive APIサービスが追加されているか確認してください。');
+      if(errMsg.includes('scope')||errMsg.includes('403')){
+        alert('権限エラーが発生しました。GASを再デプロイして再試行してください。\n詳細: '+errMsg.slice(0,120));
       }else if(errMsg.includes('Gmail')){
         alert('メール送信に失敗しました。GASの実行アカウントのGmail権限を確認してください。');
+      }else if(errMsg.includes('Docs変換失敗')||errMsg.includes('PDF変換失敗')){
+        alert('PDF生成に失敗しました。GASのログを確認してください。\n詳細: '+errMsg.slice(0,120));
       }else{
-        alert('送信に失敗しました（'+errMsg.slice(0,80)+'）\nGASのログを確認してください。');
+        alert('送信に失敗しました。\n詳細: '+errMsg.slice(0,120)+'\n\nGASの実行ログを確認してください。');
       }
     }
   }catch(e){
