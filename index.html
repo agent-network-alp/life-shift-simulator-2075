@@ -2349,6 +2349,34 @@ async function showResult(){
 
 // ━━━ Gemini AI生成（GASプロキシ経由） ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
+// 不完全なJSONから部分的にフィールドを抽出
+function extractPartialJSON(raw){
+  const result={};
+  // myStory配列を抽出
+  const storyMatch=raw.match(/"myStory"\s*:\s*\[([^\]]*)/);
+  if(storyMatch){
+    const items=storyMatch[1].match(/"([^"]+)"/g);
+    if(items) result.myStory=items.map(s=>s.replace(/^"|"$/g,''));
+  }
+  // industryCommentsを抽出
+  const indMatch=raw.match(/"industryComments"\s*:\s*\{([^}]*)/);
+  if(indMatch){
+    result.industryComments={};
+    const pairs=indMatch[1].matchAll(/"([^"]+)"\s*:\s*"([^"]+)"/g);
+    for(const [,k,v] of pairs) result.industryComments[k]=v;
+  }
+  // selfPRを抽出
+  const prMatch=raw.match(/"selfPR"\s*:\s*"([^"]+)"/);
+  if(prMatch) result.selfPR=prMatch[1];
+  // jobActionsを抽出
+  const actMatch=raw.match(/"jobActions"\s*:\s*\[([^\]]*)/);
+  if(actMatch){
+    const items=actMatch[1].match(/"([^"]+)"/g);
+    if(items) result.jobActions=items.map(s=>s.replace(/^"|"$/g,''));
+  }
+  return Object.keys(result).length>0?result:null;
+}
+
 async function generateWithGemini(score, tierLabel, domTag, top3){
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',
     independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理',
@@ -2453,12 +2481,35 @@ JSON: {"jobActions": ["アクション1","アクション2","アクション3"]}
     const data = await res.json();
     if(!data.ok) throw new Error(data.error||'GAS Gemini error');
 
-    // JSONパース
+    // JSONパース（不完全なJSONへの対策付き）
     let parsed = data.result;
     if(typeof parsed === 'string'){
-      // コードブロック除去
-      parsed = parsed.replace(/```json|```/g,'').trim();
-      parsed = JSON.parse(parsed);
+      let raw = parsed.replace(/```json|```/g,'').trim();
+      try{
+        parsed = JSON.parse(raw);
+      }catch(e){
+        // 末尾が切れている場合：最後の完全なブロックまでを使う
+        console.warn('Gemini JSON不完全、修復を試みます:', e.message);
+        // 末尾に }] を補完して再試行
+        const attempts = [
+          raw,
+          raw + '"]}',
+          raw + '"}',
+          raw + ']}'  ,
+          raw + '"]}}'
+        ];
+        let repaired = null;
+        for(const attempt of attempts){
+          try{ repaired=JSON.parse(attempt); break; }catch(_){}
+        }
+        if(repaired){
+          parsed = repaired;
+          console.log('JSON修復成功');
+        }else{
+          // 部分的に使えるフィールドだけ抽出
+          parsed = extractPartialJSON(raw);
+        }
+      }
     }
     return parsed;
   }catch(e){
@@ -3234,21 +3285,18 @@ function applyTooltipsToPage(){
 // stat値のフォーマット（スプレッドシートが数値変換した場合のフォールバック）
 function formatStatVal(val){
   if(val===null||val===undefined)return'--';
+  const s=String(val).trim();
+  // スプレッドシートのエラー値をガード
+  if(s.startsWith('#')||s===''||s==='undefined'||s==='null')return'--';
   // 文字列ならそのまま返す
-  if(typeof val==='string')return val;
+  if(typeof val==='string')return s;
   // 数値の場合（スプレッドシートが%を小数に変換した場合）
   if(typeof val==='number'){
-    if(val>0&&val<1){
-      // 0.27 → "約27%"
-      return'約'+Math.round(val*100)+'%';
-    }
-    if(val>=1&&val<100){
-      // 27 → "27%" （%なしで入力されたケース）
-      return Math.round(val)+'%';
-    }
-    return String(val);
+    if(val>0&&val<1)return'約'+Math.round(val*100)+'%';
+    if(val>=1&&val<100)return Math.round(val)+'%';
+    return s;
   }
-  return String(val);
+  return s;
 }
 
 init();
