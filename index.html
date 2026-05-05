@@ -2541,6 +2541,7 @@ async function showResult(){
     renderJobSheet(score,tier.label,domTag,indScores,null);
   }
 
+  window._lastIndScores=indScores; // PDF送信用
   await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
   fetchStats(score,tier.label);
 
@@ -3191,20 +3192,22 @@ async function sendReportEmail(){
   btn.disabled=true;btn.textContent='送信中...';
 
   // レポートデータを収集
+  // 業種スコアをグローバルに保存済みか確認
   const reportData={
     action:'sendReport',
     email,
     nickname:G.nickname,
     mbtiType:G.mbtiType||null,
     mbtiLabel:G.mbtiData?.label||null,
+    mbtiDesc:G.mbtiData?.desc||null,
     score:document.getElementById('res-score').textContent,
     tier:document.getElementById('res-tier').textContent,
     headline:document.getElementById('res-headline').textContent,
     analysis:document.getElementById('res-body').textContent,
     narratives:G.narratives.map(n=>({phase:n.era,age:n.ageRange,text:n.text})),
+    industryScores:window._lastIndScores||[],
     xSummary:window._xSummary||'',
     sessionId:G.sessionId,
-    // 就活ワンシートデータ
     jobSheet:{
       axis:document.getElementById('jws-axis')?.textContent||'',
       industry:document.getElementById('jws-industry')?.textContent||'',
