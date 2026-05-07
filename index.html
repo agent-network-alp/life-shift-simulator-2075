@@ -473,7 +473,7 @@ div[style*="CAREER TRANSLATION"] {
 }
 #result-loading{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
 #result-loading.show{display:flex}
-.rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);text-align:center;padding:0 20px;line-height:1.4}
+.rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);animation:pulse 1.8s ease-in-out infinite;text-align:center;padding:0 20px;line-height:1.4}
 .rl-sub{font-size:.75rem;color:var(--w40);letter-spacing:3px}
 .rl-bar-wrap{width:260px;height:2px;background:var(--border);border-radius:2px}
 .rl-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;width:0%;transition:width .4s ease}
@@ -2370,7 +2370,10 @@ function calcEra(){
 
 function calcChain(){
   const t=G.tags,c=G.config;
-  if((t[0]==='specialization'||t[1]==='specialization')&&t[2]==='rare-combination')return{bonus:c.multiplicationBonus??1.6,rule:'multiplication'};
+  // multiplication: Phase1〜4のどこかでspecializationを選び、それ以降でrare-combinationを選んだ場合
+  const specIdx=t.findIndex(tag=>tag==='specialization');
+  const rareIdx=t.findIndex(tag=>tag==='rare-combination');
+  if(specIdx>=0 && rareIdx>specIdx && specIdx<=3)return{bonus:c.multiplicationBonus??1.6,rule:'multiplication'};
   let maxS=1,cur=1,sT=t[0],sS=0,tS=0;
   for(let i=1;i<t.length;i++){if(t[i]===t[i-1]){cur++;if(cur>maxS){maxS=cur;sT=t[i];sS=tS;}}else{cur=1;tS=i;}}
   if(maxS>=3){const end=sS+maxS;return end<t.length&&t[end]!==sT?{bonus:c.consistentPivotBonus??1.5,rule:'consistent+pivot'}:{bonus:c.consistentBonus??1.0,rule:'consistent'};}
@@ -2379,19 +2382,27 @@ function calcChain(){
 }
 
 function calcCtx(){
-  const c=G.config,map={'specialization:ai-native':c.ctx_specialization_ainative??0.5,'ai-native:strategic':c.ctx_ainative_strategic??0.4,'independent:community-builder':c.ctx_independent_community??0.4,'leadership:legacy':c.ctx_leadership_legacy??0.5,'strategic:strategic':c.ctx_strategic_strategic??0.3};
+  const c=G.config,map={
+    'specialization:ai-native': c.ctx_specialization_ainative??0.5,  // 専門性→AI活用（深化の流れ）
+    'ai-native:strategic':      c.ctx_ainative_strategic??0.4,        // AI活用→意思決定（進化の流れ）
+    'independent:community-builder': c.ctx_independent_community??0.4,// 独立→コミュニティ（拡張の流れ）
+    'leadership:legacy':        c.ctx_leadership_legacy??0.5,         // 育成→継承（成熟の流れ）
+    'specialization:rare-combination': 0.3,                           // 専門→掛け算（追加：自然な発展）
+    'ai-native:independent':    0.3,                                   // AI活用→独立（追加：起業の流れ）
+    // strategic:strategic は calcChain の consistent と重複するため削除
+  };
   return G.tags.slice(1).reduce((b,t,i)=>b+(map[`${G.tags[i]}:${t}`]||0),0);
 }
 
 function calcQ1B(){
-  const pw=getPW(),mx=G.config.q1BonusMax??0.22;
+  // Q1の認識精度はフェーズ関係なく均等評価
+  // 6フェーズ全正解時の最大値 = q1BonusMax = 1.1 (bonusCap内に収まる)
+  const perPhase=(G.config.q1BonusMax??0.22)/6*6; // = q1BonusMax/6 per phase
+  const bonusPerPhase=(G.config.q1BonusMax??0.22)/6;
   return G.q1Choices.reduce((b,q,i)=>{
     if(!q||q.erafit<8)return b;
-    const pid=PHASE_IDS[i];
-    if(!pid)return b;
-    const w=pw[pid]||0;
-    const v=mx*w*5;
-    return isNaN(v)?b:b+v;
+    if(!PHASE_IDS[i])return b;
+    return b+bonusPerPhase;
   },0);
 }
 
@@ -2451,7 +2462,7 @@ function calcIndScores(){
     inds.forEach(n=>{gp[n]+=(affinity[n]||0);});
   });
 
-  const mxG=hasTagData?60:G.tags.length*10||30;
+  const mxG=hasTagData?60:Math.max(G.tags.length*6,1); // DEFAULT_AFFINITY最大値6×タグ数
   const myS=(pa[G.profileCode]||{});
   const hasProfData=Object.keys(pa).length>0;
 
@@ -2480,14 +2491,16 @@ function calcRadar(){
   const eraFitVal   = safe(vmState.eraFit);
   const crisis      = safe(vmState.crisis);
   const consistency = safe(vmState.consistency);
-  const q2q3val     = calcQ2Q3B();
-  const inv         = safe(50+(isNaN(q2q3val)?0:q2q3val)*25);
+  const q2q3val = calcQ2Q3B();
+  // 投資効率: Q2×Q3の整合性スコアを投資効率軸に変換（20〜80の範囲）
+  const q2q3norm = isNaN(q2q3val)?0:Math.max(-1.5,Math.min(1.5,q2q3val));
+  const inv = safe(50 + q2q3norm * 20);
   return[expertise, adaptability, eraFitVal, crisis, consistency, Math.round(inv)];
 }
 
 function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
 
-function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label:'先駆者',color:'#e94560'};if(s>=(c.tier_adapter_min??60))return{label:'適応者',color:'#4fc3f7'};if(s>=(c.tier_seeker_min??40))return{label:'模索者',color:'#81c784'};return{label:'転換期',color:'#ff8a65'};}
+function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label:'先駆者',color:'#E8621A'};if(s>=(c.tier_adapter_min??60))return{label:'適応者',color:'#2B8FC5'};if(s>=(c.tier_seeker_min??40))return{label:'模索者',color:'#6B7280'};return{label:'転換期',color:'#EF4444'};}
 
 // ── 結果 ─────────────────────────────────────────────────────────
 async function showResult(){
@@ -2592,107 +2605,101 @@ async function showResult(){
     '投資先を絞り込み、深く集中することで成果につながりやすくなります。',
   ];
 
+    // MBTIデータを取得して統合
+  const md=G.mbtiData||null;
+  const mbtiGroupColor=md?.groupColor||'#9CA3AF';
+  const mbtiGroupName=md?.group||'';
+  const mbtiLabelName=md?.label||'';
+  const mbtiTypeCode=G.mbtiType||'';
+
+  // MBTI×レーダー軸の整合性を計算
+  const mbtiTagBonus2=md?.tagBonus||{};
+  const alignedCount=G.tags.filter(t=>(mbtiTagBonus2[t]||0)>0).length;
+  const alignedPct=Math.round((alignedCount/Math.max(G.tags.length,1))*100);
+
+  // MBTIグループのAI時代コメント（グループ単位で汎用説明）
+  const GROUP_AI_ERA={
+    '分析家':'論理的・システム的思考でAIの仕組みを理解し活用する側に立ちやすい。「より良い方法を見つけようとする」姿勢がAI時代に直結。',
+    '外交官':'人を動かす共感力・リーダーシップはAIが最も代替しにくい能力。AI化が進むほど、人間的つながりの希少価値が上がる。',
+    '番人':'確実な実行力と責任感はAI導入の土台になる。「AIが示した方向性を現実に落とし込む力」として希少価値を持つ。',
+    '探検家':'変化への即応力と実践的適応力はAI時代の変化の速さと相性が良い。新しいツールを誰より早く試す姿勢が強みになる。',
+  };
+  const groupAiComment=GROUP_AI_ERA[mbtiGroupName]||'';
+
   const analysisHtml=
-    '<div style="margin-bottom:16px">'
-    +'<div style="font-size:.72rem;color:var(--accent);font-weight:700;margin-bottom:6px">▍ 強み（上位2軸）</div>'
-    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
+    // セクション1: 強み
+    '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
+    +'<div style="font-size:.7rem;color:var(--accent);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<span style="display:inline-block;width:3px;height:13px;background:var(--accent);border-radius:2px"></span>強み — 上位2軸</div>'
+    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.9">'
     +'あなたの最も際立つ軸は'
     +'<strong style="color:var(--accent)">'+radarLabels[top2[0].i]+'（'+top2[0].v+'）</strong>と'
     +'<strong style="color:var(--accent)">'+radarLabels[top2[1].i]+'（'+top2[1].v+'）</strong>です。'
     +strengthDesc[top2[0].i]
     +'</div></div>'
-    +'<div style="margin-bottom:16px">'
-    +'<div style="font-size:.72rem;color:var(--gold);font-weight:700;margin-bottom:6px">▍ 伸びしろ（下位2軸）</div>'
-    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
+    // セクション2: 伸びしろ
+    +'<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
+    +'<div style="font-size:.7rem;color:var(--gold);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<span style="display:inline-block;width:3px;height:13px;background:var(--gold);border-radius:2px"></span>伸びしろ — 下位2軸</div>'
+    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.9">'
     +'伸びしろとして注目したいのは'
     +'<strong style="color:var(--gold)">'+radarLabels[bot2[0].i]+'（'+bot2[0].v+'）</strong>と'
     +'<strong style="color:var(--gold)">'+radarLabels[bot2[1].i]+'（'+bot2[1].v+'）</strong>です。'
     +growthDesc[bot2[0].i]
     +'</div></div>'
+    // セクション3: MBTI×今回の選択（MBTIがある場合のみ）
+    +(mbtiTypeCode?
+      '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
+      +'<div style="font-size:.7rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:'+mbtiGroupColor+'">'
+      +'<span style="display:inline-block;width:3px;height:13px;background:'+mbtiGroupColor+';border-radius:2px"></span>'
+      +'MBTIと今回の選択 — '+mbtiTypeCode+'（'+mbtiLabelName+'）</div>'
+      // グループバッジ
+      +'<div style="display:inline-flex;align-items:center;gap:6px;background:'+mbtiGroupColor+'14;border:1px solid '+mbtiGroupColor+'33;border-radius:6px;padding:3px 10px;margin-bottom:10px">'
+      +'<span style="width:7px;height:7px;border-radius:50%;background:'+mbtiGroupColor+';display:inline-block"></span>'
+      +'<span style="font-size:.68rem;font-weight:700;color:'+mbtiGroupColor+'">'+mbtiGroupName+'</span>'
+      +'</div>'
+      // グループAI時代コメント
+      +(groupAiComment?'<div style="font-size:.82rem;color:#374151;line-height:1.8;margin-bottom:10px">'+groupAiComment+'</div>':'')
+      // 選択整合性
+      +'<div style="background:#F9FAFB;border-radius:6px;padding:10px 12px;font-size:.8rem;color:#1A1A2E;line-height:1.75">'
+      +'今回の選択と'+mbtiTypeCode+'の傾向の一致度：'
+      +'<strong style="color:'+(alignedPct>=60?'var(--accent)':alignedPct>=30?'var(--gold)':'#9CA3AF')+'">'+alignedPct+'%</strong>'
+      +'（'+alignedCount+'/'+G.tags.length+'フェーズ）。'
+      +(alignedPct>=60?'MBTIの強みを軸にした一貫した選択ができています。':
+        alignedPct>=30?'MBTIの傾向を活かした選択と、それを超えた選択が混在しています。どちらも成長のプロセスです。':
+        'MBTIの典型的な傾向とは異なるルートを歩みました。それは弱点ではなく、意識的な多様性です。')
+      +'</div>'
+      // AI時代の強み・注意点（L3データ）
+      +(md?.aiEra?
+        '<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">'
+        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(52,211,153,.07);border-left:2px solid #059669">'
+        +'<span style="font-size:.65rem;font-weight:700;color:#059669;margin-right:4px">AI時代の強み</span>'
+        +(md.aiEra.advantage||'')+'</div>'
+        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(245,158,11,.07);border-left:2px solid #D97706">'
+        +'<span style="font-size:.65rem;font-weight:700;color:#D97706;margin-right:4px">注意点</span>'
+        +(md.aiEra.caution||'')+'</div>'
+        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(232,98,26,.07);border-left:2px solid var(--accent)">'
+        +'<span style="font-size:.65rem;font-weight:700;color:var(--accent);margin-right:4px">最適ポジション</span>'
+        +(md.aiEra.bestRole||'')+'</div>'
+        +'</div>'
+      :'')
+      +'</div>'
+    :'')
+    // セクション4: メタ認知力
     +'<div>'
-    +'<div style="font-size:.72rem;color:#6B7280;font-weight:700;margin-bottom:6px">▍ メタ認知力</div>'
-    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
-    +'AI時代の変化を適正に認識できた割合：'
-    +'<strong style="color:'+(metacogPct>=50?'var(--accent)':metacogPct>=25?'var(--gold)':'#9CA3AF')+'">'+metacogPct+'%</strong>'
-    +'（'+correctQ1+'/'+G.q1Choices.length+'回）。'+metacogTxt
+    +'<div style="font-size:.7rem;color:#6B7280;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<span style="display:inline-block;width:3px;height:13px;background:#6B7280;border-radius:2px"></span>メタ認知力</div>'
+    +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">'
+    +'<div style="font-family:var(--ff-head);font-size:2rem;line-height:1;color:'+(metacogPct>=50?'var(--accent)':metacogPct>=25?'var(--gold)':'#9CA3AF')+'">'+metacogPct+'%</div>'
+    +'<div style="font-size:.72rem;color:#6B7280;line-height:1.6">AI時代の変化を<br>適正に認識できた割合<br>（Q1 '+correctQ1+'/'+G.q1Choices.length+'回）</div>'
+    +'</div>'
+    +'<div style="font-size:.82rem;color:#1A1A2E;line-height:1.75;background:rgba(232,98,26,.04);border-radius:6px;padding:10px 12px;border:1px solid rgba(232,98,26,.1)">'+metacogTxt
+    +'<br><span style="font-size:.7rem;color:#9CA3AF;margin-top:4px;display:block">メタ認知力——自分の思考パターンを客観視する力——はAIに代替されない人間固有の能力です。</span>'
     +'</div></div>';
 
   const resBody=document.getElementById('res-body');
   if(resBody) resBody.innerHTML=analysisHtml;
 
-  // 2. MBTI分析（自己一致・意識的拡張・メタ認知）
-  if(G.mbtiType&&G.mbtiData){
-    const mbtiTagBonus=G.mbtiData.tagBonus||{};
-
-    // 自己一致：MBTIの強みタグと一致した選択
-    const alignedTags=G.tags.filter(t=>(mbtiTagBonus[t]||0)>0);
-    const uniqueAligned=[...new Set(alignedTags)];
-
-    // 意識的拡張：MBTIの傾向を超えた（弱みを補った）選択
-    // E/I軸・J/P軸・S/N軸・T/F軸のそれぞれの逆側タグを「拡張」と定義
-    const MBTI_EXPANSION_TAGS={
-      // I型（内向）が外向的選択をした
-      INTJ:['community-builder','leadership','global'],
-      INTP:['community-builder','leadership','global'],
-      INFJ:['independent','global','strategic'],
-      INFP:['independent','strategic','global'],
-      ISTJ:['independent','rare-combination','global'],
-      ISFJ:['independent','rare-combination','strategic'],
-      ISTP:['community-builder','leadership','legacy'],
-      ISFP:['strategic','leadership','global'],
-      // E型（外向）が内向的選択をした
-      ENTJ:['specialization','legacy','independent'],
-      ENTP:['specialization','legacy','independent'],
-      ENFJ:['specialization','independent','strategic'],
-      ENFP:['specialization','legacy','independent'],
-      ESTJ:['independent','legacy','specialization'],
-      ESFJ:['independent','strategic','specialization'],
-      ESTP:['specialization','legacy','community-builder'],
-      ESFP:['strategic','specialization','legacy'],
-    };
-    const expansionTags=MBTI_EXPANSION_TAGS[G.mbtiType]||[];
-    const expandedTags=G.tags.filter(t=>expansionTags.includes(t));
-    const uniqueExpanded=[...new Set(expandedTags)];
-
-    // メタ認知スコア：Q1での適正認識率
-    const correctQ1=G.q1Choices.filter(q=>q&&q.erafit>=8).length;
-    const metacogScore=Math.round((correctQ1/Math.max(G.q1Choices.length,1))*100);
-
-    // 総合メッセージ
-    const metacogMsg=metacogScore>=67
-      ? 'AI時代の変化を正確に捉える認知力が高く、自分の選択を客観視できています。'
-      : metacogScore>=33
-      ? 'AI時代の変化への認識は平均的。より客観的な視点を育てると選択の質が上がります。'
-      : '変化への認識にズレがありましたが、そのギャップに気づけたことが最大の収穫です。';
-
-    const mbtiBadge=document.createElement('div');
-    mbtiBadge.style.cssText='margin-top:20px';
-    mbtiBadge.innerHTML=`
-      <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:18px 20px">
-        <div style="font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:14px">MBTI SELF-AWARENESS REPORT</div>
-
-        <!-- L3: AI時代の文脈 -->
-        ${G.mbtiData?.aiEra?`
-        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
-          <div style="font-size:.7rem;color:var(--gold);margin-bottom:8px;font-weight:700">▍ AI時代のポジション</div>
-          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.75;margin-bottom:6px">
-            <span style="display:inline-block;background:rgba(52,211,153,.1);color:#059669;border-radius:4px;padding:1px 7px;font-size:.68rem;font-weight:700;margin-bottom:4px">強み</span><br>
-            ${G.mbtiData.aiEra.advantage||''}
-          </div>
-          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.75;margin-bottom:6px">
-            <span style="display:inline-block;background:rgba(245,158,11,.1);color:#D97706;border-radius:4px;padding:1px 7px;font-size:.68rem;font-weight:700;margin-bottom:4px">注意点</span><br>
-            ${G.mbtiData.aiEra.caution||''}
-          </div>
-          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.75">
-            <span style="display:inline-block;background:rgba(232,98,26,.1);color:#E8621A;border-radius:4px;padding:1px 7px;font-size:.68rem;font-weight:700;margin-bottom:4px">最適ポジション</span><br>
-            ${G.mbtiData.aiEra.bestRole||''}
-          </div>
-        </div>`:''}
-
-
-      </div>`;
-    document.getElementById('res-body').after(mbtiBadge);
-  }
 
   // MY STORY（50年まとめストーリー）
   const storyEl=document.getElementById('story-entries');
