@@ -7,7 +7,7 @@
 <meta name="description" content="未来へ旅して、戻ってきた君はどこへ向かう。AI時代の就活生のための50年疑似体験。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" crossorigin="anonymous"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -625,12 +625,12 @@ div[style*="CAREER TRANSLATION"] {
 .mbti-section-label{font-size:.58rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.8}
 .mbti-groups{display:flex;flex-direction:column;gap:16px;width:100%;margin-bottom:20px}
 .mbti-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
-.mbti-group-title{font-size:.65rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px}
+.mbti-group-title{font-size:.65rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px;font-weight:700}
 .mbti-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .mbti-type-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:10px 6px;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
 .mbti-type-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.1);color:var(--white)}
 .mbti-type-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.18);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
-.mbti-type-sub{font-size:.6rem;color:var(--w40);display:block;margin-top:2px;font-weight:400}
+.mbti-type-sub{font-size:.6rem;color:var(--w40);display:block;margin-top:2px;font-weight:700}
 .mbti-divider{display:flex;align-items:center;gap:12px;color:var(--w40);font-size:.75rem;margin:4px 0}
 .mbti-divider::before,.mbti-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
@@ -919,13 +919,37 @@ div[style*="CAREER TRANSLATION"] {
       <div class="score-headline" id="res-headline"></div>
     </div>
 
-    <!-- ②6角チャート -->
-    <div class="radar-wrap"><canvas id="radar-chart"></canvas></div>
+    <!-- ②6角チャート（タイトル付き）+ LIVE COMPARISON統合 -->
+    <div class="rpt-card" style="padding-bottom:16px">
+      <div class="rpt-card-header accent">VALUE RADAR — あなたの6軸プロフィール</div>
+      <div id="radar-chart-container" style="position:relative;height:260px">
+        <canvas id="radar-chart"></canvas>
+      </div>
+      <!-- LIVE COMPARISON（レーダーの下に統合） -->
+      <div id="compare-block" style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6;display:none">
+        <div style="font-size:.58rem;letter-spacing:3px;color:#2B8FC5;font-weight:700;margin-bottom:12px">LIVE COMPARISON</div>
+        <div class="compare-stats" style="display:flex;gap:0;margin-bottom:14px">
+          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
+            <div class="compare-num" id="cmp-total" style="font-size:1.6rem;font-weight:900;color:#2B8FC5;display:block;margin-bottom:3px">--</div>
+            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">参加者数</div>
+          </div>
+          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
+            <div class="compare-num" id="cmp-avg" style="font-size:1.6rem;font-weight:900;color:var(--gold);display:block;margin-bottom:3px">--</div>
+            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">平均スコア</div>
+          </div>
+          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px">
+            <div class="compare-num" id="cmp-beat" style="font-size:1.6rem;font-weight:900;color:var(--accent);display:block;margin-bottom:3px">--%</div>
+            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">上位</div>
+          </div>
+        </div>
+        <div id="tier-bars"></div>
+      </div>
+    </div>
 
-    <!-- ③ANALYSIS -->
+    <!-- ③ANALYSIS（六角チャートの分析） -->
     <div class="rpt-card">
       <div class="rpt-card-header accent">ANALYSIS</div>
-      <p id="res-body" style="font-size:.88rem;line-height:1.95;color:#2c2c3e"></p>
+      <div id="res-body" style="font-size:.88rem;line-height:1.95;color:#2c2c3e"></div>
     </div>
 
     <!-- ④MY STORY -->
@@ -934,16 +958,7 @@ div[style*="CAREER TRANSLATION"] {
       <div id="story-entries"></div>
     </div>
 
-    <!-- ⑤LIVE COMPARISON -->
-    <div class="rpt-card" id="compare-block">
-      <div class="rpt-card-header cyan">LIVE COMPARISON</div>
-      <div class="compare-stats">
-        <div class="compare-item"><div class="compare-num" id="cmp-total" style="color:var(--cyan)">--</div><div class="compare-lbl">参加者数</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-avg" style="color:var(--gold)">--</div><div class="compare-lbl">平均スコア</div></div>
-        <div class="compare-item"><div class="compare-num" id="cmp-beat" style="color:var(--accent)">--%</div><div class="compare-lbl">上位</div></div>
-      </div>
-      <div id="tier-bars"></div>
-    </div>
+
 
     <!-- ━━━ 就活パート ━━━ -->
     <div class="rpt-part-label">CAREER</div>
@@ -988,6 +1003,13 @@ div[style*="CAREER TRANSLATION"] {
     <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2)">
     </div>
 
+    <div style="margin:24px 16px 0;padding:14px 16px;background:rgba(0,0,0,.03);border-radius:8px;border-left:2px solid rgba(0,0,0,.1)">
+      <p style="font-size:.68rem;color:#9CA3AF;line-height:1.8">
+        ※ このレポートはシミュレーションゲームの選択結果にもとづくものであり、
+        実際のキャリアや能力・適性を保証・証明するものではありません。
+        診断結果は自己理解のきっかけとしてご活用ください。
+      </p>
+    </div>
     <div class="brand-footer">by 株式会社エージェント</div>
 
     <!-- 固定CTA分の余白 -->
@@ -1041,12 +1063,31 @@ div[style*="CAREER TRANSLATION"] {
       <p style="font-size:.84rem;color:#555;line-height:1.8;margin-bottom:16px">このレポートを持って、キャリア相談へ。あなたの診断結果をもとに、より深いキャリア分析を行います。</p>
       <div id="agent-fit-popup-score" style="margin-bottom:16px"></div>
     </div>
-    <button class="popup-action-btn" onclick="window.open('https://agent-network.co.jp','_blank')">エージェントに相談する →</button>
+    <button class="popup-action-btn" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに相談する →</button>
     <button class="popup-back" onclick="closePopup('popup-agent')">← レポートに戻る</button>
   </div>
 </div>
 
 <script>
+// ━━━ セキュリティ: HTMLエスケープ関数
+function escHtml(s){
+  if(!s)return '';
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#x27;')
+    .replace(/\//g,'&#x2F;');
+}
+
+// ニックネームのバリデーション（英数字・ひらがな・カタカナ・漢字・記号限定）
+function sanitizeNickname(s){
+  if(!s)return '';
+  // 危険なHTMLタグ文字を除去
+  return String(s).replace(/[<>&"'`]/g,'').slice(0,20);
+}
+
 const GAS_URL='https://script.google.com/macros/s/AKfycbxmW1kE-CFbpUQwXzD_iaak0aOviXI395xDBT6KcttL5Jnv9om7a3QovceCi7avVD-9/exec';
 
 // ━━━ MBTI定義 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1349,7 +1390,7 @@ async function init(){
   let w=0;const bar=document.getElementById('loading-bar');
   const t=setInterval(()=>{w=Math.min(w+Math.random()*15,90);bar.style.width=w+'%';if(w>=90)clearInterval(t);},150);
   try{
-    const res=await fetch(`${GAS_URL}?action=contents`);
+    const res=await fetch(`${GAS_URL}?action=contents`,{referrerPolicy:'no-referrer'});
     const json=await res.json();
     if(!json.ok)throw new Error('fail');
     G.data=json;G.config=json.config||{};
@@ -1387,10 +1428,10 @@ function updateStartBtn(){
 }
 
 function goStart(){
-  const nick=document.getElementById('nickname-input').value.trim();
-  if(!nick){document.getElementById('nickname-input').focus();return;}
+  const rawNick=document.getElementById('nickname-input').value.trim();
+  if(!rawNick){document.getElementById('nickname-input').focus();return;}
   if(!document.getElementById('privacy-check')?.checked)return;
-  G.nickname=nick;G.sessionId=crypto.randomUUID();
+  G.nickname=sanitizeNickname(rawNick);G.sessionId=crypto.randomUUID();
   showScreen('screen-mbti');
 }
 
@@ -1644,7 +1685,7 @@ function renderEraPage(phase){
         <div class="decision-hint-text">${hints[G.currentPhase]||''}</div>
       </div>
       <button class="era-cta" onclick="G.currentQ=0;renderPhase()">
-        <span>${G.nickname}さんはどのように意思決定し、行動しますか？</span>
+        <span>${escHtml(G.nickname)}さんはどのように意思決定し、行動しますか？</span>
         <span class="era-cta-arrow">→</span>
       </button>
     </div>`;
@@ -1942,8 +1983,27 @@ function showEvent(ev){
 }
 
 function selectEv(id,ch,tag,corr){
-  G.eventChoices.push({id,ch,tag,corr:Number(corr),phaseIdx:G.currentPhase});
+  const corrNum=Number(corr)||0;
+  G.eventChoices.push({id,ch,tag,corr:corrNum,phaseIdx:G.currentPhase});
   document.getElementById('event-overlay')?.remove();
+  // 案B: correctionをVALUE METERに反映（タグ＋corr値でvmStateを変化）
+  if(tag){
+    applyValueMeterChoice(tag); // タグに基づく軸変化
+  }
+  if(corrNum>0){
+    // 追い風・良選択: eraFit・adaptabilityにプラス補正
+    const boost=Math.min(corrNum,8);
+    vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(boost*0.4));
+    vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(boost*0.3));
+    vmState.expertise   =Math.min(100,vmState.expertise+Math.round(boost*0.2));
+    renderValueMeter(null);
+  }else if(corrNum<0){
+    // ショック・悪選択: crisis・consistencyにマイナス補正
+    const penalty=Math.abs(corrNum);
+    vmState.crisis      =Math.max(0,vmState.crisis-Math.round(penalty*0.3));
+    vmState.consistency =Math.max(0,vmState.consistency-Math.round(penalty*0.2));
+    renderValueMeter(null);
+  }
   nextPhase();
 }
 
@@ -2501,28 +2561,64 @@ async function showResult(){
     `未来から見えたこと——あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。<br>
      <span style="font-size:.8rem;opacity:.85">同世代の${scorePercentile}に相当するスコア。${scoreContext}${chainContext}</span>`;
 
-  // スコア就活翻訳カードをscore-blockの後に追加
-  const scoreTransBlock=document.createElement('div');
-  scoreTransBlock.style.cssText='margin-bottom:24px';
-  scoreTransBlock.innerHTML=`
-    <div style="background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09);border-radius:10px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-      <div style="font-size:.58rem;letter-spacing:3px;color:#a05c14;margin-bottom:14px">CAREER TRANSLATION — 就活言語に翻訳</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.risk}</div>
-        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.env}</div>
-        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7">${jt.career}</div>
-        <div style="font-size:.82rem;color:#1c1c2e;line-height:1.7;background:rgba(232,98,26,.06);border-radius:6px;padding:10px 12px;border-left:3px solid var(--accent)">${jt.pr}</div>
-      </div>
-    </div>`;
-  document.querySelector('.score-block').after(scoreTransBlock);
 
-  // MBTI最適化フィードバック
-  const mbtiStyle=G.mbtiData?FEEDBACK_STYLE[G.mbtiData.feedbackStyle]||{}:{};
-  const rawBody=(fb.body||'').replace('{dominantTag}',TL[domTag]||domTag);
-  const optimizedBody=mbtiStyle.prefix
-    ? mbtiStyle.prefix+rawBody+mbtiStyle.suffix
-    : rawBody;
-  document.getElementById('res-body').textContent=optimizedBody;
+  // CAREER TRANSLATIONブロックは削除（就活ワンシートと統合）
+  // ANALYSISを六角チャートの強み・伸びしろ分析に変更
+  const radarLabels=['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'];
+  const sorted=[...radar.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v);
+  const top2=sorted.slice(0,2);
+  const bot2=sorted.slice(-2).reverse();
+  const correctQ1=G.q1Choices.filter(q=>q&&q.erafit>=8).length;
+  const metacogPct=Math.round((correctQ1/Math.max(G.q1Choices.length,1))*100);
+  const metacogTxt=metacogPct>=67?'AI時代の変化を高い精度で捉える認識力があります。':
+    metacogPct>=33?'AI時代の変化への認識は平均的。客観的な視点を意識すると選択の質が上がります。':
+    metacogPct===0?'今回のゲームではAIの変化を「過大評価」または「過小評価」する傾向が現れました。どの視点が「適正」だったかを振り返ることが、AI時代の認識力を磨くきっかけになります。':
+    '変化への認識にやや偏りがありました。客観的な視点を育てることでさらに成長できます。';
+
+  const strengthDesc=[
+    '深い専門性は、AIが広まる時代でも代替されにくい希少価値です。',
+    '高い適応力は、変化の速いAI時代に最も求められる能力の一つです。',
+    '時代適合性が高く、AI時代の変化の方向性と選択が一致しています。',
+    '危機対応力の高さは、予期せぬ変化に強いキャリアの土台になります。',
+    '一貫した軸があることで、長期的な信頼と専門性が積み上がります。',
+    '投資効率の高い選択を続けており、努力が成果につながりやすい傾向があります。',
+  ];
+  const growthDesc=[
+    '専門性への投資を意識的に深めることで、他者との差別化が加速します。',
+    '適応力を意識して鍛えることで、AI時代の変化への対応力が一段上がります。',
+    'AI時代の変化の本質を学ぶ機会を増やすと、選択の質が向上します。',
+    '予期しない変化への備えを増やすことで、キャリアの耐久力が高まります。',
+    '選択に一貫性を持たせる意識が、次のフェーズでのスコアを引き上げます。',
+    '投資先を絞り込み、深く集中することで成果につながりやすくなります。',
+  ];
+
+  const analysisHtml=
+    '<div style="margin-bottom:16px">'
+    +'<div style="font-size:.72rem;color:var(--accent);font-weight:700;margin-bottom:6px">▍ 強み（上位2軸）</div>'
+    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
+    +'あなたの最も際立つ軸は'
+    +'<strong style="color:var(--accent)">'+radarLabels[top2[0].i]+'（'+top2[0].v+'）</strong>と'
+    +'<strong style="color:var(--accent)">'+radarLabels[top2[1].i]+'（'+top2[1].v+'）</strong>です。'
+    +strengthDesc[top2[0].i]
+    +'</div></div>'
+    +'<div style="margin-bottom:16px">'
+    +'<div style="font-size:.72rem;color:var(--gold);font-weight:700;margin-bottom:6px">▍ 伸びしろ（下位2軸）</div>'
+    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
+    +'伸びしろとして注目したいのは'
+    +'<strong style="color:var(--gold)">'+radarLabels[bot2[0].i]+'（'+bot2[0].v+'）</strong>と'
+    +'<strong style="color:var(--gold)">'+radarLabels[bot2[1].i]+'（'+bot2[1].v+'）</strong>です。'
+    +growthDesc[bot2[0].i]
+    +'</div></div>'
+    +'<div>'
+    +'<div style="font-size:.72rem;color:#6B7280;font-weight:700;margin-bottom:6px">▍ メタ認知力</div>'
+    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.85">'
+    +'AI時代の変化を適正に認識できた割合：'
+    +'<strong style="color:'+(metacogPct>=50?'var(--accent)':metacogPct>=25?'var(--gold)':'#9CA3AF')+'">'+metacogPct+'%</strong>'
+    +'（'+correctQ1+'/'+G.q1Choices.length+'回）。'+metacogTxt
+    +'</div></div>';
+
+  const resBody=document.getElementById('res-body');
+  if(resBody) resBody.innerHTML=analysisHtml;
 
   // 2. MBTI分析（自己一致・意識的拡張・メタ認知）
   if(G.mbtiType&&G.mbtiData){
@@ -2575,34 +2671,6 @@ async function showResult(){
       <div style="background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.2);border-radius:10px;padding:18px 20px">
         <div style="font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:14px">MBTI SELF-AWARENESS REPORT</div>
 
-        <!-- 自己一致 -->
-        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
-          <div style="font-size:.7rem;color:var(--cyan);margin-bottom:6px;font-weight:700">▍ 強みの発揮</div>
-          <div style="font-size:.82rem;color:#2c2c3e;line-height:1.7">
-            ${uniqueAligned.length>0
-              ? `${G.mbtiType}（${G.mbtiData.label}）の強みである
-                <strong style="color:var(--accent)">${uniqueAligned.map(t=>TL[t]||t).join('・')}</strong>
-                を軸にした選択を<strong>${alignedTags.length}回</strong>行いました。
-                MBTIの傾向が自然にキャリア選択に現れています。`
-              : `今回の選択はMBTIの典型的な強みとは異なるルートでした。それは弱点ではなく、意識的な多様性です。`
-            }
-          </div>
-        </div>
-
-        <!-- 意識的拡張 -->
-        <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
-          <div style="font-size:.7rem;color:var(--gold);margin-bottom:6px;font-weight:700">▍ 意識的な拡張</div>
-          <div style="font-size:.82rem;color:#2c2c3e;line-height:1.7">
-            ${uniqueExpanded.length>0
-              ? `${G.mbtiType}が苦手とする傾向の
-                <strong style="color:var(--gold)">${uniqueExpanded.map(t=>TL[t]||t).join('・')}</strong>
-                を<strong>${expandedTags.length}回</strong>意識的に選択しました。
-                自分の傾向を超えた選択は、<strong>AI時代に最も求められる成長の証</strong>です。`
-              : `今回はMBTIの強みに沿った選択が中心でした。次回は意識的に苦手領域に挑戦すると、さらなる成長が見込めます。`
-            }
-          </div>
-        </div>
-
         <!-- L3: AI時代の文脈 -->
         ${G.mbtiData?.aiEra?`
         <div style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(56,189,248,.12)">
@@ -2621,23 +2689,7 @@ async function showResult(){
           </div>
         </div>`:''}
 
-        <!-- メタ認知 -->
-        <div>
-          <div style="font-size:.7rem;color:var(--accent);margin-bottom:6px;font-weight:700">▍ メタ認知力</div>
-          <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-            <div style="font-family:var(--ff-head);font-size:1.8rem;color:${metacogScore>=50?'var(--accent)':metacogScore>=25?'var(--gold)':'#aaa'}">${metacogScore}%</div>
-            <div style="font-size:.72rem;color:#555">
-              AI時代の変化を適正に認識できた割合<br>
-              （Q1で「適正認識型」を選んだ回数 ${correctQ1}/${G.q1Choices.length}回）
-            </div>
-          </div>
-          <div style="font-size:.78rem;color:#2c2c3e;line-height:1.75;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
-            ${metacogScore===0
-              ? 'Q1ではAIの変化を「過大評価」または「過小評価」する選択が続きました。これはゲームの選択結果です。どの答えが「適正認識」だったか振り返ることで、AI時代の変化の見方が磨かれます。'
-              : metacogMsg}<br>
-            <span style="font-size:.7rem;color:#888;margin-top:4px;display:block">メタ認知力——自分の思考パターンを客観視する力——はAIに代替されない人間固有の能力です。</span>
-          </div>
-        </div>
+
       </div>`;
     document.getElementById('res-body').after(mbtiBadge);
   }
@@ -3284,9 +3336,9 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
 
   // 適性スコアの就活言語翻訳
   const fitAdvice=agentFitScore>=75
-    ? `${G.nickname}さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に${TL[domTag]||domTag}軸が、採用支援の仕事の本質と重なっています。`
+    ? `${escHtml(G.nickname)}さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に${TL[domTag]||domTag}軸が、採用支援の仕事の本質と重なっています。`
     : agentFitScore>=55
-    ? `${G.nickname}さんは一定の適性を持っています。${TL[domTag]||domTag}の強みを採用・人材領域でどう活かすかを言語化することで、さらに適性が高まるでしょう。`
+    ? `${escHtml(G.nickname)}さんは一定の適性を持っています。${TL[domTag]||domTag}の強みを採用・人材領域でどう活かすかを言語化することで、さらに適性が高まるでしょう。`
     : `エージェントの仕事は、あなたの現在の強みとは異なる方向性ですが、${TL[domTag]||domTag}の力が人材・採用領域で新しい価値を生む可能性があります。`;
 
   const el=document.getElementById('agent-fit-block');
@@ -3373,6 +3425,7 @@ async function fetchStats(myScore,myTier){
     const res=await fetch(`${GAS_URL}?action=stats`);
     const data=await res.json();
     if(!data.ok||!data.total){document.getElementById('compare-block').style.display='none';return;}
+    document.getElementById('compare-block').style.display='block';
     document.getElementById('cmp-total').textContent=data.total;
     document.getElementById('cmp-avg').textContent=data.avgScore;
     const to=['先駆者','適応者','模索者','転換期'];
@@ -3784,8 +3837,13 @@ function closeDice(){
   if(result?.type==='bad'&&result.event){
     showEvent(result.event); // 既存のイベント表示
   }else if(result?.type==='good'&&result.bonus){
-    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:result.bonus.correction,phaseIdx:G.currentPhase});
+    const bonusCorr=result.bonus.correction||0;
+    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:bonusCorr,phaseIdx:G.currentPhase});
     applyValueMeterChoice(result.bonus.tag);
+    // 追い風ボーナス: eraFit・adaptabilityを強化
+    vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
+    vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
+    renderValueMeter(null);
     nextPhase();
   }else{
     nextPhase();
