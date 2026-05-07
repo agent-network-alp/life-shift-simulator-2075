@@ -380,18 +380,12 @@ div[style*="CAREER TRANSLATION"] {
 
 /* ━━━ アクション ━━━ */
 .result-inner .action-item{
-  background:#F9FAFB;border:1.5px solid #E5E7EB;
-  border-radius:10px;color:#1A1A2E;padding:14px 16px;
-  font-size:.84rem;line-height:1.7;margin-bottom:8px;
-  transition:all .15s;
+  font-size:.84rem;line-height:1.8;color:#374151;
+  padding:5px 0 5px 18px;position:relative;
+  display:block;border:none;background:none;width:100%;text-align:left;cursor:default;
 }
-.result-inner .action-item:hover{
-  border-color:#E8621A;background:#fff;
-  box-shadow:0 2px 8px rgba(232,98,26,.1);
-}
-.result-inner .action-item.picked{
-  border-color:#E8621A;background:rgba(232,98,26,.05);
-  color:#1A1A2E;
+.result-inner .action-item::before{
+  content:"→";position:absolute;left:0;color:#E8621A;font-weight:700;
 }
 
 /* ━━━ 就活ワンシート ━━━ */
@@ -479,8 +473,8 @@ div[style*="CAREER TRANSLATION"] {
 }
 #result-loading{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
 #result-loading.show{display:flex}
-.rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);animation:pulse 1.2s infinite;text-align:center;padding:0 20px;line-height:1.4}
-.rl-sub{font-size:.75rem;color:var(--w40);letter-spacing:3px;animation:pulse 1.2s infinite .3s}
+.rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);text-align:center;padding:0 20px;line-height:1.4}
+.rl-sub{font-size:.75rem;color:var(--w40);letter-spacing:3px}
 .rl-bar-wrap{width:260px;height:2px;background:var(--border);border-radius:2px}
 .rl-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;width:0%;transition:width .4s ease}
 .ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
@@ -502,9 +496,8 @@ div[style*="CAREER TRANSLATION"] {
 .radar-wrap{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:20px;margin-bottom:18px;height:260px;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.05)}
 .action-block{background:rgba(232,98,26,.06);border:1px solid rgba(232,98,26,.22);border-radius:10px;padding:20px 22px;margin-bottom:32px}
 .action-block h3{font-size:.6rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
-.action-item{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:13px 16px;cursor:pointer;font-size:.84rem;line-height:1.7;transition:all .18s;text-align:left;color:var(--w90);font-family:var(--ff-body);width:100%;margin-bottom:8px;display:block}
-.action-item:hover{border-color:var(--gold);background:rgba(240,180,41,.07);color:var(--white)}
-.action-item.picked{border-color:var(--gold);background:rgba(240,180,41,.1);color:var(--white)}
+.action-item{font-size:.84rem;line-height:1.7;color:#374151;padding:6px 0 6px 16px;position:relative;display:block;border:none;background:none;width:100%;text-align:left}
+.action-item::before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
 .compare-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .compare-item{flex:1;min-width:90px;text-align:center}
 .compare-num{font-family:var(--ff-head);font-size:1.7rem;color:var(--white)}
@@ -978,12 +971,8 @@ div[style*="CAREER TRANSLATION"] {
         <span class="job-sheet-value" id="jws-risk">--</span>
       </div>
       <div class="job-sheet-row" style="flex-direction:column">
-        <span class="job-sheet-label" style="margin-bottom:6px">自己PRの核心</span>
-        <div class="job-sheet-pr" id="jws-pr">生成中...</div>
-      </div>
-      <div class="job-sheet-row" style="flex-direction:column">
-        <span class="job-sheet-label" style="margin-bottom:6px">面接エピソードの型</span>
-        <div class="job-sheet-value" id="jws-episode" style="background:rgba(56,189,248,.06);border-radius:6px;padding:10px 12px;border:1px solid rgba(56,189,248,.15)">生成中...</div>
+        <span class="job-sheet-label" style="margin-bottom:6px">就活軸の提案</span>
+        <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.84rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
       </div>
       <button class="job-sheet-copy-btn" onclick="copyJobSheet()">📋 このシートをコピーする</button>
     </div>
@@ -2755,7 +2744,7 @@ async function showResult(){
     ],
   };
   const acts=actionPool[tier.label]||actionPool['模索者'];
-  document.getElementById('action-list').innerHTML=acts.map(a=>`<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`).join('');
+  document.getElementById('action-list').innerHTML=acts.map(a=>`<div class="action-item">${a}</div>`).join('');
 
   // Gemini AIでナラティブと業種説明文を生成
   try{
@@ -2785,7 +2774,7 @@ async function showResult(){
         const actionEl=document.getElementById('action-list');
         if(actionEl){
           actionEl.innerHTML=aiResult.jobActions.map(a=>
-            `<button class="action-item" onclick="this.classList.toggle('picked')">${a}</button>`
+            `<div class="action-item">${a}</div>`
           ).join('');
         }
       }
@@ -3091,12 +3080,60 @@ function renderJobSheet(score, tierLabel, domTag, indScores, aiResult){
     }
   }
 
-  // 面接エピソードの型（MBTI×タグ）
-  const episodeEl=document.getElementById('jws-episode');
-  if(episodeEl){
-    const mbtiLabel=G.mbtiData?.label||'';
-    const episodeTemplate=`「私は${mbtiLabel?mbtiLabel+'として、':''}${TL_inner[domTag]||domTag}の力を[具体的な場面]で発揮しました。その結果[成果・変化]が生まれました。この経験から[学んだこと・強み]に自信を持っています。」`;
-    episodeEl.innerHTML=`<span style="color:#888;font-size:.72rem">テンプレート（[ ]内を自分のエピソードで埋める）</span><br><br>${episodeTemplate}`;
+  // 就活軸の提案（MBTI×選択傾向から生成）
+  const careerAxisEl=document.getElementById('jws-career-axis');
+  if(careerAxisEl){
+    const mbtiGroup = G.mbtiData?.group||'';
+    const mbtiLabel = G.mbtiData?.label||'';
+    const aiAdvantage = G.mbtiData?.aiEra?.advantage||'';
+    const aiBestRole  = G.mbtiData?.aiEra?.bestRole||'';
+
+    // グループ×dominantTagの組み合わせで軸を決定
+    const GROUP_AXIS={
+      '分析家':{
+        strategic:'「AIが解けない問いを立てる人材」として事業の上流に立つ。論理×戦略で組織の羅針盤になる。',
+        specialization:'「誰にも代替できない専門性」を武器に、AI時代でも希少であり続ける。深さで差別化する就活軸。',
+        'ai-native':'AIを誰よりも速く理解・活用する「AI実装のエキスパート」として企業のDXを牽引する就活軸。',
+        default:'論理と独立した思考力を武器に、AIが苦手とする「本質的な問いを立てる役割」を担う就活軸。',
+      },
+      '外交官':{
+        leadership:'「人を育て、組織を動かす力」を軸に。AI時代に最も希少な人間のリーダーシップを就活の核心に据える。',
+        'community-builder':'「人と人をつなぎ、場を作る力」を軸に。AIが分断する時代にコミュニティを束ねる人材として活躍。',
+        strategic:'「人への深い共感×戦略的思考」で、組織課題の本質を解く。コンサル・HR・教育分野で唯一無二の価値。',
+        default:'共感力とリーダーシップで「人間にしか作れない価値」を体現する。AI時代の人材×組織分野を中心に据える就活軸。',
+      },
+      '番人':{
+        specialization:'「確実な実行力と専門的信頼性」を軸に。AIが示した方向性を現実に落とし込む「実装のプロ」として活躍。',
+        leadership:'「秩序と責任感で組織を支える力」を軸に。AI導入後の組織をまとめる管理職・プロジェクトリーダーとして活躍。',
+        legacy:'「積み上げてきた信頼と知見を次代に継承する力」を軸に。組織の知的資産を守り育てる専門職として活躍。',
+        default:'信頼性・責任感・実行力を軸に、AIが不確かな時代に「確実性」を提供できる人材として活躍する就活軸。',
+      },
+      '探検家':{
+        independent:'「自律的に動き、変化を機会に変える力」を軸に。AI時代の変化の速さを武器にするファーストムーバー就活軸。',
+        'ai-native':'「新しいツールを誰よりも速く実践活用する力」を軸に。現場でAIを動かすエンジニア・スペシャリストとして活躍。',
+        'rare-combination':'「複数の領域を掛け合わせる柔軟な実践力」を軸に。業界の境界が崩れる時代に希少な掛け算人材として活躍。',
+        default:'適応力と実践力を武器に、AI時代の変化に最も自然に乗れる人材として活躍する就活軸。',
+      },
+    };
+
+    const groupAxes = GROUP_AXIS[mbtiGroup]||GROUP_AXIS['外交官'];
+    const axisText  = groupAxes[TL_inner[domTag]]||groupAxes[domTag]||groupAxes['default']||'';
+
+    // 業種を加えた具体的な就活軸テキスト
+    const topInd = document.getElementById('jws-industry')?.textContent?.split('（')[0]?.split('／')[0]?.trim()||'';
+
+    careerAxisEl.innerHTML =
+      (axisText
+        ? `<div style="margin-bottom:10px">${axisText}</div>`
+        : '') +
+      (aiBestRole
+        ? `<div style="font-size:.78rem;color:#6B7280;border-top:1px solid rgba(232,98,26,.15);padding-top:8px;margin-top:8px">`
+          +`<span style="color:#E8621A;font-weight:700">最適ポジション：</span>${aiBestRole}</div>`
+        : '') +
+      (topInd
+        ? `<div style="font-size:.78rem;color:#6B7280;border-top:1px solid rgba(232,98,26,.15);padding-top:8px;margin-top:8px">`
+          +`<span style="color:#E8621A;font-weight:700">注目業種：</span>${topInd}</div>`
+        : '');
   }
 }
 
@@ -3104,19 +3141,15 @@ function copyJobSheet(){
   const axis=document.getElementById('jws-axis')?.textContent||'';
   const ind=document.getElementById('jws-industry')?.textContent||'';
   const risk=document.getElementById('jws-risk')?.textContent||'';
-  const pr=document.getElementById('jws-pr')?.textContent||'';
-  const ep=document.getElementById('jws-episode')?.textContent||'';
+  const careerAxis=document.getElementById('jws-career-axis')?.textContent||'';
   const text=`【就活ワンシート - LIFE SHIFT SIMULATOR 2075】
 
 キャリアの軸：${axis}
 第一志望業種：${ind}
 AI代替リスク：${risk}
 
-自己PRの核心：
-${pr}
-
-面接エピソードの型：
-${ep}`;
+就活軸の提案：
+${careerAxis}`;
   navigator.clipboard.writeText(text).then(()=>{
     const btn=document.querySelector('.job-sheet-copy-btn');
     if(btn){btn.textContent='✓ コピーしました！';setTimeout(()=>{btn.textContent='📋 このシートをコピーする';},2000);}
@@ -3680,9 +3713,12 @@ function rollDice(){
   const badge=document.getElementById('dice-badge');
   const cta=document.getElementById('dice-cta');
 
-  if(face.classList.contains('rolling'))return;
+  // 1回のみ：rolling中またはすでに振り終えた場合は無効
+  if(face.classList.contains('rolling')||face.dataset.rolled)return;
   hint.style.display='none';
   face.classList.add('rolling');
+  face.dataset.rolled='1'; // 振り済みフラグ
+  face.style.cursor='default';
 
   const FACES=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'];
   let count=0;
