@@ -2577,6 +2577,9 @@ async function showResult(){
 
   // CAREER TRANSLATIONブロックは削除（就活ワンシートと統合）
   // ANALYSISを六角チャートの強み・伸びしろ分析に変更
+  // MBTIデータを取得（strengthDesc/growthDescで使用）← analysisHtml生成より前に必要
+  const md=G.mbtiData||null;
+
   const radarLabels=['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'];
   const sorted=[...radar.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v);
   const top2=sorted.slice(0,2);
@@ -2621,9 +2624,6 @@ async function showResult(){
     (mbtiGrowthPrefix||'')+'選択に一貫性を持たせる意識が次のステージでのスコアを引き上げます。'+(mbtiG==='探検家'?'探検家型は多様な方向に動く傾向があるため、「今週の選択は自分の軸と一致しているか」を週次で問い直すと一貫性が育ちます。':mbtiG==='外交官'?'外交官型は他者の期待に応じて方向が変わりやすいため、「自分が本当に望む方向」を定期的に確認する習慣が一貫性を守ります。':'「なぜこれを選ぶのか」を言語化する習慣が、選択の一貫性を高めます。'),
     (mbtiGrowthPrefix||'')+'投資先を絞り込み深く集中することで成果につながりやすくなります。'+(mbtiG==='分析家'?'分析家型は複数の可能性を同時に探索する傾向があるため、「最も重要な1つ」に意識的に絞り込む訓練が効果的です。':mbtiG==='外交官'?'外交官型は多くの人・活動に関わりたい傾向があるため、「今期の重点投資先」を1つ明確にすることで成果が加速します。':'エネルギーの分散を意識的に防ぐことが、この軸の伸びしろを最大化します。'),
   ];
-
-    // MBTIデータを取得（strengthDesc/growthDescで使用）
-  const md=G.mbtiData||null;
 
   const analysisHtml=
     // セクション1: 強み
