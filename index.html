@@ -2962,7 +2962,7 @@ Q3投資先の傾向: ${q3Top||'スキル中心'}
 
 3つをまとめた1つのJSONのみ。`;
 
-  // ━━━ 2リクエストを並列送信
+  // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
   const callGAS = async (prompt, maxTok) => {
     const res = await fetch(GAS_URL, {
       method: 'POST',
@@ -2976,45 +2976,30 @@ Q3投資先の傾向: ${q3Top||'スキル中心'}
       try{
         parsed=JSON.parse(raw);
       }catch(e){
-        // JSON修復：末尾補完パターン
-        const attempts=[
-          raw,
-          raw+'"}]}}',
-          raw+'"]}',
-          raw+'"}',
-          raw+'"]}}',
-          raw+'}}',
-          raw+'}',
-        ];
+        const attempts=[raw, raw+'"}]}}', raw+'"]}', raw+'"}', raw+'"]}}', raw+'}}', raw+'}'];
         let repaired=null;
-        for(const a of attempts){
-          try{ repaired=JSON.parse(a); break; }catch(_){}
-        }
-        if(repaired){
-          parsed=repaired;
-        }else{
-          // 部分抽出（切れた要素は含まない）
-          parsed=extractPartialJSON(raw);
-        }
+        for(const a of attempts){ try{ repaired=JSON.parse(a); break; }catch(_){} }
+        parsed = repaired || extractPartialJSON(raw);
       }
     }
     return parsed;
   };
 
   try{
-    // 並列実行
-    const [storyResult, careerResult] = await Promise.all([
-      callGAS(promptStory, 2500),   // MY STORY: 6×100字=日本語600字≈900トークン、余裕みて2500
-      callGAS(promptCareer, 800),   // 業種+PR+アクション: 余裕みて800
-    ]);
+    // ━━ Req①：MY STORY（先に送信・完了を待つ）
+    const storyResult = await callGAS(promptStory, 2500);
+    console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
-    // 結果をマージ
+    // ━━ Req②：業種・就活軸・アクション（①完了後に送信）
+    const careerResult = await callGAS(promptCareer, 900);
+    console.log('careerResult:', JSON.stringify(careerResult)?.slice(0,120));
+
     return {
-      myStory:         storyResult?.myStory || null,
-      industryComments:careerResult?.industryComments || null,
-      selfPR:          careerResult?.selfPR || null,
-      careerAxis:      careerResult?.careerAxis || null,
-      jobActions:      careerResult?.jobActions || null,
+      myStory:          storyResult?.myStory || null,
+      industryComments: careerResult?.industryComments || null,
+      selfPR:           careerResult?.selfPR || null,
+      careerAxis:       careerResult?.careerAxis || null,
+      jobActions:       careerResult?.jobActions || null,
     };
   }catch(e){
     console.warn('Gemini API error:', e);
