@@ -2588,43 +2588,42 @@ async function showResult(){
     metacogPct===0?'今回のゲームではAIの変化を「過大評価」または「過小評価」する傾向が現れました。どの視点が「適正」だったかを振り返ることが、AI時代の認識力を磨くきっかけになります。':
     '変化への認識にやや偏りがありました。客観的な視点を育てることでさらに成長できます。';
 
+  // MBTI情報でstrengthDesc・growthDescをリッチ化
+  const mbtiL=md?.label||'';
+  const mbtiG=md?.group||'';
+  // MBTIグループ別の表現スタイル
+  const mbtiStrengthPrefix=
+    mbtiG==='分析家'?'論理的・体系的な思考力を持つ'+mbtiL+'型として、':
+    mbtiG==='外交官'?'共感力とビジョン志向を持つ'+mbtiL+'型として、':
+    mbtiG==='番人'?'責任感と実行力を持つ'+mbtiL+'型として、':
+    mbtiG==='探検家'?'即応力と実践力を持つ'+mbtiL+'型として、':
+    mbtiL?mbtiL+'型として、':'';
+  const mbtiGrowthPrefix=
+    mbtiG==='分析家'?'分析家グループが持つ探求力を活かして、':
+    mbtiG==='外交官'?'外交官グループが持つ人への関心を活かして、':
+    mbtiG==='番人'?'番人グループが持つ着実さを活かして、':
+    mbtiG==='探検家'?'探検家グループが持つ行動力を活かして、':
+    '';
+
   const strengthDesc=[
-    '深い専門性は、AIが広まる時代でも代替されにくい希少価値です。',
-    '高い適応力は、変化の速いAI時代に最も求められる能力の一つです。',
-    '時代適合性が高く、AI時代の変化の方向性と選択が一致しています。',
-    '危機対応力の高さは、予期せぬ変化に強いキャリアの土台になります。',
-    '一貫した軸があることで、長期的な信頼と専門性が積み上がります。',
-    '投資効率の高い選択を続けており、努力が成果につながりやすい傾向があります。',
+    (mbtiStrengthPrefix||'')+'深い専門性はAIが広まる時代でも代替されにくい希少価値です。'+(mbtiG==='分析家'?'体系的に深掘りする思考がこの軸をさらに際立たせます。':mbtiG==='番人'?'着実に積み上げる姿勢がこの強みをより確かなものにしています。':'知識の深さと人間的な洞察が組み合わさると、唯一無二の専門家になれます。'),
+    (mbtiStrengthPrefix||'')+'高い適応力はAI時代に最も求められる能力の一つです。'+(mbtiG==='探検家'?'環境変化を即座に機会と捉える探検家型の感覚が、この軸を自然に伸ばします。':mbtiG==='外交官'?'人間関係のダイナミクスを素早く読む力が、変化への適応をさらに高めています。':'変化をストレスではなく成長の機会と捉える姿勢が、この軸の根幹にあります。'),
+    (mbtiStrengthPrefix||'')+'時代適合性が高く、AI時代の変化の方向性と選択が一致しています。'+(mbtiG==='分析家'?'変化の本質を論理的に読み解く力が、時代を先読みする選択につながっています。':mbtiG==='外交官'?'未来への直感と人への洞察が、時代の文脈に合った選択を生み出しています。':'時代の潮流を肌で感じながら、自分らしい選択ができています。'),
+    (mbtiStrengthPrefix||'')+'危機対応力の高さは、予期せぬ変化に強いキャリアの土台になります。'+(mbtiG==='番人'?'計画性と責任感を持つ番人型として、リスクを事前に察知し備える力が際立ちます。':mbtiG==='探検家'?'即興的な対応力を持つ探検家型として、危機を乗り越える実践力があります。':'困難な局面で冷静に行動する力が、キャリアの耐久力を高めています。'),
+    (mbtiStrengthPrefix||'')+'一貫した軸があることで、長期的な信頼と専門性が積み上がります。'+(mbtiG==='番人'?'責任感と継続力を持つ番人型として、この一貫性は最大の強みになります。':mbtiG==='分析家'?'独自のシステムを長期間磨き続ける分析家型の粘り強さが、この軸を支えています。':'ブレない軸を持ち続ける姿勢が、他者からの信頼を積み重ねています。'),
+    (mbtiStrengthPrefix||'')+'投資効率の高い選択を続けており、努力が成果につながりやすい傾向があります。'+(mbtiG==='分析家'?'論理的に優先順位を判断する分析家型の特性が、投資先の選択精度を高めています。':mbtiG==='探検家'?'実践から学ぶ探検家型の姿勢が、投資の回収を早めています。':'選択の質の高さが、時間とエネルギーの無駄を最小化しています。'),
   ];
   const growthDesc=[
-    '専門性への投資を意識的に深めることで、他者との差別化が加速します。',
-    '適応力を意識して鍛えることで、AI時代の変化への対応力が一段上がります。',
-    'AI時代の変化の本質を学ぶ機会を増やすと、選択の質が向上します。',
-    '予期しない変化への備えを増やすことで、キャリアの耐久力が高まります。',
-    '選択に一貫性を持たせる意識が、次のフェーズでのスコアを引き上げます。',
-    '投資先を絞り込み、深く集中することで成果につながりやすくなります。',
+    (mbtiGrowthPrefix||'')+'専門性への投資を意識的に深めることで他者との差別化が加速します。'+(mbtiG==='外交官'?'外交官型が持つ人への関心を「特定分野の専門家」と掛け合わせると、唯一無二のキャリアが生まれます。':mbtiG==='探検家'?'探検家型の幅広い興味を1点に絞り込む練習が、次の段階への鍵になります。':'「広く知る」から「深く知る」へのシフトが、この軸を伸ばす第一歩です。'),
+    (mbtiGrowthPrefix||'')+'適応力を意識して鍛えることでAI時代の変化への対応力が一段上がります。'+(mbtiG==='番人'?'番人型が持つ堅実さを維持しながら、意識的に新しい環境に身を置く経験を増やすと効果的です。':mbtiG==='分析家'?'分析家型は変化の論理的な理解が得意なので、「理解してから動く」習慣を「動きながら理解する」方向にシフトすると適応力が高まります。':'小さな変化に積極的に飛び込む習慣が、この軸の伸びしろを引き出します。'),
+    (mbtiGrowthPrefix||'')+'AI時代の変化の本質を学ぶ機会を増やすと選択の質が向上します。'+(mbtiG==='外交官'?'外交官型の豊かな感受性に「データと事実」の視点を加えることで、時代認識の精度が上がります。':mbtiG==='探検家'?'探検家型の行動力に「中長期トレンドの観察」を組み合わせると、変化への対応がさらに的確になります。':'直感だけでなく、構造的な学習習慣を作ることが、この軸を伸ばします。'),
+    (mbtiGrowthPrefix||'')+'予期しない変化への備えを増やすことでキャリアの耐久力が高まります。'+(mbtiG==='外交官'?'外交官型は感情的に影響を受けやすい傾向があるため、「変化そのもの」ではなく「変化への自分の反応」を観察する習慣が力になります。':mbtiG==='探検家'?'即興力の高い探検家型でも、シナリオプランニングの習慣を加えることで備えの質が上がります。':'「もし〜なら」という仮説思考を日常に取り入れることが、危機対応力を育てます。'),
+    (mbtiGrowthPrefix||'')+'選択に一貫性を持たせる意識が次のステージでのスコアを引き上げます。'+(mbtiG==='探検家'?'探検家型は多様な方向に動く傾向があるため、「今週の選択は自分の軸と一致しているか」を週次で問い直すと一貫性が育ちます。':mbtiG==='外交官'?'外交官型は他者の期待に応じて方向が変わりやすいため、「自分が本当に望む方向」を定期的に確認する習慣が一貫性を守ります。':'「なぜこれを選ぶのか」を言語化する習慣が、選択の一貫性を高めます。'),
+    (mbtiGrowthPrefix||'')+'投資先を絞り込み深く集中することで成果につながりやすくなります。'+(mbtiG==='分析家'?'分析家型は複数の可能性を同時に探索する傾向があるため、「最も重要な1つ」に意識的に絞り込む訓練が効果的です。':mbtiG==='外交官'?'外交官型は多くの人・活動に関わりたい傾向があるため、「今期の重点投資先」を1つ明確にすることで成果が加速します。':'エネルギーの分散を意識的に防ぐことが、この軸の伸びしろを最大化します。'),
   ];
 
-    // MBTIデータを取得して統合
+    // MBTIデータを取得（strengthDesc/growthDescで使用）
   const md=G.mbtiData||null;
-  const mbtiGroupColor=md?.groupColor||'#9CA3AF';
-  const mbtiGroupName=md?.group||'';
-  const mbtiLabelName=md?.label||'';
-  const mbtiTypeCode=G.mbtiType||'';
-
-  // MBTI×レーダー軸の整合性を計算
-  const mbtiTagBonus2=md?.tagBonus||{};
-  const alignedCount=G.tags.filter(t=>(mbtiTagBonus2[t]||0)>0).length;
-  const alignedPct=Math.round((alignedCount/Math.max(G.tags.length,1))*100);
-
-  // MBTIグループのAI時代コメント（グループ単位で汎用説明）
-  const GROUP_AI_ERA={
-    '分析家':'論理的・システム的思考でAIの仕組みを理解し活用する側に立ちやすい。「より良い方法を見つけようとする」姿勢がAI時代に直結。',
-    '外交官':'人を動かす共感力・リーダーシップはAIが最も代替しにくい能力。AI化が進むほど、人間的つながりの希少価値が上がる。',
-    '番人':'確実な実行力と責任感はAI導入の土台になる。「AIが示した方向性を現実に落とし込む力」として希少価値を持つ。',
-    '探検家':'変化への即応力と実践的適応力はAI時代の変化の速さと相性が良い。新しいツールを誰より早く試す姿勢が強みになる。',
-  };
-  const groupAiComment=GROUP_AI_ERA[mbtiGroupName]||'';
 
   const analysisHtml=
     // セクション1: 強み
@@ -2647,44 +2646,7 @@ async function showResult(){
     +'<strong style="color:var(--gold)">'+radarLabels[bot2[1].i]+'（'+bot2[1].v+'）</strong>です。'
     +growthDesc[bot2[0].i]
     +'</div></div>'
-    // セクション3: MBTI×今回の選択（MBTIがある場合のみ）
-    +(mbtiTypeCode?
-      '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
-      +'<div style="font-size:.7rem;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;color:'+mbtiGroupColor+'">'
-      +'<span style="display:inline-block;width:3px;height:13px;background:'+mbtiGroupColor+';border-radius:2px"></span>'
-      +'MBTIと今回の選択 — '+mbtiTypeCode+'（'+mbtiLabelName+'）</div>'
-      // グループバッジ
-      +'<div style="display:inline-flex;align-items:center;gap:6px;background:'+mbtiGroupColor+'14;border:1px solid '+mbtiGroupColor+'33;border-radius:6px;padding:3px 10px;margin-bottom:10px">'
-      +'<span style="width:7px;height:7px;border-radius:50%;background:'+mbtiGroupColor+';display:inline-block"></span>'
-      +'<span style="font-size:.68rem;font-weight:700;color:'+mbtiGroupColor+'">'+mbtiGroupName+'</span>'
-      +'</div>'
-      // グループAI時代コメント
-      +(groupAiComment?'<div style="font-size:.82rem;color:#374151;line-height:1.8;margin-bottom:10px">'+groupAiComment+'</div>':'')
-      // 選択整合性
-      +'<div style="background:#F9FAFB;border-radius:6px;padding:10px 12px;font-size:.8rem;color:#1A1A2E;line-height:1.75">'
-      +'今回の選択と'+mbtiTypeCode+'の傾向の一致度：'
-      +'<strong style="color:'+(alignedPct>=60?'var(--accent)':alignedPct>=30?'var(--gold)':'#9CA3AF')+'">'+alignedPct+'%</strong>'
-      +'（'+alignedCount+'/'+G.tags.length+'フェーズ）。'
-      +(alignedPct>=60?'MBTIの強みを軸にした一貫した選択ができています。':
-        alignedPct>=30?'MBTIの傾向を活かした選択と、それを超えた選択が混在しています。どちらも成長のプロセスです。':
-        'MBTIの典型的な傾向とは異なるルートを歩みました。それは弱点ではなく、意識的な多様性です。')
-      +'</div>'
-      // AI時代の強み・注意点（L3データ）
-      +(md?.aiEra?
-        '<div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">'
-        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(52,211,153,.07);border-left:2px solid #059669">'
-        +'<span style="font-size:.65rem;font-weight:700;color:#059669;margin-right:4px">AI時代の強み</span>'
-        +(md.aiEra.advantage||'')+'</div>'
-        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(245,158,11,.07);border-left:2px solid #D97706">'
-        +'<span style="font-size:.65rem;font-weight:700;color:#D97706;margin-right:4px">注意点</span>'
-        +(md.aiEra.caution||'')+'</div>'
-        +'<div style="font-size:.78rem;color:#1A1A2E;line-height:1.7;padding:7px 10px;border-radius:5px;background:rgba(232,98,26,.07);border-left:2px solid var(--accent)">'
-        +'<span style="font-size:.65rem;font-weight:700;color:var(--accent);margin-right:4px">最適ポジション</span>'
-        +(md.aiEra.bestRole||'')+'</div>'
-        +'</div>'
-      :'')
-      +'</div>'
-    :'')
+    // セクション3: MBTIと今回の選択 → 削除
     // セクション4: メタ認知力
     +'<div>'
     +'<div style="font-size:.7rem;color:#6B7280;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
@@ -3292,134 +3254,266 @@ function buildAIStory50(storyArr, narratives){
 // ━━━ エージェント適性診断 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 function renderAgentFit(score, tier, domTag, indScores, radar){
-  // 株式会社エージェントが求める人材像との適性を評価
-  // エージェントの事業：人材・採用支援・キャリア支援
+
+  // ━━━ 14事業部データ（事業部紹介.docx準拠）
+  const DIVISIONS = [
+    {
+      name:'自治体DX事業部',
+      short:'自治体DX',
+      mission:'教育格差をICTで解決し、次世代IT人材を育成する',
+      persona:'教育・社会課題への使命感があり、現場に伴走できる人材。IT知識と人への共感を掛け合わせられる。',
+      tags:['community-builder','specialization','ai-native'],
+      mbtiGroups:['外交官','番人'],
+    },
+    {
+      name:'ふるのば',
+      short:'ふるのば',
+      mission:'自治体と企業をつなぐ公民連携会員サービス',
+      persona:'人と組織をつなぐことに喜びを感じ、自治体・地域課題に関心がある人材。ネットワーク構築が得意。',
+      tags:['community-builder','strategic','global'],
+      mbtiGroups:['外交官','探検家'],
+    },
+    {
+      name:'DXラーニング事業部',
+      short:'DXラーニング',
+      mission:'企業のAX人材を育成し、組織変革を推進する',
+      persona:'AI・ITの知識と人材育成への情熱を持ち、企業の変革を伴走できる人材。教えることを楽しめる。',
+      tags:['ai-native','leadership','strategic'],
+      mbtiGroups:['分析家','外交官'],
+    },
+    {
+      name:'デジタルトレーニング事業部',
+      short:'デジタルトレーニング',
+      mission:'デジタル製品メーカーの販促・トレーニングを支援する',
+      persona:'デジタル製品への興味と現場での実行力を持つ人材。データを活用しながらリテール現場で動ける。',
+      tags:['ai-native','specialization','independent'],
+      mbtiGroups:['探検家','番人'],
+    },
+    {
+      name:'公民連携事業部',
+      short:'公民連携',
+      mission:'自社・パートナーサービスを駆使した共創型自治体支援',
+      persona:'複数のサービスを組み合わせて地域課題を解決できる、掛け算型の思考を持つ人材。',
+      tags:['rare-combination','strategic','community-builder'],
+      mbtiGroups:['分析家','外交官'],
+    },
+    {
+      name:'ライフスタイルソリューション事業部',
+      short:'ライフスタイルSL',
+      mission:'生活インフラの現場で、家計をオトクに・ラクにする',
+      persona:'生活者目線で物事を考え、現場での顧客接点を大切にできる人材。誠実さと共感力がある。',
+      tags:['community-builder','specialization','legacy'],
+      mbtiGroups:['番人','外交官'],
+    },
+    {
+      name:'スタキャン事業部',
+      short:'スタキャン',
+      mission:'スタートアップを民主化し、日本一の起業家育成拠点を築く',
+      persona:'事業創造への熱量とリスクを取る姿勢がある人材。AI活用×事業開発の掛け算ができ、失敗を恐れない。',
+      tags:['strategic','independent','rare-combination','ai-native'],
+      mbtiGroups:['分析家','探検家'],
+    },
+    {
+      name:'みんなのキャリア',
+      short:'みんなのキャリア',
+      mission:'現職社員のリアルな声で、採用と就活を変える',
+      persona:'人の物語を引き出し伝えることが好きな人材。採用・就活の構造的な課題に関心があり、コンテンツで社会を変えたい。',
+      tags:['community-builder','legacy','strategic'],
+      mbtiGroups:['外交官','探検家'],
+    },
+    {
+      name:'バトンコネクト',
+      short:'バトンコネクト',
+      mission:'空き家に価値をつけ、次の持ち主へつなぐ',
+      persona:'社会課題に向き合い、地域の資産を再生することに意義を感じる人材。粘り強く現場で動ける。',
+      tags:['specialization','legacy','community-builder'],
+      mbtiGroups:['番人','外交官'],
+    },
+    {
+      name:'ぴたスマ',
+      short:'ぴたスマ',
+      mission:'スマホ料金見直しを起点に、デジタル格差を解消する',
+      persona:'中立的な視点で顧客に寄り添い、複雑な情報をわかりやすく伝えられる人材。デジタルと生活者の橋渡し役。',
+      tags:['specialization','community-builder','ai-native'],
+      mbtiGroups:['外交官','番人'],
+    },
+    {
+      name:'ふるもば',
+      short:'ふるもば',
+      mission:'シニア向け地域密着型MVNOで、デジタル支援インフラを構築する',
+      persona:'地域密着型で丁寧に人と向き合える人材。シニア・地域課題に関心があり、自治体との協働を楽しめる。',
+      tags:['community-builder','specialization','global'],
+      mbtiGroups:['外交官','番人'],
+    },
+    {
+      name:'ソーシャルシフト デジタル人材サービス事業部',
+      short:'ソーシャルシフト',
+      mission:'20代デジタル人材を育成し、日本の生産性向上に貢献する',
+      persona:'キャリア支援への情熱とデジタルスキルを持ち、若者の成長を伴走できる人材。1on1での深い関わりが好き。',
+      tags:['leadership','ai-native','specialization'],
+      mbtiGroups:['外交官','番人'],
+    },
+    {
+      name:'anyenv テックソリューション事業部',
+      short:'anyenv',
+      mission:'AIを活用した業務改善伴走サービスで、現場から変革を起こす',
+      persona:'AIと現場実装の両方に強みを持ち、企業の業務変革を一気通貫で実行できる人材。技術と人材を繋げる。',
+      tags:['ai-native','rare-combination','strategic'],
+      mbtiGroups:['分析家','探検家'],
+    },
+    {
+      name:'インキュベーション事業部',
+      short:'インキュベーション',
+      mission:'社内外の事業創造・成長を戦略から実行まで伴走支援する',
+      persona:'事業創造のノウハウとAI活用力を持ち、戦略立案から実行まで伴走できる人材。社会課題を事業で解く熱量がある。',
+      tags:['strategic','rare-combination','ai-native','legacy'],
+      mbtiGroups:['分析家','外交官'],
+    },
+    {
+      name:'リモートソリューション事業部',
+      short:'リモートSL',
+      mission:'在宅フリーランスが実働するインサイドセールス代行サービス',
+      persona:'自律的に成果を出せる人材。フリーランスや多様な働き方に共感し、仕組みづくりに関心がある。',
+      tags:['independent','strategic','community-builder'],
+      mbtiGroups:['探検家','分析家'],
+    },
+    {
+      name:'デジタルシフトソリューション事業部',
+      short:'デジタルシフトSL',
+      mission:'専門人材の提供で消費者とデジタルをつなぐ',
+      persona:'デジタルと生活者をつなぐ使命感があり、専門知識を持ちながら顧客に寄り添える人材。',
+      tags:['specialization','community-builder','ai-native'],
+      mbtiGroups:['番人','外交官'],
+    },
+  ];
+
+  // ━━━ 事業部フィットスコア計算
+  const mbtiGroup = G.mbtiData?.group||'';
+  function calcDivFit(div){
+    // タグ一致（最大60点）
+    const tagHit = G.tags.filter(t=>div.tags.includes(t)).length;
+    const tagScore = Math.min(60, Math.round((tagHit / Math.max(G.tags.length,1)) * 60 * (div.tags.length/3)));
+    // MBTIグループ一致（最大20点）
+    const mbtiScore = mbtiGroup && div.mbtiGroups.includes(mbtiGroup) ? 20 : 0;
+    // 全体スコア補正（最大20点）
+    const scoreBonus = score>=80?20:score>=60?14:score>=40?8:4;
+    return Math.min(100, tagScore + mbtiScore + scoreBonus);
+  }
+
+  const divScores = DIVISIONS.map(d=>({...d, fit:calcDivFit(d)}))
+    .sort((a,b)=>b.fit-a.fit);
+  const top3 = divScores.slice(0,3);
+
+  // ━━━ 既存のエージェント適性スコア計算
   const AGENT_IDEAL_TAGS=['community-builder','leadership','strategic','independent'];
   const AGENT_IDEAL_INDUSTRIES=['事業開発・新規事業','コンサルティング','スタートアップ・VC','総合商社'];
-
-  // タグ一致スコア
   const tagMatch=G.tags.filter(t=>AGENT_IDEAL_TAGS.includes(t)).length;
-  const tagScore=Math.round((tagMatch/Math.max(G.tags.length,1))*100);
-
-  // 業種一致スコア（上位3業種がエージェント向き業種と重なるか）
+  const tagBonus=Math.min(40,tagMatch*10);
   const indMatch=indScores.slice(0,3).filter(s=>AGENT_IDEAL_INDUSTRIES.includes(s.name)).length;
-  const indScore=indMatch>=2?'◎':indMatch===1?'○':'△';
-
-  // レーダー軸スコアから適性スコアを計算
-  // [専門性,適応力,時代適合,危機対応,一貫性,投資効率]
-  const [exp,adp,era,cri,con,inv]=radar;
-
-  // エージェント適性：選択パターンベースで計算（50点スタートのバイアスを排除）
-  // ① タグ一致ボーナス（4タグ×10点）
-  const tagBonus=Math.min(40, tagMatch*10);
-  // ② 業種一致ボーナス（3業種×10点）
-  const indBonus=Math.min(30, indMatch*10);
-  // ③ スコアによるベース（先駆者:30, 適応者:20, 模索者:10, 転換期:5）
+  const indBonus=Math.min(30,indMatch*10);
   const scoreBase=score>=80?30:score>=60?20:score>=40?10:5;
-  // ④ レーダーの相対的な高さ（平均50超えの軸1本=+3点、最大15点）
+  const [exp,adp,era,cri,con,inv]=radar;
   const radarBonus=Math.min(15,[adp,era,con].filter(v=>v>55).length*5);
-
-  const agentFitScore=Math.min(100, tagBonus+indBonus+scoreBase+radarBonus);
-
-  // 総合適性ランク
+  const agentFitScore=Math.min(100,tagBonus+indBonus+scoreBase+radarBonus);
   const fitRank=agentFitScore>=60?{label:'高い適性',color:'var(--accent)',icon:'🔥'}
     :agentFitScore>=35?{label:'一定の適性',color:'var(--gold)',icon:'✨'}
     :{label:'可能性あり',color:'#888',icon:'🌱'};
 
-  // エージェントで活かせる強みのコメント
+  // 強みコメント
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
   const tagComments={
-    'community-builder':'人と人をつなぐ力は、採用・キャリア支援の核心です。',
-    leadership:'人を育て引っ張る力は、キャリアコンサルタントとして直接活きます。',
-    strategic:'意思決定を支援する力は、企業の採用戦略立案で発揮できます。',
-    independent:'自律的に動く力は、個人の裁量が大きいエージェントの仕事に向いています。',
-    'ai-native':'AI活用力は、採用DXが加速するエージェント業界で希少な武器になります。',
-    'rare-combination':'掛け算の思考は、異業種の人材をつなぐコンサルティングで活きます。',
-    global:'グローバル視点は、外資系企業への転職支援やグローバル人材採用で強みになります。',
-    specialization:'深い専門性は、特定業界に特化した採用支援で最大の価値を発揮します。',
-    legacy:'知見を残す力は、採用ノウハウの体系化やナレッジマネジメントで活きます。',
+    'community-builder':'人と人をつなぐ力は株式会社エージェントの採用支援・キャリア支援の核心であり、求職者と企業の橋渡し役として最も直接的に発揮できます。',
+    leadership:'人を育て引っ張る力は株式会社エージェントのキャリアアドバイザーとして直接活きます。求職者の成長を支援し、内定後も伴走できる存在になれます。',
+    strategic:'意思決定を支援する力は株式会社エージェントが企業クライアントに提供する採用戦略立案で発揮できます。採用課題の本質を見抜くコンサルティング力になります。',
+    independent:'自律的に動く力は株式会社エージェントのように個人の裁量が大きい環境で最大限に発揮できます。自分でKPIを設定し、主体的に動ける人材として評価されます。',
+    'ai-native':'AI活用力は採用DXを推進する株式会社エージェントで希少な武器になります。AIを使った求人マッチングや候補者分析で、他のアドバイザーと圧倒的な差をつけられます。',
+    'rare-combination':'異なる領域を掛け合わせる思考は株式会社エージェントの多様な業界・職種への採用支援で直接活きます。専門業界×別業界の横断知識が独自の提案力になります。',
+    global:'グローバル視点は株式会社エージェントが支援する外資系企業への転職支援やグローバル人材採用で強みになります。語学力と異文化理解がクライアント獲得につながります。',
+    specialization:'深い専門性は株式会社エージェントが強みとする特定業界・職種に特化した採用支援で最大の価値を発揮します。専門家としての信頼がリピート紹介につながります。',
+    legacy:'知見を体系化し残す力は株式会社エージェントの採用ノウハウの蓄積・チームへの教育・ナレッジマネジメントで活きます。組織の知的資産を育てる人材として評価されます。',
   };
-  const mainComment=tagComments[domTag]||'あなたの選択パターンは、エージェントの仕事に活かせる可能性を持っています。';
+  const mainComment=tagComments[domTag]||'あなたの選択パターンは、株式会社エージェントの仕事に活かせる可能性を持っています。';
+  const fitAdvice=agentFitScore>=60
+    ? escHtml(G.nickname)+'さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に'+( TL[domTag]||domTag)+'軸が、採用支援の仕事の本質と重なっています。'
+    : agentFitScore>=35
+    ? escHtml(G.nickname)+'さんは一定の適性を持っています。'+(TL[domTag]||domTag)+'の強みを採用・人材領域でどう活かすかを言語化することで、さらに適性が高まるでしょう。'
+    : '現時点では他の方向性との適性が高い可能性もあります。ただし、'+(TL[domTag]||domTag)+'の力が人材・採用領域で新しい価値を生む可能性があります。';
 
-  // 適性スコアの就活言語翻訳
-  const fitAdvice=agentFitScore>=75
-    ? `${escHtml(G.nickname)}さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に${TL[domTag]||domTag}軸が、採用支援の仕事の本質と重なっています。`
-    : agentFitScore>=55
-    ? `${escHtml(G.nickname)}さんは一定の適性を持っています。${TL[domTag]||domTag}の強みを採用・人材領域でどう活かすかを言語化することで、さらに適性が高まるでしょう。`
-    : `エージェントの仕事は、あなたの現在の強みとは異なる方向性ですが、${TL[domTag]||domTag}の力が人材・採用領域で新しい価値を生む可能性があります。`;
+  // ━━━ バーレンダー（幅をインラインで表現）
+  function fitBar(pct, color){
+    return '<div style="height:6px;background:#F3F4F6;border-radius:3px;overflow:hidden;margin-top:4px">'
+      +'<div style="height:100%;width:'+pct+'%;background:'+color+';border-radius:3px;transition:width 1s ease"></div>'
+      +'</div>';
+  }
 
+  // ━━━ 事業部ランキングHTML
+  const medals=['🥇','🥈','🥉'];
+  const divColors=['#E8621A','#2B8FC5','#6B7280'];
+  const divRankHtml=top3.map((d,i)=>(
+    '<div style="margin-bottom:'+(i<2?'14px':'0')+'">'
+    +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">'
+      +'<div style="font-size:.84rem;font-weight:700;color:'+(i===0?'#1A1A2E':'#374151')+'">'
+        +medals[i]+' '+d.short
+      +'</div>'
+      +'<div style="font-size:.82rem;font-weight:700;color:'+divColors[i]+'">'+d.fit+'%</div>'
+    +'</div>'
+    +fitBar(d.fit, divColors[i])
+    +'<div style="font-size:.72rem;color:#6B7280;margin-top:3px">'+d.mission+'</div>'
+    +'</div>'
+  )).join('');
+
+  // ━━━ 1位事業部の人材像
+  const best=top3[0];
+  const bestPersonaHtml=best?
+    '<div style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6">'
+    +'<div style="font-size:.65rem;letter-spacing:3px;color:var(--accent);font-weight:700;margin-bottom:8px">'+best.short+' が求める人材像</div>'
+    +'<div style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.82rem;color:#1A1A2E;line-height:1.85">'
+    +best.persona
+    +'</div></div>'
+  :'';
+
+  // ━━━ 描画
   const el=document.getElementById('agent-fit-block');
   if(!el)return;
-  el.innerHTML=`
-    <div style="font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>
+  el.innerHTML=
+    '<div style="font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>'
 
-    <!-- 総合スコア -->
-    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid rgba(0,0,0,.08)">
-      <div style="text-align:center">
-        <div style="font-family:var(--ff-head);font-size:2.8rem;color:${fitRank.color};line-height:1">${agentFitScore}</div>
-        <div style="font-size:.6rem;color:#888;margin-top:2px">適性スコア</div>
-      </div>
-      <div>
-        <div style="font-size:.88rem;font-weight:700;color:#1c1c2e;margin-bottom:4px">${fitRank.icon} ${fitRank.label}</div>
-        <div style="font-size:.78rem;color:#555;line-height:1.6">${fitAdvice}</div>
-      </div>
-    </div>
+    // 総合スコア行
+    +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,.07)">'
+      +'<div style="text-align:center">'
+        +'<div style="font-family:var(--ff-head);font-size:2.6rem;color:'+fitRank.color+';line-height:1">'+agentFitScore+'</div>'
+        +'<div style="font-size:.6rem;color:#888;margin-top:2px">適性スコア</div>'
+      +'</div>'
+      +'<div>'
+        +'<div style="font-size:.86rem;font-weight:700;color:#1c1c2e;margin-bottom:4px">'+fitRank.icon+' '+fitRank.label+'</div>'
+        +'<div style="font-size:.78rem;color:#555;line-height:1.65">'+fitAdvice+'</div>'
+      +'</div>'
+    +'</div>'
 
-    <!-- 強みの詳細 -->
-    <div style="margin-bottom:14px">
-      <div style="font-size:.68rem;color:var(--accent);font-weight:700;margin-bottom:8px">あなたの強みがエージェントで活きる理由</div>
-      <div style="font-size:.82rem;color:#1c1c2e;line-height:1.8;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">
-        ${mainComment}
-      </div>
-    </div>
+    // あなたの強みが活きる理由
+    +'<div style="margin-bottom:16px">'
+      +'<div style="font-size:.65rem;letter-spacing:2px;color:var(--accent);font-weight:700;margin-bottom:7px">あなたの強みが株式会社エージェントで活きる理由</div>'
+      +'<div style="font-size:.82rem;color:#1c1c2e;line-height:1.8;background:rgba(232,98,26,.05);border-radius:6px;padding:10px 12px">'+mainComment+'</div>'
+    +'</div>'
 
-    <!-- 適性指標 -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-      <div style="background:rgba(255,255,255,.6);border-radius:6px;padding:10px 12px;border:1px solid rgba(0,0,0,.08)">
-        <div style="font-size:.6rem;color:#888;margin-bottom:4px">行動パターン一致</div>
-        <div style="font-size:1.1rem;font-weight:700;color:${tagMatch>=3?'var(--accent)':tagMatch>=1?'var(--gold)':'#aaa'}">${tagMatch}/6フェーズ</div>
-      </div>
-      <div style="background:rgba(255,255,255,.6);border-radius:6px;padding:10px 12px;border:1px solid rgba(0,0,0,.08)">
-        <div style="font-size:.6rem;color:#888;margin-bottom:4px">業種親和性</div>
-        <div style="font-size:1.1rem;font-weight:700;color:${indMatch>=2?'var(--accent)':indMatch===1?'var(--gold)':'#aaa'}">${indScore}</div>
-      </div>
-    </div>
+    // フィットする事業部ランキング
+    +'<div style="margin-bottom:0">'
+      +'<div style="font-size:.65rem;letter-spacing:2px;color:#2B8FC5;font-weight:700;margin-bottom:12px">フィットする事業部 TOP 3</div>'
+      +divRankHtml
+    +'</div>'
 
-    <!-- 適応力・時代適合スコア（エージェントで重要な2軸） -->
-    <div style="font-size:.68rem;color:#888;margin-bottom:6px">エージェントで特に重要な2軸</div>
-    ${[['適応力（変化への対応力）',adp||50],['時代適合（AI時代の感覚）',era||50]].map(([lbl,val])=>`
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <div style="font-size:.72rem;color:#555;width:150px;flex-shrink:0">${lbl}</div>
-        <div style="flex:1;height:5px;background:rgba(0,0,0,.09);border-radius:3px;overflow:hidden">
-          <div style="height:100%;width:${val}%;background:var(--accent);border-radius:3px;transition:width 1s ease"></div>
-        </div>
-        <div style="font-size:.72rem;color:var(--accent);font-weight:700;width:32px;text-align:right">${val}</div>
-      </div>`).join('')}
+    // 1位事業部の人材像
+    +bestPersonaHtml
 
-    <!-- CTA -->
-    <div style="margin-top:14px;padding:12px 14px;background:rgba(232,98,26,.08);border-radius:6px;border:1px solid rgba(232,98,26,.2)">
-      <div style="font-size:.78rem;color:#1c1c2e;line-height:1.7">
-        このレポートを持って、株式会社エージェントのキャリア相談へ。<br>
-        <span style="font-size:.72rem;color:#888">診断結果をもとに、あなたのキャリアをより深く分析します。</span>
-      </div>
-    </div>
-  `;
+    // CTA
+    +'<div style="margin-top:14px;padding:11px 14px;background:rgba(232,98,26,.07);border-radius:6px;border:1px solid rgba(232,98,26,.18)">'
+      +'<div style="font-size:.78rem;color:#1c1c2e;line-height:1.7">'
+        +'このレポートを持って、株式会社エージェントのキャリア相談へ。<br>'
+        +'<span style="font-size:.72rem;color:#888">診断結果をもとに、あなたに合った事業部をさらに深く分析します。</span>'
+      +'</div>'
+    +'</div>';
 }
 
-function openPopup(id){
-  const el=document.getElementById(id);
-  if(el){el.style.display='flex';document.body.style.overflow='hidden';}
-  // エージェントポップアップにスコアを表示
-  if(id==='popup-agent'){
-    const sc=document.getElementById('agent-fit-popup-score');
-    const af=document.getElementById('agent-fit-block');
-    if(sc&&af)sc.innerHTML=af.innerHTML;
-  }
-}
-function closePopup(id){
-  const el=document.getElementById(id);
-  if(el){el.style.display='none';document.body.style.overflow='';}
-}
 
 async function saveToGAS(score,tier,domTag,chainRule,indScores){
   try{
