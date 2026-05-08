@@ -2777,11 +2777,15 @@ async function showResult(){
         if(el){
           const story=aiResult.myStory;
           // 6フェーズ分揃っているか確認。不足分はフォールバックで補完
+          // AI生成が揃っているか確認（1件以上ある場合は表示）
+          const validStories=Array.isArray(story)?story.filter(s=>s&&s.length>10):[];
+          console.log(`MY STORY: AI生成 ${validStories.length}/6フェーズ`);
           const fullStory=G.narratives.map((n,i)=>{
-            const aiText=story[i];
+            const aiText=validStories[i];
             if(aiText&&aiText.length>10) return aiText;
-            // フォールバック：ナラティブのテキストをそのまま使用
-            return (n.text||'').replace(/<[^>]+>/g,'').trim().slice(0,120)||'（この時代の物語は生成できませんでした）';
+            // フォールバック：ゲーム中に生成したナラティブを使用
+            const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
+            return fallback.length>10 ? fallback : '（この時代の記録は残っていない）';
           });
           el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
@@ -2923,11 +2927,29 @@ ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/上位業種:${indust
     let parsed = data.result;
     if(typeof parsed==='string'){
       const raw=parsed.replace(/```json|```/g,'').trim();
-      try{ parsed=JSON.parse(raw); }
-      catch(e){
-        const attempts=[raw, raw+'"}', raw+'"]}', raw+'"]}}', raw+'}'];
-        for(const a of attempts){ try{parsed=JSON.parse(a);break;}catch(_){} }
-        if(typeof parsed==='string') parsed=extractPartialJSON(raw);
+      try{
+        parsed=JSON.parse(raw);
+      }catch(e){
+        // JSON修復：末尾補完パターン
+        const attempts=[
+          raw,
+          raw+'"}]}}',
+          raw+'"]}',
+          raw+'"}',
+          raw+'"]}}',
+          raw+'}}',
+          raw+'}',
+        ];
+        let repaired=null;
+        for(const a of attempts){
+          try{ repaired=JSON.parse(a); break; }catch(_){}
+        }
+        if(repaired){
+          parsed=repaired;
+        }else{
+          // 部分抽出（切れた要素は含まない）
+          parsed=extractPartialJSON(raw);
+        }
       }
     }
     return parsed;
@@ -3372,16 +3394,19 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
 
   // 強みコメント
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  // AG-SPIRITSコンセプトに基づくコメント
+  // パーパス「次代を創る」ミッション「社会の困ったを解決する」
+  // AG-MIND: Be Ambitious / Be Leader / Be Professional
   const tagComments={
-    'community-builder':'人と人をつなぐ力は株式会社エージェントの採用支援・キャリア支援の核心であり、求職者と企業の橋渡し役として最も直接的に発揮できます。',
-    leadership:'人を育て引っ張る力は株式会社エージェントのキャリアアドバイザーとして直接活きます。求職者の成長を支援し、内定後も伴走できる存在になれます。',
-    strategic:'意思決定を支援する力は株式会社エージェントが企業クライアントに提供する採用戦略立案で発揮できます。採用課題の本質を見抜くコンサルティング力になります。',
-    independent:'自律的に動く力は株式会社エージェントのように個人の裁量が大きい環境で最大限に発揮できます。自分でKPIを設定し、主体的に動ける人材として評価されます。',
-    'ai-native':'AI活用力は採用DXを推進する株式会社エージェントで希少な武器になります。AIを使った求人マッチングや候補者分析で、他のアドバイザーと圧倒的な差をつけられます。',
-    'rare-combination':'異なる領域を掛け合わせる思考は株式会社エージェントの多様な業界・職種への採用支援で直接活きます。専門業界×別業界の横断知識が独自の提案力になります。',
-    global:'グローバル視点は株式会社エージェントが支援する外資系企業への転職支援やグローバル人材採用で強みになります。語学力と異文化理解がクライアント獲得につながります。',
-    specialization:'深い専門性は株式会社エージェントが強みとする特定業界・職種に特化した採用支援で最大の価値を発揮します。専門家としての信頼がリピート紹介につながります。',
-    legacy:'知見を体系化し残す力は株式会社エージェントの採用ノウハウの蓄積・チームへの教育・ナレッジマネジメントで活きます。組織の知的資産を育てる人材として評価されます。',
+    'community-builder':'「同志を創出します」というAG-MINDが体現する力です。株式会社エージェントは「Agent-Network＝同志を育てチームを構築する」を組織理念に掲げており、人と人をつなぐ力は会社の根幹です。フラットな組織で化学反応を起こす推進力になれます。',
+    leadership:'「勇気を与えます」というBe Leaderの精神と重なります。株式会社エージェントは平均年齢28歳・ボトムアップ型組織で、早期にリーダーとして人を動かす機会が豊富です。人を育て引っ張る力は、同志を増やしAll-Smile社会を実現する直接的な武器になります。',
+    strategic:'「困ったを解決する」ミッションの最前線で機能する力です。株式会社エージェントは「専門人材×先端技術×ビジネスデザイン」で次世代ソリューションを生み出す事業開発ファームであり、本質的な課題を特定する戦略的思考は全事業部で最も求められる能力です。',
+    independent:'「他責ではなく、自責で」というオーナーシップカルチャーと完全に一致します。株式会社エージェントはジョブ型雇用・年次新規事業起案制度を持ち、自律的に動ける人材が最も活躍できる環境です。自分のKPIに当事者意識を持てる力が高く評価されます。',
+    'ai-native':'「一人でなんでもできるAI時代に、わざわざ集まる意義を創る」というエージェントの新時代観と直結します。「専門人材×先端技術」の掛け算を体現でき、AI×事業開発で「不可能を突破する」Be Professionalの精神を最も自然に発揮できる人材です。',
+    'rare-combination':'「1+1が2以上になる化学反応」を起こす力です。株式会社エージェントは7つの社会課題領域で14事業部が横断連携するユニークな組織であり、異なる知識を掛け合わせて新しいソリューションを生み出す思考は、300事業創出というビジョン実現に直接貢献します。',
+    global:'社会の「困った」を世界規模で捉える視野が、エージェントのAll-Smile社会実現に新しい次元を加えます。カンボジアでの原体験から生まれた株式会社エージェントは、グローバルな視点を持つ人材が「次代を創る」新しいソリューション開発に貢献できる土壌があります。',
+    specialization:'「品質を高め続けます・期待を超えていきます」というBe Professionalの精神と重なります。株式会社エージェントの各事業部は特定の社会課題に特化しており、深い専門性を持つ人材が顧客の期待を超え続けることで、14年連続増収という成長を支えています。',
+    legacy:'「バトンを次世代に渡す」という時間軸を超えた使命観と一致します。株式会社エージェントは2034年・30期・300事業創出というビジョンを掲げており、知見を体系化し次世代に伝える力は、この長期ビジョンを実現するためのナレッジインフラとして不可欠です。',
   };
   const mainComment=tagComments[domTag]||'あなたの選択パターンは、株式会社エージェントの仕事に活かせる可能性を持っています。';
   const fitAdvice=agentFitScore>=60
