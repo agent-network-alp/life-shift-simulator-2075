@@ -989,7 +989,7 @@ div[style*="CAREER TRANSLATION"] {
         <span class="job-sheet-label" style="margin-bottom:6px">就活軸の提案</span>
         <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.84rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
       </div>
-      <button class="job-sheet-copy-btn" onclick="copyJobSheet()">📋 このシートをコピーする</button>
+
     </div>
 
     <!-- ⑦TODAY'S ACTION -->
@@ -2795,10 +2795,9 @@ async function showResult(){
         G.aiIndustryComments = aiResult.industryComments;
         renderIndustryDetailsWithAI(indScores.slice(0,3), aiResult.industryComments);
       }
-      // AI生成自己PR文
-      if(aiResult.selfPR){
-        G.aiSelfPR=aiResult.selfPR;
-        // 就活ワンシートに反映（後で生成）
+      // AI生成就活軸
+      if(aiResult.careerAxis){
+        G.aiCareerAxis=aiResult.careerAxis;
       }
       // J：AI生成の就活アクションで上書き
       if(aiResult.jobActions&&aiResult.jobActions.length){
@@ -2809,8 +2808,21 @@ async function showResult(){
           ).join('');
         }
       }
+      // AI就活軸をグローバルに保存してから就活ワンシートを再レンダリング
+      if(aiResult.careerAxis) G.aiCareerAxis=aiResult.careerAxis;
       // 就活ワンシート生成（AI結果が揃ってから）
       renderJobSheet(score,tier.label,domTag,indScores,aiResult);
+      // 就活軸のみ再描画（AIデータで上書き）
+      const axEl=document.getElementById('jws-career-axis');
+      if(axEl&&G.aiCareerAxis){
+        const sentences=G.aiCareerAxis.split(/。/).filter(s=>s.trim().length>3);
+        axEl.innerHTML=sentences.map((s,i)=>{
+          const icons=['①','②','③'];
+          return '<div style="margin-bottom:'+(i<sentences.length-1?'8px':'0')+';line-height:1.8">'
+            +'<span style="color:var(--accent);font-weight:700;margin-right:4px">'+(icons[i]||'')+'</span>'
+            +s.trim()+'。</div>';
+        }).join('');
+      }
     }
   }catch(e){
     console.warn('Gemini生成エラー（フォールバック継続）:', e);
@@ -2857,9 +2869,12 @@ function extractPartialJSON(raw){
     const pairs=indMatch[1].matchAll(/"([^"]+)"\s*:\s*"([^"]+)"/g);
     for(const [,k,v] of pairs) result.industryComments[k]=v;
   }
-  // selfPRを抽出
+  // selfPRを抽出（旧互換）
   const prMatch=raw.match(/"selfPR"\s*:\s*"([^"]+)"/);
   if(prMatch) result.selfPR=prMatch[1];
+  // careerAxisを抽出
+  const axisMatch=raw.match(/"careerAxis"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  if(axisMatch) result.careerAxis=axisMatch[1].replace(/\\n/g,'').replace(/\\"/g,'"');
   // jobActionsを抽出
   const actMatch=raw.match(/"jobActions"\s*:\s*\[([^\]]*)/);
   if(actMatch){
@@ -2902,14 +2917,47 @@ Q1認識: ${q1Types.join(',')}
 {"myStory":["P1","P2","P3","P4","P5","P6"]}`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
+  // 就活軸生成のための3要素を構造化してプロンプトに渡す
+  const mbtiGroupDesc={
+    '分析家':'論理と構造で課題を解くタイプ。システム思考・独立した判断力が強み。',
+    '外交官':'人を動かし共感で変えるタイプ。ビジョン共有・関係構築・育成が強み。',
+    '番人':'責任と実行力で積み上げるタイプ。誠実さ・継続力・組織への貢献が強み。',
+    '探検家':'行動と適応で切り拓くタイプ。即応力・実践的問題解決・変化への親和性が強み。',
+  };
+  const mbtiGroupText=(G.mbtiData?.group&&mbtiGroupDesc[G.mbtiData.group])
+    ? `${G.mbtiType}(${G.mbtiData.label}/${G.mbtiData.group}): ${mbtiGroupDesc[G.mbtiData.group]}`
+    : mbtiDesc;
+
+  // Q3投資先の傾向を要約
+  const q3Summary=G.q3Choices.reduce((acc,v)=>{
+    if(v)acc[v]=(acc[v]||0)+1; return acc;
+  },{});
+  const q3Top=Object.entries(q3Summary).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}×${v}`).join('・');
+
   const promptCareer=`キャリア診断AIです。日本語JSONのみ返答。
-${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/上位業種:${industryList}
 
-【指示1】上位3業種それぞれ:①2030-2040年の変化②この人が向いている理由③リスクと対策。各60字以内。
+【プレイヤー情報】
+MBTI: ${mbtiGroupText}
+スコア: ${score}点(${tierLabel}) / 支配的キャリア軸: ${domTagJP}
+上位業種: ${industryList}
+6フェーズの選択傾向: ${domTagJP}軸を中心に${G.tags.map(t=>({specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立',  'rare-combination':'掛け算',leadership:'育成',  'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
+Q3投資先の傾向: ${q3Top||'スキル中心'}
+
+【指示1】就活軸の提案（3文構成）
+この人の「業種希望×MBTI×選択傾向」の3要素を掛け合わせ、就活生が「これは自分だ」と感じられる就活軸を3文で書く。
+
+構成ルール：
+- 1文目：「〇〇な社会課題・テーマに向き合いたい」（業種から導出したテーマ）
+- 2文目：「〇〇という強みで、〇〇なアプローチをとる」（MBTIと選択傾向から導出）
+- 3文目：「〇〇の現場で、〇〇を実現したい」（業種名と具体的な貢献イメージ）
+
+禁止：抽象的な表現・MBTIのタイプ名をそのまま使う・「私はMBTIが〜」で始める
+各文40〜60字。合計120〜180字。
+
+{"careerAxis":"1文目。2文目。3文目。"}
+
+【指示2】上位3業種それぞれ:①この業種の2030年代の変化②この人が向いている具体的な理由③注意点。各60字以内。
 {"industryComments":{"業種名":"①②③",...}}
-
-【指示2】「私は学生時代に〜」で始まる自己PR。${domTagJP}軸中心。80字以内。
-{"selfPR":"文章"}
 
 【指示3】業種名・職種名入り就活アクション3つ。各40字以内。
 {"jobActions":["1","2","3"]}
@@ -3074,60 +3122,31 @@ function renderJobSheet(score, tierLabel, domTag, indScores, aiResult){
     }
   }
 
-  // 就活軸の提案（MBTI×選択傾向から生成）
+  // 就活軸の表示（AI生成があれば反映、なければフォールバック）
   const careerAxisEl=document.getElementById('jws-career-axis');
   if(careerAxisEl){
-    const mbtiGroup = G.mbtiData?.group||'';
-    const mbtiLabel = G.mbtiData?.label||'';
-    const aiAdvantage = G.mbtiData?.aiEra?.advantage||'';
-    const aiBestRole  = G.mbtiData?.aiEra?.bestRole||'';
-
-    // グループ×dominantTagの組み合わせで軸を決定
-    const GROUP_AXIS={
-      '分析家':{
-        strategic:'「AIが解けない問いを立てる人材」として事業の上流に立つ。論理×戦略で組織の羅針盤になる。',
-        specialization:'「誰にも代替できない専門性」を武器に、AI時代でも希少であり続ける。深さで差別化する就活軸。',
-        'ai-native':'AIを誰よりも速く理解・活用する「AI実装のエキスパート」として企業のDXを牽引する就活軸。',
-        default:'論理と独立した思考力を武器に、AIが苦手とする「本質的な問いを立てる役割」を担う就活軸。',
-      },
-      '外交官':{
-        leadership:'「人を育て、組織を動かす力」を軸に。AI時代に最も希少な人間のリーダーシップを就活の核心に据える。',
-        'community-builder':'「人と人をつなぎ、場を作る力」を軸に。AIが分断する時代にコミュニティを束ねる人材として活躍。',
-        strategic:'「人への深い共感×戦略的思考」で、組織課題の本質を解く。コンサル・HR・教育分野で唯一無二の価値。',
-        default:'共感力とリーダーシップで「人間にしか作れない価値」を体現する。AI時代の人材×組織分野を中心に据える就活軸。',
-      },
-      '番人':{
-        specialization:'「確実な実行力と専門的信頼性」を軸に。AIが示した方向性を現実に落とし込む「実装のプロ」として活躍。',
-        leadership:'「秩序と責任感で組織を支える力」を軸に。AI導入後の組織をまとめる管理職・プロジェクトリーダーとして活躍。',
-        legacy:'「積み上げてきた信頼と知見を次代に継承する力」を軸に。組織の知的資産を守り育てる専門職として活躍。',
-        default:'信頼性・責任感・実行力を軸に、AIが不確かな時代に「確実性」を提供できる人材として活躍する就活軸。',
-      },
-      '探検家':{
-        independent:'「自律的に動き、変化を機会に変える力」を軸に。AI時代の変化の速さを武器にするファーストムーバー就活軸。',
-        'ai-native':'「新しいツールを誰よりも速く実践活用する力」を軸に。現場でAIを動かすエンジニア・スペシャリストとして活躍。',
-        'rare-combination':'「複数の領域を掛け合わせる柔軟な実践力」を軸に。業界の境界が崩れる時代に希少な掛け算人材として活躍。',
-        default:'適応力と実践力を武器に、AI時代の変化に最も自然に乗れる人材として活躍する就活軸。',
-      },
-    };
-
-    const groupAxes = GROUP_AXIS[mbtiGroup]||GROUP_AXIS['外交官'];
-    const axisText  = groupAxes[TL_inner[domTag]]||groupAxes[domTag]||groupAxes['default']||'';
-
-    // 業種を加えた具体的な就活軸テキスト
-    const topInd = document.getElementById('jws-industry')?.textContent?.split('（')[0]?.split('／')[0]?.trim()||'';
-
-    careerAxisEl.innerHTML =
-      (axisText
-        ? `<div style="margin-bottom:10px">${axisText}</div>`
-        : '') +
-      (aiBestRole
-        ? `<div style="font-size:.78rem;color:#6B7280;border-top:1px solid rgba(232,98,26,.15);padding-top:8px;margin-top:8px">`
-          +`<span style="color:#E8621A;font-weight:700">最適ポジション：</span>${aiBestRole}</div>`
-        : '') +
-      (topInd
-        ? `<div style="font-size:.78rem;color:#6B7280;border-top:1px solid rgba(232,98,26,.15);padding-top:8px;margin-top:8px">`
-          +`<span style="color:#E8621A;font-weight:700">注目業種：</span>${topInd}</div>`
-        : '');
+    // AI生成の就活軸があれば使用（renderJobSheet呼び出し時点ではまだない場合も）
+    if(G.aiCareerAxis){
+      // 3文をそれぞれ段落で表示
+      const sentences=G.aiCareerAxis.split(/。/).filter(s=>s.trim().length>3);
+      careerAxisEl.innerHTML=sentences.map((s,i)=>{
+        const icons=['①','②','③'];
+        return `<div style="margin-bottom:${i<sentences.length-1?'8px':'0'};line-height:1.8">`
+          +`<span style="color:var(--accent);font-weight:700;margin-right:4px">${icons[i]||''}</span>`
+          +s.trim()+'。</div>';
+      }).join('');
+    }else{
+      // フォールバック（AI未生成時）
+      const topInd=document.getElementById('jws-industry')?.textContent?.split('（')[0]?.split('／')[0]?.trim()||'';
+      const mbtiG=G.mbtiData?.group||'';
+      const fallbackMap={
+        '分析家':'論理と構造で課題の本質を解き、AIを武器として使いこなす人材として、'+( topInd||'ビジネス')+'の現場に貢献する。',
+        '外交官':'人を動かし共感で変える力を軸に、'+( topInd||'社会課題')+'の領域で、AIが代替できない人間的価値を生み出す。',
+        '番人':'責任感と実行力で確実に成果を積み上げ、'+( topInd||'組織')+'の現場でAI時代の変化を着実に推進する。',
+        '探検家':'変化を機会と捉え、AI×行動力で新しい価値を切り拓き、'+( topInd||'新興領域')+'の最前線で誰よりも速く動く。',
+      };
+      careerAxisEl.textContent=fallbackMap[mbtiG]||( topInd+'の領域で、'+TL_inner[domTag]+'の力を活かして社会に貢献する就活軸。');
+    }
   }
 }
 
