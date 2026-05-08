@@ -3010,10 +3010,22 @@ AI時代適合スコア: ${score}点（${tierLabel}）
       try{
         parsed=JSON.parse(raw);
       }catch(e){
+        // JSON切れ修復
         const attempts=[raw, raw+'"}]}}', raw+'"]}', raw+'"}', raw+'"]}}', raw+'}}', raw+'}'];
         let repaired=null;
         for(const a of attempts){ try{ repaired=JSON.parse(a); break; }catch(_){} }
-        parsed = repaired || extractPartialJSON(raw);
+        if(repaired){
+          parsed=repaired;
+        }else{
+          // 部分抽出
+          const partial=extractPartialJSON(raw);
+          // careerAxisだけを持つ場合の特別処理：配列を直接抽出
+          if(!partial.careerAxis){
+            const m=raw.match(/"careerAxis"\s*:\s*\[[\s\S]*?\]/);
+            if(m) try{ partial.careerAxis=JSON.parse('{'+m[0]+'}').careerAxis; }catch(_){}
+          }
+          parsed=partial;
+        }
       }
     }
     return parsed;
@@ -3028,8 +3040,9 @@ AI時代適合スコア: ${score}点（${tierLabel}）
     const careerResult = await callGAS(promptCareer, 600);
 
     // ━━ Req③：就活軸（専用・個人情報フル）
-    const axisResult = await callGAS(promptAxis, 400);
+    const axisResult = await callGAS(promptAxis, 800);
     console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
+    console.log('axisResult full:', JSON.stringify(axisResult)?.slice(0,200));
 
     return {
       myStory:          storyResult?.myStory || null,
