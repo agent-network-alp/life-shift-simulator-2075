@@ -2773,11 +2773,17 @@ async function showResult(){
     if(aiResult){
       // AIナラティブでMY STORYを上書き
       if(aiResult.myStory && storyEl){
-        // AIが生成した6フェーズのテキストを1つの流れるストーリーに統合
         const el=document.getElementById('story-50years');
         if(el){
           const story=aiResult.myStory;
-          el.innerHTML=buildAIStory50(story, G.narratives);
+          // 6フェーズ分揃っているか確認。不足分はフォールバックで補完
+          const fullStory=G.narratives.map((n,i)=>{
+            const aiText=story[i];
+            if(aiText&&aiText.length>10) return aiText;
+            // フォールバック：ナラティブのテキストをそのまま使用
+            return (n.text||'').replace(/<[^>]+>/g,'').trim().slice(0,120)||'（この時代の物語は生成できませんでした）';
+          });
+          el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
       }
       // AI業種説明文を上書き
@@ -2831,11 +2837,14 @@ async function showResult(){
 // 不完全なJSONから部分的にフィールドを抽出
 function extractPartialJSON(raw){
   const result={};
-  // myStory配列を抽出
-  const storyMatch=raw.match(/"myStory"\s*:\s*\[([^\]]*)/);
+  // myStory配列を抽出（途中切れにも対応）
+  const storyMatch=raw.match(/"myStory"\s*:\s*\[([\s\S]*?)(?:\]|$)/);
   if(storyMatch){
-    const items=storyMatch[1].match(/"([^"]+)"/g);
-    if(items) result.myStory=items.map(s=>s.replace(/^"|"$/g,''));
+    // 完全な文字列リテラルのみ抽出（途中で切れたものは除外）
+    const items=[...storyMatch[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)];
+    if(items.length>0){
+      result.myStory=items.map(m=>m[1].replace(/\\n/g,'').replace(/\\"/g,'"'));
+    }
   }
   // industryCommentsを抽出
   const indMatch=raw.match(/"industryComments"\s*:\s*\{([^}]*)/);
@@ -2927,8 +2936,8 @@ ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/上位業種:${indust
   try{
     // 並列実行
     const [storyResult, careerResult] = await Promise.all([
-      callGAS(promptStory, 1200),   // MY STORY: 6×100字≈400トークン、余裕みて1200
-      callGAS(promptCareer, 600),   // 業種+PR+アクション: 600トークンで十分
+      callGAS(promptStory, 2500),   // MY STORY: 6×100字=日本語600字≈900トークン、余裕みて2500
+      callGAS(promptCareer, 800),   // 業種+PR+アクション: 余裕みて800
     ]);
 
     // 結果をマージ
