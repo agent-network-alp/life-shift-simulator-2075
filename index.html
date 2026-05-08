@@ -3003,7 +3003,10 @@ AI時代適合スコア: ${score}点（${tierLabel}）
       body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, sessionId: G.sessionId }),
     });
     const data = await res.json();
-    if(!data.ok) throw new Error(data.error||'GAS error');
+    if(!data.ok){
+      console.warn('GAS error:', data.error);
+      return null;
+    }
     let parsed = data.result;
     if(typeof parsed==='string'){
       const raw=parsed.replace(/```json|```/g,'').trim();
@@ -3037,12 +3040,22 @@ AI時代適合スコア: ${score}点（${tierLabel}）
     console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
     // ━━ Req②：業種コメント・アクション（軽量）
-    const careerResult = await callGAS(promptCareer, 600);
+    let careerResult = null;
+    try {
+      careerResult = await callGAS(promptCareer, 600);
+    } catch(e2) {
+      console.warn('Req②エラー:', e2.message);
+    }
 
-    // ━━ Req③：就活軸（専用・個人情報フル）
-    const axisResult = await callGAS(promptAxis, 800);
-    console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
-    console.log('axisResult full:', JSON.stringify(axisResult)?.slice(0,200));
+    // ━━ Req③：就活軸（専用・個別try/catchで保護）
+    let axisResult = null;
+    try {
+      axisResult = await callGAS(promptAxis, 800);
+      console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
+    } catch(e3) {
+      console.warn('Req③(就活軸)エラー:', e3.message);
+      // Req③が失敗しても他の結果は返す
+    }
 
     return {
       myStory:          storyResult?.myStory || null,
