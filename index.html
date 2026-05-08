@@ -2857,151 +2857,93 @@ function extractPartialJSON(raw){
 }
 
 async function generateWithGemini(score, tierLabel, domTag, top3){
-  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',
-    independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理',
-    'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  // ━━━ 共通コンテキスト（両リクエストで使用）
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  const mbtiData=G.mbtiData||null;
 
-  const mbtiData = G.mbtiData || null;
-  const mbtiDesc = mbtiData
-    ? `MBTIタイプ: ${G.mbtiType}（${mbtiData.label}）グループ:${mbtiData.group||''}
-強み: ${(mbtiData.strengths||[]).join('・')}
-弱み: ${(mbtiData.weaknesses||[]).join('・')}
-AI時代の強み: ${mbtiData.aiEra?.advantage||''}
-AI時代の注意点: ${mbtiData.aiEra?.caution||''}
-最適なポジション: ${mbtiData.aiEra?.bestRole||''}`
-    : '（MBTIなし・簡易診断）';
+  // mbtiDesc：短縮版（入力トークン削減）
+  const mbtiDesc=mbtiData
+    ? `${G.mbtiType}/${mbtiData.label}/${mbtiData.group||''}型。強み:${(mbtiData.strengths||[]).slice(0,2).join('・')}。AI時代の強み:${mbtiData.aiEra?.advantage||''}`.slice(0,150)
+    : 'MBTIなし';
 
-  // ナラティブの要約（プロンプトに渡す）
-  const narrativeSummary = G.narratives.map((n,i)=>
-    `Phase${i+1}（${n.ageRange}/${n.era}）: ${n.text.slice(0,60)}...`
-  ).join('\n');
+  // phaseDetails：簡潔版（入力トークン削減）
+  const phaseDetails=G.tags.map((tag,i)=>{
+    const q1=G.q1Choices[i];
+    const q3=G.q3Choices[i]||'';
+    const q1type=q1?.erafit>=8?'適正':q1?.erafit>=5?'楽観':'過小';
+    return `P${i+1}:${TL[tag]||tag},Q1=${q1type},Q3=${q3}`;
+  }).join(' / ');
 
-  // 業種上位3つ
-  const industryList = top3.map(t=>`${t.name}（${t.score}%）`).join('、');
+  const q1Types=G.q1Choices.map(q=>q?.erafit>=8?'適正':q?.erafit>=5?'楽観':'過小');
+  const industryList=top3.map(s=>s.name+'('+s.score+'%)').join('・');
+  const domTagJP=TL[domTag]||domTag;
 
-  // フェーズごとの詳細な選択情報
-  const _TLtag={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
-  const _ages=['20-25歳','25-30歳','30-40歳','40-50歳','50-60歳','60-70歳'];
-  const _eras=['AI実装期','AGI移行期','産業再編期','人機協働成熟期','社会構造変容期','ポスト労働期'];
-  const _imap={skill:'スキル学習',network:'人脈構築',experiment:'副業実験',current_job:'現職実績'};
-  const phaseDetails = G.tags.map((tag,i)=>{
-    const q1l=G.q1Choices[i]?.label||'';
-    const inv=G.q3Choices[i]||'';
-    return 'P'+(i+1)+'('+_ages[i]+'/'+_eras[i]+'): 行動='+(_TLtag[tag]||tag)+' Q1='+(q1l==='B'||q1l==='D'?'適正':'過大過小')+' 投資='+(_imap[inv]||inv);
-  }).join(', ');
+  // ━━━ リクエスト①：MY STORY（独立して最重要・先に投げる）
+  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
+${G.nickname}/${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸
+フェーズ: ${phaseDetails}
+Q1認識: ${q1Types.join(',')}
 
-  // Q1認識タイプを物語化のために渡す
-  const q1Types=G.q1Choices.map(q=>{
-    if(!q)return'不明';
-    return q.erafit>=8?'適正認識（変化を正確に捉えた）':q.erafit>=5?'やや楽観視':q.erafit>=3?'過小評価':'過大評価';
-  });
+【指示】6フェーズの一人称過去形ナラティブ。
+条件:完全な一人称/Q1認識タイプを物語に組込む(適正→「変化を先読みしていた」/楽観→「甘く見ていた」/過小→「後から気づいた」)/MBTIの特性自然に反映/${mbtiData?.label||''}型の思考/葛藤と決断を描く/各80〜100字
+{"myStory":["P1","P2","P3","P4","P5","P6"]}`;
 
-  const prompt = `あなたは就活生向けキャリア診断の専門家です。以下のシミュレーション結果を分析し、日本語で返答してください。
+  // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
+  const promptCareer=`キャリア診断AIです。日本語JSONのみ返答。
+${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/上位業種:${industryList}
 
-【プレイヤー情報】
-ニックネーム: ${G.nickname}
-${mbtiDesc}
-AI時代適合スコア: ${score}点（${tierLabel}）
-キャリアの軸: ${TL[domTag]||domTag}
-業種適合上位: ${industryList}
+【指示1】上位3業種それぞれ:①2030-2040年の変化②この人が向いている理由③リスクと対策。各60字以内。
+{"industryComments":{"業種名":"①②③",...}}
 
-【6フェーズの選択詳細】
-${phaseDetails}
+【指示2】「私は学生時代に〜」で始まる自己PR。${domTagJP}軸中心。80字以内。
+{"selfPR":"文章"}
 
-【Q1（環境認識）の認識タイプ：変化をどう捉えたか】
-${q1Types.map((t,i)=>'P'+(i+1)+': '+t).join(', ')}
+【指示3】業種名・職種名入り就活アクション3つ。各40字以内。
+{"jobActions":["1","2","3"]}
 
----
+3つをまとめた1つのJSONのみ。`;
 
-【依頼1】個別最適化された自分史（MY STORY）
-
-条件：
-- 完全な一人称・過去形
-- 各フェーズで「Q1認識タイプ」を物語に組み込む
-  例）過小評価だったPhase1→「当時の私はAIの影響を甘く見ていた。3年後にその認識の甘さを思い知ることになる」
-  例）適正認識だったPhase2→「変化の本質が見えていたから、周囲より早く動けた」
-- MBTIの特性を自然に反映（${G.mbtiData?.label||''}型の思考・行動パターン）
-- 葛藤・決断の瞬間を1フェーズに最低1つ描写
-- テンプレート排除：この人だけの物語
-- 各フェーズ130〜180字
-
-JSON: {"myStory": ["P1","P2","P3","P4","P5","P6"]}
-
-【依頼2】業種インサイト（3問形式）
-
-上位3業種それぞれを以下の構成で：
-① 2030〜2040年のその業種の変化（具体的に1文）
-② このプレイヤーの選択パターン・MBTIから見た「なぜ向いているか」（具体的に1文）
-③ この業種特有のリスクと、このプレイヤーが取るべき対策（1文）
-合計100〜120字。抽象表現禁止。
-
-JSON: {"industryComments": {"業種名": "①〜③の文章", ...}}
-
-【依頼3】就活ワンシート用の自己PR文
-
-このプレイヤーのスコア・タグ・MBTIを踏まえた自己PR文を書いてください。
-- 「私は学生時代に〜」で始まる
-- キャリアの軸（${TL[domTag]||domTag}）を中心に
-- 100字程度、面接で使えるレベルの具体性
-
-JSON: {"selfPR": "自己PR文"}
-
-【依頼4】今すぐできる就活アクション3つ
-
-業種名・職種名の固有名詞を含め、明日から実行できる行動を3つ。
-
-JSON: {"jobActions": ["アクション1","アクション2","アクション3"]}
-
-上記4つをまとめた1つのJSONのみ返してください。説明文不要。`;
-
-  try{
+  // ━━━ 2リクエストを並列送信
+  const callGAS = async (prompt, maxTok) => {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        action: 'gemini',
-        prompt,
-        sessionId: G.sessionId,
-      })
+      body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, sessionId: G.sessionId }),
     });
     const data = await res.json();
-    if(!data.ok) throw new Error(data.error||'GAS Gemini error');
-
-    // JSONパース（不完全なJSONへの対策付き）
+    if(!data.ok) throw new Error(data.error||'GAS error');
     let parsed = data.result;
-    if(typeof parsed === 'string'){
-      let raw = parsed.replace(/```json|```/g,'').trim();
-      try{
-        parsed = JSON.parse(raw);
-      }catch(e){
-        // 末尾が切れている場合：最後の完全なブロックまでを使う
-        console.warn('Gemini JSON不完全、修復を試みます:', e.message);
-        // 末尾に }] を補完して再試行
-        const attempts = [
-          raw,
-          raw + '"]}',
-          raw + '"}',
-          raw + ']}'  ,
-          raw + '"]}}'
-        ];
-        let repaired = null;
-        for(const attempt of attempts){
-          try{ repaired=JSON.parse(attempt); break; }catch(_){}
-        }
-        if(repaired){
-          parsed = repaired;
-          console.log('JSON修復成功');
-        }else{
-          // 部分的に使えるフィールドだけ抽出
-          parsed = extractPartialJSON(raw);
-        }
+    if(typeof parsed==='string'){
+      const raw=parsed.replace(/```json|```/g,'').trim();
+      try{ parsed=JSON.parse(raw); }
+      catch(e){
+        const attempts=[raw, raw+'"}', raw+'"]}', raw+'"]}}', raw+'}'];
+        for(const a of attempts){ try{parsed=JSON.parse(a);break;}catch(_){} }
+        if(typeof parsed==='string') parsed=extractPartialJSON(raw);
       }
     }
     return parsed;
+  };
+
+  try{
+    // 並列実行
+    const [storyResult, careerResult] = await Promise.all([
+      callGAS(promptStory, 1200),   // MY STORY: 6×100字≈400トークン、余裕みて1200
+      callGAS(promptCareer, 600),   // 業種+PR+アクション: 600トークンで十分
+    ]);
+
+    // 結果をマージ
+    return {
+      myStory:         storyResult?.myStory || null,
+      industryComments:careerResult?.industryComments || null,
+      selfPR:          careerResult?.selfPR || null,
+      jobActions:      careerResult?.jobActions || null,
+    };
   }catch(e){
     console.warn('Gemini API error:', e);
     return null;
   }
 }
+
 
 // AI生成業種説明付きレンダリング
 function renderIndustryDetailsWithAI(top3, aiComments){
