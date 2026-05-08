@@ -2866,9 +2866,15 @@ function extractPartialJSON(raw){
   // selfPRを抽出（旧互換）
   const prMatch=raw.match(/"selfPR"\s*:\s*"([^"]+)"/);
   if(prMatch) result.selfPR=prMatch[1];
-  // careerAxisを抽出
-  const axisMatch=raw.match(/"careerAxis"\s*:\s*"((?:[^"\\]|\\.)*)"/);
-  if(axisMatch) result.careerAxis=axisMatch[1].replace(/\\n/g,'').replace(/\\"/g,'"');
+  // careerAxisを抽出（配列形式優先）
+  const axisArrMatch=raw.match(/"careerAxis"\s*:\s*\[([^\]]+)\]/);
+  if(axisArrMatch){
+    const items=[...axisArrMatch[1].matchAll(/"((?:[^"\\]|\\.)*)"/g)];
+    if(items.length>0) result.careerAxis=items.map(m=>m[1].replace(/\\n/g,'').replace(/\\"/g,'"'));
+  } else {
+    const axisStrMatch=raw.match(/"careerAxis"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+    if(axisStrMatch) result.careerAxis=axisStrMatch[1].replace(/\\n/g,'').replace(/\\"/g,'"');
+  }
   // jobActionsを抽出
   const actMatch=raw.match(/"jobActions"\s*:\s*\[([^\]]*)/);
   if(actMatch){
@@ -2937,18 +2943,16 @@ MBTI: ${mbtiGroupText}
 6フェーズの選択傾向: ${domTagJP}軸を中心に${G.tags.map(t=>({specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立',  'rare-combination':'掛け算',leadership:'育成',  'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
 Q3投資先の傾向: ${q3Top||'スキル中心'}
 
-【指示1】就活軸の提案（3文構成）
-この人の「業種希望×MBTI×選択傾向」の3要素を掛け合わせ、就活生が「これは自分だ」と感じられる就活軸を3文で書く。
+【指示1】就活軸の提案（3要素の配列で返す）
+この人の「業種希望×MBTI×選択傾向」の3要素を掛け合わせ、就活生が「これは自分だ」と感じられる就活軸を書く。
 
-構成ルール：
-- 1文目：「〇〇な社会課題・テーマに向き合いたい」（業種から導出したテーマ）
-- 2文目：「〇〇という強みで、〇〇なアプローチをとる」（MBTIと選択傾向から導出）
-- 3文目：「〇〇の現場で、〇〇を実現したい」（業種名と具体的な貢献イメージ）
+3要素それぞれを独立した文字列として配列で返すこと：
+- axis[0]：向き合いたい社会課題・テーマ（業種から導出）40〜55字
+- axis[1]：自分の強みとアプローチ（MBTIと選択傾向から導出）40〜55字
+- axis[2]：業種の現場で実現したいこと（業種名を含む）40〜55字
 
-禁止：抽象的な表現・MBTIのタイプ名をそのまま使う・「私はMBTIが〜」で始める
-必須：3文それぞれを「。」で終わらせ、文中に「。」を使わない。各文40〜60字。
-
-{"careerAxis":"1文目の内容。2文目の内容。3文目の内容。"}
+禁止：抽象的な表現・MBTIタイプ名をそのまま使う
+{"careerAxis":["テーマ文","強み・アプローチ文","実現したいこと文"]}
 
 【指示2】上位3業種それぞれ:①この業種の2030年代の変化②この人が向いている具体的な理由③注意点。各60字以内。
 {"industryComments":{"業種名":"①②③",...}}
@@ -3161,22 +3165,30 @@ ${careerAxis}`;
 
 // フォールバック：テンプレートで50年ストーリーを1本化
 // 就活軸テキストを①②③段落に整形して返す
-function renderCareerAxis(text){
-  if(!text||!text.trim()) return '';
-  // 。で分割
-  var parts=text.split('。').map(function(s){return s.trim();}).filter(function(s){return s.length>5;});
-  // 1文以下なら改行で分割
-  if(parts.length<2){
-    var lines=[];
-    var raw=text.split('\n');
-    for(var k=0;k<raw.length;k++){
-      var l=raw[k].replace(/^[①②③ \s]+/,'').trim();
-      if(l.length>5) lines.push(l);
+// 配列["文1","文2","文3"] または 文字列 どちらでも対応
+function renderCareerAxis(data){
+  if(!data) return '';
+  var parts=[];
+  // 配列形式（推奨）
+  if(Array.isArray(data)){
+    parts=data.filter(function(s){return s&&s.trim().length>3;}).slice(0,3);
+  } else {
+    // 文字列形式：句点で分割
+    var text=String(data);
+    parts=text.split('。').map(function(s){return s.trim();}).filter(function(s){return s.length>5;});
+    if(parts.length<2){
+      var lines=text.split('\n');
+      var lp=[];
+      for(var k=0;k<lines.length;k++){
+        var l=lines[k].replace(/^[①②③\s]+/,'').trim();
+        if(l.length>5) lp.push(l);
+      }
+      if(lp.length>=2) parts=lp.slice(0,3);
+      else return '<div style="line-height:1.85">'+text+'</div>';
     }
-    if(lines.length>=2) parts=lines.slice(0,3);
-    else return '<div style="line-height:1.85">'+text+'</div>';
+    parts=parts.slice(0,3);
   }
-  parts=parts.slice(0,3);
+  if(parts.length===0) return '';
   var icons=['①','②','③'];
   var html='';
   for(var i=0;i<parts.length;i++){
