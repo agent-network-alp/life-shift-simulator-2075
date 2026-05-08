@@ -2808,8 +2808,26 @@ async function showResult(){
           ).join('');
         }
       }
-      // AI就活軸をグローバルに保存してから就活ワンシートを再レンダリング
-      if(aiResult.careerAxis) G.aiCareerAxis=aiResult.careerAxis;
+      // AI就活軸をグローバルに保存（1要素の場合はコードで補完）
+      if(aiResult.careerAxis){
+        let axis=aiResult.careerAxis;
+        // 配列で1〜2要素しかない場合、残りをコードで生成
+        if(Array.isArray(axis)&&axis.length<3){
+          const topInd=indScores[0]?.name||'事業開発';
+          const mbtiG=G.mbtiData?.group||'';
+          const domJP=TL[domTag]||domTag;
+          const fallbacks=[
+            axis[0]||'AI時代の変化を力に変え、社会の課題に正面から向き合いたい。',
+            axis[1]||(mbtiG==='分析家'?'論理的な思考と'+domJP+'の力で、課題の本質を解き続ける。':
+                       mbtiG==='外交官'?'人を動かす共感力と'+domJP+'の選択を軸に、変革を起こす。':
+                       mbtiG==='番人'?'誠実な実行力と'+domJP+'の積み上げで、確実に成果を出す。':
+                       '行動力と'+domJP+'の実践力で、誰よりも速く変化に乗る。'),
+            axis[2]||topInd+'の現場で、AIと人間の力を掛け合わせた新しい価値を創りたい。',
+          ];
+          axis=fallbacks;
+        }
+        G.aiCareerAxis=axis;
+      }
       // 就活ワンシート生成（AI結果が揃ってから）
       renderJobSheet(score,tier.label,domTag,indScores,aiResult);
       // 就活軸のみ再描画（AIデータで上書き）
@@ -2943,16 +2961,15 @@ MBTI: ${mbtiGroupText}
 6フェーズの選択傾向: ${domTagJP}軸を中心に${G.tags.map(t=>({specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立',  'rare-combination':'掛け算',leadership:'育成',  'community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
 Q3投資先の傾向: ${q3Top||'スキル中心'}
 
-【指示1】就活軸の提案（3要素の配列で返す）
-この人の「業種希望×MBTI×選択傾向」の3要素を掛け合わせ、就活生が「これは自分だ」と感じられる就活軸を書く。
+【指示1】就活軸（必ず3つの独立した文を配列で返す）
+この人の業種・MBTI・選択傾向を踏まえ、以下の3文を別々の配列要素として生成する。
 
-3要素それぞれを独立した文字列として配列で返すこと：
-- axis[0]：向き合いたい社会課題・テーマ（業種から導出）40〜55字
-- axis[1]：自分の強みとアプローチ（MBTIと選択傾向から導出）40〜55字
-- axis[2]：業種の現場で実現したいこと（業種名を含む）40〜55字
+文1（テーマ）：この人が向き合いたい社会課題・領域。30〜45字。
+文2（強み）：この人の強みとアプローチの仕方。30〜45字。
+文3（志望）：上位業種の具体的な現場で実現したいこと。業種名を含む。30〜45字。
 
-禁止：抽象的な表現・MBTIタイプ名をそのまま使う
-{"careerAxis":["テーマ文","強み・アプローチ文","実現したいこと文"]}
+出力形式（この形式を厳守。文字列が1つや2つでは不可。必ず3要素の配列）：
+{"careerAxis":["文1の内容","文2の内容","文3の内容"]}
 
 【指示2】上位3業種それぞれ:①この業種の2030年代の変化②この人が向いている具体的な理由③注意点。各60字以内。
 {"industryComments":{"業種名":"①②③",...}}
@@ -3154,21 +3171,19 @@ ${careerAxis}`;
 function renderCareerAxis(data){
   if(!data) return '';
   var parts=[];
-  // 配列形式（推奨）
   if(Array.isArray(data)){
-    parts=data.filter(function(s){return s&&s.trim().length>3;}).slice(0,3);
+    parts=data.filter(function(s){return s&&String(s).trim().length>2;}).slice(0,3);
   } else {
-    // 文字列形式：句点で分割
     var text=String(data);
-    parts=text.split('。').map(function(s){return s.trim();}).filter(function(s){return s.length>5;});
+    parts=text.split('。').map(function(s){return s.trim();}).filter(function(s){return s.length>2;});
     if(parts.length<2){
       var lines=text.split('\n');
       var lp=[];
       for(var k=0;k<lines.length;k++){
         var l=lines[k].replace(/^[①②③\s]+/,'').trim();
-        if(l.length>5) lp.push(l);
+        if(l.length>2) lp.push(l);
       }
-      if(lp.length>=2) parts=lp.slice(0,3);
+      if(lp.length>=1) parts=lp.slice(0,3);
       else return '<div style="line-height:1.85">'+text+'</div>';
     }
     parts=parts.slice(0,3);
@@ -3177,7 +3192,7 @@ function renderCareerAxis(data){
   var icons=['①','②','③'];
   var html='';
   for(var i=0;i<parts.length;i++){
-    var s=parts[i].replace(/。\s*$/,'')+'。';
+    var s=String(parts[i]).replace(/。\s*$/,'')+'。';
     html+='<div style="margin-bottom:'+(i<parts.length-1?'10px':'0')+';line-height:1.85">'
       +'<span style="color:var(--accent);font-weight:700;margin-right:5px">'+(icons[i]||'')+'</span>'
       +s+'</div>';
