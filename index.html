@@ -908,6 +908,7 @@ div[style*="CAREER TRANSLATION"] {
 <div id="result-loading">
   <div class="rl-msg">お疲れさまでした！</div>
   <div class="rl-sub">レポートを作成しています。少々お待ちください</div>
+  <div id="rl-headline" style="font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-top:12px;text-align:center;padding:0 20px;min-height:1.4em;transition:opacity .5s ease"></div>
   <div class="rl-bar-wrap"><div class="rl-bar" id="rl-bar"></div></div>
 </div>
 
@@ -1755,6 +1756,8 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
+      // 振動フィードバック（モバイル）
+      if(navigator.vibrate) navigator.vibrate(30);
       // Q2はタグで反映、Q1はerafitで反映、Q3はinvestで反映
       if(ch.tag){
         applyValueMeterChoice(ch.tag);
@@ -2252,6 +2255,35 @@ function pickNarrative(tag,phaseIdx){
 
 
 // イベント発生有無によるナラティブ後半
+// 70歳の自分からのコメンタリー（選択直後にフラッシュ表示）
+const COMMENTARY_FALLBACK={
+  'ai-native':['「ためらうな、AIは武器だ」','「波に乗れ、これが時代だ」','「速さより、方向が大事だ」'],
+  'strategic':['「問いを持て、それがすべてだ」','「全体を見よ、細部は後だ」','「迷ったら本質に戻れ」'],
+  'specialization':['「深さは裏切らない」','「続けろ、深みが力になる」','「専門家は孤独だが強い」'],
+  'independent':['「誰かに頼むな、自分で動け」','「自律が最大の武器になる」','「孤独を恐れるな」'],
+  'rare-combination':['「掛け算は足し算より強い」','「境界線を越えろ」','「2つを持つ者が勝つ」'],
+  'leadership':['「育てた人間が返ってくる」','「人への投資は必ず実る」','「リーダーは一人でない」'],
+  'community-builder':['「つながりが力になる日が来る」','「信頼は複利で増える」','「人を結べ、それが価値だ」'],
+  'global':['「視野が広い者が生き残る」','「境界を越えた者が強い」','「世界で考えろ」'],
+  'legacy':['「残したものだけが続く」','「知恵は渡してこそ意味がある」','「次の世代のために打て」'],
+};
+let _commentaryShown=false;
+async function fetchCommentary(phaseIdx, tagJP, q1mood, mbtiLabel){
+  // フォールバック即表示（Gemini不使用・コスト0）
+  const pool=COMMENTARY_FALLBACK[G.tags[phaseIdx]]||['「この選択が、未来の自分をつくる」'];
+  const text=pool[phaseIdx%pool.length];
+  showCommentaryFlash(text);
+}
+function showCommentaryFlash(text){
+  const el=document.createElement('div');
+  el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(26,26,46,.95);color:#fff;font-size:.82rem;padding:10px 18px;border-radius:20px;border:1px solid rgba(232,98,26,.4);z-index:200;opacity:0;transition:all .4s ease;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;font-style:italic';
+  el.textContent='70歳の自分から：'+text;
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';},50);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(-10px)';},2800);
+  setTimeout(()=>el.remove(),3300);
+}
+
 function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
   const opening=pickNarrative(tag,phaseIdx);
   // why×how×horizonでナラティブの「味付け」を決定
@@ -2353,6 +2385,16 @@ function showNarrative(completedPhaseIdx, onNext){
     ageRange:`${PHASE_AGES[completedPhaseIdx]}〜${PHASE_END_AGES[completedPhaseIdx]}歳`,
     text,tag,
   };
+
+  // 70歳の自分からのコメンタリーを取得して表示（非同期・バックグラウンド）
+  if(G.sessionId&&G.mbtiType){
+    const phaseIdx=completedPhaseIdx;
+    const tagJP=({'specialization':'専門特化','ai-native':'AI活用','strategic':'意思決定','independent':'独立','rare-combination':'掛け算','leadership':'育成','community-builder':'コミュニティ','global':'グローバル','legacy':'知見継承'})[tag]||tag;
+    const q1rec=G.q1Choices[phaseIdx];
+    const q1mood=q1rec?.erafit>=8?'先読みしていた':'様子見していた';
+    // コメンタリーをフェーズナラティブ表示と並列で取得
+    fetchCommentary(phaseIdx,tagJP,q1mood,G.mbtiData?.label||'');
+  }
 
   // オーバーレイ表示
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
@@ -2610,6 +2652,29 @@ async function showResult(){
   // ローディング演出開始
   const rl=document.getElementById('result-loading');
   const rlBar=document.getElementById('rl-bar');
+  // 2075年ニュースヘッドラインローテーション
+  const HEADLINES_2075=[
+    '📡 2075年速報：AGIが「意識」を持つと国連が認定',
+    '🌏 2075年：人間×AI協働企業が世界GDPの71%を担う',
+    '🧬 2075年：平均寿命105歳・キャリアは3ステージが標準へ',
+    '⚡ 2075年：「なぜ働くか」を答えられる人材だけが不可欠に',
+    '🎓 2075年：専門性の掛け算を持つ人材の報酬が3.2倍に',
+    '🔗 2075年：AIが5秒で書いた論文を人間が10年かけて実証する時代',
+  ];
+  const _hlEl=document.getElementById('rl-headline');
+  let _hlIdx=Math.floor(Math.random()*HEADLINES_2075.length);
+  if(_hlEl){
+    _hlEl.textContent=HEADLINES_2075[_hlIdx];
+    const _hlTimer=setInterval(()=>{
+      _hlEl.style.opacity='0';
+      setTimeout(()=>{
+        _hlIdx=(_hlIdx+1)%HEADLINES_2075.length;
+        _hlEl.textContent=HEADLINES_2075[_hlIdx];
+        _hlEl.style.opacity='1';
+      },500);
+    },3500);
+    window._hlTimer=_hlTimer;
+  }
   rl.classList.add('show');
   let progress=0;
   const progressTimer=setInterval(()=>{
@@ -3083,13 +3148,34 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
   const domTagJP=TL[domTag]||domTag;
 
   // ━━━ リクエスト①：MY STORY（独立して最重要・先に投げる）
-  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
-${G.nickname}/${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸
-フェーズ: ${phaseDetails}
-Q1認識: ${q1Types.join(',')}
+  // フェーズ別選択ログを詳細に構築（因果の糸のため）
+  const phaseChoiceLog=G.tags.map((tag,i)=>{
+    const q1=G.q1Choices[i];const q3=G.q3Choices[i]||'';
+    const sl=(G.styleLog||[])[i]||{};
+    const q1label=q1?.erafit>=8?'先読み':q1?.erafit>=5?'様子見':'後追い';
+    return `P${i+1}[${(['専門特化','AI活用','意思決定','独立','掛け算','育成','コミュニティ','グローバル','知見継承'][['specialization','ai-native','strategic','independent','rare-combination','leadership','community-builder','global','legacy'].indexOf(tag)]||tag)}/${q1label}/${q3}/${sl.why||''}/${sl.how||''}]`;
+  }).join(' → ');
 
-【指示】6フェーズの一人称過去形ナラティブ。
-条件:完全な一人称/Q1認識タイプを物語に組込む(適正→「変化を先読みしていた」/楽観→「甘く見ていた」/過小→「後から気づいた」)/MBTIの特性自然に反映/${mbtiData?.label||''}型の思考/葛藤と決断を描く/各80〜100字
+  // MBTI認知機能パターン（L3データ）
+  const cogFn=mbtiData?`主機能:${{
+    '分析家':'Ni/Ti（長期洞察・論理）','外交官':'Fe/Ni（共感・ビジョン）',
+    '番人':'Si/Fe（記憶・調和）','探検家':'Se/Ti（現場感覚・分析）'
+  }[mbtiData.group]||''}`:'' ;
+
+  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
+
+【就活生データ】
+名前: ${G.nickname} / MBTI: ${G.mbtiType||'不明'}（${mbtiData?.label||''}）${cogFn}
+選択の流れ: ${phaseChoiceLog}
+動機軸: ${{'resolver':'解決者型','contributor':'貢献者型','ownership':'オーナー型'}[G.dominantWhy]||''} / 行動: ${{'visionary':'長期設計','pragmatic':'現実実行','relational':'関係構築','disruptive':'常識破壊'}[G.dominantHow]||''}
+スコア: ${score}点（${tierLabel}）
+
+【生成ルール】
+1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める（例：ENFJなら承認欲求との葛藤、INTJなら孤独と確信の葛藤）
+2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
+3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
+4. 各80〜100字、完全な一人称過去形
+
 {"myStory":["P1","P2","P3","P4","P5","P6"]}`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
