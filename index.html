@@ -3159,7 +3159,9 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     const q1=G.q1Choices[i];const q3=G.q3Choices[i]||'';
     const sl=(G.styleLog||[])[i]||{};
     const q1label=q1?.erafit>=8?'先読み':q1?.erafit>=5?'様子見':'後追い';
-    return `P${i+1}[${(['専門特化','AI活用','意思決定','独立','掛け算','育成','コミュニティ','グローバル','知見継承'][['specialization','ai-native','strategic','independent','rare-combination','leadership','community-builder','global','legacy'].indexOf(tag)]||tag)}/${q1label}/${q3}/${sl.why||''}/${sl.how||''}]`;
+    const PHASE_AGE_LABELS=['20〜25歳（AI実装期）','25〜30歳（AGI移行期）','30〜40歳（産業再編期）','40〜50歳（人機協働成熟期）','50〜60歳（社会構造変容期）','60〜70歳（ポスト労働期）'];
+    const ageLabel=PHASE_AGE_LABELS[i]||`フェーズ${i+1}`;
+    return `${ageLabel}[${(['専門特化','AI活用','意思決定','独立','掛け算','育成','コミュニティ','グローバル','知見継承'][['specialization','ai-native','strategic','independent','rare-combination','leadership','community-builder','global','legacy'].indexOf(tag)]||tag)}/${q1label}/${q3}/${sl.why||''}/${sl.how||''}]`;
   }).join(' → ');
 
   // MBTI認知機能パターン（L3データ）
@@ -3182,7 +3184,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
 4. 各80〜100字、完全な一人称過去形
 
-{"myStory":["P1","P2","P3","P4","P5","P6"]}`;
+{"myStory":["20〜25歳（AI実装期）のナラティブ","25〜30歳（AGI移行期）のナラティブ","30〜40歳（産業再編期）のナラティブ","40〜50歳（人機協働成熟期）のナラティブ","50〜60歳（社会構造変容期）のナラティブ","60〜70歳（ポスト労働期）のナラティブ"]}`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
   // 就活軸生成のための3要素を構造化してプロンプトに渡す
