@@ -9,7 +9,10 @@
 <title>LIFE SHIFT SIMULATOR 2075 | 株式会社エージェント</title>
 <meta name="description" content="未来へ旅して、戻ってきた君はどこへ向かう。AI時代の就活生のための50年疑似体験。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<!-- Bebas Neue を優先プリロード（フォントズレ防止） -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700&display=block">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700&display=block" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" crossorigin="anonymous"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -41,7 +44,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 #loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .5s ease}
 #loading-overlay.hide{opacity:0;pointer-events:none}
-.loading-logo{font-family:var(--ff-head);font-size:clamp(2rem,6vw,3.2rem);letter-spacing:8px;color:var(--accent);text-shadow:0 0 40px rgba(232,98,26,.3)}
+.loading-logo{font-family:var(--ff-head),'Arial Black',sans-serif;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:8px;color:var(--accent);text-shadow:0 0 40px rgba(232,98,26,.3);min-height:3.5rem;display:flex;align-items:center;justify-content:center}
 .loading-bar-wrap{width:200px;height:1px;background:var(--border)}
 .loading-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0%;transition:width .3s ease}
 .loading-text{font-size:.68rem;color:var(--w40);letter-spacing:4px;animation:pulse 1.5s infinite}
@@ -908,7 +911,10 @@ div[style*="CAREER TRANSLATION"] {
 <div id="result-loading">
   <div class="rl-msg">お疲れさまでした！</div>
   <div class="rl-sub">レポートを作成しています。少々お待ちください</div>
-  <div id="rl-headline" style="font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.5px;margin-top:12px;text-align:center;padding:0 20px;min-height:1.4em;transition:opacity .5s ease"></div>
+  <div style="margin-top:20px;text-align:center">
+    <div style="font-size:.55rem;letter-spacing:4px;color:rgba(232,98,26,.7);margin-bottom:6px;font-weight:700">✦ 2075年 ニュースヘッドライン ✦</div>
+    <div id="rl-headline" style="font-size:.92rem;color:rgba(255,255,255,.75);letter-spacing:.5px;line-height:1.6;padding:0 24px;min-height:2.4em;transition:opacity .5s ease;font-weight:400"></div>
+  </div>
   <div class="rl-bar-wrap"><div class="rl-bar" id="rl-bar"></div></div>
 </div>
 
