@@ -3018,7 +3018,7 @@ async function showResult(){
         let axis=aiResult.careerAxis;
         // 配列で1〜2要素しかない場合、残りをコードで生成
         // 要素数が3未満、または各要素が短すぎる（不完全）場合はフォールバック
-        if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<8))){
+        if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<15))){
           const topInd=indScores?.[0]?.name||'事業開発・新規事業';
           const mbtiG=G.mbtiData?.group||'';
           const domJP=TL[domTag]||domTag;
@@ -3225,22 +3225,25 @@ ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/業種:${industryList
 
 ■就活生データ
 MBTI: ${mbtiGroupText}
-選択軸: ${domTagJP} / HOW: ${ {'visionary':'長期設計型','pragmatic':'実行型','relational':'関係構築型','disruptive':'革新型'}[G.dominantHow]||G.dominantHow||'実行型' }
-フェーズ選択: ${G.tags.map(t=>({'specialization':'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
-Q3投資: ${q3Top||'スキル'}
-志望1位: ${topInd1}（${topScore1}%）
-スコア: ${score}点
+選択軸: ${domTagJP} / スタイル: ${ {'visionary':'長期設計型','pragmatic':'現実実行型','relational':'関係構築型','disruptive':'革新型'}[G.dominantHow]||'実行型' }
+フェーズ選択の流れ: ${G.tags.map(t=>({'specialization':'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
+Q3投資傾向: ${q3Top||'スキル'}
+志望業種1位: ${topInd1}（${topScore1}%）
+スコア: ${score}点（${tierLabel}）
 
-■出力指示
-以下の3文を必ず配列の3要素として返す。
+■生成指示（3つの文を配列で返す）
+この就活生の「業種・MBTI・選択傾向」を踏まえ、本人が「これは自分だ」と感じる就活軸を3文で生成する。
 
-[0] ${topInd1}で解決したい社会課題（25字以内・体言止めOK）
-[1] ${domTagJP}と${ G.mbtiData?.group||'' }型から生まれる強み・動き方（25字以内）
-[2] ${topInd1}での具体的な目標（25字以内・業種名含む）
+文①（テーマ・向き合いたいこと）：${topInd1}の文脈で、この人が解決したい社会課題や向き合いたいテーマ。30〜45字。
+文②（強み・アプローチ）：${domTagJP}の選択傾向と${G.mbtiData?.group||''}型の特性から生まれる、この人ならではの動き方や強み。30〜45字。
+文③（志望・実現したいこと）：${topInd1}という場を選ぶ理由と、そこで実現したい具体的なこと。業種名を含む。30〜45字。
 
-{"careerAxis":["[0]の内容","[1]の内容","[2]の内容"]}
+【重要】
+- 各文は30〜45字の完全な文にする（短すぎる断片は禁止）
+- 3要素すべてを必ず生成する
+- テンプレ文・定型表現禁止
 
-必ず3要素の配列。各25字以内。`
+{"careerAxis":["文①の内容","文②の内容","文③の内容"]}`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
   const callGAS = async (prompt, maxTok) => {
@@ -3296,7 +3299,7 @@ Q3投資: ${q3Top||'スキル'}
     // ━━ Req③：就活軸（専用・個別try/catchで保護）
     let axisResult = null;
     try {
-      axisResult = await callGAS(promptAxis, 800);
+      axisResult = await callGAS(promptAxis, 1200); // 45字×3文+JSON構造
       console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
     } catch(e3) {
       console.warn('Req③(就活軸)エラー:', e3.message);
