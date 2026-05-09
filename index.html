@@ -4089,6 +4089,40 @@ function renderValueMeter(previewTag){
     +'</div>';
 }
 
+// ソフトキャップ：72以上で変化量45%、85以上で10%に逓減
+function vmSoftApply(cur, delta){
+  if(delta>0){
+    if(cur>=85) delta=Math.max(0,Math.round(delta*0.1));
+    else if(cur>=72) delta=Math.round(delta*0.45);
+  }
+  return Math.min(90, Math.max(18, cur+delta));
+}
+
+function applyValueMeterChoice(tag){
+  const impact=TAG_AXIS_IMPACT[tag]||{};
+  renderValueMeter(tag);
+  setTimeout(()=>{
+    Object.keys(impact).forEach(k=>{
+      vmState[k]=vmSoftApply(vmState[k],impact[k]);
+    });
+    renderValueMeter(null);
+  },800);
+}
+
+function applyValueMeterDelta(delta){
+  const tempTag='_delta';
+  TAG_AXIS_IMPACT[tempTag]=delta;
+  renderValueMeter(tempTag);
+  setTimeout(()=>{
+    delete TAG_AXIS_IMPACT[tempTag];
+    Object.keys(delta).forEach(k=>{
+      vmState[k]=vmSoftApply(vmState[k],delta[k]||0);
+    });
+    renderValueMeter(null);
+  },800);
+}
+
+
 
 // ━━━ ダイスロール ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
