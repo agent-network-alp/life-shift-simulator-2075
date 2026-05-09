@@ -57,7 +57,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .onboard-title span{color:var(--accent)}
 .onboard-sub{font-size:.88rem;color:var(--w70);line-height:2;margin-bottom:40px}
 .onboard-hint{font-size:.7rem;color:var(--w40);margin-bottom:24px;letter-spacing:2px}
-.input-box{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);font-size:1.05rem;padding:16px 20px;border-radius:6px;text-align:center;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:8px}
+.input-box{width:100%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.25);color:var(--white);font-family:var(--ff-body);font-size:1.05rem;padding:16px 20px;border-radius:6px;text-align:center;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:8px}
+.input-box::placeholder{color:rgba(255,255,255,.4)}
 .input-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,98,26,.15)}
 .input-box::placeholder{color:rgba(255,255,255,.28)}
 .choice2-wrap{display:flex;gap:12px;width:100%;margin-bottom:8px;flex-wrap:wrap}
@@ -155,9 +156,10 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 #value-meter.vm-visible{display:block}
 .vm-inner{max-width:660px;margin:0 auto}
 .vm-title{font-size:.55rem;letter-spacing:4px;color:var(--accent);margin-bottom:8px;opacity:.9}
-.vm-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.vm-row{display:flex;flex-direction:column;gap:3px}
-.vm-label{font-size:.62rem;color:var(--w40);text-align:center}
+.vm-grid{display:flex;gap:10px;align-items:center;justify-content:center}
+.vm-row{display:flex;flex-direction:column;align-items:center;gap:5px}
+.vm-label{font-size:.6rem;color:var(--w60);white-space:nowrap;text-align:center}
+.vm-signal{width:18px;height:18px;border-radius:50%;flex-shrink:0;transition:background .4s ease}
 .vm-track{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
 .vm-fill{height:100%;border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
 .vm-delta{font-size:.64rem;font-weight:700;text-align:center;transition:color .3s;min-height:14px}
@@ -707,7 +709,7 @@ div[style*="CAREER TRANSLATION"] {
       </div>
     </div>
 
-    <p class="onboard-hint">ニックネームを入力してスタート</p>
+    <p class="onboard-hint" style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:10px;letter-spacing:.5px">▼ ニックネームを入力してスタート</p>
     <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
 
     <!-- 個人情報同意 -->
@@ -1575,7 +1577,7 @@ function startGame(){
   G.currentPhase=0;G.currentQ=-1;
   G.choices=[];G.q1Choices=[];G.q3Choices=[];G.tags=[];G.eventChoices=[];
   G.narratives=[];
-  vmState={expertise:50,adaptability:50,eraFit:50,crisis:50,consistency:50};
+  vmState={expertise:40,adaptability:40,eraFit:40,crisis:40,consistency:40}; // 初期値40に調整
   // VALUE METERを一旦非表示
   const vmEl=document.getElementById('value-meter');
   if(vmEl)vmEl.classList.remove('vm-visible');
@@ -1746,15 +1748,15 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
         applyValueMeterChoice(ch.tag);
       }else if(ch.erafit!=null){
         // Q1：erafitの高低に応じてeraFit軸を変化
-        const delta=ch.erafit>=8?+10:ch.erafit>=5?0:-8;
+        const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5; // 変化量削減
         applyValueMeterDelta({eraFit:delta});
       }else if(ch.invest){
         // Q3：投資先に応じた軸変化
         const investImpact={
-          skill:     {expertise:+8, adaptability:+4},
-          network:   {adaptability:+6,'consistency':+4},
-          experiment:{adaptability:+10,crisis:+6},
-          current_job:{expertise:+6, consistency:+8},
+          skill:      {expertise:+5, adaptability:+3},  // 調整済み
+          network:    {adaptability:+4,'consistency':+3},
+          experiment: {adaptability:+6, crisis:+4},
+          current_job:{expertise:+4, consistency:+5},
         };
         applyValueMeterDelta(investImpact[ch.invest]||{});
       }
@@ -2517,7 +2519,12 @@ function calcScore(){
   const safeEra   = isNaN(era)?5:era;
   const safeBonus = isNaN(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus)?0:(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus);
   const allBonus  = Math.min(safeBonus,cap);
-  const raw = 13 + safeEra*5 + allBonus*16;  // 調整済み: base=13,era_coeff=5,bonus_coeff=16
+  // 方針B：vmStateの平均値をスコアに組み込む（相関確保）
+  const vmVals=[vmState.expertise,vmState.adaptability,vmState.eraFit,vmState.crisis,vmState.consistency];
+  const vmAvg=vmVals.reduce((s,v)=>s+(isNaN(v)?40:Math.min(100,Math.max(0,v))),0)/5;
+  // vmAvgをボーナスとして加算（スケール：vmが50→0ボーナス、vmが80→0.3ボーナス）
+  const vmBonus=Math.max(0,(vmAvg-40)/100)*0.5; // 最大+0.5（vmAvg=140相当、実際は最大0.3程度）
+  const raw = 13 + safeEra*5 + Math.min(allBonus+vmBonus,cap)*16;  // vmを含む
   return Math.min(100,Math.max(0,Math.round(isNaN(raw)?40:raw)));
 }
 
@@ -2928,20 +2935,39 @@ async function showResult(){
         let axis=aiResult.careerAxis;
         // 配列で1〜2要素しかない場合、残りをコードで生成
         if(Array.isArray(axis)&&axis.length<3){
-          const topInd=top3[0]?.name||indScores?.[0]?.name||'事業開発';
+          const topInd=indScores?.[0]?.name||'事業開発・新規事業';
           const mbtiG=G.mbtiData?.group||'';
           const domJP=TL[domTag]||domTag;
-          // Q3傾向から補完テキストを生成
+          // ━━ フォールバック：MBTI×業種×タグのマトリクスで個人固有の文を生成
           var q3inv=(G.q3Choices||[]).reduce(function(a,v){if(v)a[v]=(a[v]||0)+1;return a;},{});
           var q3topKey=Object.keys(q3inv).sort(function(a,b){return q3inv[b]-q3inv[a];})[0]||'skill';
-          var q3phrase={'skill':'専門を磨く投資','network':'人脈を広げる投資','experiment':'実験と挑戦','current_job':'現場での実践','global':'越境への挑戦'}[q3topKey]||'継続的な自己投資';
+          // Q3投資先を就活軸の文に変換
+          var q3verb={'skill':'専門性を深め','network':'人脈を広げ','experiment':'実験を繰り返し','current_job':'現場に留まり続け'}[q3topKey]||'行動し続け';
+          // 業種×タグ固有のテーマ
+          var ind=topInd||'事業開発';
+          var IND_THEME={
+            '事業開発・新規事業':'まだ誰も解いていない社会課題を事業という形で解決すること',
+            '教育・EdTech':'学びの機会の格差をテクノロジーで埋めること',
+            'コンサルティング':'企業が抱える本質的な構造問題を解明し変革を導くこと',
+            'スタートアップ・VC':'ゼロから社会的インパクトのある事業を生み出すこと',
+            '医療・ヘルスケア':'人が健やかに生きられる環境の選択肢を広げること',
+            '広告・マーケティング':'人の行動や意識を変えるコミュニケーションを設計すること',
+            'ITサービス・SaaS':'テクノロジーで人の仕事と生活をより良くすること',
+            '総合商社':'異なる産業と地域をつなぎ、新しい価値の流れを作ること',
+          };
+          var theme=IND_THEME[ind]||ind+'で社会に新しい価値をもたらすこと';
+          // MBTI×how固有の強み表現
+          var MBTI_HOW_STR={
+            '分析家':{'visionary':'構造を設計する力','pragmatic':'論理で本質を解く力','relational':'知的対話で合意を作る力','disruptive':'常識を疑い新解を出す力'},
+            '外交官':{'relational':'人を巻き込む共感力','visionary':'ビジョンで人を動かす力','pragmatic':'人への誠実な伴走力','disruptive':'価値観を塗り替える熱量'},
+            '番人':  {'pragmatic':'確実に実行し信頼を積む力','relational':'チームを安定させる責任感','visionary':'長期視点で組織を守る力','disruptive':'旧慣を変える粘り強さ'},
+            '探検家':{'disruptive':'誰より速く動く行動力','pragmatic':'現場で学び即適応する力','relational':'多様な人と化学反応を起こす力','visionary':'変化を機会に変える直感'},
+          };
+          var howStr=(MBTI_HOW_STR[mbtiG]&&MBTI_HOW_STR[mbtiG][G.dominantHow])||domJP+'の力';
           const fallbacks=[
-            axis[0]||topInd+'と'+domJP+'の交差点にある課題を解決し、社会を動かしたい。',
-            axis[1]||(mbtiG==='分析家'?'構造的な思考と'+domJP+'の力で、'+q3phrase+'を重ねながら課題の本質を解く。':
-                       mbtiG==='外交官'?'人を動かす共感力と'+domJP+'の選択を武器に、'+q3phrase+'で変革を起こす。':
-                       mbtiG==='番人'?'誠実な実行力と'+domJP+'の積み上げで、'+q3phrase+'を通じて確実に成果を出す。':
-                       '即応力と'+domJP+'の実践力で、'+q3phrase+'しながら変化の最前線を走る。'),
-            axis[2]||topInd+'の現場で、'+domJP+'を軸にした課題解決によって「困った」を事業に変えたい。',
+            axis[0]||theme+'に、正面から向き合いたい。',
+            axis[1]||howStr+'と、'+q3verb+'きた'+domJP+'の選択が、自分だけのアプローチになっている。',
+            axis[2]||ind+'の現場で、'+howStr+'を活かして「困った」を事業で解決したい。',
           ];
           axis=fallbacks;
         }
@@ -3088,30 +3114,26 @@ ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/業種:${industryList
   const topInd2=top3[1]?.name||'';
   const topScore1=top3[0]?.score||0;
   const q1Pattern=G.q1Choices.map(q=>q?.erafit>=8?'先読み':q?.erafit>=5?'様子見':'後追い').join('→');
-  const promptAxis=`就活生のキャリア診断AIです。日本語JSONのみ。
+  const promptAxis=`就活生のキャリア診断AIです。日本語JSONのみ返答。
 
-【この就活生のデータ】
+■就活生データ
 MBTI: ${mbtiGroupText}
-支配的な選択軸: ${domTagJP}（全6フェーズで最も多く選んだパターン）
-動機軸(WHY): ${ {'resolver':'解決者型（社会課題に向き合う）','contributor':'貢献者型（組織・仲間への貢献）','ownership':'オーナー型（自律・当事者意識）'}[G.dominantWhy]||'未集計' }（一貫性${G.whyConsistency||0}%）
-行動スタイル(HOW): ${ {'visionary':'ビジョナリー（長期設計）','pragmatic':'実行者（現実直視）','relational':'関係構築者（人起点）','disruptive':'破壊的革新者（常識破壊）'}[G.dominantHow]||'未集計' }
-フェーズ選択の流れ: ${G.tags.map(t=>({specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
-Q3投資先の傾向: ${q3Top||'スキル投資中心'}
-Q1環境認識パターン: ${q1Pattern}
-志望業種1位: ${topInd1}（適合度${topScore1}%）
-志望業種2位: ${topInd2}
-AI時代適合スコア: ${score}点（${tierLabel}）
+選択軸: ${domTagJP} / HOW: ${ {'visionary':'長期設計型','pragmatic':'実行型','relational':'関係構築型','disruptive':'革新型'}[G.dominantHow]||G.dominantHow||'実行型' }
+フェーズ選択: ${G.tags.map(t=>({'specialization':'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
+Q3投資: ${q3Top||'スキル'}
+志望1位: ${topInd1}（${topScore1}%）
+スコア: ${score}点
 
-【生成指示】
-このデータをもとに、この就活生だけに当てはまる就活軸を3文で書く。
-データに含まれる具体的な情報（業種名・選択軸・MBTI特性）を必ず文章に織り込むこと。
+■出力指示
+以下の3文を必ず配列の3要素として返す。
 
-文A：この人が本気で向き合いたいテーマ・社会課題（${topInd1}と${domTagJP}から導く）
-文B：この人ならではの強みとアプローチ（${G.mbtiData?.group||''}型の特性 + ${domTagJP}の選択傾向から）
-文C：${topInd1}の現場で具体的に成し遂げたいこと（業種名を含む）
+要素0: ${topInd1}と関連した「向き合いたい社会課題や未解決テーマ」を一文で。40字以内。
+要素1: ${domTagJP}の選択傾向と${ G.mbtiData?.group||'' }型の特性から生まれる「この人ならではの動き方・強み」を一文で。40字以内。
+要素2: ${topInd1}の現場で「具体的に成し遂げたいこと」を一文で。業種名を含む。40字以内。
 
-制約：各文30〜50字。定型表現禁止。「〜したい」で3文全てを終わらせない。
-{"careerAxis":["文Aの文章","文Bの文章","文Cの文章"]}`;
+{"careerAxis":["要素0の文","要素1の文","要素2の文"]}
+
+※配列は必ず3要素。短くてよい。定型文・テンプレ禁止。`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
   const callGAS = async (prompt, maxTok) => {
@@ -3990,15 +4012,16 @@ let vmState={expertise:50,adaptability:50,eraFit:50,crisis:50,consistency:50};
 
 // タグ→軸への影響定義（簡易版・リアルタイム表示用）
 const TAG_AXIS_IMPACT={
-  specialization:  {expertise:+14,adaptability:-4, eraFit:+2, crisis:0,  consistency:+6},
-  'ai-native':     {expertise:+4, adaptability:+14,eraFit:+10,crisis:+4, consistency:-2},
-  strategic:       {expertise:+2, adaptability:+8, eraFit:+12,crisis:+6, consistency:+4},
-  independent:     {expertise:+4, adaptability:+12,eraFit:+6, crisis:+8, consistency:-4},
-  'rare-combination':{expertise:+10,adaptability:+8,eraFit:+14,crisis:+2,consistency:+2},
-  leadership:      {expertise:+6, adaptability:+4, eraFit:+8, crisis:+6, consistency:+10},
-  'community-builder':{expertise:+2,adaptability:+6,eraFit:+8, crisis:+10,consistency:+4},
-  global:          {expertise:+4, adaptability:+10,eraFit:+10,crisis:+4, consistency:-2},
-  legacy:          {expertise:+12,adaptability:+2, eraFit:+6, crisis:+2, consistency:+12},
+  // 値を縮小・バランス調整（100点張り付き防止）
+  specialization:    {expertise:+8, adaptability:-2, eraFit:+1, crisis: 0, consistency:+3},
+  'ai-native':       {expertise:+2, adaptability:+8, eraFit:+6, crisis:+2, consistency:-1},
+  strategic:         {expertise:+1, adaptability:+5, eraFit:+7, crisis:+3, consistency:+2},
+  independent:       {expertise:+2, adaptability:+7, eraFit:+3, crisis:+5, consistency:-2},
+  'rare-combination':{expertise:+6, adaptability:+5, eraFit:+8, crisis:+1, consistency:+1},
+  leadership:        {expertise:+3, adaptability:+2, eraFit:+4, crisis:+3, consistency:+6},
+  'community-builder':{expertise:+1,adaptability:+3, eraFit:+4, crisis:+6, consistency:+2},
+  global:            {expertise:+2, adaptability:+6, eraFit:+6, crisis:+2, consistency:-1},
+  legacy:            {expertise:+7, adaptability:+1, eraFit:+3, crisis:+1, consistency:+7},
 };
 
 function renderValueMeter(previewTag){
@@ -4006,32 +4029,47 @@ function renderValueMeter(previewTag){
   if(!el)return;
 
   const axes=[
-    {key:'expertise',  label:'専門性', color:'#f0b429'},
-    {key:'adaptability',label:'適応力',color:'#38bdf8'},
-    {key:'eraFit',     label:'時代適合',color:'#e8621a'},
-    {key:'crisis',     label:'危機対応',color:'#34d399'},
-    {key:'consistency',label:'一貫性', color:'#a78bfa'},
+    {key:'expertise',  label:'専門性'},
+    {key:'adaptability',label:'適応力'},
+    {key:'eraFit',     label:'時代適合'},
+    {key:'crisis',     label:'危機対応'},
+    {key:'consistency',label:'一貫性'},
   ];
 
-  const impact=previewTag?TAG_AXIS_IMPACT[previewTag]||{}:{};
+  function signalColor(v){
+    if(v>=90) return '#2B8FC5';
+    if(v>=80) return '#34D399';
+    if(v>=70) return '#86EFAC';
+    if(v>=60) return '#F59E0B';
+    if(v>=50) return '#F97316';
+    return '#EF4444';
+  }
 
-  el.innerHTML=`<div class="vm-inner">
-    <div class="vm-title">VALUE METER</div>
-    <div class="vm-grid">`+
-    axes.map(a=>{
-      const base=Math.min(100,Math.max(0,vmState[a.key]));
-      const delta=impact[a.key]||0;
-      const pct=previewTag?Math.min(100,Math.max(0,base+delta)):base;
-      const sign=delta>0?'+':delta<0?'':'+';
-      const cls=delta>0?'up':delta<0?'down':'zero';
-      const dtext=previewTag&&delta!==0?`${sign}${delta}`:'';
-      return `<div class="vm-row">
-        <div class="vm-track"><div class="vm-fill" style="width:${pct}%;background:${a.color}"></div></div>
-        <div class="vm-label">${a.label} <span style="color:${a.color};font-weight:700">${Math.round(pct)}</span></div>
-        <div class="vm-delta ${cls}">${dtext}</div>
-      </div>`;
-    }).join('')+
-    `</div></div>`;
+  const impact=previewTag?TAG_AXIS_IMPACT[previewTag]||{}:{};
+  const rows=axes.map(a=>{
+    const base=Math.min(100,Math.max(0,vmState[a.key]));
+    const delta=impact[a.key]||0;
+    const pct=previewTag?Math.min(100,Math.max(0,base+delta)):base;
+    const col=signalColor(Math.round(pct));
+    const arrow=previewTag&&delta!==0?(delta>0?' ↑':' ↓'):'';
+    const arrowColor=delta>0?'#34D399':'#EF4444';
+    return '<div class="vm-row">'
+      +'<div class="vm-label">'+a.label+(arrow?'<span style="color:'+arrowColor+';font-size:.7rem">'+arrow+'</span>':'')+'</div>'
+      +'<div class="vm-signal" style="background:'+col+';width:18px;height:18px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px '+col+'88"></div>'
+      +'</div>';
+  }).join('');
+
+  el.innerHTML='<div class="vm-inner"><div class="vm-title">VALUE METER</div><div class="vm-grid">'+rows+'</div></div>';
+}
+
+
+// ソフトキャップ：72以上で変化量45%、85以上で10%に逓減（100点張り付き防止）
+function vmSoftApply(cur, delta){
+  if(delta>0){
+    if(cur>=85) delta=Math.max(0,Math.round(delta*0.1));
+    else if(cur>=72) delta=Math.round(delta*0.45);
+  }
+  return Math.min(90, Math.max(18, cur+delta));
 }
 
 function applyValueMeterChoice(tag){
@@ -4039,7 +4077,7 @@ function applyValueMeterChoice(tag){
   renderValueMeter(tag);
   setTimeout(()=>{
     Object.keys(impact).forEach(k=>{
-      vmState[k]=Math.min(100,Math.max(0,vmState[k]+impact[k]));
+      vmState[k]=vmSoftApply(vmState[k],impact[k]);
     });
     renderValueMeter(null);
   },800);
@@ -4053,7 +4091,7 @@ function applyValueMeterDelta(delta){
   renderValueMeter(tempTag);
   setTimeout(()=>{
     Object.keys(delta).forEach(k=>{
-      vmState[k]=Math.min(100,Math.max(0,vmState[k]+(delta[k]||0)));
+      vmState[k]=vmSoftApply(vmState[k],delta[k]||0);
     });
     delete TAG_AXIS_IMPACT[tempTag];
     renderValueMeter(null);
@@ -4319,7 +4357,7 @@ function loadDemoReport(){
   }));
 
   // vmStateもデモ値に設定
-  vmState={expertise:72,adaptability:85,eraFit:78,crisis:64,consistency:68};
+  vmState={expertise:68,adaptability:78,eraFit:82,crisis:58,consistency:65}; // デモ調整済み
   // デモ用styleLog（why:resolver/how:relational パターン）
   G.styleLog=[
     {tag:'ai-native',   why:'resolver',    how:'disruptive'},
