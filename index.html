@@ -2380,7 +2380,7 @@ function calcOwnershipBonus(){
   if(!G.q1Choices||!G.q1Choices.length)return 0;
   const highCount=G.q1Choices.filter(q=>q&&q.erafit>=8).length;
   const ratio=highCount/Math.max(G.q1Choices.length,1);
-  const v=Math.round(ratio*0.8*10)/10;
+  const v=Math.round(ratio*0.5*10)/10;  // 調整済み 0.8→0.5
   return isNaN(v)?0:v;
 }
 
@@ -2454,18 +2454,18 @@ function calcCtx(){
   const whyConsistency=Math.max(...Object.values(whyCounts))/Math.max(styleLog.filter(Boolean).length,1);
   // 同じ動機軸で6フェーズ中4回以上選択→オーナーシップ一貫性ボーナス
   let whyBonus=0;
-  if(whyConsistency>=0.67) whyBonus=0.25;      // 強い一貫性
-  else if(whyConsistency>=0.5) whyBonus=0.1;    // 中程度の一貫性
+  if(whyConsistency>=0.67) whyBonus=0.15;      // 強い一貫性（調整済み）
+  else if(whyConsistency>=0.5) whyBonus=0.07;   // 中程度の一貫性
 
   // ━━ how軸ボーナス（行動スタイルとMBTIの一致）
   const howCounts={visionary:0,pragmatic:0,relational:0,disruptive:0};
   styleLog.forEach(s=>{if(s?.how)howCounts[s.how]=(howCounts[s.how]||0)+1;});
   const dominantHow=Object.entries(howCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
   const MBTI_HOW_FIT={
-    '分析家':{visionary:0.2,disruptive:0.2,pragmatic:0.1,relational:0.0},
-    '外交官':{relational:0.2,visionary:0.15,disruptive:0.1,pragmatic:0.0},
-    '番人':  {pragmatic:0.2,relational:0.1,visionary:0.05,disruptive:0.0},
-    '探検家':{disruptive:0.2,pragmatic:0.15,relational:0.1,visionary:0.05},
+    '分析家':{visionary:0.12,disruptive:0.12,pragmatic:0.06,relational:0.0},
+    '外交官':{relational:0.12,visionary:0.09,disruptive:0.06,pragmatic:0.0},
+    '番人':  {pragmatic:0.12,relational:0.06,visionary:0.03,disruptive:0.0},
+    '探検家':{disruptive:0.12,pragmatic:0.09,relational:0.06,visionary:0.03},
   };
   const mbtiGroup=G.mbtiData?.group||'';
   const howFit=MBTI_HOW_FIT[mbtiGroup]?.[dominantHow]||0;
@@ -2491,7 +2491,7 @@ function calcQ1B(){
 }
 
 function calcQ2Q3B(){
-  const c=G.config,mm=c.q2q3MatchBonus??0.3,mp=c.q2q3MismatchPenalty??-0.4,lm=c.q2q3LightMismatch??-0.2;
+  const c=G.config,mm=c.q2q3MatchBonus??0.15,mp=c.q2q3MismatchPenalty??-0.25,lm=c.q2q3LightMismatch??-0.1;  // 調整済み
   const map={'ai-native:skill':mm,'independent:experiment':mm,'specialization:current_job':mm,'strategic:network':mm,'rare-combination:experiment':mm,'leadership:network':mm,'community-builder:network':mm,'global:experiment':mm,'legacy:current_job':mm,'independent:current_job':mp,'specialization:experiment':mp,'ai-native:network':lm};
   return G.tags.reduce((b,tag,i)=>{
     if(!tag||!G.q3Choices[i])return b;
@@ -2512,12 +2512,12 @@ function calcScore(){
   const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
   const ownership=calcOwnershipBonus();
   const mbtiBonus=getMBTITagBonus();
-  const cap=G.config.bonusCap??2.5;
+  const cap=G.config.bonusCap??2.0;  // cap=2.0
   // NaNガード：各値を数値に強制変換
   const safeEra   = isNaN(era)?5:era;
   const safeBonus = isNaN(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus)?0:(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus);
   const allBonus  = Math.min(safeBonus,cap);
-  const raw = 15 + safeEra*6 + allBonus*10;
+  const raw = 13 + safeEra*5 + allBonus*16;  // 調整済み: base=13,era_coeff=5,bonus_coeff=16
   return Math.min(100,Math.max(0,Math.round(isNaN(raw)?40:raw)));
 }
 
@@ -2584,7 +2584,7 @@ function calcRadar(){
 
 function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
 
-function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label:'先駆者',color:'#E8621A'};if(s>=(c.tier_adapter_min??60))return{label:'適応者',color:'#2B8FC5'};if(s>=(c.tier_seeker_min??40))return{label:'模索者',color:'#6B7280'};return{label:'転換期',color:'#EF4444'};}
+function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??70))return{label:'先駆者',color:'#E8621A'};if(s>=(c.tier_adapter_min??57))return{label:'適応者',color:'#2B8FC5'};if(s>=(c.tier_seeker_min??43))return{label:'模索者',color:'#6B7280'};return{label:'転換期',color:'#EF4444'};}
 
 // ── 結果 ─────────────────────────────────────────────────────────
 async function showResult(){
