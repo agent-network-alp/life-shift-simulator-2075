@@ -2,6 +2,9 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LIFE SHIFT SIMULATOR 2075 | 株式会社エージェント</title>
 <meta name="description" content="未来へ旅して、戻ってきた君はどこへ向かう。AI時代の就活生のための50年疑似体験。">
@@ -1737,8 +1740,9 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
       <div id="mirror-area"></div>
     </div>`;
 
-  // VALUE METER 注入
-  injectValueMeter();
+  // VALUE METER 表示
+  const vmEl=document.getElementById('value-meter');
+  if(vmEl){vmEl.classList.add('vm-visible');renderValueMeter(null);}
 
   const wrap=document.getElementById('choices4');
   choiceData.forEach(ch=>{
@@ -2942,7 +2946,8 @@ async function showResult(){
       if(aiResult.careerAxis){
         let axis=aiResult.careerAxis;
         // 配列で1〜2要素しかない場合、残りをコードで生成
-        if(Array.isArray(axis)&&axis.length<3){
+        // 要素数が3未満、または各要素が短すぎる（不完全）場合はフォールバック
+        if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<8))){
           const topInd=indScores?.[0]?.name||'事業開発・新規事業';
           const mbtiG=G.mbtiData?.group||'';
           const domJP=TL[domTag]||domTag;
@@ -3135,13 +3140,13 @@ Q3投資: ${q3Top||'スキル'}
 ■出力指示
 以下の3文を必ず配列の3要素として返す。
 
-要素0: ${topInd1}と関連した「向き合いたい社会課題や未解決テーマ」を一文で。40字以内。
-要素1: ${domTagJP}の選択傾向と${ G.mbtiData?.group||'' }型の特性から生まれる「この人ならではの動き方・強み」を一文で。40字以内。
-要素2: ${topInd1}の現場で「具体的に成し遂げたいこと」を一文で。業種名を含む。40字以内。
+[0] ${topInd1}で解決したい社会課題（25字以内・体言止めOK）
+[1] ${domTagJP}と${ G.mbtiData?.group||'' }型から生まれる強み・動き方（25字以内）
+[2] ${topInd1}での具体的な目標（25字以内・業種名含む）
 
-{"careerAxis":["要素0の文","要素1の文","要素2の文"]}
+{"careerAxis":["[0]の内容","[1]の内容","[2]の内容"]}
 
-※配列は必ず3要素。短くてよい。定型文・テンプレ禁止。`
+必ず3要素の配列。各25字以内。`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
   const callGAS = async (prompt, maxTok) => {
