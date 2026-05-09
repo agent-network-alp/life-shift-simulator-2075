@@ -1842,7 +1842,11 @@ function renderQ1(phase){
     {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
     {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
     {label:'D',text:q1.choice_d_text,erafit:Number(q1.choice_d_erafit)},
-  ],c=>{G.q1Choices[G.currentPhase]={label:c.label,erafit:c.erafit};G.currentQ=1;renderPhase();});
+  ],c=>{// Q1：erafit＋時間軸・認識スタイルを記録
+    // erafit 8-10:適正認識=long-term視点, 5-7:楽観的=short-term, 0-4:過小評価=reactive
+    const q1Horizon = c.erafit>=8?'long-term':c.erafit>=5?'adaptive':'reactive';
+    G.q1Choices[G.currentPhase]={label:c.label,erafit:c.erafit,horizon:q1Horizon};
+    G.currentQ=1;renderPhase();});
 }
 
 function renderQ2(phase){
@@ -1859,6 +1863,23 @@ function renderQ2(phase){
     {label:'D',text:q2.choice_d_text,sub:q2.choice_d_example,tag:q2.choice_d_tag},
   ],c=>{
     G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
+    // Q2：タグから「動機軸(why)」「行動スタイル(how)」を自動導出
+    // 動機軸：resolver=社会課題解決が動機 / contributor=組織・仲間への貢献が動機 / ownership=自律・オーナーシップが動機
+    // 行動スタイル：visionary=長期設計 / pragmatic=現実実行 / relational=関係構築 / disruptive=常識破壊
+    const TAG_WHY={
+      'strategic':'resolver', 'ai-native':'resolver', 'rare-combination':'resolver',
+      'community-builder':'contributor', 'leadership':'contributor', 'legacy':'contributor',
+      'independent':'ownership', 'specialization':'ownership', 'global':'resolver',
+    };
+    const TAG_HOW={
+      'strategic':'visionary', 'ai-native':'disruptive', 'rare-combination':'disruptive',
+      'community-builder':'relational', 'leadership':'relational', 'legacy':'relational',
+      'independent':'pragmatic', 'specialization':'pragmatic', 'global':'visionary',
+    };
+    const choiceWhy = TAG_WHY[c.tag]||'resolver';
+    const choiceHow = TAG_HOW[c.tag]||'pragmatic';
+    if(!G.styleLog) G.styleLog=[];
+    G.styleLog[G.currentPhase]={tag:c.tag, why:choiceWhy, how:choiceHow};
     // B：選択タグに応じた「連鎖反応の予告」を表示
     const CHAIN_REACTION={
       specialization:{
@@ -2219,6 +2240,12 @@ function pickNarrative(tag,phaseIdx){
 // イベント発生有無によるナラティブ後半
 function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
   const opening=pickNarrative(tag,phaseIdx);
+  // why×how×horizonでナラティブの「味付け」を決定
+  const sl=(G.styleLog||[])[phaseIdx]||{};
+  const why=sl.why||'resolver';
+  const how=sl.how||'pragmatic';
+  const q1=G.q1Choices[phaseIdx]||{};
+  const horizon=q1.horizon||'adaptive';
 
   // イベント描写
   let eventStr='';
@@ -2242,8 +2269,33 @@ function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
     eventStr='\n'+((eventDescs[evType][eventTag])||eventDescs[evType].default);
   }
 
-  // 締めの一文（TAG_LABELS的な）
-  const closings={
+  // 締めの一文：why×how×horizonの組み合わせで個人化
+  const WHY_CLOSING={
+    resolver:{
+      visionary: 'この時代に、私が選んだのは「なぜ」という問いに答え続けることだった。',
+      disruptive:'この時代に、私は常識を疑うことで社会の「困った」に切り込んだ。',
+      relational:'この時代に、私は人との対話の中から「解くべき問い」を見つけ続けた。',
+      pragmatic: 'この時代に、私は「動くこと」が最大の答えだと信じていた。',
+    },
+    contributor:{
+      relational:'この時代に、私は「誰かの役に立つこと」を自分の燃料にした。',
+      visionary: 'この時代に、私は仲間と共に「まだない未来」を描いた。',
+      pragmatic: 'この時代に、私はチームの中で「確実に届ける力」を磨いた。',
+      disruptive:'この時代に、私は組織の常識を壊すことで貢献の形を変えた。',
+    },
+    ownership:{
+      pragmatic: 'この時代に、私は「誰かに頼まれる前に動く人間」であり続けた。',
+      disruptive:'この時代に、私は「自分にしかできないこと」を追い求めた。',
+      visionary: 'この時代に、私は長い時間軸で「自分の責任」を定義した。',
+      relational:'この時代に、私は「自立しながらもつながること」の価値を実証した。',
+    },
+  };
+  const HORIZON_SUFFIX={
+    'long-term': 'その選択の意味は、ずっと後になってわかった。',
+    'adaptive':  'その選択の正しさは、行動しながら確かめるしかなかった。',
+    'reactive':  '後から振り返って、それが自分を変えた転換点だとわかった。',
+  };
+  const TAG_CLOSING_DEFAULT={
     specialization:'この時代に、私は「深さ」で勝負した。',
     'ai-native':'この時代に、私は「変化に乗る力」で前に進んだ。',
     strategic:'この時代に、私は「全体を見る目」で価値を出した。',
@@ -2254,7 +2306,9 @@ function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
     global:'この時代に、私は「境界を越える力」を武器にした。',
     legacy:'この時代に、私は「残すこと」を自分の仕事にした。',
   };
-  const closing=closings[tag]||'この時代を、私は自分の選択で歩んだ。';
+  const closingBase=WHY_CLOSING[why]?.[how]||TAG_CLOSING_DEFAULT[tag]||'この時代を、私は自分の選択で歩んだ。';
+  const closingSuffix=HORIZON_SUFFIX[horizon]||'';
+  const closing=closingBase+(closingSuffix?' '+closingSuffix:'');
 
   return opening+eventStr+'\n\n'+closing;
 }
@@ -2383,15 +2437,45 @@ function calcChain(){
 
 function calcCtx(){
   const c=G.config,map={
-    'specialization:ai-native': c.ctx_specialization_ainative??0.5,  // 専門性→AI活用（深化の流れ）
-    'ai-native:strategic':      c.ctx_ainative_strategic??0.4,        // AI活用→意思決定（進化の流れ）
-    'independent:community-builder': c.ctx_independent_community??0.4,// 独立→コミュニティ（拡張の流れ）
-    'leadership:legacy':        c.ctx_leadership_legacy??0.5,         // 育成→継承（成熟の流れ）
-    'specialization:rare-combination': 0.3,                           // 専門→掛け算（追加：自然な発展）
-    'ai-native:independent':    0.3,                                   // AI活用→独立（追加：起業の流れ）
-    // strategic:strategic は calcChain の consistent と重複するため削除
+    // タグ連鎖ペア
+    'specialization:ai-native':        c.ctx_specialization_ainative??0.5,
+    'ai-native:strategic':             c.ctx_ainative_strategic??0.4,
+    'independent:community-builder':   c.ctx_independent_community??0.4,
+    'leadership:legacy':               c.ctx_leadership_legacy??0.5,
+    'specialization:rare-combination': 0.3,
+    'ai-native:independent':           0.3,
   };
-  return G.tags.slice(1).reduce((b,t,i)=>b+(map[`${G.tags[i]}:${t}`]||0),0);
+
+  // ━━ why軸ボーナス（エージェントが求める「解決者」「貢献者」「オーナー」の一貫性）
+  const styleLog=G.styleLog||[];
+  const whyCounts={resolver:0,contributor:0,ownership:0};
+  styleLog.forEach(s=>{if(s?.why)whyCounts[s.why]=(whyCounts[s.why]||0)+1;});
+  const dominantWhy=Object.entries(whyCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+  const whyConsistency=Math.max(...Object.values(whyCounts))/Math.max(styleLog.filter(Boolean).length,1);
+  // 同じ動機軸で6フェーズ中4回以上選択→オーナーシップ一貫性ボーナス
+  let whyBonus=0;
+  if(whyConsistency>=0.67) whyBonus=0.25;      // 強い一貫性
+  else if(whyConsistency>=0.5) whyBonus=0.1;    // 中程度の一貫性
+
+  // ━━ how軸ボーナス（行動スタイルとMBTIの一致）
+  const howCounts={visionary:0,pragmatic:0,relational:0,disruptive:0};
+  styleLog.forEach(s=>{if(s?.how)howCounts[s.how]=(howCounts[s.how]||0)+1;});
+  const dominantHow=Object.entries(howCounts).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';
+  const MBTI_HOW_FIT={
+    '分析家':{visionary:0.2,disruptive:0.2,pragmatic:0.1,relational:0.0},
+    '外交官':{relational:0.2,visionary:0.15,disruptive:0.1,pragmatic:0.0},
+    '番人':  {pragmatic:0.2,relational:0.1,visionary:0.05,disruptive:0.0},
+    '探検家':{disruptive:0.2,pragmatic:0.15,relational:0.1,visionary:0.05},
+  };
+  const mbtiGroup=G.mbtiData?.group||'';
+  const howFit=MBTI_HOW_FIT[mbtiGroup]?.[dominantHow]||0;
+
+  // グローバルに保存（レポートで参照）
+  G.dominantWhy=dominantWhy;
+  G.dominantHow=dominantHow;
+  G.whyConsistency=Math.round(whyConsistency*100);
+  const tagCtxBonus=G.tags.slice(1).reduce((b,t,i)=>b+(map[`${G.tags[i]}:${t}`]||0),0);
+  return tagCtxBonus + whyBonus + howFit;
 }
 
 function calcQ1B(){
@@ -2648,6 +2732,37 @@ async function showResult(){
     +'</div></div>'
     // セクション3: MBTIと今回の選択 → 削除
     // セクション4: メタ認知力
+    // ━━ why/how軸の集計（ANALYSISに統合）
+    +(G.dominantWhy&&G.dominantHow?
+      '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
+      +'<div style="font-size:.7rem;color:#2B8FC5;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+      +'<span style="display:inline-block;width:3px;height:13px;background:#2B8FC5;border-radius:2px"></span>選択の動機・スタイル分析</div>'
+      +'<div style="display:flex;gap:8px;margin-bottom:10px">'
+        // Why軸バッジ
+        +'<div style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);border-radius:6px;padding:8px 12px;flex:1">'
+          +'<div style="font-size:.62rem;color:#059669;font-weight:700;margin-bottom:3px">動機軸（WHY）</div>'
+          +'<div style="font-size:.82rem;font-weight:700;color:#1A1A2E">'
+          +({'resolver':'解決者','contributor':'貢献者','ownership':'オーナー'}[G.dominantWhy]||G.dominantWhy)+'</div>'
+          +'<div style="font-size:.68rem;color:#6B7280;margin-top:2px">'
+          +({'resolver':'社会課題に向き合う動機','contributor':'組織・仲間への貢献動機','ownership':'自律・当事者意識'}[G.dominantWhy]||'')+'</div>'
+        +'</div>'
+        // How軸バッジ
+        +'<div style="background:rgba(43,143,197,.08);border:1px solid rgba(43,143,197,.2);border-radius:6px;padding:8px 12px;flex:1">'
+          +'<div style="font-size:.62rem;color:#2B8FC5;font-weight:700;margin-bottom:3px">行動スタイル（HOW）</div>'
+          +'<div style="font-size:.82rem;font-weight:700;color:#1A1A2E">'
+          +({'visionary':'ビジョナリー','pragmatic':'実行者','relational':'関係構築者','disruptive':'破壊的革新者'}[G.dominantHow]||G.dominantHow)+'</div>'
+          +'<div style="font-size:.68rem;color:#6B7280;margin-top:2px">'
+          +({'visionary':'長期・構造的な設計','pragmatic':'現実直視・確実な実行','relational':'人を起点とした変革','disruptive':'常識を疑い逆張りで動く'}[G.dominantHow]||'')+'</div>'
+        +'</div>'
+      +'</div>'
+      // Agent適合コメント
+      +'<div style="font-size:.8rem;color:#1A1A2E;line-height:1.75;background:#F9FAFB;border-radius:6px;padding:9px 12px">'
+      +(G.whyConsistency>=67?'<strong style="color:#059669">一貫した動機軸</strong>を持ち、'+G.whyConsistency+'%の選択が同じ動機から生まれています。エージェントが重視する「なぜ動くか」の軸が明確です。':
+        G.whyConsistency>=50?'動機軸は'+G.whyConsistency+'%の一貫性。AI時代に必要な「なぜ動くか」の軸を育てる余地があります。':
+        '多様な動機から選択しています。AI時代に活躍するには「自分の動機の中心」を言語化することが次のステップです。')
+      +'</div>'
+      +'</div>'
+    :'')
     +'<div>'
     +'<div style="font-size:.7rem;color:#6B7280;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
     +'<span style="display:inline-block;width:3px;height:13px;background:#6B7280;border-radius:2px"></span>メタ認知力</div>'
@@ -2978,6 +3093,8 @@ ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/業種:${industryList
 【この就活生のデータ】
 MBTI: ${mbtiGroupText}
 支配的な選択軸: ${domTagJP}（全6フェーズで最も多く選んだパターン）
+動機軸(WHY): ${ {'resolver':'解決者型（社会課題に向き合う）','contributor':'貢献者型（組織・仲間への貢献）','ownership':'オーナー型（自律・当事者意識）'}[G.dominantWhy]||'未集計' }（一貫性${G.whyConsistency||0}%）
+行動スタイル(HOW): ${ {'visionary':'ビジョナリー（長期設計）','pragmatic':'実行者（現実直視）','relational':'関係構築者（人起点）','disruptive':'破壊的革新者（常識破壊）'}[G.dominantHow]||'未集計' }
 フェーズ選択の流れ: ${G.tags.map(t=>({specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[t]||t)).join('→')}
 Q3投資先の傾向: ${q3Top||'スキル投資中心'}
 Q1環境認識パターン: ${q1Pattern}
@@ -3481,7 +3598,15 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   const scoreBase=score>=80?30:score>=60?20:score>=40?10:5;
   const [exp,adp,era,cri,con,inv]=radar;
   const radarBonus=Math.min(15,[adp,era,con].filter(v=>v>55).length*5);
-  const agentFitScore=Math.min(100,tagBonus+indBonus+scoreBase+radarBonus);
+  // ━━ why軸ボーナス（エージェントの人材要素との一致度）
+  // resolver=社会課題解決志向→最もエージェントと一致
+  // contributor=貢献動機→化学反応・AG-NETWORKと一致
+  // ownership=自律・オーナーシップ→コミット・フラット文化と一致
+  const WHY_AGENT_BONUS={resolver:15,contributor:12,ownership:10};
+  const whyAgentBonus=WHY_AGENT_BONUS[G.dominantWhy]||0;
+  // why一貫性ボーナス（70%以上→追加+5）
+  const whyConsBonus=(G.whyConsistency||0)>=67?5:0;
+  const agentFitScore=Math.min(100,tagBonus+indBonus+scoreBase+radarBonus+whyAgentBonus+whyConsBonus);
   const fitRank=agentFitScore>=60?{label:'高い適性',color:'var(--accent)',icon:'🔥'}
     :agentFitScore>=35?{label:'一定の適性',color:'var(--gold)',icon:'✨'}
     :{label:'可能性あり',color:'#888',icon:'🌱'};
@@ -4195,6 +4320,18 @@ function loadDemoReport(){
 
   // vmStateもデモ値に設定
   vmState={expertise:72,adaptability:85,eraFit:78,crisis:64,consistency:68};
+  // デモ用styleLog（why:resolver/how:relational パターン）
+  G.styleLog=[
+    {tag:'ai-native',   why:'resolver',    how:'disruptive'},
+    {tag:'strategic',   why:'resolver',    how:'visionary'},
+    {tag:'rare-combination',why:'resolver', how:'disruptive'},
+    {tag:'leadership',  why:'contributor', how:'relational'},
+    {tag:'community-builder',why:'contributor',how:'relational'},
+    {tag:'legacy',      why:'contributor', how:'relational'},
+  ];
+  G.dominantWhy='resolver';
+  G.dominantHow='disruptive';
+  G.whyConsistency=67;
 
   // フォールバックのデータがある場合そのまま使う
   if(!G.data||!G.data.feedback){
