@@ -155,14 +155,22 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 }
 #value-meter.vm-visible{display:block}
 .vm-inner{max-width:660px;margin:0 auto}
-.vm-title{font-size:.55rem;letter-spacing:4px;color:var(--accent);margin-bottom:8px;opacity:.9}
-.vm-grid{display:flex;gap:10px;align-items:center;justify-content:center}
-.vm-row{display:flex;flex-direction:column;align-items:center;gap:5px}
-.vm-label{font-size:.6rem;color:var(--w60);white-space:nowrap;text-align:center}
-.vm-signal{width:18px;height:18px;border-radius:50%;flex-shrink:0;transition:background .4s ease}
-.vm-track{width:100%;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
-.vm-fill{height:100%;border-radius:2px;transition:width .45s cubic-bezier(.4,0,.2,1)}
-.vm-delta{font-size:.64rem;font-weight:700;text-align:center;transition:color .3s;min-height:14px}
+.vm-title{font-size:.55rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.9;font-weight:700}
+.vm-grid{display:flex;gap:0;align-items:stretch}
+.vm-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0 4px;border-right:1px solid rgba(255,255,255,.07)}
+.vm-item:last-child{border-right:none}
+.vm-dot-wrap{position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vm-signal{width:14px;height:14px;border-radius:50%;transition:background .4s ease,box-shadow .4s ease}
+.vm-arrow{position:absolute;right:-4px;top:-2px;font-size:9px;line-height:1;font-weight:700;width:10px;text-align:center}
+.vm-arrow.up{color:#34D399}
+.vm-arrow.dn{color:#EF4444}
+.vm-label{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.3px;text-align:center;white-space:nowrap;line-height:1.2}
+.vm-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.07)}
+.vm-legend-item{display:flex;align-items:center;gap:4px;font-size:8px;color:rgba(255,255,255,.3)}
+.vm-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.vm-track{display:none}
+.vm-fill{display:none}
+.vm-delta{display:none}
 .vm-delta.up{color:var(--cyan)}
 .vm-delta.down{color:var(--accent)}
 .vm-delta.zero{color:transparent}
@@ -4036,83 +4044,46 @@ function renderValueMeter(previewTag){
     {key:'consistency',label:'一貫性'},
   ];
 
-  function signalColor(v){
-    if(v>=90) return '#2B8FC5';
-    if(v>=80) return '#34D399';
-    if(v>=70) return '#86EFAC';
-    if(v>=60) return '#F59E0B';
-    if(v>=50) return '#F97316';
-    return '#EF4444';
+  function sigColor(v){
+    if(v>=90)return{bg:'#2B8FC5',sh:'#2B8FC555'};
+    if(v>=80)return{bg:'#34D399',sh:'#34D39955'};
+    if(v>=70)return{bg:'#86EFAC',sh:'#86EFAC44'};
+    if(v>=60)return{bg:'#F59E0B',sh:'#F59E0B44'};
+    if(v>=50)return{bg:'#F97316',sh:'#F9731644'};
+    return{bg:'#EF4444',sh:'#EF444444'};
   }
 
   const impact=previewTag?TAG_AXIS_IMPACT[previewTag]||{}:{};
-  const rows=axes.map(a=>{
+
+  const items=axes.map(a=>{
     const base=Math.min(100,Math.max(0,vmState[a.key]));
     const delta=impact[a.key]||0;
     const pct=previewTag?Math.min(100,Math.max(0,base+delta)):base;
-    const col=signalColor(Math.round(pct));
-    const arrow=previewTag&&delta!==0?(delta>0?' ↑':' ↓'):'';
-    const arrowColor=delta>0?'#34D399':'#EF4444';
-    return '<div class="vm-row">'
-      +'<div class="vm-label">'+a.label+(arrow?'<span style="color:'+arrowColor+';font-size:.7rem">'+arrow+'</span>':'')+'</div>'
-      +'<div class="vm-signal" style="background:'+col+';width:18px;height:18px;border-radius:50%;flex-shrink:0;box-shadow:0 0 6px '+col+'88"></div>'
+    const sc=sigColor(Math.round(pct));
+    const arrowHtml=previewTag&&delta!==0
+      ?'<div class="vm-arrow '+(delta>0?'up':'dn')+'">'+(delta>0?'↑':'↓')+'</div>'
+      :'';
+    return '<div class="vm-item">'
+      +'<div class="vm-dot-wrap">'
+        +'<div class="vm-signal" style="background:'+sc.bg+';box-shadow:0 0 7px '+sc.sh+'"></div>'
+        +arrowHtml
+      +'</div>'
+      +'<div class="vm-label">'+a.label+'</div>'
       +'</div>';
   }).join('');
 
-  el.innerHTML='<div class="vm-inner"><div class="vm-title">VALUE METER</div><div class="vm-grid">'+rows+'</div></div>';
+  const legend=[
+    {c:'#2B8FC5',l:'90+'},{c:'#34D399',l:'80+'},{c:'#86EFAC',l:'70+'},
+    {c:'#F59E0B',l:'60+'},{c:'#F97316',l:'50+'},{c:'#EF4444',l:'〜49'},
+  ].map(d=>'<div class="vm-legend-item"><div class="vm-legend-dot" style="background:'+d.c+'"></div>'+d.l+'</div>').join('');
+
+  el.innerHTML='<div class="vm-inner">'
+    +'<div class="vm-title">VALUE METER</div>'
+    +'<div class="vm-grid">'+items+'</div>'
+    +'<div class="vm-legend">'+legend+'</div>'
+    +'</div>';
 }
 
-
-// ソフトキャップ：72以上で変化量45%、85以上で10%に逓減（100点張り付き防止）
-function vmSoftApply(cur, delta){
-  if(delta>0){
-    if(cur>=85) delta=Math.max(0,Math.round(delta*0.1));
-    else if(cur>=72) delta=Math.round(delta*0.45);
-  }
-  return Math.min(90, Math.max(18, cur+delta));
-}
-
-function applyValueMeterChoice(tag){
-  const impact=TAG_AXIS_IMPACT[tag]||{};
-  renderValueMeter(tag);
-  setTimeout(()=>{
-    Object.keys(impact).forEach(k=>{
-      vmState[k]=vmSoftApply(vmState[k],impact[k]);
-    });
-    renderValueMeter(null);
-  },800);
-}
-
-function applyValueMeterDelta(delta){
-  // タグなし選択肢（Q1・Q3）用：deltaオブジェクトで直接変化量を指定
-  // まず変化量を一時表示してから確定
-  const tempTag='_delta';
-  TAG_AXIS_IMPACT[tempTag]=delta;
-  renderValueMeter(tempTag);
-  setTimeout(()=>{
-    Object.keys(delta).forEach(k=>{
-      vmState[k]=vmSoftApply(vmState[k],delta[k]||0);
-    });
-    delete TAG_AXIS_IMPACT[tempTag];
-    renderValueMeter(null);
-  },800);
-}
-
-function injectValueMeter(){
-  // 固定フローティングVALUE METERを表示
-  const el=document.getElementById('value-meter');
-  if(el){
-    el.classList.add('vm-visible');
-    renderValueMeter(null);
-    return;
-  }
-  // 初回：bodyに固定要素を作成
-  const newEl=document.createElement('div');
-  newEl.id='value-meter';
-  newEl.classList.add('vm-visible');
-  document.body.appendChild(newEl);
-  renderValueMeter(null);
-}
 
 // ━━━ ダイスロール ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
