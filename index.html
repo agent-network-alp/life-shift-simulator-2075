@@ -3029,12 +3029,16 @@ async function showResult(){
           ).join('');
         }
       }
-      // AI就活軸をグローバルに保存（1要素の場合はコードで補完）
+      // AI就活軸をグローバルに保存（要素不足・短文の場合はコードで補完）
       if(aiResult.careerAxis){
         let axis=aiResult.careerAxis;
-        // 配列で1〜2要素しかない場合、残りをコードで生成
-        // 要素数が3未満、または各要素が短すぎる（不完全）場合はフォールバック
-        if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<15))){
+        // 配列の各要素を文字列化・トリム済み配列に正規化
+        const normAxis=Array.isArray(axis)
+          ? axis.map(s=>String(s||'').trim())
+          : [String(axis||'').trim()];
+        // 30字未満または空の要素をフォールバックが必要と判断
+        const needsFallback=normAxis.length<3||normAxis.some(s=>s.length<15);
+        if(needsFallback){
           const topInd=indScores?.[0]?.name||'事業開発・新規事業';
           const mbtiG=G.mbtiData?.group||'';
           const domJP=TL[domTag]||domTag;
@@ -3065,11 +3069,13 @@ async function showResult(){
           };
           var howStr=(MBTI_HOW_STR[mbtiG]&&MBTI_HOW_STR[mbtiG][G.dominantHow])||domJP+'の力';
           const fallbacks=[
-            axis[0]||theme+'に、正面から向き合いたい。',
-            axis[1]||howStr+'と、'+q3verb+'きた'+domJP+'の選択が、自分だけのアプローチになっている。',
-            axis[2]||ind+'の現場で、'+howStr+'を活かして「困った」を事業で解決したい。',
+            (normAxis[0]&&normAxis[0].length>=15)?normAxis[0]:(theme+'に、正面から向き合いたい。'),
+            (normAxis[1]&&normAxis[1].length>=15)?normAxis[1]:(howStr+'と、'+q3verb+'きた'+domJP+'の選択が、自分だけのアプローチになっている。'),
+            (normAxis[2]&&normAxis[2].length>=15)?normAxis[2]:(ind+'の現場で、'+howStr+'を活かして「困った」を事業で解決したい。'),
           ];
           axis=fallbacks;
+        } else {
+          axis=normAxis;
         }
         G.aiCareerAxis=axis;
       }
@@ -3186,7 +3192,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     '番人':'Si/Fe（記憶・調和）','探検家':'Se/Ti（現場感覚・分析）'
   }[mbtiData.group]||''}`:'' ;
 
-  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
+  const promptStory=`キャリア診断AIです。日本語のJSONのみ返答してください。
 
 【就活生データ】
 名前: ${G.nickname} / MBTI: ${G.mbtiType||'不明'}（${mbtiData?.label||''}）${cogFn}
@@ -3200,7 +3206,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
 4. 各80〜100字、完全な一人称過去形
 
-{"myStory":["20〜25歳（AI実装期）のナラティブ","25〜30歳（AGI移行期）のナラティブ","30〜40歳（産業再編期）のナラティブ","40〜50歳（人機協働成熟期）のナラティブ","50〜60歳（社会構造変容期）のナラティブ","60〜70歳（ポスト労働期）のナラティブ"]}`;
+myStoryに6フェーズ分のナラティブを配列で格納する（要素順：20〜25歳AI実装期、25〜30歳AGI移行期、30〜40歳産業再編期、40〜50歳人機協働成熟期、50〜60歳社会構造変容期、60〜70歳ポスト労働期）。`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
   // 就活軸生成のための3要素を構造化してプロンプトに渡す
@@ -3221,23 +3227,19 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
   const q3Top=Object.entries(q3Summary).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}×${v}`).join('・');
 
   // Req②：業種コメント・アクション（軽量）
-  const promptCareer=`キャリア診断AIです。日本語JSONのみ返答。
+  const promptCareer=`キャリア診断AIです。日本語のJSONのみ返答してください。
 ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/業種:${industryList}
 
-【指示1】上位3業種それぞれ:①2030年代の変化②この人が向いている理由③注意点。各50字以内。
-{"industryComments":{"業種名":"①②③",...}}
+指示1: 上位3業種それぞれについて、①2030年代の変化②この人が向いている理由③注意点を各50字以内でまとめ、industryCommentsに業種名をキーとして格納する。
 
-【指示2】業種名・職種名入り就活アクション3つ。各35字以内。
-{"jobActions":["1","2","3"]}
-
-2つをまとめた1つのJSONのみ。`;
+指示2: 業種名・職種名を含む就活アクションを3つ生成し、jobActionsに格納する。各35字以内。`;
 
   // Req③：就活軸（専用・個人情報フル投入）
   const topInd1=top3[0]?.name||'事業開発・新規事業';
   const topInd2=top3[1]?.name||'';
   const topScore1=top3[0]?.score||0;
   const q1Pattern=G.q1Choices.map(q=>q?.erafit>=8?'先読み':q?.erafit>=5?'様子見':'後追い').join('→');
-  const promptAxis=`就活生のキャリア診断AIです。日本語JSONのみ返答。
+  const promptAxis=`就活生のキャリア診断AIです。日本語のJSONのみ返答してください。
 
 ■就活生データ
 MBTI: ${mbtiGroupText}
@@ -3247,25 +3249,20 @@ Q3投資傾向: ${q3Top||'スキル'}
 志望業種1位: ${topInd1}（${topScore1}%）
 スコア: ${score}点（${tierLabel}）
 
-■生成指示（3つの文を配列で返す）
-この就活生の「業種・MBTI・選択傾向」を踏まえ、本人が「これは自分だ」と感じる就活軸を3文で生成する。
+■生成指示
+この就活生の「業種・MBTI・選択傾向」を踏まえ、本人が「これは自分だ」と感じる就活軸を3文でcareerAxisに格納する。
 
 文①（テーマ・向き合いたいこと）：${topInd1}の文脈で、この人が解決したい社会課題や向き合いたいテーマ。30〜45字。
 文②（強み・アプローチ）：${domTagJP}の選択傾向と${G.mbtiData?.group||''}型の特性から生まれる、この人ならではの動き方や強み。30〜45字。
 文③（志望・実現したいこと）：${topInd1}という場を選ぶ理由と、そこで実現したい具体的なこと。業種名を含む。30〜45字。
 
-【重要】
-- 各文は30〜45字の完全な文にする（短すぎる断片は禁止）
-- 3要素すべてを必ず生成する
-- テンプレ文・定型表現禁止
-
-{"careerAxis":["文①の内容","文②の内容","文③の内容"]}`
+重要：各文は30〜45字の完全な一文にする（断片禁止）。テンプレ文・定型表現禁止。`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
-  const callGAS = async (prompt, maxTok) => {
+  const callGAS = async (prompt, maxTok, schemaHint) => {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, sessionId: G.sessionId }),
+      body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, schemaHint: schemaHint||null, sessionId: G.sessionId }),
     });
     const data = await res.json();
     if(!data.ok){
@@ -3300,22 +3297,22 @@ Q3投資傾向: ${q3Top||'スキル'}
   };
 
   try{
-    // ━━ Req①：MY STORY
-    const storyResult = await callGAS(promptStory, 2500);
+    // ━━ Req①：MY STORY（schemaHint='story' / 6フェーズ×100字 ≒ 600字 → 1200トークン確保）
+    const storyResult = await callGAS(promptStory, 1800, 'story');
     console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
-    // ━━ Req②：業種コメント・アクション（軽量）
+    // ━━ Req②：業種コメント・アクション（schemaHint='career' / トークン増量）
     let careerResult = null;
     try {
-      careerResult = await callGAS(promptCareer, 600);
+      careerResult = await callGAS(promptCareer, 900, 'career');
     } catch(e2) {
       console.warn('Req②エラー:', e2.message);
     }
 
-    // ━━ Req③：就活軸（専用・個別try/catchで保護）
+    // ━━ Req③：就活軸（schemaHint='axis' / 45字×3文+JSON構造）
     let axisResult = null;
     try {
-      axisResult = await callGAS(promptAxis, 1200); // 45字×3文+JSON構造
+      axisResult = await callGAS(promptAxis, 600, 'axis');
       console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
     } catch(e3) {
       console.warn('Req③(就活軸)エラー:', e3.message);
