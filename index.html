@@ -1039,10 +1039,10 @@ div[style*="CAREER TRANSLATION"] {
 
 <!-- 固定CTA（レポート画面専用） -->
 <div class="fixed-cta" id="fixed-cta" style="display:none">
-  <button class="fcta-btn fcta-x"      onclick="openPopup('popup-x')">𝕏</button>
+  <button class="fcta-btn fcta-x"      onclick="openXPopup()">𝕏</button>
   <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">PDF</button>
   <button class="fcta-btn fcta-agent"  onclick="openPopup('popup-agent')">AGENT</button>
-  <button class="fcta-btn fcta-retry"  onclick="resetGame()">NEW</button>
+  <button class="fcta-btn fcta-retry"  onclick="confirmNewGame()">NEW</button>
 </div>
 
 <!-- ポップアップ：Xサマリ -->
@@ -1063,7 +1063,9 @@ div[style*="CAREER TRANSLATION"] {
 <div class="popup-overlay" id="popup-pdf" style="display:none">
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-pdf')">×</button>
-    <div class="popup-title">レポートをPDFで受け取る</div>
+    <div class="popup-title">レポートを受け取る</div>
+    <button class="popup-action-btn" style="margin-bottom:10px;background:linear-gradient(135deg,#2B8FC5,#1A7AB0)" onclick="closePopup('popup-pdf')">🔍 ブラウザで確認する（このまま閉じる）</button>
+    <div style="font-size:.7rem;color:#9CA3AF;text-align:center;margin-bottom:10px">— または メールで受け取る —</div>
     <p style="font-size:.82rem;color:#555;line-height:1.7;margin-bottom:16px">メールアドレスを登録すると、就活ワンシート付きのレポートPDFを送付します。</p>
     <div class="email-input-row">
       <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
@@ -1080,8 +1082,20 @@ div[style*="CAREER TRANSLATION"] {
     <button class="popup-close" onclick="closePopup('popup-agent')">×</button>
     <div class="popup-title">株式会社エージェントに相談する</div>
     <div id="popup-agent-content">
-      <p style="font-size:.84rem;color:#555;line-height:1.8;margin-bottom:16px">このレポートを持って、キャリア相談へ。あなたの診断結果をもとに、より深いキャリア分析を行います。</p>
-      <div id="agent-fit-popup-score" style="margin-bottom:16px"></div>
+      <p style="font-size:.84rem;color:#555;line-height:1.7;margin-bottom:10px">診断結果をもとに、専任アドバイザーが個別にお話を伺います。</p>
+      <div id="agent-fit-popup-score" style="margin-bottom:12px"></div>
+      <div id="agent-contact-form">
+        <input id="agf-name"  type="text"  placeholder="お名前（例：山田 太郎）"  style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:8px;font-family:inherit;outline:none">
+        <input id="agf-email" type="email" placeholder="メールアドレス"             style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:8px;font-family:inherit;outline:none">
+        <input id="agf-phone" type="tel"   placeholder="電話番号（任意）"           style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:12px;font-family:inherit;outline:none">
+        <button class="popup-action-btn" id="agf-submit" onclick="submitAgentContact()">相談を申し込む</button>
+        <p style="font-size:.68rem;color:#9CA3AF;margin-top:8px;text-align:center">送信した情報は採用目的にのみ使用します</p>
+      </div>
+      <div id="agent-form-done" style="display:none;text-align:center;padding:20px 0">
+        <div style="font-size:2rem;margin-bottom:8px">✅</div>
+        <div style="font-size:.9rem;font-weight:700;color:#1A1A2E">送信完了しました</div>
+        <div style="font-size:.78rem;color:#6B7280;margin-top:6px;line-height:1.7">担当者より3営業日以内にご連絡します</div>
+      </div>
     </div>
     <button class="popup-action-btn" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに相談する →</button>
     <button class="popup-back" onclick="closePopup('popup-agent')">← レポートに戻る</button>
@@ -2983,14 +2997,16 @@ async function showResult(){
           const story=aiResult.myStory;
           // 6フェーズ分揃っているか確認。不足分はフォールバックで補完
           // AI生成が揃っているか確認（1件以上ある場合は表示）
-          const validStories=Array.isArray(story)?story.filter(s=>s&&s.length>10):[];
-          console.log(`MY STORY: AI生成 ${validStories.length}/6フェーズ`);
+          // AI生成story：配列・オブジェクト({時代名:テキスト})両対応
+          let storyArr=Array.isArray(story)?story:Object.values(story||{});
+          const validStories=storyArr.filter(s=>s&&String(s).trim().length>10);
+          console.log('MY STORY: AI生成 '+validStories.length+'/6フェーズ');
           const fullStory=G.narratives.map((n,i)=>{
             const aiText=validStories[i];
-            if(aiText&&aiText.length>10) return aiText;
+            if(aiText&&String(aiText).trim().length>10) return String(aiText).trim();
             // フォールバック：ゲーム中に生成したナラティブを使用
             const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
-            return fallback.length>10 ? fallback : '（この時代の記録は残っていない）';
+            return fallback.length>10?fallback:'（この時代の物語を紡いでいます）';
           });
           el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
@@ -4032,6 +4048,82 @@ by 株式会社エージェント
   }
   // Xシェアボタンを非表示（share-rowは削除済み）
   window._xSummary=summary;
+}
+
+// ━━━ openXPopup：Xサマリ動的生成
+function openXPopup(){
+  const score=document.getElementById('res-score')?.textContent||'--';
+  const tier=document.getElementById('res-tier')?.textContent||'--';
+  const nickname=G.nickname||'あなた';
+  const mbti=G.mbtiType||'';
+  const mbtiLabel=G.mbtiData?.label||'';
+  const topInd=(document.getElementById('jws-industry')?.textContent||'').split('（')[0].split('／')[0].trim();
+  const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  const domTagJP=TL[G.tags?.find(Boolean)]||'キャリア探求';
+  const lines=[
+    '🚀 LIFE SHIFT SIMULATOR 2075 でAI時代の50年を体験しました',
+    '',
+    '📊 AI時代適合スコア：'+score+'点（'+tier+'）',
+    mbti?'🧠 MBTI：'+mbti+'（'+mbtiLabel+'）':'',
+    topInd?'🎯 注目業種：'+topInd:'',
+    '⚡ キャリア軸：'+domTagJP,
+    '',
+    'あなたもAI時代の50年を疑似体験してみては？',
+    'https://agent-network-alp.github.io/life-shift-simulator-2075/',
+  ].filter(Boolean);
+  window._xSummary=lines.join('\n');
+  const el=document.getElementById('x-summary-text');
+  if(el) el.textContent=window._xSummary;
+  openPopup('popup-x');
+}
+
+// ━━━ submitAgentContact：エージェント相談フォーム送信
+async function submitAgentContact(){
+  const name=(document.getElementById('agf-name')?.value||'').trim();
+  const email=(document.getElementById('agf-email')?.value||'').trim();
+  const phone=(document.getElementById('agf-phone')?.value||'').trim();
+  if(!name||!email){alert('お名前とメールアドレスを入力してください');return;}
+  if(!email.includes('@')){alert('正しいメールアドレスを入力してください');return;}
+  const btn=document.getElementById('agf-submit');
+  if(btn){btn.textContent='送信中...';btn.disabled=true;}
+  try{
+    await fetch(GAS_URL,{
+      method:'POST',
+      body:JSON.stringify({
+        action:'agentContact',
+        name,email,phone,
+        nickname:G.nickname||'',
+        score:document.getElementById('res-score')?.textContent||'',
+        tier:document.getElementById('res-tier')?.textContent||'',
+        mbtiType:G.mbtiType||'',
+        topIndustry:(document.getElementById('jws-industry')?.textContent||'').split('（')[0].trim(),
+        sessionId:G.sessionId,
+      }),
+    });
+  }catch(e){console.warn('agentContact error:',e);}
+  // 成否に関わらず完了表示（UX優先）
+  document.getElementById('agent-contact-form').style.display='none';
+  document.getElementById('agent-form-done').style.display='block';
+}
+
+// ━━━ confirmNewGame：NEWボタンの確認ダイアログ
+function confirmNewGame(){
+  const overlay=document.createElement('div');
+  overlay.id='ng-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+  const card=document.createElement('div');
+  card.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center';
+  card.innerHTML=
+    '<div style="font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:10px">ニューゲームを始めますか？</div>'
+    +'<div style="font-size:.84rem;color:#6B7280;line-height:1.7;margin-bottom:20px">今回のゲーム結果はリセットされます。</div>'
+    +'<div style="display:flex;gap:10px">'
+      +'<button id="ng-no"  style="flex:1;padding:13px;border:1.5px solid #E5E7EB;border-radius:10px;background:#fff;color:#6B7280;font-size:.9rem;font-weight:700;cursor:pointer">戻る</button>'
+      +'<button id="ng-yes" style="flex:1;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#E8621A,#F59E0B);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer">はじめる</button>'
+    +'</div>';
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+  document.getElementById('ng-no').onclick=function(){overlay.remove();};
+  document.getElementById('ng-yes').onclick=function(){overlay.remove();resetGame();};
 }
 
 function shareXSummary(){
