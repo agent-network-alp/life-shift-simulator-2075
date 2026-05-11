@@ -181,24 +181,84 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .vm-delta.down{color:var(--accent)}
 .vm-delta.zero{color:transparent}
 /* VALUE METER分の余白はq-scroll-bodyで管理 */
-.dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .25s ease}
-.dice-card{background:#0d0d0d;border:1px solid var(--border2);border-radius:14px;padding:36px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,0,0,.9)}
-.dice-intro{font-size:.62rem;letter-spacing:4px;color:var(--w40);margin-bottom:24px}
-.dice-face{width:84px;height:84px;margin:0 auto 20px;background:#161616;border:2px solid var(--border2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;cursor:pointer;user-select:none;transition:transform .1s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
-.dice-face:hover{border-color:var(--accent)}
-.dice-face.rolling{animation:diceRoll .5s ease}
-@keyframes diceRoll{0%{transform:rotate(0)scale(1)}20%{transform:rotate(16deg)scale(1.1)}40%{transform:rotate(-12deg)scale(.93)}60%{transform:rotate(8deg)scale(1.07)}80%{transform:rotate(-5deg)scale(.97)}100%{transform:rotate(0)scale(1)}}
-.dice-label{font-size:.8rem;color:var(--w70);margin-bottom:24px;line-height:1.7;min-height:44px}
-.dice-result-badge{display:inline-block;font-family:var(--ff-head);font-size:.78rem;letter-spacing:2px;padding:6px 18px;border-radius:20px;margin-bottom:20px;opacity:0;transition:opacity .3s}
-.dice-result-badge.show{opacity:1}
-.dice-result-badge.event-bad{background:rgba(232,98,26,.18);color:var(--accent2);border:1px solid rgba(232,98,26,.35)}
-.dice-result-badge.event-none{background:var(--card);color:var(--w70);border:1px solid var(--border)}
-.dice-result-badge.event-good{background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.3)}
-.dice-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;padding:14px;border-radius:6px;opacity:0;transition:opacity .3s,transform .15s;pointer-events:none}
-.dice-cta.show{opacity:1;pointer-events:auto}
-.dice-cta:hover{transform:translateY(-1px)}
-.dice-event-text{font-size:.84rem;color:var(--w90);line-height:1.8;margin-bottom:16px;min-height:40px;opacity:0;transition:opacity .4s ease .2s;padding:0 4px;font-style:italic}
-.dice-tap-hint{font-size:.68rem;color:var(--w40);letter-spacing:2px;margin-top:12px;animation:pulse 1.5s infinite}
+/* ━━━ FATE EVENT ━━━ */
+/* ── STEP1：予告画面 ── */
+.fate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .3s ease}
+.fate-announce{text-align:center;animation:fadeIn .4s ease}
+.fate-announce-label{font-size:.58rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;font-family:var(--ff-head)}
+.fate-announce-title{font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:2px;line-height:1.3;margin-bottom:10px}
+.fate-announce-sub{font-size:.78rem;color:var(--w40);letter-spacing:1px}
+@keyframes fatePulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
+.fate-announce-icon{font-size:3.2rem;margin-bottom:18px;animation:fatePulse 1.2s ease infinite}
+
+/* ── STEP2：カード選択画面 ── */
+.fate-card-screen{text-align:center}
+.fate-card-label{font-size:.55rem;letter-spacing:5px;color:var(--w40);margin-bottom:6px;font-family:var(--ff-head)}
+.fate-card-title{font-size:.9rem;color:#fff;font-weight:700;margin-bottom:6px;line-height:1.5}
+.fate-card-phase{font-size:.62rem;color:var(--accent);letter-spacing:2px;margin-bottom:28px}
+.fate-cards-row{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
+.fate-card{
+  width:96px;flex-shrink:0;
+  background:linear-gradient(160deg,#1a1a2e,#0d0d1a);
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:18px 10px 14px;
+  cursor:pointer;user-select:none;
+  transition:transform .2s,border-color .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.fate-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);
+  border-radius:12px;
+}
+.fate-card:hover{transform:translateY(-6px) scale(1.04);border-color:rgba(255,255,255,.5);box-shadow:0 12px 32px rgba(0,0,0,.6)}
+.fate-card:active{transform:translateY(-2px) scale(1.01)}
+.fate-card-back-icon{font-size:2rem;margin-bottom:10px;display:block}
+.fate-card-back-text{font-size:.58rem;letter-spacing:2px;color:var(--w40);font-family:var(--ff-head)}
+.fate-hint{font-size:.62rem;color:var(--w40);letter-spacing:1px;animation:pulse 1.8s infinite}
+
+/* ── STEP3：カード結果画面 ── */
+.fate-result-screen{text-align:center;animation:fadeIn .35s ease}
+.fate-result-card{
+  border-radius:14px;padding:24px 20px 20px;margin-bottom:20px;
+  border:1.5px solid transparent;
+}
+.fate-result-card.good{background:linear-gradient(160deg,#0a1a0f,#061209);border-color:rgba(52,211,153,.3)}
+.fate-result-card.bad{background:linear-gradient(160deg,#1a0a06,#120604);border-color:rgba(232,98,26,.3)}
+.fate-result-type{font-size:.55rem;letter-spacing:4px;font-family:var(--ff-head);margin-bottom:10px;font-weight:700}
+.fate-result-type.good{color:#34d399}
+.fate-result-type.bad{color:var(--accent)}
+.fate-result-event-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
+.fate-result-event-desc{font-size:.78rem;color:var(--w70);line-height:1.75;margin-bottom:16px}
+.fate-result-choices{display:flex;flex-direction:column;gap:8px}
+.fate-choice-btn{
+  width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);border-radius:8px;
+  color:#fff;font-size:.78rem;line-height:1.5;text-align:left;
+  cursor:pointer;font-family:inherit;
+  transition:background .18s,border-color .18s,transform .12s;
+}
+.fate-choice-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);transform:translateX(3px)}
+.fate-choice-btn.good-style:hover{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.08)}
+.fate-choice-btn.bad-style:hover{border-color:rgba(232,98,26,.5);background:rgba(232,98,26,.08)}
+.fate-choice-label{font-size:.56rem;letter-spacing:2px;opacity:.5;display:block;margin-bottom:3px;font-family:var(--ff-head)}
+
+/* ── STEP4：結果フィードバック ── */
+.fate-feedback{text-align:center;animation:fadeIn .3s ease;padding:8px 0}
+.fate-feedback-icon{font-size:2.4rem;margin-bottom:10px}
+.fate-feedback-result{font-size:.62rem;letter-spacing:3px;font-family:var(--ff-head);margin-bottom:8px;font-weight:700}
+.fate-feedback-result.great{color:#34d399}
+.fate-feedback-result.good{color:#60a5fa}
+.fate-feedback-result.partial{color:#fbbf24}
+.fate-feedback-result.bad{color:var(--accent)}
+.fate-feedback-title{font-size:.96rem;font-weight:800;color:#fff;margin-bottom:6px}
+.fate-feedback-desc{font-size:.76rem;color:var(--w70);line-height:1.75;margin-bottom:18px}
+.fate-feedback-delta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
+.fate-delta-chip{font-size:.68rem;padding:4px 10px;border-radius:20px;font-weight:700;font-family:var(--ff-head)}
+.fate-delta-chip.plus{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
+.fate-delta-chip.minus{background:rgba(232,98,26,.15);color:var(--accent);border:1px solid rgba(232,98,26,.3)}
+.fate-next-btn{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:.9rem;letter-spacing:2px;padding:14px;border-radius:8px;transition:transform .15s,opacity .15s}
+.fate-next-btn:hover{transform:translateY(-1px);opacity:.9}
 .q-header{margin-bottom:0;padding-bottom:0;border-bottom:none}
 /* q-context-bar：上部固定 */
 .q-context-bar{
@@ -2140,9 +2200,9 @@ function renderQ3(phase){
 
 // ── イベント ─────────────────────────────────────────────────────
 function proceedPhase(){
-  // 33%の確率でダイスロール演出、それ以外は直接次フェーズへ
-  if(Math.random()<0.33){
-    showDice(()=>{});
+  // 20%の確率でFATEカードイベント発生
+  if(Math.random()<0.20){
+    showFateAnnounce();
   }else{
     nextPhase();
   }
@@ -4502,159 +4562,343 @@ function applyValueMeterDelta(delta){
 
 
 
-// ━━━ ダイスロール ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ FATE EVENT SYSTEM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-const DICE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
-const BONUS_EVENTS=[
-  {title:'🌟 追い風イベント',desc:'業界に追い風。あなたのスキルへの需要が急増した。',tag:'ai-native',correction:5},
-  {title:'🤝 思わぬ出会い',desc:'強力な仲間と繋がった。人的資本が広がった。',tag:'community-builder',correction:4},
-  {title:'📈 市場拡大',desc:'参入していた分野が急成長。先行者利益が得られた。',tag:'strategic',correction:6},
+// ── フェーズ名 ──
+const FATE_PHASE_NAMES=[
+  '20〜25歳 AI実装期','25〜30歳 AGI移行期','30〜40歳 産業再編期',
+  '40〜50歳 人機協働成熟期','50〜60歳 社会構造変容期','60〜70歳 ポスト労働期'
 ];
 
-let diceCallback=null;
-
-// D：フェーズ×結果別の具体的なイベントテキスト
-const DICE_EVENTS={
-  bad:{
-    0:['突然の業界再編。配属先の部署が縮小された。','新卒同期の3人がAI導入で仕事を失った。自分の番はいつか。','最初のプロジェクトが頓挫。自分の判断を疑い始めた。'],
-    1:['担当業務の60%がAIに置き換えられた。役割の再定義が急務になった。','景気後退で採用凍結。転職の道が一時的に閉ざされた。','信頼していた上司が突然退職。よりどころが消えた。'],
-    2:['メインクライアントが競合他社に流れた。実力を問い直す時間が来た。','業界の主要プレイヤーが統合・再編。自分のポジションが揺れた。','3年がかりのプロジェクトが中断。積み上げたものが白紙になった。'],
-    3:['組織が突然リストラを発表。あなたの部署も対象になった。','AIに意思決定の一部を奪われ始めた。人間の役割を再考する時が来た。','長年のパートナーとの決裂。関係性の作り直しを迫られた。'],
-    4:['健康上の問題が発生。働き方を根本から見直す必要が出てきた。','技術の急変で積み上げた専門性の一部が陳腐化した。','予期しない社会変動で、計画が大きく狂った。'],
-    5:['社会保障制度が大きく変わった。老後の設計を見直す必要が出た。','長年の仲間が急逝した。何のために働くかを、改めて問い直した。','最後の計画が崩れた。しかしそれが、新しい始まりになった。'],
-  },
-  good:{
-    0:['業界誌に書いたコラムがバズった。思わぬ場所から声がかかった。','偶然の出会いが、最初のメンターとの縁を作った。','社内ハッカソンで優秀賞。自分の可能性に気づいた瞬間だった。'],
-    1:['転職活動で、想定より高いオファーが届いた。市場価値が見えた。','副業で取り組んでいたプロジェクトが注目を集めた。','異業種のイベントで、後の仕事相手となる人物に出会った。'],
-    2:['取り組んでいた研究・プロジェクトが業界誌に掲載された。','掛け算が機能した。二つの専門性が交差する仕事が舞い込んだ。','海外からオファーが届いた。グローバルな評価を実感した。'],
-    3:['長年育てていた後輩が、大きなプロジェクトで結果を出した。','経営陣から直接声がかかった。意思決定の中枢に入る機会が来た。','コミュニティが動いた。自分の発信が、社会課題の解決につながった。'],
-    4:['積み上げてきた知見が、書籍として形になった。','コミュニティが自走し始めた。自分がいなくても動く仕組みができた。','若い世代から「あなたのようになりたい」という言葉をもらった。'],
-    5:['人生の集大成となるプロジェクトの話が舞い込んだ。','後進が自分を超えた瞬間を目撃した。それが最大の喜びだった。','長年の活動が、思わぬ形で社会に認められた。'],
-  },
-  none:{
-    0:['特に大きな出来事はなかった。静かに、着実に積み上げる時間が続いた。','波乱なく過ぎた日常の中で、小さな習慣が土台を作っていた。'],
-    1:['大きな変化はなかった。しかし、その「静けさ」が集中を生んだ。','特筆すべき出来事はなかった。それがむしろ、積み上げの時間になった。'],
-    2:['嵐の中の凪のような時期だった。静かに次の準備をする時間として使った。','業界が揺れる中で、自分の周辺は比較的穏やかだった。'],
-    3:['大きな波はなかった。その分、深く考え、内側を鍛える時間になった。','特別な出来事はなかった。ただ、確実に何かが育っていた。'],
-    4:['静かな時期が続いた。積み上げたものを整理し、言語化する時間になった。','波乱のない時間だった。それが、深く振り返るための余白になった。'],
-    5:['静かな最終章の始まりだった。自分の人生を、静かに俯瞰する時間。','大きな出来事はなかった。それが、穏やかな着地点への道になった。'],
-  },
+// ── イベントデータ（Phase × Good1+Bad2、各3パターン） ──
+// choiceA = ドミナントタグ寄り / choiceB = 汎用・安定寄り
+// good: A=大ボーナス B=小ボーナス / bad: A=部分ボーナス B=全体マイナス
+const FATE_EVENTS={
+  good:[
+    // Phase 0
+    [
+      {title:'社内AI導入プロジェクトに抜擢',desc:'入社2年目でAI活用推進チームに声がかかった。思わぬ機会が目の前に現れた。',
+       choiceA:'主体的にリードを志願する',choiceB:'サポート役として様子を見る',tagA:'ai-native'},
+      {title:'業界メディアへの寄稿オファー',desc:'取り組みが外部の目に留まり、執筆依頼が届いた。自分の言葉で発信できる場が生まれた。',
+       choiceA:'即座に引き受け自分の視点で書く',choiceB:'上司に相談してから判断する',tagA:'specialization'},
+      {title:'優秀な同期との共同プロジェクト',desc:'尊敬できる同期と自主プロジェクトを立ち上げる機会が生まれた。',
+       choiceA:'企画立案からリードする',choiceB:'実行サポートに徹する',tagA:'strategic'},
+    ],
+    // Phase 1
+    [
+      {title:'AGI関連スタートアップからスカウト',desc:'リスクはあるが時代の最前線に乗れる機会が届いた。',
+       choiceA:'リスクを取ってジョインする',choiceB:'条件交渉して現職に残る',tagA:'independent'},
+      {title:'海外カンファレンスへの登壇オファー',desc:'自分の取り組みが国際的に評価され、登壇の場が生まれた。',
+       choiceA:'自費でも行って登壇する',choiceB:'リモート参加でコストを抑える',tagA:'global'},
+      {title:'転職市場で想定以上のオファー',desc:'複数社から高評価。年収30%アップが視野に入ってきた。',
+       choiceA:'最も挑戦的なポジションを選ぶ',choiceB:'最も条件の良いオファーを選ぶ',tagA:'strategic'},
+    ],
+    // Phase 2
+    [
+      {title:'二つの専門性が交差する新市場が誕生',desc:'自分だけが持つ掛け算スキルへの需要が急増した。',
+       choiceA:'独立・起業でそのポジションを取りにいく',choiceB:'今の組織の中でその役割を確立する',tagA:'rare-combination'},
+      {title:'業界の主要メディアに特集された',desc:'取り組みが広く認知され講演依頼が急増した。',
+       choiceA:'発信を強化しブランドを構築する',choiceB:'本業への集中を優先して露出を絞る',tagA:'specialization'},
+      {title:'大型プロジェクトのリーダーに抜擢',desc:'予算・権限ともに最大規模の仕事が来た。',
+       choiceA:'高い目標を掲げ革新的な方法で挑む',choiceB:'確実な成果を優先してリスクを抑える',tagA:'strategic'},
+    ],
+    // Phase 3
+    [
+      {title:'経営陣から意思決定の中枢に招かれた',desc:'取締役・執行役員クラスへの就任打診が届いた。',
+       choiceA:'リスクを取って受ける',choiceB:'現場の専門家として残ることを選ぶ',tagA:'strategic'},
+      {title:'育てた後輩が大きな成果を出した',desc:'自分のメンタリングが実を結んだ瞬間が訪れた。',
+       choiceA:'後輩をさらに高い場所へ送り出す',choiceB:'一緒に次のプロジェクトに挑む',tagA:'leadership'},
+      {title:'コミュニティへの発信が社会課題解決に繋がった',desc:'自分の活動が政策・業界標準に影響を与え始めた。',
+       choiceA:'さらに大きな課題に向けて動く',choiceB:'現在の活動を深化させる',tagA:'community-builder'},
+    ],
+    // Phase 4
+    [
+      {title:'知見が書籍として出版される',desc:'30年の経験が一冊にまとまり、広く届く機会が生まれた。',
+       choiceA:'自分のメッセージを前面に出した本を書く',choiceB:'共著・監修として他者の声も入れる',tagA:'legacy'},
+      {title:'コミュニティが完全に自走し始めた',desc:'自分がいなくても動く仕組みがついに完成した。',
+       choiceA:'さらに大きなコミュニティを立ち上げる',choiceB:'今のコミュニティの質を深める',tagA:'community-builder'},
+      {title:'若い世代から「師匠」と呼ばれるようになった',desc:'次世代のリーダー10人以上に影響を与えた。',
+       choiceA:'メンタリングをビジネスとして構造化する',choiceB:'無償のギブとして続ける',tagA:'leadership'},
+    ],
+    // Phase 5
+    [
+      {title:'人生の集大成プロジェクトの打診',desc:'社会的意義の大きな仕事のオファーが届いた。',
+       choiceA:'全力で受けて最後の挑戦とする',choiceB:'関わる形を絞って無理なく貢献する',tagA:'legacy'},
+      {title:'後進が自分を大きく超えた',desc:'育てた次世代が社会を動かし始めた瞬間を目撃した。',
+       choiceA:'彼らの活動を全力で支援・資金提供する',choiceB:'静かに見守り必要時だけ助言する',tagA:'leadership'},
+      {title:'長年の活動が国・業界から表彰された',desc:'社会的な認定を受ける機会が訪れた。',
+       choiceA:'賞を次世代への発信の場として活用する',choiceB:'個人の喜びとして静かに受け取る',tagA:'legacy'},
+    ],
+  ],
+  bad:[
+    // Phase 0
+    [
+      {title:'配属先の部署がAI導入で縮小',desc:'入社半年で部署の半分がAIに置き換えられた。自分の番はいつか、という空気が漂い始めた。',
+       choiceA:'積極的にAI活用側へシフトを申し出る',choiceB:'異動願いを出して安定部署へ移る',tagA:'ai-native'},
+      {title:'最初のプロジェクトが頓挫',desc:'3ヶ月かけた企画が経営判断で中断された。積み上げたものが白紙になった。',
+       choiceA:'原因を分析し次に活かす提案書を作る',choiceB:'気持ちを切り替えて次の指示を待つ',tagA:'strategic'},
+      {title:'信頼していた上司が突然退職',desc:'入社から支えてくれたメンターが競合に転職した。よりどころが消えた。',
+       choiceA:'関係を維持しつつ新たな師を探す',choiceB:'社内で新しい後ろ盾を作ることに集中',tagA:'community-builder'},
+      {title:'同期との実力差を突きつけられる',desc:'同期が大型案件を担当。自分は補佐に回った。',
+       choiceA:'悔しさをバネに自己投資を加速する',choiceB:'自分のペースで着実に積み上げる',tagA:'specialization'},
+      {title:'業界全体の採用が急減',desc:'AIバブル崩壊の余波で新卒市場が収縮した。',
+       choiceA:'副業・社外活動で市場価値を証明する',choiceB:'今の職場にしがみつき安定を優先',tagA:'independent'},
+      {title:'チームの人間関係が崩壊',desc:'プロジェクト失敗の責任を押し付け合う空気が漂い始めた。',
+       choiceA:'第三者として調整役に立つ',choiceB:'静観してやり過ごす',tagA:'community-builder'},
+    ],
+    // Phase 1
+    [
+      {title:'担当業務の60%がAGIに代替された',desc:'自分の仕事が半年で消えた。役割の再定義が急務になった。',
+       choiceA:'残り40%を深掘りし人間固有領域を確立',choiceB:'全く別の職種へのキャリアチェンジを検討',tagA:'specialization'},
+      {title:'景気後退で転職の道が閉ざされた',desc:'内定が出ていたポジションが突然撤回された。',
+       choiceA:'フリーランスとして独立を模索する',choiceB:'現職で実績を積み直す',tagA:'independent'},
+      {title:'信頼していたパートナーの裏切り',desc:'共同で進めていた事業で情報を持ち逃げされた。',
+       choiceA:'法的手段も視野に毅然と対処する',choiceB:'損切りして前に進む',tagA:'strategic'},
+      {title:'副業が本業に悪影響を及ぼし始めた',desc:'副業への注力が評価に響き、降格の可能性が出てきた。',
+       choiceA:'副業を本業にすると決断し退職する',choiceB:'副業を一時停止して本業に集中する',tagA:'independent'},
+      {title:'チームがAI代替で士気崩壊',desc:'周囲が諦めムードの中、自分はどうするかを迫られた。',
+       choiceA:'チームを鼓舞し新しいロールを提案する',choiceB:'自分の生き残りに集中する',tagA:'leadership'},
+      {title:'燃え尽き症候群の予兆',desc:'3年フル稼働の疲弊が限界に来た。',
+       choiceA:'意識的に休養を取り設計し直す',choiceB:'気力で乗り切り走り続ける',tagA:'strategic'},
+    ],
+    // Phase 2
+    [
+      {title:'メインクライアントが撤退',desc:'売上の40%を占める取引先が突然契約解除した。',
+       choiceA:'失った穴を自分で埋めるべく新規開拓へ',choiceB:'組織に頼りリスク分散を依頼する',tagA:'independent'},
+      {title:'3年かけたプロジェクトが白紙に',desc:'経営戦略の転換で積み上げた成果がゼロになった。',
+       choiceA:'プロセスを資産化しよそに展開する',choiceB:'次のプロジェクトへ気持ちを切り替える',tagA:'rare-combination'},
+      {title:'業界再編で自分のポジションが消滅',desc:'M&Aにより役割が重複し肩書きが宙に浮いた。',
+       choiceA:'新組織で新ポジションを自ら提案する',choiceB:'転職市場に出て外部評価を確認する',tagA:'strategic'},
+      {title:'マネジメントで部下がついてこない',desc:'初めてのリーダー職。チームが空中分解の危機になった。',
+       choiceA:'1on1を増やし個別に向き合う',choiceB:'チームの仕組みと評価制度を整備する',tagA:'leadership'},
+      {title:'健康上の問題が発生',desc:'過労で倒れ、3ヶ月の療養を余儀なくされた。',
+       choiceA:'復帰後は働き方を根本から設計し直す',choiceB:'早期復帰を目指し無理をしてでも戻る',tagA:'strategic'},
+      {title:'技術の急変でスキルが陳腐化',desc:'5年磨いた専門性が新技術に一夜で飲み込まれた。',
+       choiceA:'新技術を即座に学習し先行者になる',choiceB:'自分の経験値を活かせる領域を探す',tagA:'ai-native'},
+    ],
+    // Phase 3
+    [
+      {title:'組織のリストラ対象になった',desc:'40代でまさか自分が対象になるとは、という事態が訪れた。',
+       choiceA:'早期退職パッケージを受け独立する',choiceB:'残留交渉を行い組織内での再起を図る',tagA:'independent'},
+      {title:'AIに意思決定の一部を奪われた',desc:'自分がやっていた判断業務がシステム化された。',
+       choiceA:'AIを使いこなす側にポジションを移す',choiceB:'人間にしかできない定性判断に特化する',tagA:'ai-native'},
+      {title:'長年のパートナーとの決裂',desc:'ビジネスパートナーと価値観の相違で決別した。',
+       choiceA:'関係を再構築するための対話を試みる',choiceB:'完全に縁を切り新たなパートナーを探す',tagA:'community-builder'},
+      {title:'家庭とキャリア投資が両立できない',desc:'子どもの教育費と自己投資のトレードオフが訪れた。',
+       choiceA:'自己投資を優先し長期で回収する',choiceB:'家庭を優先し安定収入を確保する',tagA:'specialization'},
+      {title:'組織の方向性と自分のビジョンが乖離',desc:'会社がAI化を推進する中、自分は人的価値を重視していた。',
+       choiceA:'声を上げ内部から変えようとする',choiceB:'自分のビジョンを実現できる場に移る',tagA:'strategic'},
+      {title:'突然の親の介護問題',desc:'フルタイムとの両立が難しくなってきた。',
+       choiceA:'仕事の形を変えてでもキャリアを継続する',choiceB:'一時離職して家族に向き合う',tagA:'independent'},
+    ],
+    // Phase 4
+    [
+      {title:'技術の急変で専門性が陳腐化',desc:'50代での技術的な再学習を迫られた。',
+       choiceA:'第一線に戻るべく猛烈に学び直す',choiceB:'経験値を武器に戦略・管理側に転向する',tagA:'ai-native'},
+      {title:'健康問題が深刻化',desc:'医師から働き方の根本的な見直しを勧告された。',
+       choiceA:'働く量を減らし質に転換する',choiceB:'完治を目指して一定期間完全休養する',tagA:'strategic'},
+      {title:'社会制度の大変化で資産計画が崩れた',desc:'年金・税制の大改正が老後設計を直撃した。',
+       choiceA:'新制度を深く理解しリアロケーションする',choiceB:'専門家（FP等）に全面的に委託する',tagA:'strategic'},
+      {title:'後輩・部下の成長に複雑な感情',desc:'自分を超えてくる存在への複雑な感情が生まれた。',
+       choiceA:'素直に認め彼らのスポンサーになる',choiceB:'自分だけにしかできない道を極める',tagA:'leadership'},
+      {title:'大切なパートナーの喪失',desc:'長年の仕事仲間・人生のパートナーを失った。',
+       choiceA:'悲しみを力に変え意志を継ぐ',choiceB:'十分に悼む時間を取り静かに前進する',tagA:'legacy'},
+      {title:'自分のブランドが時代遅れになってきた',desc:'SNS・メディアでの発信が若い世代に届かなくなった。',
+       choiceA:'発信スタイルを全面刷新する',choiceB:'対面・少人数に絞って深める',tagA:'community-builder'},
+    ],
+    // Phase 5
+    [
+      {title:'最後に描いた計画が崩れた',desc:'引退を前にした大きな計画が頓挫した。',
+       choiceA:'縮小版でもいいから形にして終わらせる',choiceB:'手放して「完了」と定義し直す',tagA:'legacy'},
+      {title:'認知機能の衰えを実感し始めた',desc:'判断の精度が落ちてきたと自覚した瞬間が訪れた。',
+       choiceA:'早めに権限を委譲し仕組みで残す',choiceB:'今の自分にできることに集中する',tagA:'strategic'},
+      {title:'社会との繋がりが急に薄くなった',desc:'退職後、呼ばれる機会が激減した。',
+       choiceA:'自ら新しいコミュニティを作る',choiceB:'家族・旧友との関係に軸を移す',tagA:'community-builder'},
+      {title:'蓄積した資産の大部分を失った',desc:'投資判断の失敗で老後設計が崩れた。',
+       choiceA:'残りの能力を活かして働き続ける',choiceB:'支出を最適化して今あるもので生きる',tagA:'independent'},
+      {title:'自分の遺産・記録が散逸しそうになった',desc:'積み上げた知見が継承されないまま消えそうになっている。',
+       choiceA:'体系化・デジタルアーカイブ化に着手する',choiceB:'信頼できる後継者一人に口頭で伝える',tagA:'legacy'},
+      {title:'老いることへの虚無感',desc:'残り時間の少なさに直面し意欲が落ちてきた。',
+       choiceA:'「残り時間」を逆算して今を濃密にする',choiceB:'過去の蓄積に意味を見出し受け入れる',tagA:'legacy'},
+    ],
+  ],
 };
 
-function getDiceEventText(result){
-  const pi=Math.min(G.currentPhase,5);
-  const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
-  return pool[Math.floor(Math.random()*pool.length)];
-}
+// スコア影響設定
+const FATE_SCORE={
+  good_A:{eraFit:+10,adaptability:+5,expertise:+5},   // 大ボーナス
+  good_B:{eraFit:+5, adaptability:+3},                 // 小ボーナス
+  bad_A: {crisis:+8, consistency:+4},                  // 部分ボーナス
+  bad_B: {eraFit:-8, adaptability:-5, consistency:-4}, // 全体マイナス
+};
 
-function showDice(onResult){
-  diceCallback=onResult;
+// フィードバックテキスト
+const FATE_FEEDBACK={
+  good_A:{icon:'🌟',label:'GREAT CHOICE',title:'最高の選択だ。',
+    desc:'あなたのキャリア軸と完全に一致した行動。この時代を味方にできた。'},
+  good_B:{icon:'✅',label:'SAFE CHOICE',title:'堅実な判断だった。',
+    desc:'リスクを抑えた選択。大きな飛躍はないが、着実に前に進んだ。'},
+  bad_A: {icon:'💪',label:'SURVIVED',title:'試練を乗り越えた。',
+    desc:'逆境でも軸に沿って動いた。ダメージは最小限に抑えられた。'},
+  bad_B: {icon:'⚡',label:'DAMAGED',title:'代償を払った。',
+    desc:'この選択は時代の流れと逆行した。影響は次のフェーズにも残る。'},
+};
+
+// ── STEP1：予告画面 ──────────────────────────────────────────────
+function showFateAnnounce(){
   const ol=document.createElement('div');
-  ol.className='dice-overlay';ol.id='dice-overlay';
+  ol.className='fate-overlay';ol.id='fate-overlay';
   ol.innerHTML=`
-    <div class="dice-card">
-      <div class="dice-intro">FATE ROLL — 人生には選択だけでは決まらないことがある</div>
-      <div class="dice-face" id="dice-face" onclick="rollDice()">🎲</div>
-      <div class="dice-tap-hint" id="dice-tap-hint">TAP TO ROLL</div>
-      <div class="dice-label" id="dice-label"></div>
-      <div class="dice-event-text" id="dice-event-text"></div>
-      <div class="dice-result-badge" id="dice-badge"></div>
-      <button class="dice-cta" id="dice-cta" onclick="closeDice()">次のフェーズへ →</button>
+    <div class="fate-announce">
+      <div class="fate-announce-label">FATE EVENT</div>
+      <div class="fate-announce-icon">🃏</div>
+      <div class="fate-announce-title">運命の選択<br>イベント発生！</div>
+      <div class="fate-announce-sub" style="margin-top:12px">カードを1枚選べ</div>
     </div>`;
   document.body.appendChild(ol);
+  // 1.8秒後にカード選択画面へ自動遷移
+  setTimeout(()=>{ ol.remove(); showFateCards(); },1800);
 }
 
-function rollDice(){
-  const face=document.getElementById('dice-face');
-  const hint=document.getElementById('dice-tap-hint');
-  const label=document.getElementById('dice-label');
-  const eventTextEl=document.getElementById('dice-event-text');
-  const badge=document.getElementById('dice-badge');
-  const cta=document.getElementById('dice-cta');
+// ── STEP2：カード選択画面 ─────────────────────────────────────────
+function showFateCards(){
+  const pi=Math.min(G.currentPhase,5);
+  const phaseName=FATE_PHASE_NAMES[pi]||'';
 
-  // 1回のみ：rolling中またはすでに振り終えた場合は無効
-  if(face.classList.contains('rolling')||face.dataset.rolled)return;
-  hint.style.display='none';
-  face.classList.add('rolling');
-  face.dataset.rolled='1'; // 振り済みフラグ
-  face.style.cursor='default';
+  // Good1枚・Bad2枚をシャッフルして配置
+  const goodPool=FATE_EVENTS.good[pi];
+  const badPool =FATE_EVENTS.bad[pi];
+  const goodEv=goodPool[Math.floor(Math.random()*goodPool.length)];
+  // Badは重複なく2枚選ぶ
+  const shuffledBad=[...badPool].sort(()=>Math.random()-.5);
+  const badEv1=shuffledBad[0];
+  const badEv2=shuffledBad[1]||shuffledBad[0];
 
-  const FACES=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'];
-  let count=0;
-  const spin=setInterval(()=>{
-    face.textContent=FACES[Math.floor(Math.random()*6)];
-    count++;
-    if(count>12){
-      clearInterval(spin);
-      face.classList.remove('rolling');
-      const result=Math.ceil(Math.random()*6);
+  // 3枚をシャッフル配置
+  const cards=[
+    {type:'good',ev:goodEv},
+    {type:'bad', ev:badEv1},
+    {type:'bad', ev:badEv2},
+  ].sort(()=>Math.random()-.5);
 
-      setTimeout(()=>{
-        let type,badgeClass,badgeText,faceIcon,labelText;
-        if(result<=2){
-          type='bad';badgeClass='event-bad';badgeText='⚡ SHOCK';faceIcon='2️⃣';
-          labelText='試練が訪れた。';
-          const evs=(G.data.events||[]).filter(e=>{
-            const tp=Array.isArray(e.trigger_phases)?e.trigger_phases:String(e.trigger_phases).split(',').map(s=>s.trim());
-            return tp.includes(PHASE_IDS[G.currentPhase]);
-          });
-          if(evs.length){
-            const ev=evs[Math.floor(Math.random()*evs.length)];
-            diceCallback={type:'bad',event:ev};
-          }else{
-            type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
-            labelText='特に大きな変化はなかった。';
-            diceCallback={type:'none'};
-          }
-        }else if(result<=4){
-          type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
-          labelText='波乱のないフェーズだった。';
-          diceCallback={type:'none'};
-        }else{
-          type='good';badgeClass='event-good';badgeText='✨ TAILWIND';faceIcon='6️⃣';
-          labelText='追い風が吹いた。';
-          const bonus=BONUS_EVENTS[Math.floor(Math.random()*BONUS_EVENTS.length)];
-          diceCallback={type:'good',bonus};
-        }
+  const ol=document.createElement('div');
+  ol.className='fate-overlay';ol.id='fate-overlay';
+  ol.innerHTML=`
+    <div class="fate-card-screen" style="width:100%;max-width:360px">
+      <div class="fate-card-label">FATE CARD</div>
+      <div class="fate-card-title">1枚のカードを選べ</div>
+      <div class="fate-card-phase">${phaseName}</div>
+      <div class="fate-cards-row">
+        ${cards.map((_,i)=>`
+          <div class="fate-card" id="fate-card-${i}" onclick="selectFateCard(${i})" data-idx="${i}">
+            <span class="fate-card-back-icon">🃏</span>
+            <div class="fate-card-back-text">FATE</div>
+          </div>`).join('')}
+      </div>
+      <div class="fate-hint">TAP TO CHOOSE</div>
+    </div>`;
+  document.body.appendChild(ol);
 
-        face.textContent=faceIcon;
-        label.textContent=labelText;
+  // カードデータをDOMに保持
+  ol._fateCards=cards;
+}
 
-        // 具体的なイベントテキスト
-        const eventText=getDiceEventText(type==='bad'&&diceCallback.type==='none'?'none':type);
-        if(eventTextEl){
-          eventTextEl.textContent=eventText;
-          eventTextEl.style.opacity='1';
-        }
+// ── STEP3：カード選択 → 結果表示 ────────────────────────────────
+function selectFateCard(idx){
+  const ol=document.getElementById('fate-overlay');
+  if(!ol||ol._fateChosen)return;
+  ol._fateChosen=true;
 
-        badge.className='dice-result-badge show '+badgeClass;
-        badge.textContent=badgeText;
-        cta.className='dice-cta show';
-      },200);
+  const cards=ol._fateCards;
+  const chosen=cards[idx];
+  const {type,ev}=chosen;
+  const domTag=getDomTag();
+
+  // 選んだカードを強調、他をフェードアウト
+  cards.forEach((_,i)=>{
+    const el=document.getElementById('fate-card-'+i);
+    if(!el)return;
+    if(i===idx){
+      el.style.transform='translateY(-10px) scale(1.08)';
+      el.style.borderColor=type==='good'?'rgba(52,211,153,.7)':'rgba(232,98,26,.7)';
+      el.style.boxShadow=type==='good'?'0 16px 40px rgba(52,211,153,.25)':'0 16px 40px rgba(232,98,26,.25)';
+    }else{
+      el.style.opacity='.25';el.style.transform='scale(.94)';
     }
-  },55);
+  });
+
+  // 0.5秒後に結果画面へ
+  setTimeout(()=>{
+    ol.innerHTML=`
+      <div class="fate-result-screen" style="width:100%;max-width:360px">
+        <div class="fate-result-card ${type}">
+          <div class="fate-result-type ${type}">${type==='good'?'✨ GOOD EVENT':'⚡ BAD EVENT'}</div>
+          <div class="fate-result-event-title">${ev.title}</div>
+          <div class="fate-result-event-desc">${ev.desc}</div>
+          <div class="fate-result-choices">
+            <button class="fate-choice-btn ${type}-style" onclick="selectFateChoice('${type}','A','${ev.tagA}',this.closest('.fate-overlay'))">
+              <span class="fate-choice-label">CHOICE A</span>${ev.choiceA}
+            </button>
+            <button class="fate-choice-btn ${type}-style" onclick="selectFateChoice('${type}','B','${ev.tagA}',this.closest('.fate-overlay'))">
+              <span class="fate-choice-label">CHOICE B</span>${ev.choiceB}
+            </button>
+          </div>
+        </div>
+      </div>`;
+    ol._fateCards=cards; // 保持継続
+  },500);
 }
 
-function closeDice(){
-  const result=diceCallback;
-  document.getElementById('dice-overlay')?.remove();
-  diceCallback=null;
+// ── STEP4：選択肢選択 → フィードバック ──────────────────────────
+function selectFateChoice(type,choice,tagA,ol){
+  if(!ol||ol._fateDone)return;
+  ol._fateDone=true;
 
-  if(result?.type==='bad'&&result.event){
-    showEvent(result.event); // 既存のイベント表示
-  }else if(result?.type==='good'&&result.bonus){
-    const bonusCorr=result.bonus.correction||0;
-    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:bonusCorr,phaseIdx:G.currentPhase});
-    applyValueMeterChoice(result.bonus.tag);
-    // 追い風ボーナス: eraFit・adaptabilityを強化
-    vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
-    vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
-    renderValueMeter(null);
-    nextPhase();
-  }else{
-    nextPhase();
-  }
+  // 選択ボタンをすべて無効化
+  ol.querySelectorAll('.fate-choice-btn').forEach(b=>b.style.pointerEvents='none');
+
+  const domTag=getDomTag();
+  // 判定：ユーザーのドミナントタグとイベントのtagAが一致 → A判定
+  const isAxisMatch=(choice==='A');
+  const key=type==='good'
+    ?(isAxisMatch?'good_A':'good_B')
+    :(isAxisMatch?'bad_A' :'bad_B');
+
+  const delta=FATE_SCORE[key];
+  const fb=FATE_FEEDBACK[key];
+
+  // vmStateに反映
+  applyValueMeterDelta(delta);
+
+  // スコア変動チップ生成
+  const chips=Object.entries(delta).map(([k,v])=>{
+    const labels={eraFit:'時代適合',adaptability:'適応力',expertise:'専門性',crisis:'危機対応',consistency:'一貫性'};
+    return `<span class="fate-delta-chip ${v>0?'plus':'minus'}">${v>0?'+':''}${v} ${labels[k]||k}</span>`;
+  }).join('');
+
+  // フィードバック画面へ
+  setTimeout(()=>{
+    ol.innerHTML=`
+      <div class="fate-feedback" style="width:100%;max-width:360px">
+        <div class="fate-feedback-icon">${fb.icon}</div>
+        <div class="fate-feedback-result ${key.replace('_','')}">${fb.label}</div>
+        <div class="fate-feedback-title">${fb.title}</div>
+        <div class="fate-feedback-desc">${fb.desc}</div>
+        <div class="fate-feedback-delta">${chips}</div>
+        <button class="fate-next-btn" onclick="closeFate()">次のフェーズへ →</button>
+      </div>`;
+  },300);
 }
+
+// ── クローズ ──────────────────────────────────────────────────────
+function closeFate(){
+  document.getElementById('fate-overlay')?.remove();
+  nextPhase();
+}
+
+// 旧API互換（showDice呼び出しが残っている場合の保険）
+function showDice(cb){ showFateAnnounce(); }
+function closeDice(){ closeFate(); }
 
 // ── 専門用語ツールチップ ─────────────────────────────────────────
 const TERMS={
