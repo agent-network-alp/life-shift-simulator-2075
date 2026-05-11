@@ -501,6 +501,80 @@ div[style*="CAREER TRANSLATION"] {
 .score-num{font-family:var(--ff-head);font-size:clamp(4.5rem,14vw,7.5rem);line-height:1;background:linear-gradient(135deg,var(--accent) 20%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .score-tier{font-family:var(--ff-head);font-size:1.5rem;letter-spacing:5px;margin-top:8px;color:var(--white)}
 .score-headline{font-size:.9rem;color:var(--w90);line-height:1.9;margin-top:12px;max-width:440px;margin-inline:auto}
+
+/* ━━━ スコア数字ラッパー（ツールチップ用） ━━━ */
+.score-num-wrap{
+  position:relative;display:inline-block;cursor:default;
+  /* ホバーエリアを少し広めに確保 */
+  padding:8px 16px 0;margin:-8px -16px 0;
+}
+.score-num-wrap:hover .score-tooltip,
+.score-num-wrap:focus-within .score-tooltip{
+  opacity:1;transform:translateY(0);pointer-events:auto;
+}
+
+/* ツールチップ本体 */
+.score-tooltip{
+  position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%) translateY(-6px);
+  width:260px;
+  background:#1A1A2E;
+  border:1px solid rgba(232,98,26,.35);
+  border-radius:12px;padding:14px 16px;
+  text-align:left;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease,transform .22s ease;
+  z-index:50;
+  box-shadow:0 8px 32px rgba(0,0,0,.35);
+}
+/* 上向き三角 */
+.score-tooltip::before{
+  content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
+  border:6px solid transparent;border-bottom-color:#1A1A2E;
+}
+.score-tooltip-title{
+  font-size:.62rem;letter-spacing:3px;color:var(--accent);
+  font-weight:700;margin-bottom:8px;
+}
+.score-tooltip-body{
+  font-size:.78rem;color:rgba(255,255,255,.85);line-height:1.75;
+}
+
+/* ━━━ スコアコンテキスト（旧 ending-copy の移動先） ━━━ */
+.score-context{
+  margin-top:18px;
+  padding:14px 18px;
+  background:rgba(232,98,26,.06);
+  border:1px solid rgba(232,98,26,.18);
+  border-radius:10px;
+  font-size:.84rem;color:#2c2c3e;line-height:1.85;
+  max-width:420px;margin-inline:auto;
+  text-align:left;
+}
+.score-context strong{color:#E8621A}
+
+/* ━━━ スコア内訳バー ━━━ */
+.score-breakdown{
+  margin-top:16px;max-width:420px;margin-inline:auto;
+  text-align:left;
+}
+.score-bd-row{
+  display:flex;align-items:center;gap:10px;margin-bottom:7px;
+}
+.score-bd-label{
+  font-size:.68rem;color:#6B7280;width:108px;flex-shrink:0;line-height:1.3;
+}
+.score-bd-track{
+  flex:1;height:5px;background:#E5E7EB;border-radius:3px;overflow:hidden;
+}
+.score-bd-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--accent),var(--gold));
+  transition:width 1.0s cubic-bezier(.4,0,.2,1);
+  width:0%;
+}
+.score-bd-val{
+  font-size:.7rem;font-weight:700;color:#1A1A2E;width:30px;text-align:right;
+}
 .result-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:24px}
 .result-card h3{font-size:.6rem;letter-spacing:3px;margin-bottom:14px}
 .industry-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
@@ -922,21 +996,40 @@ div[style*="CAREER TRANSLATION"] {
 <div class="screen" id="screen-result">
   <div class="result-inner">
 
-    <!-- ヒーロー -->
+    <!-- ヒーロー：タイトルのみ（解説はスコアブロックへ移動） -->
     <div class="ending-block">
       <div class="ending-year-bg">2075</div>
       <h2 class="ending-title">旅が終わった。<br>2026年に戻ってきた。</h2>
-      <p class="ending-copy" id="ending-copy"></p>
+      <!-- ending-copy は JS で score-context に書き込む -->
     </div>
 
     <!-- ━━━ スコアパート ━━━ -->
     <div class="rpt-part-label">SCORE</div>
 
-    <!-- ①総合スコア -->
+    <!-- ①総合スコア：数字→ティア→ツールチップ→解説の順で意味が流れる -->
     <div class="score-block">
-      <div class="score-num" id="res-score">--</div>
+
+      <!-- スコア数字（ホバーでツールチップ） -->
+      <div class="score-num-wrap" id="score-num-wrap">
+        <div class="score-num" id="res-score">--</div>
+        <!-- ツールチップ -->
+        <div class="score-tooltip" id="score-tooltip">
+          <div class="score-tooltip-title">このスコアは何？</div>
+          <div class="score-tooltip-body" id="score-tooltip-body"></div>
+        </div>
+      </div>
+
+      <!-- ティア名 -->
       <div class="score-tier" id="res-tier">--</div>
+
+      <!-- ティア説明（fb.headline） -->
       <div class="score-headline" id="res-headline"></div>
+
+      <!-- スコアのコンテキスト（旧 ending-copy の内容） -->
+      <div class="score-context" id="score-context"></div>
+
+      <!-- スコア内訳バー -->
+      <div class="score-breakdown" id="score-breakdown"></div>
     </div>
 
     <!-- ②6角チャート（タイトル付き）+ LIVE COMPARISON統合 -->
@@ -1059,19 +1152,49 @@ div[style*="CAREER TRANSLATION"] {
   </div>
 </div>
 
-<!-- ポップアップ：PDF送信 -->
+<!-- ポップアップ：レポートURL生成・共有 -->
 <div class="popup-overlay" id="popup-pdf" style="display:none">
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-pdf')">×</button>
-    <div class="popup-title">レポートを受け取る</div>
-    <button class="popup-action-btn" style="margin-bottom:10px;background:linear-gradient(135deg,#2B8FC5,#1A7AB0)" onclick="closePopup('popup-pdf')">🔍 ブラウザで確認する（このまま閉じる）</button>
-    <div style="font-size:.7rem;color:#9CA3AF;text-align:center;margin-bottom:10px">— または メールで受け取る —</div>
-    <p style="font-size:.82rem;color:#555;line-height:1.7;margin-bottom:16px">メールアドレスを登録すると、就活ワンシート付きのレポートPDFを送付します。</p>
-    <div class="email-input-row">
-      <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
-      <button class="btn-email-send" id="email-send-btn" onclick="sendReportEmail()">送信</button>
+    <div class="popup-title">📋 レポートを共有・保存</div>
+
+    <!-- URL生成前 -->
+    <div id="report-url-init">
+      <p style="font-size:.82rem;color:#555;line-height:1.7;margin-bottom:16px">
+        専用URLを生成して、レポートをいつでも閲覧・共有できます。<br>
+        <span style="font-size:.72rem;color:#9CA3AF">URLは1年間有効です。</span>
+      </p>
+      <button class="popup-action-btn" id="report-url-gen-btn" onclick="generateReportUrl()">
+        🔗 閲覧URLを生成する
+      </button>
     </div>
-    <div class="email-sent-msg" id="email-sent-msg">✓ 送信しました！数分以内にご確認ください。</div>
+
+    <!-- URL生成後 -->
+    <div id="report-url-result" style="display:none">
+      <p style="font-size:.75rem;color:#059669;font-weight:700;margin-bottom:8px">✓ URLが生成されました</p>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
+        <input id="report-url-text" type="text" readonly
+          style="flex:1;font-size:.72rem;color:#374151;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:6px;padding:9px 10px;outline:none;width:0">
+        <button onclick="copyReportUrl()" id="copy-url-btn"
+          style="background:#1A1A2E;color:#fff;border:none;border-radius:6px;padding:9px 14px;font-size:.75rem;cursor:pointer;white-space:nowrap">
+          コピー
+        </button>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <button onclick="shareReportUrlX()"
+          style="flex:1;background:#1A1A2E;color:#fff;border:none;border-radius:8px;padding:11px;font-size:.78rem;cursor:pointer">
+          𝕏 でシェア
+        </button>
+        <button onclick="shareReportUrlLine()"
+          style="flex:1;background:#00B900;color:#fff;border:none;border-radius:8px;padding:11px;font-size:.78rem;cursor:pointer">
+          LINEで送る
+        </button>
+      </div>
+    </div>
+
+    <!-- エラー -->
+    <div id="report-url-error" style="display:none;color:#EF4444;font-size:.78rem;margin-top:8px"></div>
+
     <button class="popup-back" onclick="closePopup('popup-pdf')">← レポートに戻る</button>
   </div>
 </div>
@@ -2703,6 +2826,9 @@ async function showResult(){
   },200);
 
   const score=calcScore(),chain=calcChain(),tier=getTier(score),domTag=getDomTag();
+  // 閲覧URL生成で参照するためグローバル保存
+  window._lastScore = score;
+  window._lastTier  = tier.label;
   const indScores=calcIndScores(),radar=calcRadar();
   const fb=(G.data.feedback||{})[tier.label]||{};
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
@@ -2758,9 +2884,55 @@ async function showResult(){
   };
   const jt=JOB_TRANSLATION[tier.label]||JOB_TRANSLATION['模索者'];
 
-  document.getElementById('ending-copy').innerHTML=
-    `未来から見えたこと——あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。<br>
-     <span style="font-size:.8rem;opacity:.85">同世代の${scorePercentile}に相当するスコア。${scoreContext}${chainContext}</span>`;
+  document.getElementById('ending-copy') && (document.getElementById('ending-copy').innerHTML='');
+
+  // ── スコアコンテキスト（旧 ending-copy の内容をスコアブロック下に表示）
+  const scoreCtxEl=document.getElementById('score-context');
+  if(scoreCtxEl){
+    scoreCtxEl.innerHTML=
+      `あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。`
+      +(scoreContext?`<br><span style="font-size:.78rem;color:#6B7280">${scoreContext}</span>`:'')
+      +(chainContext?`<span style="font-size:.78rem;color:#6B7280"> ${chainContext}</span>`:'');
+  }
+
+  // ── ツールチップ内容（スコアの意味を具体的に説明）
+  const tooltipEl=document.getElementById('score-tooltip-body');
+  if(tooltipEl){
+    const tierTooltips={
+      先駆者:'AI時代の変化と選択が高くフィットしています。上位18%相当。この水準は、変化への先読みと選択の一貫性が揃って初めて出ます。',
+      適応者:'変化への対応力があり、選択のバランスが良好です。上位42%相当。専門性をさらに深めると次のステージへ。',
+      模索者:'まだ軸が定まっていない段階です。上位65%相当。今は模索中でも、軸が見えてくれば一気にスコアは上がります。',
+      転換期:'現在の選択パターンは時代の需要とズレが生じています。下位35%相当。今が気づきのタイミングです。',
+    };
+    tooltipEl.innerHTML=
+      `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)">`
+      +`<span style="font-size:1.1rem;font-weight:700;color:${tier.color||'var(--accent)'}">${safeScore}</span>`
+      +`<span style="font-size:.68rem;color:rgba(255,255,255,.5)"> / 100点</span></div>`
+      +`<div>${tierTooltips[tier.label]||'AI時代への適合度を示すスコアです。'}</div>`
+      +(scoreContext?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);font-size:.72rem;color:rgba(255,255,255,.5)">${scoreContext}</div>`:'');
+  }
+
+  // ── スコア内訳バー
+  const bdEl=document.getElementById('score-breakdown');
+  if(bdEl&&radar&&radar.length===6){
+    const radarLabels_bd=['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'];
+    // 上位3軸だけ表示してスッキリ見せる
+    const sorted_bd=[...radar.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,3);
+    bdEl.innerHTML='<div style="font-size:.6rem;letter-spacing:2px;color:#9CA3AF;margin-bottom:8px">スコアの主な内訳</div>'
+      +sorted_bd.map(({v,i})=>`
+      <div class="score-bd-row">
+        <div class="score-bd-label">${radarLabels_bd[i]}</div>
+        <div class="score-bd-track"><div class="score-bd-fill" style="width:${v}%"></div></div>
+        <div class="score-bd-val">${v}</div>
+      </div>`).join('');
+    // アニメーション（少し遅らせてから）
+    setTimeout(()=>{
+      bdEl.querySelectorAll('.score-bd-fill').forEach((el,i)=>{
+        const w=sorted_bd[i]?.v||0;
+        el.style.width=w+'%';
+      });
+    },300);
+  }
 
 
   // CAREER TRANSLATIONブロックは削除（就活ワンシートと統合）
@@ -4596,6 +4768,91 @@ function loadDemoReport(){
   G.selectedIndustry='事業開発・新規事業';
 
   showResult();
+}
+
+// ━━━ 閲覧URL生成・共有 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+let _cachedReportUrl = null; // 生成済みURLキャッシュ
+
+async function generateReportUrl() {
+  const btn = document.getElementById('report-url-gen-btn');
+  const errEl = document.getElementById('report-url-error');
+  if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
+  if (errEl) errEl.style.display = 'none';
+
+  // 既にキャッシュ済みなら再利用
+  if (_cachedReportUrl) {
+    _showReportUrl(_cachedReportUrl);
+    return;
+  }
+
+  try {
+    // GASに送るペイロード（レポート表示に必要なデータ）
+    const payload = {
+      action:       'createReport',
+      sessionId:    G.sessionId,
+      nickname:     G.nickname     || '',
+      score:        window._lastScore  || 0,
+      tier:         window._lastTier   || '',
+      mbtiType:     G.mbtiType    || '',
+      mbtiLabel:    G.mbtiData?.label || '',
+      dominantTag:  getDomTag(),
+      industryScores: (window._lastIndScores || []).slice(0, 5),
+      narratives:   (G.narratives || []).map(n => ({
+        ageRange: n.ageRange, era: n.era, text: (n.text||'').replace(/<[^>]+>/g,'').slice(0,300)
+      })),
+      headline:     document.getElementById('res-headline')?.textContent || '',
+      analysis:     document.getElementById('res-body')?.textContent?.slice(0,500) || '',
+      jobSheet:     {
+        axis:     document.getElementById('jws-axis')?.textContent || '',
+        industry: document.getElementById('jws-industry')?.textContent || '',
+      },
+      chainRule:    '',
+      radarValues:  [],
+    };
+
+    const res  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
+    const data = await res.json();
+
+    if (!data.ok || !data.token) throw new Error(data.error || 'Token generation failed');
+
+    // GASのデプロイURLを取得してレポートURLを構築
+    const deployBase = GAS_URL.replace(/\/exec$/, '/exec');
+    const reportUrl  = deployBase + '?r=' + data.token;
+    _cachedReportUrl = reportUrl;
+    _showReportUrl(reportUrl);
+
+  } catch(e) {
+    console.error('generateReportUrl error:', e);
+    if (errEl) { errEl.textContent = 'URL生成に失敗しました。もう一度お試しください。'; errEl.style.display='block'; }
+    if (btn)   { btn.disabled = false; btn.textContent = '🔗 閲覧URLを生成する'; }
+  }
+}
+
+function _showReportUrl(url) {
+  document.getElementById('report-url-init').style.display   = 'none';
+  document.getElementById('report-url-result').style.display = 'block';
+  const inp = document.getElementById('report-url-text');
+  if (inp) inp.value = url;
+}
+
+function copyReportUrl() {
+  const url = document.getElementById('report-url-text')?.value;
+  if (!url) return;
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = document.getElementById('copy-url-btn');
+    if (btn) { btn.textContent = '✓ コピー済'; setTimeout(() => { btn.textContent = 'コピー'; }, 2000); }
+  });
+}
+
+function shareReportUrlX() {
+  const url  = document.getElementById('report-url-text')?.value || '';
+  const text = (G.nickname||'') + 'さんのAI時代キャリア診断レポート #LIFESHIFTSIMULATOR2075';
+  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
+}
+
+function shareReportUrlLine() {
+  const url = document.getElementById('report-url-text')?.value || '';
+  window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(url), '_blank', 'noopener');
 }
 
 init();
