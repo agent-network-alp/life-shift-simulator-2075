@@ -1133,7 +1133,7 @@ div[style*="CAREER TRANSLATION"] {
 <!-- 固定CTA（レポート画面専用） -->
 <div class="fixed-cta" id="fixed-cta" style="display:none">
   <button class="fcta-btn fcta-x"      onclick="openXPopup()">𝕏</button>
-  <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">PDF</button>
+  <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">SHARE</button>
   <button class="fcta-btn fcta-agent"  onclick="openPopup('popup-agent')">AGENT</button>
   <button class="fcta-btn fcta-retry"  onclick="confirmNewGame()">NEW</button>
 </div>
@@ -1152,48 +1152,46 @@ div[style*="CAREER TRANSLATION"] {
   </div>
 </div>
 
-<!-- ポップアップ：レポートURL生成・共有 -->
+<!-- ポップアップ：SHARE（氏名・メアド登録 → URL送付） -->
 <div class="popup-overlay" id="popup-pdf" style="display:none">
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-pdf')">×</button>
-    <div class="popup-title">📋 レポートを共有・保存</div>
+    <div class="popup-title">📤 レポートを保存・共有</div>
 
-    <!-- URL生成前 -->
-    <div id="report-url-init">
-      <p style="font-size:.82rem;color:#555;line-height:1.7;margin-bottom:16px">
-        専用URLを生成して、レポートをいつでも閲覧・共有できます。<br>
-        <span style="font-size:.72rem;color:#9CA3AF">URLは1年間有効です。</span>
+    <!-- STEP 1：入力フォーム -->
+    <div id="share-step-form">
+      <p style="font-size:.8rem;color:#555;line-height:1.7;margin-bottom:14px">
+        お名前とメールアドレスを登録すると、<br>レポートの閲覧URLをメールでお送りします。
       </p>
-      <button class="popup-action-btn" id="report-url-gen-btn" onclick="generateReportUrl()">
-        🔗 閲覧URLを生成する
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+        <div>
+          <div style="font-size:.65rem;color:#9CA3AF;margin-bottom:4px;letter-spacing:.5px">お名前</div>
+          <input id="share-name" type="text" placeholder="山田 太郎"
+            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:.84rem;border:1.5px solid #E5E7EB;border-radius:8px;outline:none;color:#1A1A2E"
+            onfocus="this.style.borderColor='#E8621A'" onblur="this.style.borderColor='#E5E7EB'">
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:#9CA3AF;margin-bottom:4px;letter-spacing:.5px">メールアドレス</div>
+          <input id="share-email" type="email" placeholder="your@email.com"
+            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:.84rem;border:1.5px solid #E5E7EB;border-radius:8px;outline:none;color:#1A1A2E"
+            onfocus="this.style.borderColor='#E8621A'" onblur="this.style.borderColor='#E5E7EB'">
+        </div>
+      </div>
+      <div id="share-form-error" style="display:none;color:#EF4444;font-size:.75rem;margin-bottom:10px"></div>
+      <button class="popup-action-btn" id="share-submit-btn" onclick="submitShareForm()">
+        URLをメールで受け取る
       </button>
     </div>
 
-    <!-- URL生成後 -->
-    <div id="report-url-result" style="display:none">
-      <p style="font-size:.75rem;color:#059669;font-weight:700;margin-bottom:8px">✓ URLが生成されました</p>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px">
-        <input id="report-url-text" type="text" readonly
-          style="flex:1;font-size:.72rem;color:#374151;background:#F3F4F6;border:1px solid #E5E7EB;border-radius:6px;padding:9px 10px;outline:none;width:0">
-        <button onclick="copyReportUrl()" id="copy-url-btn"
-          style="background:#1A1A2E;color:#fff;border:none;border-radius:6px;padding:9px 14px;font-size:.75rem;cursor:pointer;white-space:nowrap">
-          コピー
-        </button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:4px">
-        <button onclick="shareReportUrlX()"
-          style="flex:1;background:#1A1A2E;color:#fff;border:none;border-radius:8px;padding:11px;font-size:.78rem;cursor:pointer">
-          𝕏 でシェア
-        </button>
-        <button onclick="shareReportUrlLine()"
-          style="flex:1;background:#00B900;color:#fff;border:none;border-radius:8px;padding:11px;font-size:.78rem;cursor:pointer">
-          LINEで送る
-        </button>
-      </div>
+    <!-- STEP 2：送信完了 -->
+    <div id="share-step-done" style="display:none;text-align:center;padding:12px 0">
+      <div style="font-size:2rem;margin-bottom:10px">✉️</div>
+      <div style="font-size:.9rem;font-weight:700;color:#059669;margin-bottom:8px">送信しました！</div>
+      <div id="share-done-email" style="font-size:.78rem;color:#6B7280;line-height:1.7;margin-bottom:16px"></div>
+      <p style="font-size:.72rem;color:#9CA3AF;line-height:1.6">
+        数分以内にメールが届きます。<br>届かない場合は迷惑メールフォルダをご確認ください。
+      </p>
     </div>
-
-    <!-- エラー -->
-    <div id="report-url-error" style="display:none;color:#EF4444;font-size:.78rem;margin-top:8px"></div>
 
     <button class="popup-back" onclick="closePopup('popup-pdf')">← レポートに戻る</button>
   </div>
@@ -4770,89 +4768,91 @@ function loadDemoReport(){
   showResult();
 }
 
-// ━━━ 閲覧URL生成・共有 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-let _cachedReportUrl = null; // 生成済みURLキャッシュ
+// ━━━ SHARE：氏名・メアド登録 → URL生成 → メール送付 ━━━━━━━━━━━━━━
+let _cachedReportUrl = null;
 
-async function generateReportUrl() {
-  const btn = document.getElementById('report-url-gen-btn');
-  const errEl = document.getElementById('report-url-error');
-  if (btn) { btn.disabled = true; btn.textContent = '生成中…'; }
-  if (errEl) errEl.style.display = 'none';
+async function submitShareForm() {
+  const nameVal  = (document.getElementById('share-name')?.value  || '').trim();
+  const emailVal = (document.getElementById('share-email')?.value || '').trim();
+  const errEl    = document.getElementById('share-form-error');
+  const btn      = document.getElementById('share-submit-btn');
 
-  // 既にキャッシュ済みなら再利用
-  if (_cachedReportUrl) {
-    _showReportUrl(_cachedReportUrl);
+  // バリデーション
+  errEl.style.display = 'none';
+  if (!nameVal) {
+    errEl.textContent = 'お名前を入力してください。';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!emailVal || !emailVal.includes('@')) {
+    errEl.textContent = 'メールアドレスを正しく入力してください。';
+    errEl.style.display = 'block';
     return;
   }
 
+  btn.disabled = true;
+  btn.textContent = '送信中…';
+
   try {
-    // GASに送るペイロード（レポート表示に必要なデータ）
-    const payload = {
-      action:       'createReport',
-      sessionId:    G.sessionId,
-      nickname:     G.nickname     || '',
-      score:        window._lastScore  || 0,
-      tier:         window._lastTier   || '',
-      mbtiType:     G.mbtiType    || '',
-      mbtiLabel:    G.mbtiData?.label || '',
-      dominantTag:  getDomTag(),
-      industryScores: (window._lastIndScores || []).slice(0, 5),
-      narratives:   (G.narratives || []).map(n => ({
-        ageRange: n.ageRange, era: n.era, text: (n.text||'').replace(/<[^>]+>/g,'').slice(0,300)
-      })),
-      headline:     document.getElementById('res-headline')?.textContent || '',
-      analysis:     document.getElementById('res-body')?.textContent?.slice(0,500) || '',
-      jobSheet:     {
-        axis:     document.getElementById('jws-axis')?.textContent || '',
-        industry: document.getElementById('jws-industry')?.textContent || '',
-      },
-      chainRule:    '',
-      radarValues:  [],
+    // STEP 1：トークン生成（キャッシュがあれば再利用）
+    let reportUrl = _cachedReportUrl;
+    if (!reportUrl) {
+      const payload = {
+        action:         'createReport',
+        sessionId:      G.sessionId,
+        nickname:       G.nickname      || '',
+        score:          window._lastScore || 0,
+        tier:           window._lastTier  || '',
+        mbtiType:       G.mbtiType      || '',
+        mbtiLabel:      G.mbtiData?.label || '',
+        dominantTag:    getDomTag(),
+        industryScores: (window._lastIndScores || []).slice(0, 5),
+        narratives:     (G.narratives || []).map(n => ({
+          ageRange: n.ageRange, era: n.era,
+          text: (n.text||'').replace(/<[^>]+>/g,'').slice(0,300),
+        })),
+        headline:  document.getElementById('res-headline')?.textContent || '',
+        analysis:  document.getElementById('res-body')?.textContent?.slice(0,500) || '',
+        jobSheet:  {
+          axis:     document.getElementById('jws-axis')?.textContent || '',
+          industry: document.getElementById('jws-industry')?.textContent || '',
+        },
+      };
+      const res  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
+      const data = await res.json();
+      if (!data.ok || !data.token) throw new Error(data.error || 'Token error');
+      reportUrl = GAS_URL.replace(/\/exec$/, '/exec') + '?r=' + data.token;
+      _cachedReportUrl = reportUrl;
+    }
+
+    // STEP 2：メール送信（GAS sendShareUrl アクション）
+    const mailPayload = {
+      action:     'sendShareUrl',
+      name:       nameVal,
+      email:      emailVal,
+      reportUrl:  reportUrl,
+      nickname:   G.nickname    || '',
+      score:      window._lastScore || 0,
+      tier:       window._lastTier  || '',
+      sessionId:  G.sessionId,
     };
+    const mRes  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(mailPayload) });
+    const mData = await mRes.json();
+    if (!mData.ok) throw new Error(mData.error || 'Mail send error');
 
-    const res  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
-    const data = await res.json();
-
-    if (!data.ok || !data.token) throw new Error(data.error || 'Token generation failed');
-
-    // GASのデプロイURLを取得してレポートURLを構築
-    const deployBase = GAS_URL.replace(/\/exec$/, '/exec');
-    const reportUrl  = deployBase + '?r=' + data.token;
-    _cachedReportUrl = reportUrl;
-    _showReportUrl(reportUrl);
+    // 完了画面へ
+    document.getElementById('share-step-form').style.display = 'none';
+    document.getElementById('share-step-done').style.display = 'block';
+    document.getElementById('share-done-email').textContent =
+      nameVal + ' 様（' + emailVal + '）\nにレポートURLを送信しました。';
 
   } catch(e) {
-    console.error('generateReportUrl error:', e);
-    if (errEl) { errEl.textContent = 'URL生成に失敗しました。もう一度お試しください。'; errEl.style.display='block'; }
-    if (btn)   { btn.disabled = false; btn.textContent = '🔗 閲覧URLを生成する'; }
+    console.error('submitShareForm error:', e);
+    errEl.textContent = '送信に失敗しました。もう一度お試しください。';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'URLをメールで受け取る';
   }
-}
-
-function _showReportUrl(url) {
-  document.getElementById('report-url-init').style.display   = 'none';
-  document.getElementById('report-url-result').style.display = 'block';
-  const inp = document.getElementById('report-url-text');
-  if (inp) inp.value = url;
-}
-
-function copyReportUrl() {
-  const url = document.getElementById('report-url-text')?.value;
-  if (!url) return;
-  navigator.clipboard.writeText(url).then(() => {
-    const btn = document.getElementById('copy-url-btn');
-    if (btn) { btn.textContent = '✓ コピー済'; setTimeout(() => { btn.textContent = 'コピー'; }, 2000); }
-  });
-}
-
-function shareReportUrlX() {
-  const url  = document.getElementById('report-url-text')?.value || '';
-  const text = (G.nickname||'') + 'さんのAI時代キャリア診断レポート #LIFESHIFTSIMULATOR2075';
-  window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(text) + '&url=' + encodeURIComponent(url), '_blank', 'noopener');
-}
-
-function shareReportUrlLine() {
-  const url = document.getElementById('report-url-text')?.value || '';
-  window.open('https://social-plugins.line.me/lineit/share?url=' + encodeURIComponent(url), '_blank', 'noopener');
 }
 
 init();
