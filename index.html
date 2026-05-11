@@ -2999,14 +2999,16 @@ async function showResult(){
           // AI生成が揃っているか確認（1件以上ある場合は表示）
           // AI生成story：配列・オブジェクト({時代名:テキスト})両対応
           let storyArr=Array.isArray(story)?story:Object.values(story||{});
+          // 有効テキスト（10字超）かつ空文字でないものだけ抽出
           const validStories=storyArr.filter(s=>s&&String(s).trim().length>10);
           console.log('MY STORY: AI生成 '+validStories.length+'/6フェーズ');
           const fullStory=G.narratives.map((n,i)=>{
             const aiText=validStories[i];
+            // AI生成テキストが10字超あればそれを使う
             if(aiText&&String(aiText).trim().length>10) return String(aiText).trim();
-            // フォールバック：ゲーム中に生成したナラティブを使用
+            // なければゲーム中生成ナラティブで補完
             const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
-            return fallback.length>10?fallback:'（この時代の物語を紡いでいます）';
+            return fallback.length>10?fallback:'この時代を静かに歩んでいた。';
           });
           el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
@@ -3201,12 +3203,16 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 スコア: ${score}点（${tierLabel}）
 
 【生成ルール】
-1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める（例：ENFJなら承認欲求との葛藤、INTJなら孤独と確信の葛藤）
-2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
+1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める
+2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1箇所織り込む
 3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
 4. 各80〜100字、完全な一人称過去形
 
-myStoryに6フェーズ分のナラティブを配列で格納する（要素順：20〜25歳AI実装期、25〜30歳AGI移行期、30〜40歳産業再編期、40〜50歳人機協働成熟期、50〜60歳社会構造変容期、60〜70歳ポスト労働期）。`;
+【絶対条件】myStory配列は必ず6要素。要素が足りない場合は「この時代を静かに歩んでいた。」で埋めること。
+
+{"myStory":["${phaseChoiceLog.split(' → ')[0]||'フェーズ1'}の80〜100字ナラティブ","フェーズ2","フェーズ3","フェーズ4","フェーズ5","フェーズ6"]}
+
+上記の形式でmyStory配列に6フェーズ分すべて生成してください。`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
   // 就活軸生成のための3要素を構造化してプロンプトに渡す
@@ -3250,13 +3256,13 @@ Q3投資傾向: ${q3Top||'スキル'}
 スコア: ${score}点（${tierLabel}）
 
 ■生成指示
-この就活生の「業種・MBTI・選択傾向」を踏まえ、本人が「これは自分だ」と感じる就活軸を3文でcareerAxisに格納する。
+就活軸を3文でcareerAxisに格納する。
 
-文①（テーマ・向き合いたいこと）：${topInd1}の文脈で、この人が解決したい社会課題や向き合いたいテーマ。30〜45字。
-文②（強み・アプローチ）：${domTagJP}の選択傾向と${G.mbtiData?.group||''}型の特性から生まれる、この人ならではの動き方や強み。30〜45字。
-文③（志望・実現したいこと）：${topInd1}という場を選ぶ理由と、そこで実現したい具体的なこと。業種名を含む。30〜45字。
+文①（30〜45字）：${topInd1}の文脈で向き合いたいテーマ。
+文②（30〜45字）：${domTagJP}の傾向と${G.mbtiData?.group||''}型の強み。
+文③（30〜45字）：${topInd1}を選ぶ理由と実現したいこと（業種名含む）。
 
-重要：各文は30〜45字の完全な一文にする（断片禁止）。テンプレ文・定型表現禁止。`
+【絶対条件】careerAxisは必ず3要素の配列。各要素は30字以上の完全な一文。`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
   const callGAS = async (prompt, maxTok, schemaHint) => {
@@ -4048,6 +4054,22 @@ by 株式会社エージェント
 }
 
 // ━━━ openXPopup：Xサマリ動的生成
+// ── ポップアップ汎用開閉 ────────────────────────────────────────────
+function openPopup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display='flex';
+  document.body.style.overflow='hidden';
+  // 背景クリックで閉じる
+  el.onclick=function(e){if(e.target===el)closePopup(id);};
+}
+function closePopup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display='none';
+  document.body.style.overflow='';
+}
+
 function openXPopup(){
   const score=document.getElementById('res-score')?.textContent||'--';
   const tier=document.getElementById('res-tier')?.textContent||'--';
