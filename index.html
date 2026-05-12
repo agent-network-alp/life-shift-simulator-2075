@@ -47,38 +47,38 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .loading-logo{font-family:var(--ff-head),'Arial Black',sans-serif;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:8px;color:var(--accent);text-shadow:0 0 40px rgba(232,98,26,.3);min-height:3.5rem;display:flex;align-items:center;justify-content:center}
 .loading-bar-wrap{width:200px;height:1px;background:var(--border)}
 .loading-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));width:0%;transition:width .3s ease}
-.loading-text{font-size:.68rem;color:var(--w40);letter-spacing:4px;animation:pulse 1.5s infinite}
+.loading-text{font-size:.8rem;color:var(--w40);letter-spacing:4px;animation:pulse 1.5s infinite}
 .top-bar{width:100%;background:rgba(10,10,10,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
 .top-bar-inner{display:flex;align-items:center;padding:0 20px;height:50px}
 .top-logo{font-family:var(--ff-head);font-size:.95rem;letter-spacing:4px;color:var(--accent)}
 .top-phase-info{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
-.top-phase-badge{font-family:var(--ff-head);font-size:.82rem;letter-spacing:2px;color:var(--white);background:var(--card2);padding:4px 10px;border-radius:3px;border:1px solid var(--border)}
-.top-era-name{font-size:.68rem;color:var(--accent2);letter-spacing:1px}
-.top-year-badge{font-size:.68rem;color:var(--cyan);background:rgba(56,189,248,.08);padding:3px 8px;border-radius:3px;border:1px solid rgba(56,189,248,.2)}
+.top-phase-badge{font-family:var(--ff-head);font-size:.94rem;letter-spacing:2px;color:var(--white);background:var(--card2);padding:4px 10px;border-radius:3px;border:1px solid var(--border)}
+.top-era-name{font-size:.8rem;color:var(--accent2);letter-spacing:1px}
+.top-year-badge{font-size:.8rem;color:var(--cyan);background:rgba(56,189,248,.08);padding:3px 8px;border-radius:3px;border:1px solid rgba(56,189,248,.2)}
 .progress-bar{width:100%;height:2px;background:rgba(255,255,255,.06)}
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .5s cubic-bezier(.4,0,.2,1)}
 .onboard-wrap{width:100%;max-width:540px;padding:48px 24px;text-align:center}
-.onboard-eyebrow{font-size:.6rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;opacity:.9}
+.onboard-eyebrow{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;opacity:.9}
 .onboard-title{font-family:var(--ff-head);font-size:clamp(2.4rem,10vw,4.2rem);line-height:.9;letter-spacing:2px;margin-bottom:20px;color:var(--white)}
 .onboard-title span{color:var(--accent)}
-.onboard-sub{font-size:.88rem;color:var(--w70);line-height:2;margin-bottom:40px}
-.onboard-hint{font-size:.7rem;color:var(--w40);margin-bottom:24px;letter-spacing:2px}
+.onboard-sub{font-size:1rem;color:var(--w70);line-height:2;margin-bottom:40px}
+.onboard-hint{font-size:.82rem;color:var(--w40);margin-bottom:24px;letter-spacing:2px}
 .input-box{width:100%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.25);color:var(--white);font-family:var(--ff-body);font-size:1.05rem;padding:16px 20px;border-radius:6px;text-align:center;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:8px}
 .input-box::placeholder{color:rgba(255,255,255,.4)}
 .input-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,98,26,.15)}
 .input-box::placeholder{color:rgba(255,255,255,.28)}
 .choice2-wrap{display:flex;gap:12px;width:100%;margin-bottom:8px;flex-wrap:wrap}
-.choice2-btn{flex:1;min-width:140px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:20px 16px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:.88rem;line-height:1.7;text-align:center}
+.choice2-btn{flex:1;min-width:140px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);padding:20px 16px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:1rem;line-height:1.7;text-align:center}
 .choice2-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.1);transform:translateY(-2px);box-shadow:0 4px 20px rgba(232,98,26,.15)}
 .choice2-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.14);box-shadow:0 0 0 1px var(--accent)}
 .choice2-label{font-family:var(--ff-head);font-size:1.1rem;color:var(--accent);display:block;margin-bottom:6px}
 .btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1.05rem;letter-spacing:3px;padding:17px 52px;border-radius:6px;transition:all .2s;margin-top:8px;display:inline-block;box-shadow:0 4px 20px rgba(232,98,26,.3)}
 .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(232,98,26,.45);background:var(--accent2)}
 .btn-primary:disabled{opacity:.3;cursor:default;transform:none;box-shadow:none}
-.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--w70);cursor:pointer;font-family:var(--ff-body);font-size:.84rem;padding:10px 24px;border-radius:6px;transition:all .2s;margin-top:8px}
+.btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--w70);cursor:pointer;font-family:var(--ff-body);font-size:.96rem;padding:10px 24px;border-radius:6px;transition:all .2s;margin-top:8px}
 .btn-secondary:hover{border-color:var(--w90);color:var(--white);background:var(--card)}
 .industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;width:100%;margin-bottom:16px;max-height:340px;overflow-y:auto}
-.industry-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:12px 10px;border-radius:6px;cursor:pointer;font-size:.8rem;text-align:center;transition:all .18s;line-height:1.4}
+.industry-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:12px 10px;border-radius:6px;cursor:pointer;font-size:.92rem;text-align:center;transition:all .18s;line-height:1.4}
 .industry-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.08);color:var(--white)}
 .industry-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.15);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
 .recommend-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:16px}
@@ -89,10 +89,10 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .recommend-stars{color:var(--gold);font-size:.95rem;letter-spacing:2px}
 .departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:.05;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
 .departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
-.departure-tag{font-size:.6rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;opacity:.8}
+.departure-tag{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;opacity:.8}
 .departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px;color:var(--white)}
 .departure-copy span{color:var(--cyan)}
-.departure-desc{font-size:.88rem;color:var(--w70);line-height:2.1;margin-bottom:40px}
+.departure-desc{font-size:1rem;color:var(--w70);line-height:2.1;margin-bottom:40px}
 #screen-phase{display:none;flex-direction:column;height:100vh;overflow:hidden}
 #screen-phase.active{display:flex}
 /* phase-body：era-page用は通常スクロール、Q1〜Q3は2層構造 */
@@ -123,26 +123,26 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .era-page{display:flex;flex-direction:column;gap:0;padding:20px 20px 120px}
 .age-hero{margin-bottom:20px;padding-top:8px}
 .age-hero-frame{display:inline-flex;align-items:baseline;gap:8px;background:rgba(0,0,0,.18);border:2px solid rgba(232,98,26,.45);border-radius:10px;padding:10px 20px 10px 20px;margin-top:12px;margin-bottom:4px;position:relative;white-space:nowrap}
-.age-hero-frame::before{content:'あなたは今';position:absolute;top:-8px;left:12px;font-size:.55rem;letter-spacing:2px;color:var(--accent);background:linear-gradient(150deg,#e8f4f8,#b8ddf0);padding:0 6px;white-space:nowrap}
-.age-hero-label{font-size:.6rem;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
+.age-hero-frame::before{content:'あなたは今';position:absolute;top:-8px;left:12px;font-size:.7rem;letter-spacing:2px;color:var(--accent);background:linear-gradient(150deg,#e8f4f8,#b8ddf0);padding:0 6px;white-space:nowrap}
+.age-hero-label{font-size:.74rem;letter-spacing:4px;color:var(--accent);margin-bottom:4px}
 .age-hero-num{font-family:var(--ff-head);font-size:clamp(2.8rem,9vw,4.8rem);line-height:1;color:#1c1c2e;letter-spacing:1px}
 .age-hero-num span{color:var(--accent)}
 .era-desc-block{border-left:3px solid var(--accent);padding:14px 18px;background:rgba(0,0,0,.06);border-radius:0 8px 8px 0;margin-bottom:18px}
-.era-desc-text{font-size:.86rem;color:#1c1c2e;line-height:1.95}
+.era-desc-text{font-size:.98rem;color:#1c1c2e;line-height:1.95}
 .era-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
 .era-stat-card{background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.09);border-radius:8px;padding:14px 16px;backdrop-filter:blur(4px)}
 .era-stat-val{font-family:var(--ff-head);font-size:1.55rem;color:var(--accent);margin-bottom:4px}
 .era-stat-lbl{font-size:.73rem;color:#2c2c3e;line-height:1.4;margin-bottom:3px}
-.era-stat-src{font-size:.58rem;color:#777;letter-spacing:.3px}
+.era-stat-src{font-size:.72rem;color:#777;letter-spacing:.3px}
 .prev-phase-recap{background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:12px 16px;margin-bottom:14px;border-left:3px solid var(--cyan)}
-.prev-phase-label{font-size:.58rem;letter-spacing:3px;color:var(--cyan);margin-bottom:6px}
+.prev-phase-label{font-size:.72rem;letter-spacing:3px;color:var(--cyan);margin-bottom:6px}
 .prev-phase-content{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.prev-phase-tag{font-size:.75rem;font-weight:700;color:var(--accent);background:rgba(232,98,26,.1);padding:2px 10px;border-radius:12px;border:1px solid rgba(232,98,26,.3)}
-.prev-phase-result{font-size:.78rem;color:#2c2c3e;line-height:1.6}
+.prev-phase-tag{font-size:.88rem;font-weight:700;color:var(--accent);background:rgba(232,98,26,.1);padding:2px 10px;border-radius:12px;border:1px solid rgba(232,98,26,.3)}
+.prev-phase-result{font-size:.9rem;color:#2c2c3e;line-height:1.6}
 .decision-hint{background:rgba(255,255,255,.82);border:2px solid var(--accent);border-radius:10px;padding:16px 20px;margin-bottom:24px;box-shadow:0 2px 12px rgba(232,98,26,.15)}
-.decision-hint-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px;font-weight:700;display:flex;align-items:center;gap:6px}
+.decision-hint-label{font-size:.74rem;letter-spacing:3px;color:var(--accent);margin-bottom:8px;font-weight:700;display:flex;align-items:center;gap:6px}
 .decision-hint-label::before{content:'💡';font-size:.9rem}
-.decision-hint-text{font-size:.86rem;color:#1a1a1a;line-height:1.9;font-weight:500}
+.decision-hint-text{font-size:.98rem;color:#1a1a1a;line-height:1.9;font-weight:500}
 .era-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-body);font-size:.96rem;font-weight:700;padding:20px 24px;border-radius:8px;transition:all .2s;text-align:left;display:flex;align-items:center;justify-content:space-between;line-height:1.5;box-shadow:0 4px 24px rgba(232,98,26,.3)}
 .era-cta:hover{transform:translateY(-2px);box-shadow:0 8px 36px rgba(232,98,26,.45);background:var(--accent2)}
 .era-cta-arrow{font-size:1.2rem;margin-left:8px;flex-shrink:0;transition:transform .2s}
@@ -161,7 +161,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 }
 #value-meter.vm-visible{display:block}
 .vm-inner{max-width:660px;margin:0 auto}
-.vm-title{font-size:.55rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.9;font-weight:700}
+.vm-title{font-size:.7rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.9;font-weight:700}
 .vm-grid{display:flex;gap:0;align-items:stretch}
 .vm-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0 4px;border-right:1px solid rgba(255,255,255,.07)}
 .vm-item:last-child{border-right:none}
@@ -181,84 +181,24 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .vm-delta.down{color:var(--accent)}
 .vm-delta.zero{color:transparent}
 /* VALUE METER分の余白はq-scroll-bodyで管理 */
-/* ━━━ FATE EVENT ━━━ */
-/* ── STEP1：予告画面 ── */
-.fate-overlay{position:fixed;inset:0;background:rgba(0,0,0,.96);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .3s ease}
-.fate-announce{text-align:center;animation:fadeIn .4s ease}
-.fate-announce-label{font-size:.58rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;font-family:var(--ff-head)}
-.fate-announce-title{font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:2px;line-height:1.3;margin-bottom:10px}
-.fate-announce-sub{font-size:.78rem;color:var(--w40);letter-spacing:1px}
-@keyframes fatePulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.04)}}
-.fate-announce-icon{font-size:3.2rem;margin-bottom:18px;animation:fatePulse 1.2s ease infinite}
-
-/* ── STEP2：カード選択画面 ── */
-.fate-card-screen{text-align:center}
-.fate-card-label{font-size:.55rem;letter-spacing:5px;color:var(--w40);margin-bottom:6px;font-family:var(--ff-head)}
-.fate-card-title{font-size:.9rem;color:#fff;font-weight:700;margin-bottom:6px;line-height:1.5}
-.fate-card-phase{font-size:.62rem;color:var(--accent);letter-spacing:2px;margin-bottom:28px}
-.fate-cards-row{display:flex;gap:12px;justify-content:center;margin-bottom:10px}
-.fate-card{
-  width:96px;flex-shrink:0;
-  background:linear-gradient(160deg,#1a1a2e,#0d0d1a);
-  border:1.5px solid rgba(255,255,255,.15);
-  border-radius:12px;padding:18px 10px 14px;
-  cursor:pointer;user-select:none;
-  transition:transform .2s,border-color .2s,box-shadow .2s;
-  position:relative;overflow:hidden;
-}
-.fate-card::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,.06) 0%,transparent 60%);
-  border-radius:12px;
-}
-.fate-card:hover{transform:translateY(-6px) scale(1.04);border-color:rgba(255,255,255,.5);box-shadow:0 12px 32px rgba(0,0,0,.6)}
-.fate-card:active{transform:translateY(-2px) scale(1.01)}
-.fate-card-back-icon{font-size:2rem;margin-bottom:10px;display:block}
-.fate-card-back-text{font-size:.58rem;letter-spacing:2px;color:var(--w40);font-family:var(--ff-head)}
-.fate-hint{font-size:.62rem;color:var(--w40);letter-spacing:1px;animation:pulse 1.8s infinite}
-
-/* ── STEP3：カード結果画面 ── */
-.fate-result-screen{text-align:center;animation:fadeIn .35s ease}
-.fate-result-card{
-  border-radius:14px;padding:24px 20px 20px;margin-bottom:20px;
-  border:1.5px solid transparent;
-}
-.fate-result-card.good{background:linear-gradient(160deg,#0a1a0f,#061209);border-color:rgba(52,211,153,.3)}
-.fate-result-card.bad{background:linear-gradient(160deg,#1a0a06,#120604);border-color:rgba(232,98,26,.3)}
-.fate-result-type{font-size:.55rem;letter-spacing:4px;font-family:var(--ff-head);margin-bottom:10px;font-weight:700}
-.fate-result-type.good{color:#34d399}
-.fate-result-type.bad{color:var(--accent)}
-.fate-result-event-title{font-size:1rem;font-weight:800;color:#fff;margin-bottom:8px;line-height:1.4}
-.fate-result-event-desc{font-size:.78rem;color:var(--w70);line-height:1.75;margin-bottom:16px}
-.fate-result-choices{display:flex;flex-direction:column;gap:8px}
-.fate-choice-btn{
-  width:100%;padding:12px 14px;border:1.5px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.04);border-radius:8px;
-  color:#fff;font-size:.78rem;line-height:1.5;text-align:left;
-  cursor:pointer;font-family:inherit;
-  transition:background .18s,border-color .18s,transform .12s;
-}
-.fate-choice-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.35);transform:translateX(3px)}
-.fate-choice-btn.good-style:hover{border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.08)}
-.fate-choice-btn.bad-style:hover{border-color:rgba(232,98,26,.5);background:rgba(232,98,26,.08)}
-.fate-choice-label{font-size:.56rem;letter-spacing:2px;opacity:.5;display:block;margin-bottom:3px;font-family:var(--ff-head)}
-
-/* ── STEP4：結果フィードバック ── */
-.fate-feedback{text-align:center;animation:fadeIn .3s ease;padding:8px 0}
-.fate-feedback-icon{font-size:2.4rem;margin-bottom:10px}
-.fate-feedback-result{font-size:.62rem;letter-spacing:3px;font-family:var(--ff-head);margin-bottom:8px;font-weight:700}
-.fate-feedback-result.great{color:#34d399}
-.fate-feedback-result.good{color:#60a5fa}
-.fate-feedback-result.partial{color:#fbbf24}
-.fate-feedback-result.bad{color:var(--accent)}
-.fate-feedback-title{font-size:.96rem;font-weight:800;color:#fff;margin-bottom:6px}
-.fate-feedback-desc{font-size:.76rem;color:var(--w70);line-height:1.75;margin-bottom:18px}
-.fate-feedback-delta{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:20px}
-.fate-delta-chip{font-size:.68rem;padding:4px 10px;border-radius:20px;font-weight:700;font-family:var(--ff-head)}
-.fate-delta-chip.plus{background:rgba(52,211,153,.15);color:#34d399;border:1px solid rgba(52,211,153,.3)}
-.fate-delta-chip.minus{background:rgba(232,98,26,.15);color:var(--accent);border:1px solid rgba(232,98,26,.3)}
-.fate-next-btn{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:.9rem;letter-spacing:2px;padding:14px;border-radius:8px;transition:transform .15s,opacity .15s}
-.fate-next-btn:hover{transform:translateY(-1px);opacity:.9}
+.dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .25s ease}
+.dice-card{background:#0d0d0d;border:1px solid var(--border2);border-radius:14px;padding:36px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,0,0,.9)}
+.dice-intro{font-size:.76rem;letter-spacing:4px;color:var(--w40);margin-bottom:24px}
+.dice-face{width:84px;height:84px;margin:0 auto 20px;background:#161616;border:2px solid var(--border2);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:2.6rem;cursor:pointer;user-select:none;transition:transform .1s;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.dice-face:hover{border-color:var(--accent)}
+.dice-face.rolling{animation:diceRoll .5s ease}
+@keyframes diceRoll{0%{transform:rotate(0)scale(1)}20%{transform:rotate(16deg)scale(1.1)}40%{transform:rotate(-12deg)scale(.93)}60%{transform:rotate(8deg)scale(1.07)}80%{transform:rotate(-5deg)scale(.97)}100%{transform:rotate(0)scale(1)}}
+.dice-label{font-size:.92rem;color:var(--w70);margin-bottom:24px;line-height:1.7;min-height:44px}
+.dice-result-badge{display:inline-block;font-family:var(--ff-head);font-size:.9rem;letter-spacing:2px;padding:6px 18px;border-radius:20px;margin-bottom:20px;opacity:0;transition:opacity .3s}
+.dice-result-badge.show{opacity:1}
+.dice-result-badge.event-bad{background:rgba(232,98,26,.18);color:var(--accent2);border:1px solid rgba(232,98,26,.35)}
+.dice-result-badge.event-none{background:var(--card);color:var(--w70);border:1px solid var(--border)}
+.dice-result-badge.event-good{background:rgba(56,189,248,.12);color:var(--cyan);border:1px solid rgba(56,189,248,.3)}
+.dice-cta{width:100%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;padding:14px;border-radius:6px;opacity:0;transition:opacity .3s,transform .15s;pointer-events:none}
+.dice-cta.show{opacity:1;pointer-events:auto}
+.dice-cta:hover{transform:translateY(-1px)}
+.dice-event-text{font-size:.96rem;color:var(--w90);line-height:1.8;margin-bottom:16px;min-height:40px;opacity:0;transition:opacity .4s ease .2s;padding:0 4px;font-style:italic}
+.dice-tap-hint{font-size:.8rem;color:var(--w40);letter-spacing:2px;margin-top:12px;animation:pulse 1.5s infinite}
 .q-header{margin-bottom:0;padding-bottom:0;border-bottom:none}
 /* q-context-bar：上部固定 */
 .q-context-bar{
@@ -268,37 +208,37 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   margin-bottom:12px;
 }
 .q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:var(--white);background:var(--card2);padding:4px 12px;border-radius:4px;border:1px solid var(--border)}
-.q-era-badge{font-size:.72rem;color:var(--accent2);background:rgba(232,98,26,.1);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.25);letter-spacing:.5px}
-.q-year-badge{font-size:.72rem;color:var(--cyan);background:rgba(56,189,248,.07);padding:4px 10px;border-radius:4px;border:1px solid rgba(56,189,248,.18)}
+.q-era-badge{font-size:.84rem;color:var(--accent2);background:rgba(232,98,26,.1);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.25);letter-spacing:.5px}
+.q-year-badge{font-size:.84rem;color:var(--cyan);background:rgba(56,189,248,.07);padding:4px 10px;border-radius:4px;border:1px solid rgba(56,189,248,.18)}
 /* ③ Q番号ラベルを大きく太字に */
 .q-num{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px;font-weight:700;opacity:1;padding-top:4px}
 .q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--white);line-height:1.75}
-.choices4{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
-.choice4-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--white);font-family:var(--ff-body);text-align:left;padding:16px 18px;border-radius:8px;cursor:pointer;transition:all .18s;display:flex;gap:14px;align-items:flex-start;width:100%}
+.choices4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.choice4-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);color:var(--white);font-family:var(--ff-body);text-align:center;padding:20px 14px 18px;border-radius:16px;cursor:pointer;transition:all .2s cubic-bezier(.2,0,.1,1);display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;-webkit-tap-highlight-color:transparent;min-height:120px;justify-content:center}
 .choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.08);transform:translateX(3px);box-shadow:0 2px 12px rgba(232,98,26,.12)}
 .choice4-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.13);box-shadow:0 0 0 1px var(--accent)}
-.choice4-lbl{font-family:var(--ff-head);font-size:1.35rem;color:var(--accent);min-width:22px;line-height:1;flex-shrink:0;opacity:.9}
+.choice4-lbl{font-family:var(--ff-head);font-size:1.6rem;color:var(--accent);line-height:1;opacity:.9;margin-bottom:2px}
 .choice4-body{flex:1}
-.choice4-text{font-size:.88rem;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.55}
+.choice4-text{font-size:.98rem;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.4;text-align:center}
 .choice4-ex{font-size:.71rem;color:var(--w40);line-height:1.4}
-.mirror-msg{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:6px;padding:10px 14px;font-size:.8rem;color:var(--cyan2);margin-top:10px;animation:slideUp .3s ease;line-height:1.7}
+.mirror-msg{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.18);border-radius:6px;padding:10px 14px;font-size:.92rem;color:var(--cyan2);margin-top:10px;animation:slideUp .3s ease;line-height:1.7}
 .event-overlay{position:fixed;inset:0;background:rgba(0,0,0,.93);display:flex;align-items:center;justify-content:center;z-index:200;padding:20px;animation:fadeIn .25s ease}
 .event-card{background:#0d0d0d;border:1px solid rgba(232,98,26,.4);border-radius:10px;padding:28px;max-width:500px;width:100%;box-shadow:0 0 60px rgba(232,98,26,.12)}
-.event-cat{font-size:.6rem;letter-spacing:4px;color:var(--accent2);margin-bottom:10px}
+.event-cat{font-size:.74rem;letter-spacing:4px;color:var(--accent2);margin-bottom:10px}
 .event-title{font-family:var(--ff-head);font-size:1.45rem;color:var(--white);margin-bottom:10px}
-.event-desc{font-size:.84rem;color:var(--w70);line-height:1.85;margin-bottom:20px}
+.event-desc{font-size:.96rem;color:var(--w70);line-height:1.85;margin-bottom:20px}
 .event-choices{display:flex;flex-direction:column;gap:8px}
-.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:6px;cursor:pointer;font-size:.84rem;line-height:1.55;transition:all .18s;width:100%}
+.event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:6px;cursor:pointer;font-size:.96rem;line-height:1.55;transition:all .18s;width:100%}
 .event-choice-btn:hover{border-color:var(--cyan);background:rgba(56,189,248,.07);color:var(--white)}
-.narrative-overlay{position:fixed;inset:0;background:rgba(0,0,0,.97);display:flex;align-items:center;justify-content:center;z-index:250;padding:24px;animation:fadeIn .3s ease}
+.narrative-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:250;padding:24px;animation:fadeIn .4s ease;transition:opacity .35s ease,transform .35s ease;cursor:pointer}
 .narrative-card{max-width:540px;width:100%;padding:0 4px;position:relative}
-.narrative-phase-label{font-size:.58rem;letter-spacing:5px;color:var(--accent);margin-bottom:18px;opacity:.8}
+.narrative-phase-label{font-size:.72rem;letter-spacing:5px;color:var(--accent);margin-bottom:18px;opacity:.8}
 .narrative-year{font-family:var(--ff-head);font-size:clamp(4rem,12vw,7rem);line-height:1;color:var(--white);opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
 .narrative-text{font-size:clamp(1rem,3vw,1.2rem);color:var(--w90);line-height:2;font-weight:400;margin-bottom:32px;position:relative}
 .narrative-text em{color:var(--accent2);font-style:normal;font-weight:700}
 .narrative-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
-.narrative-tag{font-size:.68rem;padding:4px 14px;border-radius:20px;border:1px solid var(--border2);color:var(--w70)}
-.narrative-next{background:transparent;border:1px solid var(--border2);color:var(--w90);font-family:var(--ff-body);font-size:.84rem;padding:12px 28px;border-radius:6px;cursor:pointer;transition:all .2s}
+.narrative-tag{font-size:.8rem;padding:4px 14px;border-radius:20px;border:1px solid var(--border2);color:var(--w70)}
+.narrative-next{background:transparent;border:1px solid var(--border2);color:var(--w90);font-family:var(--ff-body);font-size:.96rem;padding:12px 28px;border-radius:6px;cursor:pointer;transition:all .2s}
 .narrative-next:hover{border-color:var(--accent);background:rgba(232,98,26,.08);color:var(--white)}
 .theme-ivory{--bg-page:#f8f4ed;--fg-page:#1a1a1a}
 .theme-era-0{background:linear-gradient(150deg,#e8f4f8 0%,#b8ddf0 100%)}
@@ -308,12 +248,12 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .theme-era-4{background:linear-gradient(150deg,#f5f0e8 0%,#e0d0b0 100%)}
 .theme-era-5{background:linear-gradient(150deg,#f8f4ee 0%,#e8dcc8 100%)}
 .story-block{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:8px;padding:22px;margin-bottom:24px}
-.story-block h3{font-size:.6rem;letter-spacing:3px;color:var(--gold);margin-bottom:16px}
+.story-block h3{font-size:.74rem;letter-spacing:3px;color:var(--gold);margin-bottom:16px}
 .story-entry{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
 .story-entry:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
-.story-entry-phase{font-size:.6rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px;opacity:.85}
-.story-entry-text{font-size:.86rem;color:var(--w90);line-height:1.95}
-.story-50years p{font-size:.88rem;line-height:2.1;color:var(--w90)}
+.story-entry-phase{font-size:.74rem;letter-spacing:2px;color:var(--accent);margin-bottom:6px;opacity:.85}
+.story-entry-text{font-size:.98rem;color:var(--w90);line-height:1.95}
+.story-50years p{font-size:1rem;line-height:2.1;color:var(--w90)}
 .result-inner .story-50years p{color:#2c2c3e;line-height:2.1}
 /* 旧result-cardをrpt-cardにマップ */
 .result-inner .result-card{display:none} /* 非表示（rpt-cardで代替） */
@@ -346,11 +286,11 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 }
 .result-inner .ending-year-bg{color:#fff;opacity:.04}
 .result-inner .ending-title{color:#fff;font-size:clamp(1.2rem,4vw,1.9rem)}
-.result-inner .ending-copy{color:rgba(255,255,255,.75);font-size:.84rem}
+.result-inner .ending-copy{color:rgba(255,255,255,.75);font-size:.96rem}
 
 /* パートラベル */
 .result-inner .rpt-part-label{
-  color:#9CA3AF;font-size:.6rem;letter-spacing:4px;
+  color:#9CA3AF;font-size:.74rem;letter-spacing:4px;
   margin:28px 24px 12px;
   border-color:transparent;
 }
@@ -366,7 +306,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 
 /* カードヘッダー */
 .result-inner .rpt-card-header{
-  font-size:.58rem;letter-spacing:4px;font-weight:700;
+  font-size:.72rem;letter-spacing:4px;font-weight:700;
   margin-bottom:16px;padding-bottom:0;border-bottom:none;
   display:flex;align-items:center;gap:8px;
 }
@@ -397,7 +337,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   color:#1A1A2E;font-size:1.3rem;letter-spacing:4px;margin-top:6px;
 }
 .result-inner .score-headline{
-  color:#6B7280;font-size:.82rem;line-height:1.8;margin-top:10px;
+  color:#6B7280;font-size:.94rem;line-height:1.8;margin-top:10px;
 }
 
 /* スコア文脈翻訳カード */
@@ -417,7 +357,7 @@ div[style*="CAREER TRANSLATION"] {
 /* ━━━ 業種バー ━━━ */
 .result-inner .industry-bar-row{margin-bottom:12px;gap:12px}
 .result-inner .industry-bar-name{
-  color:#374151;font-size:.78rem;width:150px;
+  color:#374151;font-size:.9rem;width:150px;
 }
 .result-inner .industry-bar-name.top1{
   color:#E8621A;font-weight:700;
@@ -426,7 +366,7 @@ div[style*="CAREER TRANSLATION"] {
   height:7px;background:#F3F4F6;border-radius:4px;
 }
 .result-inner .industry-bar-pct{
-  color:#6B7280;font-size:.72rem;font-weight:600;
+  color:#6B7280;font-size:.84rem;font-weight:600;
 }
 
 /* ━━━ LIVE COMPARISON ━━━ */
@@ -439,15 +379,15 @@ div[style*="CAREER TRANSLATION"] {
 .result-inner .compare-num{
   font-size:1.8rem;color:#1A1A2E;display:block;margin-bottom:4px;
 }
-.result-inner .compare-lbl{color:#9CA3AF;font-size:.68rem}
-.result-inner .tier-bar-lbl{color:#6B7280;font-size:.7rem}
+.result-inner .compare-lbl{color:#9CA3AF;font-size:.8rem}
+.result-inner .tier-bar-lbl{color:#6B7280;font-size:.82rem}
 .result-inner .tier-bar-track{background:#F3F4F6;height:6px;border-radius:3px}
-.result-inner .tier-bar-pct{color:#6B7280;font-size:.68rem}
+.result-inner .tier-bar-pct{color:#6B7280;font-size:.8rem}
 
 /* ━━━ MY STORY ━━━ */
 .result-inner .story-50years{padding-top:4px}
 .result-inner .story-50years p{
-  font-size:.88rem;color:#374151;line-height:2.0;
+  font-size:1rem;color:#374151;line-height:2.0;
   margin-bottom:16px;
 }
 .result-inner .story-50years p strong{
@@ -456,7 +396,7 @@ div[style*="CAREER TRANSLATION"] {
 
 /* ━━━ アクション ━━━ */
 .result-inner .action-item{
-  font-size:.84rem;line-height:1.8;color:#374151;
+  font-size:.96rem;line-height:1.8;color:#374151;
   padding:5px 0 5px 18px;position:relative;
   display:block;border:none;background:none;width:100%;text-align:left;cursor:default;
 }
@@ -471,8 +411,8 @@ div[style*="CAREER TRANSLATION"] {
   background:#fff;
   box-shadow:0 1px 4px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);
 }
-.result-inner .job-sheet-label{color:#9CA3AF;font-size:.68rem;letter-spacing:.5px}
-.result-inner .job-sheet-value{color:#1A1A2E;font-size:.84rem}
+.result-inner .job-sheet-label{color:#9CA3AF;font-size:.8rem;letter-spacing:.5px}
+.result-inner .job-sheet-value{color:#1A1A2E;font-size:.96rem}
 .result-inner .job-sheet-pr{
   background:linear-gradient(135deg,rgba(232,98,26,.04),rgba(245,158,11,.04));
   border-left:3px solid #E8621A;border-radius:0 8px 8px 0;
@@ -495,7 +435,7 @@ div[style*="CAREER TRANSLATION"] {
 }
 .fcta-btn{
   padding:13px 8px;border-radius:10px;
-  font-size:.82rem;letter-spacing:1.5px;
+  font-size:.94rem;letter-spacing:1.5px;
 }
 .fcta-x{background:#1A1A2E;color:#fff}
 .fcta-pdf{
@@ -517,7 +457,7 @@ div[style*="CAREER TRANSLATION"] {
 }
 .popup-action-btn{
   background:linear-gradient(135deg,#E8621A,#F59E0B);
-  border-radius:10px;font-weight:700;font-size:.88rem;
+  border-radius:10px;font-weight:700;font-size:1rem;
   box-shadow:0 3px 12px rgba(232,98,26,.3);
   padding:16px;
 }
@@ -550,123 +490,49 @@ div[style*="CAREER TRANSLATION"] {
 #result-loading{display:none;position:fixed;inset:0;background:#0a0a0a;z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:28px}
 #result-loading.show{display:flex}
 .rl-msg{font-family:var(--ff-head);font-size:clamp(1.1rem,4vw,1.7rem);letter-spacing:4px;color:var(--white);animation:pulse 1.8s ease-in-out infinite;text-align:center;padding:0 20px;line-height:1.4}
-.rl-sub{font-size:.75rem;color:var(--w40);letter-spacing:3px}
+.rl-sub{font-size:.88rem;color:var(--w40);letter-spacing:3px}
 .rl-bar-wrap{width:260px;height:2px;background:var(--border);border-radius:2px}
 .rl-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;width:0%;transition:width .4s ease}
 .ending-block{text-align:center;margin-bottom:48px;padding:40px 20px;position:relative;overflow:hidden;border-bottom:1px solid var(--border)}
 .ending-year-bg{font-family:var(--ff-head);font-size:clamp(4rem,15vw,10rem);line-height:1;color:var(--accent);opacity:.05;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
 .ending-title{font-family:var(--ff-head);font-size:clamp(1.4rem,5vw,2.4rem);letter-spacing:3px;margin-bottom:16px;position:relative;color:var(--white)}
-.ending-copy{font-size:.88rem;color:var(--w90);line-height:1.95;max-width:480px;margin:0 auto;position:relative}
+.ending-copy{font-size:1rem;color:var(--w90);line-height:1.95;max-width:480px;margin:0 auto;position:relative}
 .score-block{text-align:center;margin-bottom:40px}
 .score-num{font-family:var(--ff-head);font-size:clamp(4.5rem,14vw,7.5rem);line-height:1;background:linear-gradient(135deg,var(--accent) 20%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .score-tier{font-family:var(--ff-head);font-size:1.5rem;letter-spacing:5px;margin-top:8px;color:var(--white)}
 .score-headline{font-size:.9rem;color:var(--w90);line-height:1.9;margin-top:12px;max-width:440px;margin-inline:auto}
-
-/* ━━━ スコア数字ラッパー（ツールチップ用） ━━━ */
-.score-num-wrap{
-  position:relative;display:inline-block;cursor:default;
-  /* ホバーエリアを少し広めに確保 */
-  padding:8px 16px 0;margin:-8px -16px 0;
-}
-.score-num-wrap:hover .score-tooltip,
-.score-num-wrap:focus-within .score-tooltip{
-  opacity:1;transform:translateY(0);pointer-events:auto;
-}
-
-/* ツールチップ本体 */
-.score-tooltip{
-  position:absolute;left:50%;top:calc(100% + 10px);transform:translateX(-50%) translateY(-6px);
-  width:260px;
-  background:#1A1A2E;
-  border:1px solid rgba(232,98,26,.35);
-  border-radius:12px;padding:14px 16px;
-  text-align:left;
-  opacity:0;pointer-events:none;
-  transition:opacity .22s ease,transform .22s ease;
-  z-index:50;
-  box-shadow:0 8px 32px rgba(0,0,0,.35);
-}
-/* 上向き三角 */
-.score-tooltip::before{
-  content:'';position:absolute;bottom:100%;left:50%;transform:translateX(-50%);
-  border:6px solid transparent;border-bottom-color:#1A1A2E;
-}
-.score-tooltip-title{
-  font-size:.62rem;letter-spacing:3px;color:var(--accent);
-  font-weight:700;margin-bottom:8px;
-}
-.score-tooltip-body{
-  font-size:.78rem;color:rgba(255,255,255,.85);line-height:1.75;
-}
-
-/* ━━━ スコアコンテキスト（旧 ending-copy の移動先） ━━━ */
-.score-context{
-  margin-top:18px;
-  padding:14px 18px;
-  background:rgba(232,98,26,.06);
-  border:1px solid rgba(232,98,26,.18);
-  border-radius:10px;
-  font-size:.84rem;color:#2c2c3e;line-height:1.85;
-  max-width:420px;margin-inline:auto;
-  text-align:left;
-}
-.score-context strong{color:#E8621A}
-
-/* ━━━ スコア内訳バー ━━━ */
-.score-breakdown{
-  margin-top:16px;max-width:420px;margin-inline:auto;
-  text-align:left;
-}
-.score-bd-row{
-  display:flex;align-items:center;gap:10px;margin-bottom:7px;
-}
-.score-bd-label{
-  font-size:.68rem;color:#6B7280;width:108px;flex-shrink:0;line-height:1.3;
-}
-.score-bd-track{
-  flex:1;height:5px;background:#E5E7EB;border-radius:3px;overflow:hidden;
-}
-.score-bd-fill{
-  height:100%;border-radius:3px;
-  background:linear-gradient(90deg,var(--accent),var(--gold));
-  transition:width 1.0s cubic-bezier(.4,0,.2,1);
-  width:0%;
-}
-.score-bd-val{
-  font-size:.7rem;font-weight:700;color:#1A1A2E;width:30px;text-align:right;
-}
 .result-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:24px}
-.result-card h3{font-size:.6rem;letter-spacing:3px;margin-bottom:14px}
+.result-card h3{font-size:.74rem;letter-spacing:3px;margin-bottom:14px}
 .industry-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:9px}
-.industry-bar-name{font-size:.78rem;width:158px;flex-shrink:0;color:var(--w90)}
+.industry-bar-name{font-size:.9rem;width:158px;flex-shrink:0;color:var(--w90)}
 .industry-bar-name.top1{color:var(--gold);font-weight:700}
 .industry-bar-track{flex:1;height:5px;background:rgba(255,255,255,.09);border-radius:3px}
 .industry-bar-fill{height:100%;border-radius:3px;transition:width 1.1s cubic-bezier(.4,0,.2,1)}
 .industry-bar-pct{font-size:.73rem;width:36px;text-align:right;color:var(--w70)}
 .radar-wrap{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.08);border-radius:10px;padding:20px;margin-bottom:18px;height:260px;position:relative;box-shadow:0 1px 6px rgba(0,0,0,.05)}
 .action-block{background:rgba(232,98,26,.06);border:1px solid rgba(232,98,26,.22);border-radius:10px;padding:20px 22px;margin-bottom:32px}
-.action-block h3{font-size:.6rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
-.action-item{font-size:.84rem;line-height:1.7;color:#374151;padding:6px 0 6px 16px;position:relative;display:block;border:none;background:none;width:100%;text-align:left}
+.action-block h3{font-size:.74rem;letter-spacing:3px;color:var(--gold);margin-bottom:12px}
+.action-item{font-size:.96rem;line-height:1.7;color:#374151;padding:6px 0 6px 16px;position:relative;display:block;border:none;background:none;width:100%;text-align:left}
 .action-item::before{content:"→";position:absolute;left:0;color:var(--accent);font-weight:700}
 .compare-stats{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .compare-item{flex:1;min-width:90px;text-align:center}
 .compare-num{font-family:var(--ff-head);font-size:1.7rem;color:var(--white)}
 .compare-lbl{font-size:.67rem;color:var(--w70)}
-.tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.7rem}
+.tier-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:.82rem}
 .tier-bar-lbl{width:46px;text-align:right;color:var(--w70)}
 .tier-bar-track{flex:1;height:4px;background:rgba(255,255,255,.09);border-radius:3px}
 .tier-bar-fill{height:100%;border-radius:3px;transition:width .9s ease}
 .tier-bar-pct{width:32px;text-align:right;color:var(--w70);font-size:.67rem}
 .share-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:40px}
-.btn-share{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border2);color:var(--w90);font-family:var(--ff-body);padding:12px 16px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:all .18s}
+.btn-share{flex:1;min-width:110px;background:var(--card);border:1px solid var(--border2);color:var(--w90);font-family:var(--ff-body);padding:12px 16px;border-radius:6px;cursor:pointer;font-size:.94rem;transition:all .18s}
 .btn-share:hover{border-color:var(--cyan);background:rgba(56,189,248,.06);color:var(--white)}
 .btn-retry{display:block;width:100%;background:transparent;border:1px solid rgba(232,98,26,.5);color:var(--accent);font-family:var(--ff-head);font-size:.92rem;letter-spacing:3px;padding:14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:24px}
 .btn-retry:hover{background:rgba(232,98,26,.1);border-color:var(--accent)}
-.brand-footer{text-align:center;font-size:.68rem;color:var(--w40);letter-spacing:3px;padding-bottom:40px}
+.brand-footer{text-align:center;font-size:.8rem;color:var(--w40);letter-spacing:3px;padding-bottom:40px}
 
 /* ━━━ レポート統一カード ━━━ */
 .rpt-part-label{
-  font-size:.58rem;letter-spacing:5px;color:var(--w40);
+  font-size:.72rem;letter-spacing:5px;color:var(--w40);
   text-align:center;margin:32px 0 16px;
   display:flex;align-items:center;gap:12px;
 }
@@ -684,7 +550,7 @@ div[style*="CAREER TRANSLATION"] {
   box-shadow:0 1px 6px rgba(0,0,0,.05);
 }
 .rpt-card-header{
-  font-size:.6rem;letter-spacing:4px;font-weight:700;
+  font-size:.74rem;letter-spacing:4px;font-weight:700;
   margin-bottom:14px;padding-bottom:10px;
   border-bottom:1px solid rgba(0,0,0,.07);
 }
@@ -704,7 +570,7 @@ div[style*="CAREER TRANSLATION"] {
 }
 .fcta-btn{
   flex:1;padding:12px 8px;border-radius:8px;border:none;
-  cursor:pointer;font-family:var(--ff-head);font-size:.88rem;
+  cursor:pointer;font-family:var(--ff-head);font-size:1rem;
   letter-spacing:2px;transition:all .2s;
   font-weight:700;
 }
@@ -735,17 +601,17 @@ div[style*="CAREER TRANSLATION"] {
   position:absolute;top:14px;right:16px;
   background:rgba(0,0,0,.06);border:none;
   width:28px;height:28px;border-radius:50%;
-  font-size:.88rem;cursor:pointer;color:#555;
+  font-size:1rem;cursor:pointer;color:#555;
   display:flex;align-items:center;justify-content:center;
 }
 .popup-close:hover{background:rgba(0,0,0,.12)}
 .popup-title{
-  font-size:.82rem;font-weight:700;color:#1c1c2e;
+  font-size:.94rem;font-weight:700;color:#1c1c2e;
   letter-spacing:2px;margin-bottom:16px;padding-right:32px;
 }
 .popup-action-btn{
   width:100%;background:var(--accent);color:#fff;border:none;
-  cursor:pointer;font-family:var(--ff-body);font-size:.88rem;
+  cursor:pointer;font-family:var(--ff-body);font-size:1rem;
   font-weight:700;padding:14px;border-radius:8px;
   margin-bottom:8px;transition:all .2s;
 }
@@ -754,65 +620,65 @@ div[style*="CAREER TRANSLATION"] {
 .popup-action-btn.secondary:hover{background:rgba(0,0,0,.05)}
 .popup-back{
   display:block;width:100%;background:transparent;border:none;
-  color:#aaa;font-family:var(--ff-body);font-size:.78rem;
+  color:#aaa;font-family:var(--ff-body);font-size:.9rem;
   cursor:pointer;padding:10px;text-align:center;margin-top:4px;
 }
 .popup-back:hover{color:#555}
 /* 就活ワンシート */
 .job-sheet{background:rgba(255,255,255,.95);border:2px solid rgba(232,98,26,.3);border-radius:12px;padding:24px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,.08)}
-.job-sheet-title{font-size:.62rem;letter-spacing:4px;color:var(--accent);margin-bottom:16px;font-weight:700}
+.job-sheet-title{font-size:.76rem;letter-spacing:4px;color:var(--accent);margin-bottom:16px;font-weight:700}
 .job-sheet-row{display:flex;gap:8px;margin-bottom:12px;align-items:flex-start}
-.job-sheet-label{font-size:.68rem;color:#888;min-width:90px;flex-shrink:0;padding-top:3px;font-weight:700;letter-spacing:.5px}
-.job-sheet-value{font-size:.84rem;color:#1c1c2e;line-height:1.7;flex:1}
+.job-sheet-label{font-size:.8rem;color:#888;min-width:90px;flex-shrink:0;padding-top:3px;font-weight:700;letter-spacing:.5px}
+.job-sheet-value{font-size:.96rem;color:#1c1c2e;line-height:1.7;flex:1}
 .job-sheet-value strong{color:var(--accent)}
-.job-sheet-pr{background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.84rem;color:#1c1c2e;line-height:1.8;margin-top:4px}
-.job-sheet-copy-btn{display:block;width:100%;background:transparent;border:1px solid rgba(0,0,0,.15);color:#555;font-family:var(--ff-body);font-size:.78rem;padding:10px;border-radius:6px;cursor:pointer;margin-top:14px;transition:all .2s}
+.job-sheet-pr{background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.96rem;color:#1c1c2e;line-height:1.8;margin-top:4px}
+.job-sheet-copy-btn{display:block;width:100%;background:transparent;border:1px solid rgba(0,0,0,.15);color:#555;font-family:var(--ff-body);font-size:.9rem;padding:10px;border-radius:6px;cursor:pointer;margin-top:14px;transition:all .2s}
 .job-sheet-copy-btn:hover{border-color:var(--accent);color:var(--accent)}
 .term{border-bottom:1px dotted var(--accent);color:var(--accent2);cursor:help;position:relative;display:inline}
 .term::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#111;color:var(--w90);font-size:.73rem;line-height:1.6;font-weight:400;padding:8px 12px;border-radius:6px;border:1px solid var(--border2);width:220px;text-align:left;pointer-events:none;opacity:0;transition:opacity .2s;z-index:999;white-space:normal;font-family:var(--ff-body);letter-spacing:0}
 .term:hover::after,.term.tip-visible::after{opacity:1}
 /* ━━━ MBTI選択画面 ━━━ */
-.mbti-section-label{font-size:.58rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.8}
+.mbti-section-label{font-size:.72rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.8}
 .mbti-groups{display:flex;flex-direction:column;gap:16px;width:100%;margin-bottom:20px}
 .mbti-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
-.mbti-group-title{font-size:.65rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px;font-weight:700}
+.mbti-group-title{font-size:.78rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px;font-weight:700}
 .mbti-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.mbti-type-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:10px 6px;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
+.mbti-type-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:10px 6px;border-radius:6px;cursor:pointer;font-size:.94rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
 .mbti-type-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.1);color:var(--white)}
 .mbti-type-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.18);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
-.mbti-type-sub{font-size:.6rem;color:var(--w40);display:block;margin-top:2px;font-weight:700}
-.mbti-divider{display:flex;align-items:center;gap:12px;color:var(--w40);font-size:.75rem;margin:4px 0}
+.mbti-type-sub{font-size:.74rem;color:var(--w40);display:block;margin-top:2px;font-weight:700}
+.mbti-divider{display:flex;align-items:center;gap:12px;color:var(--w40);font-size:.88rem;margin:4px 0}
 .mbti-divider::before,.mbti-divider::after{content:'';flex:1;height:1px;background:var(--border)}
 
 /* ━━━ メールアドレス入力（レポート画面） ━━━ */
 .email-block{background:rgba(232,98,26,.07);border:1px solid rgba(232,98,26,.22);border-radius:10px;padding:22px;margin-bottom:24px}
-.email-block h3{font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
-.email-block p{font-size:.82rem;color:#2c2c3e;line-height:1.7;margin-bottom:14px}
+.email-block h3{font-size:.74rem;letter-spacing:3px;color:var(--accent);margin-bottom:6px}
+.email-block p{font-size:.94rem;color:#2c2c3e;line-height:1.7;margin-bottom:14px}
 .email-input-row{display:flex;gap:8px;flex-wrap:wrap}
 .email-input{flex:1;min-width:200px;background:#fff;border:1px solid rgba(0,0,0,.2);color:#1c1c2e;font-family:var(--ff-body);font-size:.9rem;padding:12px 16px;border-radius:6px;outline:none;transition:border-color .2s}
 .email-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(232,98,26,.15)}
 .email-input::placeholder{color:var(--w40)}
-.btn-email-send{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:.88rem;letter-spacing:2px;padding:12px 20px;border-radius:6px;transition:all .2s;white-space:nowrap}
+.btn-email-send{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--ff-head);font-size:1rem;letter-spacing:2px;padding:12px 20px;border-radius:6px;transition:all .2s;white-space:nowrap}
 .btn-email-send:hover{background:var(--accent2);transform:translateY(-1px)}
 .btn-email-send:disabled{opacity:.4;cursor:default;transform:none}
-.email-sent-msg{font-size:.8rem;color:var(--cyan);margin-top:10px;display:none;animation:slideUp .3s ease}
+.email-sent-msg{font-size:.92rem;color:var(--cyan);margin-top:10px;display:none;animation:slideUp .3s ease}
 
 /* ━━━ X サマリ ━━━ */
 .x-summary-block{display:none!important} /* popupに移行 */
-.x-summary-text{font-size:.82rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word}
+.x-summary-text{font-size:.94rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word}
 
 /* ━━━ 業種説明（AIリッチ版） ━━━ */
 .industry-detail{margin-top:16px;display:flex;flex-direction:column;gap:12px}
 .industry-detail-card{background:rgba(255,255,255,.88);border:1px solid rgba(0,0,0,.09);border-radius:8px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
-.industry-detail-name{font-size:.88rem;font-weight:700;color:#1c1c2e;margin-bottom:4px}
+.industry-detail-name{font-size:1rem;font-weight:700;color:#1c1c2e;margin-bottom:4px}
 .industry-detail-score{font-family:var(--ff-head);font-size:1.4rem;color:var(--accent);margin-bottom:6px}
-.industry-detail-text{font-size:.8rem;color:#555;line-height:1.85}
+.industry-detail-text{font-size:.92rem;color:#555;line-height:1.85}
 
 @media(max-width:480px){
   .phase-body{padding:14px 14px 36px}
   .era-stats-grid{grid-template-columns:1fr}
   .radar-wrap{height:220px}
-  .industry-bar-name{width:118px;font-size:.72rem}
+  .industry-bar-name{width:118px;font-size:.84rem}
   .choice2-wrap{flex-direction:column}
   .top-phase-info{gap:6px}
   .top-era-name{display:none}
@@ -839,35 +705,35 @@ div[style*="CAREER TRANSLATION"] {
 
     <!-- ゲーム説明 -->
     <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px 20px;margin-bottom:24px;text-align:left">
-      <p style="font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">WHAT IS THIS?</p>
-      <p style="font-size:.84rem;color:var(--w90);line-height:1.9;margin-bottom:10px">
+      <p style="font-size:.74rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">WHAT IS THIS?</p>
+      <p style="font-size:.96rem;color:var(--w90);line-height:1.9;margin-bottom:10px">
         <strong style="color:var(--white)">AI時代のキャリア診断ゲームです。</strong><br>
         2025年〜2075年の6つの時代を舞台に、各フェーズで「どう働くか」「何に投資するか」を選択します。
       </p>
       <div style="display:flex;flex-direction:column;gap:6px">
-        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--w70)">
           <span style="color:var(--accent);font-weight:700">①</span> 18問に答えて50年のキャリアを疑似体験（約5〜10分）
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--w70)">
           <span style="color:var(--accent);font-weight:700">②</span> AI時代適合スコアと業種適合度を診断
         </div>
-        <div style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--w70)">
+        <div style="display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--w70)">
           <span style="color:var(--accent);font-weight:700">③</span> あなた専用のキャリアレポートを生成
         </div>
       </div>
     </div>
 
-    <p class="onboard-hint" style="font-size:.82rem;color:rgba(255,255,255,.7);margin-bottom:10px;letter-spacing:.5px">▼ ニックネームを入力してスタート</p>
+    <p class="onboard-hint" style="font-size:.94rem;color:rgba(255,255,255,.7);margin-bottom:10px;letter-spacing:.5px">▼ ニックネームを入力してスタート</p>
     <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
 
     <!-- 個人情報同意 -->
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:14px 0 20px;text-align:left">
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
         <input type="checkbox" id="privacy-check" onchange="updateStartBtn()" style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);flex-shrink:0">
-        <span style="font-size:.75rem;color:var(--w70);line-height:1.7">
+        <span style="font-size:.88rem;color:var(--w70);line-height:1.7">
           <a href="https://agent-network.co.jp/privacy-policy/" target="_blank" rel="noopener"
              style="color:var(--cyan);text-decoration:underline">プライバシーポリシー</a>に同意します。<br>
-          <span style="font-size:.68rem;color:var(--w40)">収集情報：ニックネーム・MBTI・選択内容・スコア。利用目的：サービス改善・統計分析のみ。第三者提供なし。</span>
+          <span style="font-size:.8rem;color:var(--w40)">収集情報：ニックネーム・MBTI・選択内容・スコア。利用目的：サービス改善・統計分析のみ。第三者提供なし。</span>
         </span>
       </label>
     </div>
@@ -890,11 +756,11 @@ div[style*="CAREER TRANSLATION"] {
   <div class="onboard-wrap" style="padding-top:28px;max-width:580px">
     <p class="onboard-eyebrow">PERSONALITY</p>
     <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.9rem);margin-bottom:10px;line-height:1.1">あなたのMBTIタイプは？</h2>
-    <p style="font-size:.78rem;color:var(--w70);line-height:1.7;margin-bottom:20px">登録するとレポートがあなたの個性に最適化されます。<br>わからない場合は「簡易診断でスタート」を選んでください。</p>
+    <p style="font-size:.9rem;color:var(--w70);line-height:1.7;margin-bottom:20px">登録するとレポートがあなたの個性に最適化されます。<br>わからない場合は「簡易診断でスタート」を選んでください。</p>
     <div class="mbti-groups">
       <div class="mbti-group">
         <div class="mbti-group-title" style="color:#7C3AED;border-left:3px solid #7C3AED">
-          <span style="font-size:.6rem;opacity:.7">論理・システム・革新</span>　分析家
+          <span style="font-size:.74rem;opacity:.7">論理・システム・革新</span>　分析家
         </div>
         <div class="mbti-types">
           <button class="mbti-type-btn" onclick="selectMBTI('INTJ',this)" style="border-color:#7C3AED33">INTJ<span class="mbti-type-sub">建築家</span></button>
@@ -905,7 +771,7 @@ div[style*="CAREER TRANSLATION"] {
       </div>
       <div class="mbti-group">
         <div class="mbti-group-title" style="color:#059669;border-left:3px solid #059669">
-          <span style="font-size:.6rem;opacity:.7">共感・意味・人間関係</span>　外交官
+          <span style="font-size:.74rem;opacity:.7">共感・意味・人間関係</span>　外交官
         </div>
         <div class="mbti-types">
           <button class="mbti-type-btn" onclick="selectMBTI('INFJ',this)" style="border-color:#05966933">INFJ<span class="mbti-type-sub">提唱者</span></button>
@@ -916,7 +782,7 @@ div[style*="CAREER TRANSLATION"] {
       </div>
       <div class="mbti-group">
         <div class="mbti-group-title" style="color:#1D6FA4;border-left:3px solid #1D6FA4">
-          <span style="font-size:.6rem;opacity:.7">秩序・責任・安定</span>　番人
+          <span style="font-size:.74rem;opacity:.7">秩序・責任・安定</span>　番人
         </div>
         <div class="mbti-types">
           <button class="mbti-type-btn" onclick="selectMBTI('ISTJ',this)" style="border-color:#1D6FA433">ISTJ<span class="mbti-type-sub">ロジスティシャン</span></button>
@@ -927,7 +793,7 @@ div[style*="CAREER TRANSLATION"] {
       </div>
       <div class="mbti-group">
         <div class="mbti-group-title" style="color:#D97706;border-left:3px solid #D97706">
-          <span style="font-size:.6rem;opacity:.7">適応・実践・現在</span>　探検家
+          <span style="font-size:.74rem;opacity:.7">適応・実践・現在</span>　探検家
         </div>
         <div class="mbti-types">
           <button class="mbti-type-btn" onclick="selectMBTI('ISTP',this)" style="border-color:#D9770633">ISTP<span class="mbti-type-sub">巨匠</span></button>
@@ -978,14 +844,14 @@ div[style*="CAREER TRANSLATION"] {
   <div class="onboard-wrap" style="padding-top:28px;max-width:600px">
     <p class="onboard-eyebrow">INDUSTRY</p>
     <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.8rem);margin-bottom:8px">気になる業種を選んでください</h2>
-    <p style="font-size:.78rem;color:var(--w90);margin-bottom:20px">AIがあなたの回答から3業種を推薦しています</p>
+    <p style="font-size:.9rem;color:var(--w90);margin-bottom:20px">AIがあなたの回答から3業種を推薦しています</p>
     <div id="recommend-section">
-      <p style="font-size:.62rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">AI RECOMMEND</p>
+      <p style="font-size:.76rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">AI RECOMMEND</p>
       <div id="recommend-list"></div>
       <button class="btn-secondary" onclick="showAllInd()" style="margin-bottom:20px">全業種から選ぶ</button>
     </div>
     <div id="all-industry-section" style="display:none">
-      <p style="font-size:.62rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">ALL INDUSTRIES</p>
+      <p style="font-size:.76rem;letter-spacing:3px;color:var(--cyan);margin-bottom:12px">ALL INDUSTRIES</p>
       <div class="industry-grid" id="industry-grid"></div>
     </div>
     <button class="btn-primary" id="ind-next-btn" onclick="goIndNext()" disabled>次へ →</button>
@@ -1000,21 +866,21 @@ div[style*="CAREER TRANSLATION"] {
     <p class="departure-tag">DEPARTURE — 2026</p>
     <h2 class="departure-copy">未来へ旅立て。<br><span>2075年まで。</span></h2>
     <div style="background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:18px 20px;margin-bottom:28px;text-align:left;backdrop-filter:blur(4px)">
-      <p style="font-size:.6rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">GAME FLOW</p>
+      <p style="font-size:.74rem;letter-spacing:3px;color:var(--accent);margin-bottom:10px">GAME FLOW</p>
       <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+        <div style="font-size:.94rem;color:var(--w90);line-height:1.6">
           <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">1</span>
           各フェーズで<strong>時代の状況</strong>を読み、3つの問いに答える
         </div>
-        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+        <div style="font-size:.94rem;color:var(--w90);line-height:1.6">
           <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">2</span>
           選択のたびに<strong>VALUE METER</strong>が変動する
         </div>
-        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+        <div style="font-size:.94rem;color:var(--w90);line-height:1.6">
           <span style="color:var(--accent);font-family:var(--ff-head);font-size:1rem;margin-right:8px">3</span>
           フェーズ後に<strong>ランダムイベント</strong>（運）が発生することも
         </div>
-        <div style="font-size:.82rem;color:var(--w90);line-height:1.6">
+        <div style="font-size:.94rem;color:var(--w90);line-height:1.6">
           <span style="color:var(--gold);font-family:var(--ff-head);font-size:1rem;margin-right:8px">→</span>
           6フェーズ完了後、<strong>AI時代適合スコア</strong>と<strong>業種適合レポート</strong>を生成
         </div>
@@ -1046,7 +912,7 @@ div[style*="CAREER TRANSLATION"] {
   <div class="rl-msg">お疲れさまでした！</div>
   <div class="rl-sub">レポートを作成しています。少々お待ちください</div>
   <div style="margin-top:20px;text-align:center">
-    <div style="font-size:.55rem;letter-spacing:4px;color:rgba(232,98,26,.7);margin-bottom:6px;font-weight:700">✦ 2075年 ニュースヘッドライン ✦</div>
+    <div style="font-size:.7rem;letter-spacing:4px;color:rgba(232,98,26,.7);margin-bottom:6px;font-weight:700">✦ 2075年 ニュースヘッドライン ✦</div>
     <div id="rl-headline" style="font-size:.92rem;color:rgba(255,255,255,.75);letter-spacing:.5px;line-height:1.6;padding:0 24px;min-height:2.4em;transition:opacity .5s ease;font-weight:400"></div>
   </div>
   <div class="rl-bar-wrap"><div class="rl-bar" id="rl-bar"></div></div>
@@ -1056,40 +922,21 @@ div[style*="CAREER TRANSLATION"] {
 <div class="screen" id="screen-result">
   <div class="result-inner">
 
-    <!-- ヒーロー：タイトルのみ（解説はスコアブロックへ移動） -->
+    <!-- ヒーロー -->
     <div class="ending-block">
       <div class="ending-year-bg">2075</div>
       <h2 class="ending-title">旅が終わった。<br>2026年に戻ってきた。</h2>
-      <!-- ending-copy は JS で score-context に書き込む -->
+      <p class="ending-copy" id="ending-copy"></p>
     </div>
 
     <!-- ━━━ スコアパート ━━━ -->
     <div class="rpt-part-label">SCORE</div>
 
-    <!-- ①総合スコア：数字→ティア→ツールチップ→解説の順で意味が流れる -->
+    <!-- ①総合スコア -->
     <div class="score-block">
-
-      <!-- スコア数字（ホバーでツールチップ） -->
-      <div class="score-num-wrap" id="score-num-wrap">
-        <div class="score-num" id="res-score">--</div>
-        <!-- ツールチップ -->
-        <div class="score-tooltip" id="score-tooltip">
-          <div class="score-tooltip-title">このスコアは何？</div>
-          <div class="score-tooltip-body" id="score-tooltip-body"></div>
-        </div>
-      </div>
-
-      <!-- ティア名 -->
+      <div class="score-num" id="res-score">--</div>
       <div class="score-tier" id="res-tier">--</div>
-
-      <!-- ティア説明（fb.headline） -->
       <div class="score-headline" id="res-headline"></div>
-
-      <!-- スコアのコンテキスト（旧 ending-copy の内容） -->
-      <div class="score-context" id="score-context"></div>
-
-      <!-- スコア内訳バー -->
-      <div class="score-breakdown" id="score-breakdown"></div>
     </div>
 
     <!-- ②6角チャート（タイトル付き）+ LIVE COMPARISON統合 -->
@@ -1100,19 +947,19 @@ div[style*="CAREER TRANSLATION"] {
       </div>
       <!-- LIVE COMPARISON（レーダーの下に統合） -->
       <div id="compare-block" style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6;display:none">
-        <div style="font-size:.58rem;letter-spacing:3px;color:#2B8FC5;font-weight:700;margin-bottom:12px">LIVE COMPARISON</div>
+        <div style="font-size:.72rem;letter-spacing:3px;color:#2B8FC5;font-weight:700;margin-bottom:12px">LIVE COMPARISON</div>
         <div class="compare-stats" style="display:flex;gap:0;margin-bottom:14px">
           <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
             <div class="compare-num" id="cmp-total" style="font-size:1.6rem;font-weight:900;color:#2B8FC5;display:block;margin-bottom:3px">--</div>
-            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">参加者数</div>
+            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">参加者数</div>
           </div>
           <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
             <div class="compare-num" id="cmp-avg" style="font-size:1.6rem;font-weight:900;color:var(--gold);display:block;margin-bottom:3px">--</div>
-            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">平均スコア</div>
+            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">平均スコア</div>
           </div>
           <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px">
             <div class="compare-num" id="cmp-beat" style="font-size:1.6rem;font-weight:900;color:var(--accent);display:block;margin-bottom:3px">--%</div>
-            <div class="compare-lbl" style="font-size:.62rem;color:#9CA3AF">上位</div>
+            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">上位</div>
           </div>
         </div>
         <div id="tier-bars"></div>
@@ -1122,7 +969,7 @@ div[style*="CAREER TRANSLATION"] {
     <!-- ③ANALYSIS（六角チャートの分析） -->
     <div class="rpt-card">
       <div class="rpt-card-header accent">ANALYSIS</div>
-      <div id="res-body" style="font-size:.88rem;line-height:1.95;color:#2c2c3e"></div>
+      <div id="res-body" style="font-size:1rem;line-height:1.95;color:#2c2c3e"></div>
     </div>
 
     <!-- ④MY STORY -->
@@ -1160,7 +1007,7 @@ div[style*="CAREER TRANSLATION"] {
       </div>
       <div class="job-sheet-row" style="flex-direction:column">
         <span class="job-sheet-label" style="margin-bottom:6px">就活軸の提案</span>
-        <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.84rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
+        <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.96rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
       </div>
 
     </div>
@@ -1168,7 +1015,7 @@ div[style*="CAREER TRANSLATION"] {
     <!-- ⑦TODAY'S ACTION -->
     <div class="rpt-card" style="border-color:rgba(232,98,26,.2);background:rgba(232,98,26,.04)">
       <div class="rpt-card-header accent">TODAY'S ACTION</div>
-      <p style="font-size:.75rem;color:#888;margin-bottom:12px">3つのアクションから今日やることを選ぼう</p>
+      <p style="font-size:.88rem;color:#888;margin-bottom:12px">3つのアクションから今日やることを選ぼう</p>
       <div id="action-list"></div>
     </div>
 
@@ -1177,7 +1024,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <div style="margin:24px 16px 0;padding:14px 16px;background:rgba(0,0,0,.03);border-radius:8px;border-left:2px solid rgba(0,0,0,.1)">
-      <p style="font-size:.68rem;color:#9CA3AF;line-height:1.8">
+      <p style="font-size:.8rem;color:#9CA3AF;line-height:1.8">
         ※ このレポートはシミュレーションゲームの選択結果にもとづくものであり、
         実際のキャリアや能力・適性を保証・証明するものではありません。
         診断結果は自己理解のきっかけとしてご活用ください。
@@ -1193,7 +1040,7 @@ div[style*="CAREER TRANSLATION"] {
 <!-- 固定CTA（レポート画面専用） -->
 <div class="fixed-cta" id="fixed-cta" style="display:none">
   <button class="fcta-btn fcta-x"      onclick="openXPopup()">𝕏</button>
-  <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">SHARE</button>
+  <button class="fcta-btn fcta-pdf"    onclick="openPopup('popup-pdf')">PDF</button>
   <button class="fcta-btn fcta-agent"  onclick="openPopup('popup-agent')">AGENT</button>
   <button class="fcta-btn fcta-retry"  onclick="confirmNewGame()">NEW</button>
 </div>
@@ -1203,7 +1050,7 @@ div[style*="CAREER TRANSLATION"] {
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-x')">×</button>
     <div class="popup-title">𝕏 シェア</div>
-    <div class="x-summary-text" id="x-summary-text" style="font-size:.82rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word;margin-bottom:16px"></div>
+    <div class="x-summary-text" id="x-summary-text" style="font-size:.94rem;color:#1c1c2e;line-height:1.8;white-space:pre-line;word-break:break-word;margin-bottom:16px"></div>
     <div style="display:flex;gap:8px">
       <button class="popup-action-btn" onclick="shareXSummary()">𝕏 シェアする</button>
       <button class="popup-action-btn secondary" onclick="copySummary()">コピー</button>
@@ -1212,47 +1059,19 @@ div[style*="CAREER TRANSLATION"] {
   </div>
 </div>
 
-<!-- ポップアップ：SHARE（氏名・メアド登録 → URL送付） -->
+<!-- ポップアップ：PDF送信 -->
 <div class="popup-overlay" id="popup-pdf" style="display:none">
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-pdf')">×</button>
-    <div class="popup-title">📤 レポートを保存・共有</div>
-
-    <!-- STEP 1：入力フォーム -->
-    <div id="share-step-form">
-      <p style="font-size:.8rem;color:#555;line-height:1.7;margin-bottom:14px">
-        お名前とメールアドレスを登録すると、<br>レポートの閲覧URLをメールでお送りします。
-      </p>
-      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
-        <div>
-          <div style="font-size:.65rem;color:#9CA3AF;margin-bottom:4px;letter-spacing:.5px">お名前</div>
-          <input id="share-name" type="text" placeholder="山田 太郎"
-            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:.84rem;border:1.5px solid #E5E7EB;border-radius:8px;outline:none;color:#1A1A2E"
-            onfocus="this.style.borderColor='#E8621A'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-        <div>
-          <div style="font-size:.65rem;color:#9CA3AF;margin-bottom:4px;letter-spacing:.5px">メールアドレス</div>
-          <input id="share-email" type="email" placeholder="your@email.com"
-            style="width:100%;box-sizing:border-box;padding:10px 12px;font-size:.84rem;border:1.5px solid #E5E7EB;border-radius:8px;outline:none;color:#1A1A2E"
-            onfocus="this.style.borderColor='#E8621A'" onblur="this.style.borderColor='#E5E7EB'">
-        </div>
-      </div>
-      <div id="share-form-error" style="display:none;color:#EF4444;font-size:.75rem;margin-bottom:10px"></div>
-      <button class="popup-action-btn" id="share-submit-btn" onclick="submitShareForm()">
-        URLをメールで受け取る
-      </button>
+    <div class="popup-title">レポートを受け取る</div>
+    <button class="popup-action-btn" style="margin-bottom:10px;background:linear-gradient(135deg,#2B8FC5,#1A7AB0)" onclick="closePopup('popup-pdf')">🔍 ブラウザで確認する（このまま閉じる）</button>
+    <div style="font-size:.82rem;color:#9CA3AF;text-align:center;margin-bottom:10px">— または メールで受け取る —</div>
+    <p style="font-size:.94rem;color:#555;line-height:1.7;margin-bottom:16px">メールアドレスを登録すると、就活ワンシート付きのレポートPDFを送付します。</p>
+    <div class="email-input-row">
+      <input class="email-input" id="email-input" type="email" placeholder="your@email.com">
+      <button class="btn-email-send" id="email-send-btn" onclick="sendReportEmail()">送信</button>
     </div>
-
-    <!-- STEP 2：送信完了 -->
-    <div id="share-step-done" style="display:none;text-align:center;padding:12px 0">
-      <div style="font-size:2rem;margin-bottom:10px">✉️</div>
-      <div style="font-size:.9rem;font-weight:700;color:#059669;margin-bottom:8px">送信しました！</div>
-      <div id="share-done-email" style="font-size:.78rem;color:#6B7280;line-height:1.7;margin-bottom:16px"></div>
-      <p style="font-size:.72rem;color:#9CA3AF;line-height:1.6">
-        数分以内にメールが届きます。<br>届かない場合は迷惑メールフォルダをご確認ください。
-      </p>
-    </div>
-
+    <div class="email-sent-msg" id="email-sent-msg">✓ 送信しました！数分以内にご確認ください。</div>
     <button class="popup-back" onclick="closePopup('popup-pdf')">← レポートに戻る</button>
   </div>
 </div>
@@ -1263,22 +1082,22 @@ div[style*="CAREER TRANSLATION"] {
     <button class="popup-close" onclick="closePopup('popup-agent')">×</button>
     <div class="popup-title">株式会社エージェントに相談する</div>
     <div id="popup-agent-content">
-      <p style="font-size:.84rem;color:#555;line-height:1.7;margin-bottom:10px">診断結果をもとに、専任アドバイザーが個別にお話を伺います。</p>
+      <p style="font-size:.96rem;color:#555;line-height:1.7;margin-bottom:10px">診断結果をもとに、専任アドバイザーが個別にお話を伺います。</p>
       <div id="agent-fit-popup-score" style="margin-bottom:12px"></div>
       <div id="agent-contact-form">
-        <input id="agf-name"  type="text"  placeholder="お名前（例：山田 太郎）"  style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:8px;font-family:inherit;outline:none">
-        <input id="agf-email" type="email" placeholder="メールアドレス"             style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:8px;font-family:inherit;outline:none">
-        <input id="agf-phone" type="tel"   placeholder="電話番号（任意）"           style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.86rem;margin-bottom:12px;font-family:inherit;outline:none">
+        <input id="agf-name"  type="text"  placeholder="お名前（例：山田 太郎）"  style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
+        <input id="agf-email" type="email" placeholder="メールアドレス"             style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
+        <input id="agf-phone" type="tel"   placeholder="電話番号（任意）"           style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:12px;font-family:inherit;outline:none">
         <button class="popup-action-btn" id="agf-submit" onclick="submitAgentContact()">相談を申し込む</button>
-        <p style="font-size:.68rem;color:#9CA3AF;margin-top:8px;text-align:center">送信した情報は採用目的にのみ使用します</p>
+        <p style="font-size:.8rem;color:#9CA3AF;margin-top:8px;text-align:center">送信した情報は採用目的にのみ使用します</p>
       </div>
       <div id="agent-form-done" style="display:none;text-align:center;padding:20px 0">
         <div style="font-size:2rem;margin-bottom:8px">✅</div>
         <div style="font-size:.9rem;font-weight:700;color:#1A1A2E">送信完了しました</div>
-        <div style="font-size:.78rem;color:#6B7280;margin-top:6px;line-height:1.7">担当者より3営業日以内にご連絡します</div>
+        <div style="font-size:.9rem;color:#6B7280;margin-top:6px;line-height:1.7">担当者より3営業日以内にご連絡します</div>
       </div>
     </div>
-    <button class="popup-action-btn" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに応募する →</button>
+    <button class="popup-action-btn" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに相談する →</button>
     <button class="popup-back" onclick="closePopup('popup-agent')">← レポートに戻る</button>
   </div>
 </div>
@@ -1706,7 +1525,7 @@ function renderOb(){
   [[q.a,'A'],[q.b,'B']].forEach(([opt,lbl])=>{
     const btn=document.createElement('button');
     btn.className='choice2-btn';
-    btn.innerHTML=`<span class="choice2-label">${lbl}</span>${opt.lbl}<br><small style="color:var(--w70);font-size:.75rem">${opt.sub}</small>`;
+    btn.innerHTML=`<span class="choice2-label">${lbl}</span>${opt.lbl}<br><small style="color:var(--w70);font-size:.88rem">${opt.sub}</small>`;
     btn.onclick=()=>selectOb(opt.val,btn);
     wrap.appendChild(btn);
   });
@@ -1803,6 +1622,12 @@ function renderPhase(){
   const phases=G.data.phases||[];
   const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
   if(!phase)return;
+  // フェーズドット更新
+  for(let d=0;d<6;d++){
+    const dot=document.getElementById('pd-'+d);
+    if(!dot)continue;
+    dot.className='phase-dot'+(d<G.currentPhase?' done':d===G.currentPhase?' active':'');
+  }
 
   // プログレス計算（時代背景ページ含む: 1フェーズ=4ページ）
   const totalPages=6*4;
@@ -1864,45 +1689,81 @@ function renderEraPage(phase){
     '経済的必要性ではなく意味で動く時代——あなたは何のために、誰のために動き続けるか。',
   ];
 
+
+  // フェーズ別SVGイラスト
+  const PHASE_SVGS=[
+    // Phase1: 20代 AI実装期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0a0a1a"/><stop offset="100%" stop-color="#1a1a3e"/></linearGradient></defs><rect width="320" height="140" fill="url(#p1bg)"/><rect x="0" y="90" width="40" height="50" fill="rgba(255,255,255,.05)" rx="2"/><rect x="35" y="72" width="30" height="68" fill="rgba(255,255,255,.07)" rx="2"/><rect x="60" y="82" width="45" height="58" fill="rgba(255,255,255,.06)" rx="2"/><rect x="200" y="78" width="35" height="62" fill="rgba(255,255,255,.06)" rx="2"/><rect x="230" y="64" width="40" height="76" fill="rgba(255,255,255,.07)" rx="2"/><rect x="265" y="88" width="55" height="52" fill="rgba(255,255,255,.05)" rx="2"/><path d="M0,100 Q80,72 160,90 Q240,108 320,80" fill="none" stroke="rgba(43,143,197,.6)" stroke-width="2"><animate attributeName="d" values="M0,100 Q80,72 160,90 Q240,108 320,80;M0,95 Q80,86 160,100 Q240,106 320,90;M0,100 Q80,72 160,90 Q240,108 320,80" dur="4s" repeatCount="indefinite"/></path><circle cx="160" cy="46" r="13" fill="rgba(232,98,26,.9)"/><path d="M148,64 Q160,82 172,64" fill="rgba(232,98,26,.7)"/><rect x="146" y="75" width="28" height="18" rx="3" fill="rgba(43,143,197,.8)"/><rect x="148" y="77" width="24" height="12" rx="1" fill="rgba(0,200,150,.6)"/><circle cx="100" cy="32" r="2" fill="#34D399"><animate attributeName="opacity" values="1;.2;1" dur="2s" repeatCount="indefinite"/></circle><circle cx="220" cy="42" r="2.5" fill="#2B8FC5"><animate attributeName="opacity" values=".7;.1;.7" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="250" cy="28" r="2" fill="#34D399"><animate attributeName="opacity" values=".7;.2;.7" dur="3s" repeatCount="indefinite"/></circle><text x="16" y="22" fill="rgba(232,98,26,.9)" font-size="11" font-weight="700" letter-spacing="2">20代 / AI実装期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2025 — 2030</text></svg>`,
+    // Phase2: 25代 AGI移行期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0d1a0d"/><stop offset="100%" stop-color="#1a3a2a"/></linearGradient></defs><rect width="320" height="140" fill="url(#p2bg)"/><line x1="40" y1="35" x2="155" y2="70" stroke="rgba(52,211,153,.3)" stroke-width="1"><animate attributeName="opacity" values="1;.3;1" dur="3s" repeatCount="indefinite"/></line><line x1="280" y1="35" x2="165" y2="70" stroke="rgba(52,211,153,.3)" stroke-width="1"><animate attributeName="opacity" values=".3;1;.3" dur="3s" repeatCount="indefinite"/></line><line x1="160" y1="90" x2="100" y2="130" stroke="rgba(43,143,197,.3)" stroke-width="1"/><line x1="160" y1="90" x2="220" y2="130" stroke="rgba(43,143,197,.3)" stroke-width="1"/><circle cx="40" cy="35" r="5" fill="#34D399" opacity=".7"><animate attributeName="r" values="5;7;5" dur="2s" repeatCount="indefinite"/></circle><circle cx="280" cy="35" r="5" fill="#2B8FC5" opacity=".7"><animate attributeName="r" values="5;7;5" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="100" cy="130" r="4" fill="#E8621A" opacity=".6"/><circle cx="220" cy="130" r="4" fill="#34D399" opacity=".6"/><circle cx="160" cy="70" r="22" fill="rgba(52,211,153,.12)" stroke="rgba(52,211,153,.6)" stroke-width="1.5"><animate attributeName="r" values="22;26;22" dur="3s" repeatCount="indefinite"/></circle><text x="160" y="67" fill="#34D399" font-size="10" text-anchor="middle" font-weight="700">AGI</text><text x="160" y="79" fill="rgba(255,255,255,.5)" font-size="7" text-anchor="middle">online</text><text x="16" y="22" fill="rgba(52,211,153,.9)" font-size="11" font-weight="700" letter-spacing="2">25代 / AGI移行期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2030 — 2035</text></svg>`,
+    // Phase3: 30代 産業再編期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0d00"/><stop offset="100%" stop-color="#2d1a00"/></linearGradient></defs><rect width="320" height="140" fill="url(#p3bg)"/><rect x="20" y="62" width="50" height="78" fill="rgba(100,100,100,.25)" rx="2"/><rect x="25" y="58" width="40" height="82" fill="rgba(80,80,80,.18)" rx="2"><animateTransform attributeName="transform" type="rotate" values="0 45 98;2 45 98;0 45 98" dur="4s" repeatCount="indefinite"/></rect><rect x="220" y="80" width="40" height="60" fill="rgba(232,98,26,.3)" rx="4"><animate attributeName="y" values="88;80;88" dur="3s" repeatCount="indefinite"/></rect><rect x="255" y="70" width="45" height="70" fill="rgba(43,143,197,.3)" rx="4"><animate attributeName="y" values="78;70;78" dur="3.5s" repeatCount="indefinite"/></rect><path d="M90,90 Q160,52 210,90" fill="none" stroke="rgba(232,98,26,.6)" stroke-width="2" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/></path><polygon points="206,84 215,90 206,96" fill="rgba(232,98,26,.8)"/><circle cx="155" cy="76" r="12" fill="rgba(232,98,26,.8)"/><text x="16" y="22" fill="rgba(232,98,26,.9)" font-size="11" font-weight="700" letter-spacing="2">30代 / 産業再編期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2035 — 2045</text></svg>`,
+    // Phase4: 40代 人機協働期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0d0d2a"/><stop offset="100%" stop-color="#1a1a4a"/></linearGradient></defs><rect width="320" height="140" fill="url(#p4bg)"/><circle cx="120" cy="52" r="15" fill="rgba(232,98,26,.85)"/><path d="M105,72 Q120,92 135,72" fill="rgba(232,98,26,.7)"/><rect x="177" y="38" width="26" height="26" rx="6" fill="rgba(43,143,197,.8)" stroke="rgba(43,143,197,.4)" stroke-width="1"/><circle cx="184" cy="50" r="2.5" fill="rgba(255,255,255,.9)"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="193" cy="50" r="2.5" fill="rgba(255,255,255,.9)"><animate attributeName="opacity" values=".3;1;.3" dur="1.5s" repeatCount="indefinite"/></circle><path d="M177,72 Q190,92 203,72" fill="rgba(43,143,197,.6)"/><path d="M135,62 Q160,57 177,62" fill="none" stroke="rgba(52,211,153,.8)" stroke-width="2"><animate attributeName="stroke-width" values="2;4;2" dur="2s" repeatCount="indefinite"/></path><rect x="60" y="108" width="200" height="2" fill="rgba(255,255,255,.2)" rx="1"/><rect x="60" y="103" width="36" height="7" fill="rgba(232,98,26,.6)" rx="1"/><rect x="101" y="96" width="36" height="14" fill="rgba(43,143,197,.6)" rx="1"/><rect x="142" y="88" width="36" height="22" fill="rgba(52,211,153,.6)" rx="1"/><rect x="183" y="80" width="36" height="30" fill="rgba(245,158,11,.6)" rx="1"/><text x="16" y="22" fill="rgba(43,143,197,.9)" font-size="11" font-weight="700" letter-spacing="2">40代 / 人機協働期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2045 — 2055</text></svg>`,
+    // Phase5: 50代 社会変容期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p5bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a1500"/><stop offset="100%" stop-color="#2a2500"/></linearGradient></defs><rect width="320" height="140" fill="url(#p5bg)"/><path d="M40,130 A120,120 0 0,1 280,130" fill="none" stroke="rgba(245,158,11,.25)" stroke-width="1.5"/><circle cx="80" cy="90" r="10" fill="rgba(245,158,11,.7)"/><circle cx="160" cy="62" r="13" fill="rgba(232,98,26,.8)"/><circle cx="240" cy="90" r="10" fill="rgba(52,211,153,.7)"/><line x1="90" y1="90" x2="147" y2="68" stroke="rgba(245,158,11,.5)" stroke-width="1.5"/><line x1="173" y1="68" x2="230" y2="90" stroke="rgba(52,211,153,.5)" stroke-width="1.5"/><text x="50" y="45" fill="rgba(245,158,11,.4)" font-size="8" font-family="monospace">GDP×3.2</text><text x="195" y="42" fill="rgba(52,211,153,.4)" font-size="8" font-family="monospace">寿命105歳</text><circle cx="160" cy="26" r="16" fill="rgba(245,158,11,.12)" stroke="rgba(245,158,11,.3)" stroke-width="1"><animate attributeName="r" values="16;20;16" dur="4s" repeatCount="indefinite"/></circle><circle cx="160" cy="26" r="7" fill="rgba(245,158,11,.6)"/><text x="16" y="22" fill="rgba(245,158,11,.9)" font-size="11" font-weight="700" letter-spacing="2">50代 / 社会変容期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2055 — 2065</text></svg>`,
+    // Phase6: 60代 ポスト労働期
+    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0d0d1a"/><stop offset="100%" stop-color="#1a1a2a"/></linearGradient></defs><rect width="320" height="140" fill="url(#p6bg)"/><circle cx="100" cy="50" r="19" fill="rgba(245,158,11,.8)"/><path d="M81,74 Q100,96 119,74" fill="rgba(245,158,11,.6)"/><circle cx="190" cy="68" r="11" fill="rgba(43,143,197,.7)"/><path d="M179,80 Q190,92 201,80" fill="rgba(43,143,197,.5)"/><circle cx="224" cy="72" r="9" fill="rgba(52,211,153,.7)"/><path d="M215,82 Q224,92 233,82" fill="rgba(52,211,153,.5)"/><circle cx="252" cy="74" r="8" fill="rgba(167,139,250,.7)"/><path d="M119,62 Q155,48 179,65" fill="none" stroke="rgba(245,158,11,.7)" stroke-width="2" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" values="0;-16" dur="1.5s" repeatCount="indefinite"/></path><circle cx="50" cy="18" r="1.5" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.1;.6" dur="2s" repeatCount="indefinite"/></circle><circle cx="270" cy="22" r="1" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.1;.5" dur="3s" repeatCount="indefinite"/></circle><circle cx="300" cy="14" r="1.5" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="100" cy="36" r="6" fill="none" stroke="rgba(245,158,11,.4)" stroke-width="1"><animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite"/></circle><text x="16" y="22" fill="rgba(245,158,11,.9)" font-size="11" font-weight="700" letter-spacing="2">60代 / ポスト労働期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2065 — 2075</text></svg>`,
+  ];
+
   body.innerHTML=`
     <div class="era-page">
-      <div class="age-hero">
-        <div class="age-hero-frame">
-          <div class="age-hero-num"><span>${age}</span></div>
-          <div style="font-family:var(--ff-head);font-size:clamp(1.4rem,4vw,2rem);color:#1c1c2e;letter-spacing:1px">歳</div>
-        </div>
-      </div>
+      ${PHASE_SVGS[pi]||''}
       <div class="era-desc-block">
         <div class="era-desc-text">${phase.eraDescription}</div>
       </div>
-      <div class="era-stats-grid">
+      <div class="era-stats-grid" style="grid-template-columns:1fr">
         <div class="era-stat-card">
           <div class="era-stat-val">${formatStatVal(phase.stat1_value)}</div>
           <div class="era-stat-lbl">${phase.stat1_label}</div>
           <div class="era-stat-src">${phase.stat1_source}</div>
         </div>
-        <div class="era-stat-card">
-          <div class="era-stat-val">${formatStatVal(phase.stat2_value)}</div>
-          <div class="era-stat-lbl">${phase.stat2_label}</div>
-          <div class="era-stat-src">${phase.stat2_source}</div>
-        </div>
       </div>
-      ${G.currentPhase>0&&G.tags[G.currentPhase-1]?`
-      <div class="prev-phase-recap">
-        <div class="prev-phase-label">◀ PHASE ${G.currentPhase} の選択</div>
-        <div class="prev-phase-content">
-          <span class="prev-phase-tag">${{specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'}[G.tags[G.currentPhase-1]]||G.tags[G.currentPhase-1]}</span>
-          <span class="prev-phase-result">${({specialization:'専門性を極める道を選んだ。その選択が今も積み上がっている。','ai-native':'AIと共に進む道を選んだ。変化への適応力が磨かれている。',strategic:'意思決定の上流に立つ道を選んだ。視野が広がっている。',independent:'組織に依存しない道を選んだ。自律性が育っている。','rare-combination':'掛け算の道を選んだ。希少な組み合わせが生まれつつある。',leadership:'人を育てる道を選んだ。影響力の輪が広がっている。','community-builder':'つながりを作る道を選んだ。ネットワークが資産になりつつある。',global:'境界を越える道を選んだ。視野がグローバルに広がっている。',legacy:'残すことを選んだ。蓄積が形になりつつある。'})[G.tags[G.currentPhase-1]]||'あなたの選択が積み上がっている。'}</span>
+          <div class="era-stat-src">${phase.stat1_source}</div>
         </div>
-      </div>`:''}
-      <div class="decision-hint">
-        <div class="decision-hint-label">意思決定のポイント</div>
-        <div class="decision-hint-text">${hints[G.currentPhase]||''}</div>
+
       </div>
-      <button class="era-cta" onclick="G.currentQ=0;renderPhase()">
-        <span>${escHtml(G.nickname)}さんはどのように意思決定し、行動しますか？</span>
-        <span class="era-cta-arrow">→</span>
-      </button>
+
+      <!-- Q1を時代背景カードに統合 -->
+      <div id="era-q1-block" style="margin-top:20px">
+        <div style="font-size:.84rem;color:rgba(0,0,0,.6);font-weight:700;margin-bottom:12px;letter-spacing:.5px">
+          AIの変化を、あなたはどう読んでいた？
+        </div>
+        <div id="era-q1-choices" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+      <script>
+        (function(){
+          const phase=(G.data.phases||[]).find(p=>p.id===PHASE_IDS[G.currentPhase]);
+          const q1=(G.data.q1||[]).find(q=>q.phase_id===phase?.id);
+          if(!q1)return;
+          const choices=[
+            {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
+            {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
+            {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
+            {label:'D',text:q1.choice_d_text,erafit:Number(q1.choice_d_erafit)},
+          ].filter(ch=>ch.text);
+          const wrap=document.getElementById('era-q1-choices');
+          if(!wrap)return;
+          choices.forEach(ch=>{
+            const btn=document.createElement('button');
+            btn.style.cssText='background:rgba(255,255,255,.85);border:1.5px solid rgba(0,0,0,.1);border-radius:10px;padding:13px 16px;font-size:.96rem;font-weight:600;color:#1A1A2E;text-align:left;cursor:pointer;transition:all .15s;width:100%;display:flex;gap:12px;align-items:center;-webkit-tap-highlight-color:transparent';
+            btn.innerHTML='<span style="font-family:var(--ff-head);font-size:1.2rem;color:var(--accent);min-width:18px">'+ch.label+'</span><span>'+ch.text+'</span>';
+            btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.12)';this.style.borderColor='var(--accent)';};
+            btn.onclick=function(){
+              // Q1を記録して即Q2へ
+              const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
+              G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
+              // eraFit変化
+              const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
+              applyValueMeterDelta({eraFit:delta});
+              // Q2へ
+              G.currentQ=0;
+              renderPhase();
+            };
+            wrap.appendChild(btn);
+          });
+        })();
+      <\/script>
     </div>`;
   applyTooltipsToPage();
   // 時代背景ページではVALUE METERを非表示
@@ -2053,7 +1914,7 @@ function renderQ1(phase){
   // MBTI視点プレフィックスを問い文に追加
   const prefix=getMBTIQuestionPrefix(1);
   const questionText=prefix
-    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix}</span>${q1.layer2||q1.layer1}`
+    ? `<span style="font-size:.84rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix}</span>${q1.layer2||q1.layer1}`
     : (q1.layer2||q1.layer1);
   buildQPage(1,'環境認識',questionText,[
     {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
@@ -2072,7 +1933,7 @@ function renderQ2(phase){
   if(!q2)return;
   const prefix2=getMBTIQuestionPrefix(2);
   const q2text=prefix2
-    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix2}</span>${q2.question}`
+    ? `<span style="font-size:.84rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix2}</span>${q2.question}`
     : q2.question;
   buildQPage(2,'行動選択',q2text,[
     {label:'A',text:q2.choice_a_text,sub:q2.choice_a_example,tag:q2.choice_a_tag},
@@ -2081,6 +1942,7 @@ function renderQ2(phase){
     {label:'D',text:q2.choice_d_text,sub:q2.choice_d_example,tag:q2.choice_d_tag},
   ],c=>{
     G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
+    // Q3は廃止 → Q2選択後は直接proceedPhaseへ（ナラティブ→次フェーズ）
     // Q2：タグから「動機軸(why)」「行動スタイル(how)」を自動導出
     // 動機軸：resolver=社会課題解決が動機 / contributor=組織・仲間への貢献が動機 / ownership=自律・オーナーシップが動機
     // 行動スタイル：visionary=長期設計 / pragmatic=現実実行 / relational=関係構築 / disruptive=常識破壊
@@ -2177,7 +2039,7 @@ function renderQ2(phase){
     const reactionText=reactions?reactions[G.currentPhase]||'→ あなたの選択が、未来の可能性を広げた。':'→ あなたの選択が、未来の可能性を広げた。';
     const ma=document.getElementById('mirror-area');
     if(ma)ma.innerHTML=`<div class="mirror-msg"><span style="color:var(--accent);font-weight:700">${reactionText}</span></div>`;
-    setTimeout(()=>{G.currentQ=2;renderPhase();},600);
+    setTimeout(()=>{proceedPhase();},600); // Q3廃止・直接nextPhaseへ
   });
 }
 
@@ -2188,7 +2050,7 @@ function renderQ3(phase){
   const q3base=Q3_PHASE_QUESTIONS[G.currentPhase]||'この時期、あなたは何に時間・エネルギーを集中させる？';
   const prefix3=getMBTIQuestionPrefix(3);
   const question=prefix3
-    ? `<span style="font-size:.72rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix3}</span>${q3base}`
+    ? `<span style="font-size:.84rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix3}</span>${q3base}`
     : q3base;
   buildQPage(3,'投資配分',question,[
     {label:'A',text:q3.choice_a_text,invest:q3.choice_a_invest},
@@ -2200,9 +2062,9 @@ function renderQ3(phase){
 
 // ── イベント ─────────────────────────────────────────────────────
 function proceedPhase(){
-  // 20%の確率でFATEカードイベント発生
-  if(Math.random()<0.20){
-    showFateAnnounce();
+  // 33%の確率でダイスロール演出、それ以外は直接次フェーズへ
+  if(Math.random()<0.33){
+    showDice(()=>{});
   }else{
     nextPhase();
   }
@@ -2477,7 +2339,7 @@ async function fetchCommentary(phaseIdx, tagJP, q1mood, mbtiLabel){
 }
 function showCommentaryFlash(text){
   const el=document.createElement('div');
-  el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(26,26,46,.95);color:#fff;font-size:.82rem;padding:10px 18px;border-radius:20px;border:1px solid rgba(232,98,26,.4);z-index:200;opacity:0;transition:all .4s ease;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;font-style:italic';
+  el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(26,26,46,.95);color:#fff;font-size:.94rem;padding:10px 18px;border-radius:20px;border:1px solid rgba(232,98,26,.4);z-index:200;opacity:0;transition:all .4s ease;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;font-style:italic';
   el.textContent='70歳の自分から：'+text;
   document.body.appendChild(el);
   setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';},50);
@@ -2612,12 +2474,30 @@ function showNarrative(completedPhaseIdx, onNext){
         ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:var(--cyan);color:var(--cyan)">✨ 追い風あり</span>':''}
         ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:var(--accent);color:var(--accent)">⚡ 試練あり</span>':''}
       </div>
-      <button class="narrative-next" onclick="closeNarrative()">次の時代へ →</button>
+      <button class="narrative-next" onclick="closeNarrative()">次の時代へ →<br><span style="font-size:.72rem;opacity:.5;font-weight:400">（タップで進む）</span></button>
     </div>`;
   document.body.appendChild(ol);
 
   // onNextをコールバックとして保存
   window._narrativeNext=onNext;
+
+  // 3秒後に自動進行（スワイプ・タップでスキップ可）
+  const _narAuto=setTimeout(()=>{
+    const el=document.getElementById('narrative-overlay');
+    if(el){
+      el.style.opacity='0';
+      el.style.transform='translateY(-10px)';
+      setTimeout(()=>{el.remove();if(window._narrativeNext){window._narrativeNext();window._narrativeNext=null;}},350);
+    }
+  },3200);
+  window._narAutoTimer=_narAuto;
+
+  // スワイプ上 / タップで即スキップ
+  ol.addEventListener('click',()=>{
+    clearTimeout(window._narAutoTimer);
+    ol.style.opacity='0';
+    setTimeout(()=>{ol.remove();if(window._narrativeNext){window._narrativeNext();window._narrativeNext=null;}},300);
+  });
 }
 
 function closeNarrative(){
@@ -2884,9 +2764,6 @@ async function showResult(){
   },200);
 
   const score=calcScore(),chain=calcChain(),tier=getTier(score),domTag=getDomTag();
-  // 閲覧URL生成で参照するためグローバル保存
-  window._lastScore = score;
-  window._lastTier  = tier.label;
   const indScores=calcIndScores(),radar=calcRadar();
   const fb=(G.data.feedback||{})[tier.label]||{};
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
@@ -2942,55 +2819,9 @@ async function showResult(){
   };
   const jt=JOB_TRANSLATION[tier.label]||JOB_TRANSLATION['模索者'];
 
-  document.getElementById('ending-copy') && (document.getElementById('ending-copy').innerHTML='');
-
-  // ── スコアコンテキスト（旧 ending-copy の内容をスコアブロック下に表示）
-  const scoreCtxEl=document.getElementById('score-context');
-  if(scoreCtxEl){
-    scoreCtxEl.innerHTML=
-      `あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。`
-      +(scoreContext?`<br><span style="font-size:.78rem;color:#6B7280">${scoreContext}</span>`:'')
-      +(chainContext?`<span style="font-size:.78rem;color:#6B7280"> ${chainContext}</span>`:'');
-  }
-
-  // ── ツールチップ内容（スコアの意味を具体的に説明）
-  const tooltipEl=document.getElementById('score-tooltip-body');
-  if(tooltipEl){
-    const tierTooltips={
-      先駆者:'AI時代の変化と選択が高くフィットしています。上位18%相当。この水準は、変化への先読みと選択の一貫性が揃って初めて出ます。',
-      適応者:'変化への対応力があり、選択のバランスが良好です。上位42%相当。専門性をさらに深めると次のステージへ。',
-      模索者:'まだ軸が定まっていない段階です。上位65%相当。今は模索中でも、軸が見えてくれば一気にスコアは上がります。',
-      転換期:'現在の選択パターンは時代の需要とズレが生じています。下位35%相当。今が気づきのタイミングです。',
-    };
-    tooltipEl.innerHTML=
-      `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.1)">`
-      +`<span style="font-size:1.1rem;font-weight:700;color:${tier.color||'var(--accent)'}">${safeScore}</span>`
-      +`<span style="font-size:.68rem;color:rgba(255,255,255,.5)"> / 100点</span></div>`
-      +`<div>${tierTooltips[tier.label]||'AI時代への適合度を示すスコアです。'}</div>`
-      +(scoreContext?`<div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.1);font-size:.72rem;color:rgba(255,255,255,.5)">${scoreContext}</div>`:'');
-  }
-
-  // ── スコア内訳バー
-  const bdEl=document.getElementById('score-breakdown');
-  if(bdEl&&radar&&radar.length===6){
-    const radarLabels_bd=['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'];
-    // 上位3軸だけ表示してスッキリ見せる
-    const sorted_bd=[...radar.map((v,i)=>({v,i}))].sort((a,b)=>b.v-a.v).slice(0,3);
-    bdEl.innerHTML='<div style="font-size:.6rem;letter-spacing:2px;color:#9CA3AF;margin-bottom:8px">スコアの主な内訳</div>'
-      +sorted_bd.map(({v,i})=>`
-      <div class="score-bd-row">
-        <div class="score-bd-label">${radarLabels_bd[i]}</div>
-        <div class="score-bd-track"><div class="score-bd-fill" style="width:${v}%"></div></div>
-        <div class="score-bd-val">${v}</div>
-      </div>`).join('');
-    // アニメーション（少し遅らせてから）
-    setTimeout(()=>{
-      bdEl.querySelectorAll('.score-bd-fill').forEach((el,i)=>{
-        const w=sorted_bd[i]?.v||0;
-        el.style.width=w+'%';
-      });
-    },300);
-  }
+  document.getElementById('ending-copy').innerHTML=
+    `未来から見えたこと——あなたは<strong>${TL[domTag]||domTag}</strong>として価値を発揮できる。<br>
+     <span style="font-size:.92rem;opacity:.85">同世代の${scorePercentile}に相当するスコア。${scoreContext}${chainContext}</span>`;
 
 
   // CAREER TRANSLATIONブロックは削除（就活ワンシートと統合）
@@ -3046,9 +2877,9 @@ async function showResult(){
   const analysisHtml=
     // セクション1: 強み
     '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
-    +'<div style="font-size:.7rem;color:var(--accent);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<div style="font-size:.82rem;color:var(--accent);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
     +'<span style="display:inline-block;width:3px;height:13px;background:var(--accent);border-radius:2px"></span>強み — 上位2軸</div>'
-    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.9">'
+    +'<div style="font-size:.98rem;color:#1A1A2E;line-height:1.9">'
     +'あなたの最も際立つ軸は'
     +'<strong style="color:var(--accent)">'+radarLabels[top2[0].i]+'（'+top2[0].v+'）</strong>と'
     +'<strong style="color:var(--accent)">'+radarLabels[top2[1].i]+'（'+top2[1].v+'）</strong>です。'
@@ -3056,9 +2887,9 @@ async function showResult(){
     +'</div></div>'
     // セクション2: 伸びしろ
     +'<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
-    +'<div style="font-size:.7rem;color:var(--gold);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<div style="font-size:.82rem;color:var(--gold);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
     +'<span style="display:inline-block;width:3px;height:13px;background:var(--gold);border-radius:2px"></span>伸びしろ — 下位2軸</div>'
-    +'<div style="font-size:.86rem;color:#1A1A2E;line-height:1.9">'
+    +'<div style="font-size:.98rem;color:#1A1A2E;line-height:1.9">'
     +'伸びしろとして注目したいのは'
     +'<strong style="color:var(--gold)">'+radarLabels[bot2[0].i]+'（'+bot2[0].v+'）</strong>と'
     +'<strong style="color:var(--gold)">'+radarLabels[bot2[1].i]+'（'+bot2[1].v+'）</strong>です。'
@@ -3069,28 +2900,28 @@ async function showResult(){
     // ━━ why/how軸の集計（ANALYSISに統合）
     +(G.dominantWhy&&G.dominantHow?
       '<div style="margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #F3F4F6">'
-      +'<div style="font-size:.7rem;color:#2B8FC5;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+      +'<div style="font-size:.82rem;color:#2B8FC5;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
       +'<span style="display:inline-block;width:3px;height:13px;background:#2B8FC5;border-radius:2px"></span>選択の動機・スタイル分析</div>'
       +'<div style="display:flex;gap:8px;margin-bottom:10px">'
         // Why軸バッジ
         +'<div style="background:rgba(5,150,105,.08);border:1px solid rgba(5,150,105,.2);border-radius:6px;padding:8px 12px;flex:1">'
-          +'<div style="font-size:.62rem;color:#059669;font-weight:700;margin-bottom:3px">動機軸（WHY）</div>'
-          +'<div style="font-size:.82rem;font-weight:700;color:#1A1A2E">'
+          +'<div style="font-size:.76rem;color:#059669;font-weight:700;margin-bottom:3px">動機軸（WHY）</div>'
+          +'<div style="font-size:.94rem;font-weight:700;color:#1A1A2E">'
           +({'resolver':'解決者','contributor':'貢献者','ownership':'オーナー'}[G.dominantWhy]||G.dominantWhy)+'</div>'
-          +'<div style="font-size:.68rem;color:#6B7280;margin-top:2px">'
+          +'<div style="font-size:.8rem;color:#6B7280;margin-top:2px">'
           +({'resolver':'社会課題に向き合う動機','contributor':'組織・仲間への貢献動機','ownership':'自律・当事者意識'}[G.dominantWhy]||'')+'</div>'
         +'</div>'
         // How軸バッジ
         +'<div style="background:rgba(43,143,197,.08);border:1px solid rgba(43,143,197,.2);border-radius:6px;padding:8px 12px;flex:1">'
-          +'<div style="font-size:.62rem;color:#2B8FC5;font-weight:700;margin-bottom:3px">行動スタイル（HOW）</div>'
-          +'<div style="font-size:.82rem;font-weight:700;color:#1A1A2E">'
+          +'<div style="font-size:.76rem;color:#2B8FC5;font-weight:700;margin-bottom:3px">行動スタイル（HOW）</div>'
+          +'<div style="font-size:.94rem;font-weight:700;color:#1A1A2E">'
           +({'visionary':'ビジョナリー','pragmatic':'実行者','relational':'関係構築者','disruptive':'破壊的革新者'}[G.dominantHow]||G.dominantHow)+'</div>'
-          +'<div style="font-size:.68rem;color:#6B7280;margin-top:2px">'
+          +'<div style="font-size:.8rem;color:#6B7280;margin-top:2px">'
           +({'visionary':'長期・構造的な設計','pragmatic':'現実直視・確実な実行','relational':'人を起点とした変革','disruptive':'常識を疑い逆張りで動く'}[G.dominantHow]||'')+'</div>'
         +'</div>'
       +'</div>'
       // Agent適合コメント
-      +'<div style="font-size:.8rem;color:#1A1A2E;line-height:1.75;background:#F9FAFB;border-radius:6px;padding:9px 12px">'
+      +'<div style="font-size:.92rem;color:#1A1A2E;line-height:1.75;background:#F9FAFB;border-radius:6px;padding:9px 12px">'
       +(G.whyConsistency>=67?'<strong style="color:#059669">一貫した動機軸</strong>を持ち、'+G.whyConsistency+'%の選択が同じ動機から生まれています。エージェントが重視する「なぜ動くか」の軸が明確です。':
         G.whyConsistency>=50?'動機軸は'+G.whyConsistency+'%の一貫性。AI時代に必要な「なぜ動くか」の軸を育てる余地があります。':
         '多様な動機から選択しています。AI時代に活躍するには「自分の動機の中心」を言語化することが次のステップです。')
@@ -3098,14 +2929,14 @@ async function showResult(){
       +'</div>'
     :'')
     +'<div>'
-    +'<div style="font-size:.7rem;color:#6B7280;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
+    +'<div style="font-size:.82rem;color:#6B7280;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px">'
     +'<span style="display:inline-block;width:3px;height:13px;background:#6B7280;border-radius:2px"></span>メタ認知力</div>'
     +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">'
     +'<div style="font-family:var(--ff-head);font-size:2rem;line-height:1;color:'+(metacogPct>=50?'var(--accent)':metacogPct>=25?'var(--gold)':'#9CA3AF')+'">'+metacogPct+'%</div>'
-    +'<div style="font-size:.72rem;color:#6B7280;line-height:1.6">AI時代の変化を<br>適正に認識できた割合<br>（Q1 '+correctQ1+'/'+G.q1Choices.length+'回）</div>'
+    +'<div style="font-size:.84rem;color:#6B7280;line-height:1.6">AI時代の変化を<br>適正に認識できた割合<br>（Q1 '+correctQ1+'/'+G.q1Choices.length+'回）</div>'
     +'</div>'
-    +'<div style="font-size:.82rem;color:#1A1A2E;line-height:1.75;background:rgba(232,98,26,.04);border-radius:6px;padding:10px 12px;border:1px solid rgba(232,98,26,.1)">'+metacogTxt
-    +'<br><span style="font-size:.7rem;color:#9CA3AF;margin-top:4px;display:block">メタ認知力——自分の思考パターンを客観視する力——はAIに代替されない人間固有の能力です。</span>'
+    +'<div style="font-size:.94rem;color:#1A1A2E;line-height:1.75;background:rgba(232,98,26,.04);border-radius:6px;padding:10px 12px;border:1px solid rgba(232,98,26,.1)">'+metacogTxt
+    +'<br><span style="font-size:.82rem;color:#9CA3AF;margin-top:4px;display:block">メタ認知力——自分の思考パターンを客観視する力——はAIに代替されない人間固有の能力です。</span>'
     +'</div></div>';
 
   const resBody=document.getElementById('res-body');
@@ -3229,16 +3060,14 @@ async function showResult(){
           // AI生成が揃っているか確認（1件以上ある場合は表示）
           // AI生成story：配列・オブジェクト({時代名:テキスト})両対応
           let storyArr=Array.isArray(story)?story:Object.values(story||{});
-          // 有効テキスト（10字超）かつ空文字でないものだけ抽出
           const validStories=storyArr.filter(s=>s&&String(s).trim().length>10);
           console.log('MY STORY: AI生成 '+validStories.length+'/6フェーズ');
           const fullStory=G.narratives.map((n,i)=>{
             const aiText=validStories[i];
-            // AI生成テキストが10字超あればそれを使う
             if(aiText&&String(aiText).trim().length>10) return String(aiText).trim();
-            // なければゲーム中生成ナラティブで補完
+            // フォールバック：ゲーム中に生成したナラティブを使用
             const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
-            return fallback.length>10?fallback:'この時代を静かに歩んでいた。';
+            return fallback.length>10?fallback:'（この時代の物語を紡いでいます）';
           });
           el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
@@ -3261,16 +3090,12 @@ async function showResult(){
           ).join('');
         }
       }
-      // AI就活軸をグローバルに保存（要素不足・短文の場合はコードで補完）
+      // AI就活軸をグローバルに保存（1要素の場合はコードで補完）
       if(aiResult.careerAxis){
         let axis=aiResult.careerAxis;
-        // 配列の各要素を文字列化・トリム済み配列に正規化
-        const normAxis=Array.isArray(axis)
-          ? axis.map(s=>String(s||'').trim())
-          : [String(axis||'').trim()];
-        // 30字未満または空の要素をフォールバックが必要と判断
-        const needsFallback=normAxis.length<3||normAxis.some(s=>s.length<15);
-        if(needsFallback){
+        // 配列で1〜2要素しかない場合、残りをコードで生成
+        // 要素数が3未満、または各要素が短すぎる（不完全）場合はフォールバック
+        if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<15))){
           const topInd=indScores?.[0]?.name||'事業開発・新規事業';
           const mbtiG=G.mbtiData?.group||'';
           const domJP=TL[domTag]||domTag;
@@ -3301,13 +3126,11 @@ async function showResult(){
           };
           var howStr=(MBTI_HOW_STR[mbtiG]&&MBTI_HOW_STR[mbtiG][G.dominantHow])||domJP+'の力';
           const fallbacks=[
-            (normAxis[0]&&normAxis[0].length>=15)?normAxis[0]:(theme+'に、正面から向き合いたい。'),
-            (normAxis[1]&&normAxis[1].length>=15)?normAxis[1]:(howStr+'と、'+q3verb+'きた'+domJP+'の選択が、自分だけのアプローチになっている。'),
-            (normAxis[2]&&normAxis[2].length>=15)?normAxis[2]:(ind+'の現場で、'+howStr+'を活かして「困った」を事業で解決したい。'),
+            axis[0]||theme+'に、正面から向き合いたい。',
+            axis[1]||howStr+'と、'+q3verb+'きた'+domJP+'の選択が、自分だけのアプローチになっている。',
+            axis[2]||ind+'の現場で、'+howStr+'を活かして「困った」を事業で解決したい。',
           ];
           axis=fallbacks;
-        } else {
-          axis=normAxis;
         }
         G.aiCareerAxis=axis;
       }
@@ -3424,7 +3247,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     '番人':'Si/Fe（記憶・調和）','探検家':'Se/Ti（現場感覚・分析）'
   }[mbtiData.group]||''}`:'' ;
 
-  const promptStory=`キャリア診断AIです。日本語のJSONのみ返答してください。
+  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
 
 【就活生データ】
 名前: ${G.nickname} / MBTI: ${G.mbtiType||'不明'}（${mbtiData?.label||''}）${cogFn}
@@ -3433,16 +3256,12 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 スコア: ${score}点（${tierLabel}）
 
 【生成ルール】
-1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める
-2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1箇所織り込む
+1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める（例：ENFJなら承認欲求との葛藤、INTJなら孤独と確信の葛藤）
+2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
 3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
 4. 各80〜100字、完全な一人称過去形
 
-【絶対条件】myStory配列は必ず6要素。要素が足りない場合は「この時代を静かに歩んでいた。」で埋めること。
-
-{"myStory":["${phaseChoiceLog.split(' → ')[0]||'フェーズ1'}の80〜100字ナラティブ","フェーズ2","フェーズ3","フェーズ4","フェーズ5","フェーズ6"]}
-
-上記の形式でmyStory配列に6フェーズ分すべて生成してください。`;
+{"myStory":["20〜25歳（AI実装期）のナラティブ","25〜30歳（AGI移行期）のナラティブ","30〜40歳（産業再編期）のナラティブ","40〜50歳（人機協働成熟期）のナラティブ","50〜60歳（社会構造変容期）のナラティブ","60〜70歳（ポスト労働期）のナラティブ"]}`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
   // 就活軸生成のための3要素を構造化してプロンプトに渡す
@@ -3463,19 +3282,23 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
   const q3Top=Object.entries(q3Summary).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}×${v}`).join('・');
 
   // Req②：業種コメント・アクション（軽量）
-  const promptCareer=`キャリア診断AIです。日本語のJSONのみ返答してください。
+  const promptCareer=`キャリア診断AIです。日本語JSONのみ返答。
 ${mbtiDesc}/スコア${score}(${tierLabel})/${domTagJP}軸/業種:${industryList}
 
-指示1: 上位3業種それぞれについて、①2030年代の変化②この人が向いている理由③注意点を各50字以内でまとめ、industryCommentsに業種名をキーとして格納する。
+【指示1】上位3業種それぞれ:①2030年代の変化②この人が向いている理由③注意点。各50字以内。
+{"industryComments":{"業種名":"①②③",...}}
 
-指示2: 業種名・職種名を含む就活アクションを3つ生成し、jobActionsに格納する。各35字以内。`;
+【指示2】業種名・職種名入り就活アクション3つ。各35字以内。
+{"jobActions":["1","2","3"]}
+
+2つをまとめた1つのJSONのみ。`;
 
   // Req③：就活軸（専用・個人情報フル投入）
   const topInd1=top3[0]?.name||'事業開発・新規事業';
   const topInd2=top3[1]?.name||'';
   const topScore1=top3[0]?.score||0;
   const q1Pattern=G.q1Choices.map(q=>q?.erafit>=8?'先読み':q?.erafit>=5?'様子見':'後追い').join('→');
-  const promptAxis=`就活生のキャリア診断AIです。日本語のJSONのみ返答してください。
+  const promptAxis=`就活生のキャリア診断AIです。日本語JSONのみ返答。
 
 ■就活生データ
 MBTI: ${mbtiGroupText}
@@ -3485,20 +3308,25 @@ Q3投資傾向: ${q3Top||'スキル'}
 志望業種1位: ${topInd1}（${topScore1}%）
 スコア: ${score}点（${tierLabel}）
 
-■生成指示
-就活軸を3文でcareerAxisに格納する。
+■生成指示（3つの文を配列で返す）
+この就活生の「業種・MBTI・選択傾向」を踏まえ、本人が「これは自分だ」と感じる就活軸を3文で生成する。
 
-文①（30〜45字）：${topInd1}の文脈で向き合いたいテーマ。
-文②（30〜45字）：${domTagJP}の傾向と${G.mbtiData?.group||''}型の強み。
-文③（30〜45字）：${topInd1}を選ぶ理由と実現したいこと（業種名含む）。
+文①（テーマ・向き合いたいこと）：${topInd1}の文脈で、この人が解決したい社会課題や向き合いたいテーマ。30〜45字。
+文②（強み・アプローチ）：${domTagJP}の選択傾向と${G.mbtiData?.group||''}型の特性から生まれる、この人ならではの動き方や強み。30〜45字。
+文③（志望・実現したいこと）：${topInd1}という場を選ぶ理由と、そこで実現したい具体的なこと。業種名を含む。30〜45字。
 
-【絶対条件】careerAxisは必ず3要素の配列。各要素は30字以上の完全な一文。`
+【重要】
+- 各文は30〜45字の完全な文にする（短すぎる断片は禁止）
+- 3要素すべてを必ず生成する
+- テンプレ文・定型表現禁止
+
+{"careerAxis":["文①の内容","文②の内容","文③の内容"]}`
 
   // ━━━ GASへのリクエスト（直列・GASのロック問題を回避）
-  const callGAS = async (prompt, maxTok, schemaHint) => {
+  const callGAS = async (prompt, maxTok) => {
     const res = await fetch(GAS_URL, {
       method: 'POST',
-      body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, schemaHint: schemaHint||null, sessionId: G.sessionId }),
+      body: JSON.stringify({ action:'gemini', prompt, maxOutputTokens: maxTok, sessionId: G.sessionId }),
     });
     const data = await res.json();
     if(!data.ok){
@@ -3533,22 +3361,22 @@ Q3投資傾向: ${q3Top||'スキル'}
   };
 
   try{
-    // ━━ Req①：MY STORY（schemaHint='story' / 6フェーズ×100字 ≒ 600字 → 1200トークン確保）
-    const storyResult = await callGAS(promptStory, 1800, 'story');
+    // ━━ Req①：MY STORY
+    const storyResult = await callGAS(promptStory, 2500);
     console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
-    // ━━ Req②：業種コメント・アクション（schemaHint='career' / トークン増量）
+    // ━━ Req②：業種コメント・アクション（軽量）
     let careerResult = null;
     try {
-      careerResult = await callGAS(promptCareer, 900, 'career');
+      careerResult = await callGAS(promptCareer, 600);
     } catch(e2) {
       console.warn('Req②エラー:', e2.message);
     }
 
-    // ━━ Req③：就活軸（schemaHint='axis' / 45字×3文+JSON構造）
+    // ━━ Req③：就活軸（専用・個別try/catchで保護）
     let axisResult = null;
     try {
-      axisResult = await callGAS(promptAxis, 600, 'axis');
+      axisResult = await callGAS(promptAxis, 1200); // 45字×3文+JSON構造
       console.log('careerAxis raw:', JSON.stringify(axisResult?.careerAxis));
     } catch(e3) {
       console.warn('Req③(就活軸)エラー:', e3.message);
@@ -3592,7 +3420,7 @@ function renderIndustryDetailsWithAI(top3, aiComments){
     '研究・アカデミア':'知の最前線を開拓する深い専門性の世界。長期的な探求心と専門的卓越性が問われます。',
   };
 
-  el.innerHTML='<div style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 — あなたが輝ける業種</div>'+
+  el.innerHTML='<div style="font-size:.74rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 — あなたが輝ける業種</div>'+
     top3.map((item,i)=>{
       const aiComment = aiComments?.[item.name];
       const baseDesc = TL_IND[item.name]||'あなたの選択パターンと高い親和性を持つ業種です。';
@@ -3605,8 +3433,8 @@ function renderIndustryDetailsWithAI(top3, aiComments){
         <div class="industry-detail-text">${baseDesc}</div>
         ${aiComment?`
         <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(56,189,248,.2)">
-          <div style="font-size:.58rem;letter-spacing:2px;color:#2a7ab5;font-weight:700;margin-bottom:4px">✦ AI INSIGHT</div>
-          <div style="font-size:.8rem;color:#2c2c3e;line-height:1.8">${aiComment}</div>
+          <div style="font-size:.72rem;letter-spacing:2px;color:#2a7ab5;font-weight:700;margin-bottom:4px">✦ AI INSIGHT</div>
+          <div style="font-size:.92rem;color:#2c2c3e;line-height:1.8">${aiComment}</div>
         </div>`:''}
       </div>`;
     }).join('');
@@ -3768,7 +3596,7 @@ function buildPreviewStory(narratives, domTag, TL){
     <p style="margin-bottom:16px">${opening}</p>
     <p style="margin-bottom:16px">${body}</p>
     <p style="color:var(--accent2);font-style:italic">${emphasisStoryText(closing)}</p>
-    <div style="font-size:.68rem;color:var(--w40);margin-top:16px;letter-spacing:1px">※ AIによる個別最適化を生成中…</div>
+    <div style="font-size:.8rem;color:var(--w40);margin-top:16px;letter-spacing:1px">※ AIによる個別最適化を生成中…</div>
   </div>`;
 }
 
@@ -4078,20 +3906,20 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   const mainComment=
     // 解決者軸
     '<div style="margin-bottom:10px">'
-    +'<span style="font-size:.65rem;font-weight:700;letter-spacing:2px;color:#059669;background:rgba(5,150,105,.08);border-radius:4px;padding:2px 8px;margin-right:6px">解決者軸</span>'
+    +'<span style="font-size:.78rem;font-weight:700;letter-spacing:2px;color:#059669;background:rgba(5,150,105,.08);border-radius:4px;padding:2px 8px;margin-right:6px">解決者軸</span>'
     +tagMap.resolver
     +'</div>'
     // 貢献意欲軸
     +'<div style="margin-bottom:10px">'
-    +'<span style="font-size:.65rem;font-weight:700;letter-spacing:2px;color:#2B8FC5;background:rgba(43,143,197,.08);border-radius:4px;padding:2px 8px;margin-right:6px">貢献意欲軸</span>'
+    +'<span style="font-size:.78rem;font-weight:700;letter-spacing:2px;color:#2B8FC5;background:rgba(43,143,197,.08);border-radius:4px;padding:2px 8px;margin-right:6px">貢献意欲軸</span>'
     +tagMap.contributor
     +'</div>'
     // AG-MIND適合項目
     +'<div style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:10px 12px;border-radius:0 6px 6px 0">'
-    +'<div style="font-size:.65rem;font-weight:700;color:var(--accent);margin-bottom:4px">'
+    +'<div style="font-size:.78rem;font-weight:700;color:var(--accent);margin-bottom:4px">'
     +(agMindItem?.cledo||'AG-MIND')+'：「'+( agMindItem?.label||'')+'」'
     +'</div>'
-    +'<div style="font-size:.8rem;color:#1A1A2E;line-height:1.75">'+tagMap.agMindReason+'</div>'
+    +'<div style="font-size:.92rem;color:#1A1A2E;line-height:1.75">'+tagMap.agMindReason+'</div>'
     +'</div>';
   const fitAdvice=agentFitScore>=60
     ? escHtml(G.nickname)+'さんの選択パターンは、エージェントが求める「AI時代のキャリアパートナー」像と高い親和性があります。特に'+( TL[domTag]||domTag)+'軸が、採用支援の仕事の本質と重なっています。'
@@ -4112,13 +3940,13 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   const divRankHtml=top3.map((d,i)=>(
     '<div style="margin-bottom:'+(i<2?'14px':'0')+'">'
     +'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px">'
-      +'<div style="font-size:.84rem;font-weight:700;color:'+(i===0?'#1A1A2E':'#374151')+'">'
+      +'<div style="font-size:.96rem;font-weight:700;color:'+(i===0?'#1A1A2E':'#374151')+'">'
         +medals[i]+' '+d.short
       +'</div>'
-      +'<div style="font-size:.82rem;font-weight:700;color:'+divColors[i]+'">'+d.fit+'%</div>'
+      +'<div style="font-size:.94rem;font-weight:700;color:'+divColors[i]+'">'+d.fit+'%</div>'
     +'</div>'
     +fitBar(d.fit, divColors[i])
-    +'<div style="font-size:.72rem;color:#6B7280;margin-top:3px">'+d.mission+'</div>'
+    +'<div style="font-size:.84rem;color:#6B7280;margin-top:3px">'+d.mission+'</div>'
     +'</div>'
   )).join('');
 
@@ -4126,8 +3954,8 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   const best=top3[0];
   const bestPersonaHtml=best?
     '<div style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6">'
-    +'<div style="font-size:.65rem;letter-spacing:3px;color:var(--accent);font-weight:700;margin-bottom:8px">'+best.short+' が求める人材像</div>'
-    +'<div style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.82rem;color:#1A1A2E;line-height:1.85">'
+    +'<div style="font-size:.78rem;letter-spacing:3px;color:var(--accent);font-weight:700;margin-bottom:8px">'+best.short+' が求める人材像</div>'
+    +'<div style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 8px 8px 0;font-size:.94rem;color:#1A1A2E;line-height:1.85">'
     +best.persona
     +'</div></div>'
   :'';
@@ -4136,29 +3964,29 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
   const el=document.getElementById('agent-fit-block');
   if(!el)return;
   el.innerHTML=
-    '<div style="font-size:.58rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>'
+    '<div style="font-size:.72rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>'
 
     // 総合スコア行
     +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,.07)">'
       +'<div style="text-align:center">'
         +'<div style="font-family:var(--ff-head);font-size:2.6rem;color:'+fitRank.color+';line-height:1">'+agentFitScore+'</div>'
-        +'<div style="font-size:.6rem;color:#888;margin-top:2px">適性スコア</div>'
+        +'<div style="font-size:.74rem;color:#888;margin-top:2px">適性スコア</div>'
       +'</div>'
       +'<div>'
-        +'<div style="font-size:.86rem;font-weight:700;color:#1c1c2e;margin-bottom:4px">'+fitRank.icon+' '+fitRank.label+'</div>'
-        +'<div style="font-size:.78rem;color:#555;line-height:1.65">'+fitAdvice+'</div>'
+        +'<div style="font-size:.98rem;font-weight:700;color:#1c1c2e;margin-bottom:4px">'+fitRank.icon+' '+fitRank.label+'</div>'
+        +'<div style="font-size:.9rem;color:#555;line-height:1.65">'+fitAdvice+'</div>'
       +'</div>'
     +'</div>'
 
     // あなたの強みが活きる理由（2軸+AG-MIND構造）
     +'<div style="margin-bottom:16px">'
-      +'<div style="font-size:.65rem;letter-spacing:2px;color:var(--accent);font-weight:700;margin-bottom:10px">あなたの強みが株式会社エージェントで活きる理由</div>'
-      +'<div style="font-size:.82rem;color:#1c1c2e;line-height:1.8">'+mainComment+'</div>'
+      +'<div style="font-size:.78rem;letter-spacing:2px;color:var(--accent);font-weight:700;margin-bottom:10px">あなたの強みが株式会社エージェントで活きる理由</div>'
+      +'<div style="font-size:.94rem;color:#1c1c2e;line-height:1.8">'+mainComment+'</div>'
     +'</div>'
 
     // フィットする事業部ランキング
     +'<div style="margin-bottom:0">'
-      +'<div style="font-size:.65rem;letter-spacing:2px;color:#2B8FC5;font-weight:700;margin-bottom:12px">フィットする事業部 TOP 3</div>'
+      +'<div style="font-size:.78rem;letter-spacing:2px;color:#2B8FC5;font-weight:700;margin-bottom:12px">フィットする事業部 TOP 3</div>'
       +divRankHtml
     +'</div>'
 
@@ -4167,9 +3995,9 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
 
     // CTA
     +'<div style="margin-top:14px;padding:11px 14px;background:rgba(232,98,26,.07);border-radius:6px;border:1px solid rgba(232,98,26,.18)">'
-      +'<div style="font-size:.78rem;color:#1c1c2e;line-height:1.7">'
+      +'<div style="font-size:.9rem;color:#1c1c2e;line-height:1.7">'
         +'このレポートを持って、株式会社エージェントのキャリア相談へ。<br>'
-        +'<span style="font-size:.72rem;color:#888">診断結果をもとに、あなたに合った事業部をさらに深く分析します。</span>'
+        +'<span style="font-size:.84rem;color:#888">診断結果をもとに、あなたに合った事業部をさらに深く分析します。</span>'
       +'</div>'
     +'</div>';
 }
@@ -4228,7 +4056,7 @@ function renderIndustryDetails(top3){
     '研究・アカデミア':'知の最前線を開拓する深い専門性の世界。長期的な探求心と専門的卓越性が問われます。',
   };
 
-  el.innerHTML='<div style="font-size:.6rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 INDUSTRY — あなたが輝ける領域</div>'+
+  el.innerHTML='<div style="font-size:.74rem;letter-spacing:3px;color:var(--cyan);margin:16px 0 10px">TOP 3 INDUSTRY — あなたが輝ける領域</div>'+
     top3.map((item,i)=>`
       <div class="industry-detail-card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -4236,7 +4064,7 @@ function renderIndustryDetails(top3){
           <div class="industry-detail-score">${item.score}%</div>
         </div>
         <div class="industry-detail-text">${TL_IND[item.name]||'あなたの選択パターンと高い親和性を持つ業種です。'}</div>
-        ${G.mbtiType?`<div style="font-size:.68rem;color:var(--accent);margin-top:6px;opacity:.8">▍ ${G.mbtiType}（${G.mbtiData?.label}）として：${getMBTIIndustryComment(G.mbtiType,item.name)}</div>`:''}
+        ${G.mbtiType?`<div style="font-size:.8rem;color:var(--accent);margin-top:6px;opacity:.8">▍ ${G.mbtiType}（${G.mbtiData?.label}）として：${getMBTIIndustryComment(G.mbtiType,item.name)}</div>`:''}
       </div>`).join('');
 }
 
@@ -4284,22 +4112,6 @@ by 株式会社エージェント
 }
 
 // ━━━ openXPopup：Xサマリ動的生成
-// ── ポップアップ汎用開閉 ────────────────────────────────────────────
-function openPopup(id){
-  const el=document.getElementById(id);
-  if(!el)return;
-  el.style.display='flex';
-  document.body.style.overflow='hidden';
-  // 背景クリックで閉じる
-  el.onclick=function(e){if(e.target===el)closePopup(id);};
-}
-function closePopup(id){
-  const el=document.getElementById(id);
-  if(!el)return;
-  el.style.display='none';
-  document.body.style.overflow='';
-}
-
 function openXPopup(){
   const score=document.getElementById('res-score')?.textContent||'--';
   const tier=document.getElementById('res-tier')?.textContent||'--';
@@ -4364,7 +4176,7 @@ function confirmNewGame(){
   card.style.cssText='background:#fff;border-radius:16px;padding:28px 24px;max-width:320px;width:100%;text-align:center';
   card.innerHTML=
     '<div style="font-size:1.1rem;font-weight:700;color:#1A1A2E;margin-bottom:10px">ニューゲームを始めますか？</div>'
-    +'<div style="font-size:.84rem;color:#6B7280;line-height:1.7;margin-bottom:20px">今回のゲーム結果はリセットされます。</div>'
+    +'<div style="font-size:.96rem;color:#6B7280;line-height:1.7;margin-bottom:20px">今回のゲーム結果はリセットされます。</div>'
     +'<div style="display:flex;gap:10px">'
       +'<button id="ng-no"  style="flex:1;padding:13px;border:1.5px solid #E5E7EB;border-radius:10px;background:#fff;color:#6B7280;font-size:.9rem;font-weight:700;cursor:pointer">戻る</button>'
       +'<button id="ng-yes" style="flex:1;padding:13px;border:none;border-radius:10px;background:linear-gradient(135deg,#E8621A,#F59E0B);color:#fff;font-size:.9rem;font-weight:700;cursor:pointer">はじめる</button>'
@@ -4562,343 +4374,159 @@ function applyValueMeterDelta(delta){
 
 
 
-// ━━━ FATE EVENT SYSTEM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ━━━ ダイスロール ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-// ── フェーズ名 ──
-const FATE_PHASE_NAMES=[
-  '20〜25歳 AI実装期','25〜30歳 AGI移行期','30〜40歳 産業再編期',
-  '40〜50歳 人機協働成熟期','50〜60歳 社会構造変容期','60〜70歳 ポスト労働期'
+const DICE_FACES=['⚀','⚁','⚂','⚃','⚄','⚅'];
+const BONUS_EVENTS=[
+  {title:'🌟 追い風イベント',desc:'業界に追い風。あなたのスキルへの需要が急増した。',tag:'ai-native',correction:5},
+  {title:'🤝 思わぬ出会い',desc:'強力な仲間と繋がった。人的資本が広がった。',tag:'community-builder',correction:4},
+  {title:'📈 市場拡大',desc:'参入していた分野が急成長。先行者利益が得られた。',tag:'strategic',correction:6},
 ];
 
-// ── イベントデータ（Phase × Good1+Bad2、各3パターン） ──
-// choiceA = ドミナントタグ寄り / choiceB = 汎用・安定寄り
-// good: A=大ボーナス B=小ボーナス / bad: A=部分ボーナス B=全体マイナス
-const FATE_EVENTS={
-  good:[
-    // Phase 0
-    [
-      {title:'社内AI導入プロジェクトに抜擢',desc:'入社2年目でAI活用推進チームに声がかかった。思わぬ機会が目の前に現れた。',
-       choiceA:'主体的にリードを志願する',choiceB:'サポート役として様子を見る',tagA:'ai-native'},
-      {title:'業界メディアへの寄稿オファー',desc:'取り組みが外部の目に留まり、執筆依頼が届いた。自分の言葉で発信できる場が生まれた。',
-       choiceA:'即座に引き受け自分の視点で書く',choiceB:'上司に相談してから判断する',tagA:'specialization'},
-      {title:'優秀な同期との共同プロジェクト',desc:'尊敬できる同期と自主プロジェクトを立ち上げる機会が生まれた。',
-       choiceA:'企画立案からリードする',choiceB:'実行サポートに徹する',tagA:'strategic'},
-    ],
-    // Phase 1
-    [
-      {title:'AGI関連スタートアップからスカウト',desc:'リスクはあるが時代の最前線に乗れる機会が届いた。',
-       choiceA:'リスクを取ってジョインする',choiceB:'条件交渉して現職に残る',tagA:'independent'},
-      {title:'海外カンファレンスへの登壇オファー',desc:'自分の取り組みが国際的に評価され、登壇の場が生まれた。',
-       choiceA:'自費でも行って登壇する',choiceB:'リモート参加でコストを抑える',tagA:'global'},
-      {title:'転職市場で想定以上のオファー',desc:'複数社から高評価。年収30%アップが視野に入ってきた。',
-       choiceA:'最も挑戦的なポジションを選ぶ',choiceB:'最も条件の良いオファーを選ぶ',tagA:'strategic'},
-    ],
-    // Phase 2
-    [
-      {title:'二つの専門性が交差する新市場が誕生',desc:'自分だけが持つ掛け算スキルへの需要が急増した。',
-       choiceA:'独立・起業でそのポジションを取りにいく',choiceB:'今の組織の中でその役割を確立する',tagA:'rare-combination'},
-      {title:'業界の主要メディアに特集された',desc:'取り組みが広く認知され講演依頼が急増した。',
-       choiceA:'発信を強化しブランドを構築する',choiceB:'本業への集中を優先して露出を絞る',tagA:'specialization'},
-      {title:'大型プロジェクトのリーダーに抜擢',desc:'予算・権限ともに最大規模の仕事が来た。',
-       choiceA:'高い目標を掲げ革新的な方法で挑む',choiceB:'確実な成果を優先してリスクを抑える',tagA:'strategic'},
-    ],
-    // Phase 3
-    [
-      {title:'経営陣から意思決定の中枢に招かれた',desc:'取締役・執行役員クラスへの就任打診が届いた。',
-       choiceA:'リスクを取って受ける',choiceB:'現場の専門家として残ることを選ぶ',tagA:'strategic'},
-      {title:'育てた後輩が大きな成果を出した',desc:'自分のメンタリングが実を結んだ瞬間が訪れた。',
-       choiceA:'後輩をさらに高い場所へ送り出す',choiceB:'一緒に次のプロジェクトに挑む',tagA:'leadership'},
-      {title:'コミュニティへの発信が社会課題解決に繋がった',desc:'自分の活動が政策・業界標準に影響を与え始めた。',
-       choiceA:'さらに大きな課題に向けて動く',choiceB:'現在の活動を深化させる',tagA:'community-builder'},
-    ],
-    // Phase 4
-    [
-      {title:'知見が書籍として出版される',desc:'30年の経験が一冊にまとまり、広く届く機会が生まれた。',
-       choiceA:'自分のメッセージを前面に出した本を書く',choiceB:'共著・監修として他者の声も入れる',tagA:'legacy'},
-      {title:'コミュニティが完全に自走し始めた',desc:'自分がいなくても動く仕組みがついに完成した。',
-       choiceA:'さらに大きなコミュニティを立ち上げる',choiceB:'今のコミュニティの質を深める',tagA:'community-builder'},
-      {title:'若い世代から「師匠」と呼ばれるようになった',desc:'次世代のリーダー10人以上に影響を与えた。',
-       choiceA:'メンタリングをビジネスとして構造化する',choiceB:'無償のギブとして続ける',tagA:'leadership'},
-    ],
-    // Phase 5
-    [
-      {title:'人生の集大成プロジェクトの打診',desc:'社会的意義の大きな仕事のオファーが届いた。',
-       choiceA:'全力で受けて最後の挑戦とする',choiceB:'関わる形を絞って無理なく貢献する',tagA:'legacy'},
-      {title:'後進が自分を大きく超えた',desc:'育てた次世代が社会を動かし始めた瞬間を目撃した。',
-       choiceA:'彼らの活動を全力で支援・資金提供する',choiceB:'静かに見守り必要時だけ助言する',tagA:'leadership'},
-      {title:'長年の活動が国・業界から表彰された',desc:'社会的な認定を受ける機会が訪れた。',
-       choiceA:'賞を次世代への発信の場として活用する',choiceB:'個人の喜びとして静かに受け取る',tagA:'legacy'},
-    ],
-  ],
-  bad:[
-    // Phase 0
-    [
-      {title:'配属先の部署がAI導入で縮小',desc:'入社半年で部署の半分がAIに置き換えられた。自分の番はいつか、という空気が漂い始めた。',
-       choiceA:'積極的にAI活用側へシフトを申し出る',choiceB:'異動願いを出して安定部署へ移る',tagA:'ai-native'},
-      {title:'最初のプロジェクトが頓挫',desc:'3ヶ月かけた企画が経営判断で中断された。積み上げたものが白紙になった。',
-       choiceA:'原因を分析し次に活かす提案書を作る',choiceB:'気持ちを切り替えて次の指示を待つ',tagA:'strategic'},
-      {title:'信頼していた上司が突然退職',desc:'入社から支えてくれたメンターが競合に転職した。よりどころが消えた。',
-       choiceA:'関係を維持しつつ新たな師を探す',choiceB:'社内で新しい後ろ盾を作ることに集中',tagA:'community-builder'},
-      {title:'同期との実力差を突きつけられる',desc:'同期が大型案件を担当。自分は補佐に回った。',
-       choiceA:'悔しさをバネに自己投資を加速する',choiceB:'自分のペースで着実に積み上げる',tagA:'specialization'},
-      {title:'業界全体の採用が急減',desc:'AIバブル崩壊の余波で新卒市場が収縮した。',
-       choiceA:'副業・社外活動で市場価値を証明する',choiceB:'今の職場にしがみつき安定を優先',tagA:'independent'},
-      {title:'チームの人間関係が崩壊',desc:'プロジェクト失敗の責任を押し付け合う空気が漂い始めた。',
-       choiceA:'第三者として調整役に立つ',choiceB:'静観してやり過ごす',tagA:'community-builder'},
-    ],
-    // Phase 1
-    [
-      {title:'担当業務の60%がAGIに代替された',desc:'自分の仕事が半年で消えた。役割の再定義が急務になった。',
-       choiceA:'残り40%を深掘りし人間固有領域を確立',choiceB:'全く別の職種へのキャリアチェンジを検討',tagA:'specialization'},
-      {title:'景気後退で転職の道が閉ざされた',desc:'内定が出ていたポジションが突然撤回された。',
-       choiceA:'フリーランスとして独立を模索する',choiceB:'現職で実績を積み直す',tagA:'independent'},
-      {title:'信頼していたパートナーの裏切り',desc:'共同で進めていた事業で情報を持ち逃げされた。',
-       choiceA:'法的手段も視野に毅然と対処する',choiceB:'損切りして前に進む',tagA:'strategic'},
-      {title:'副業が本業に悪影響を及ぼし始めた',desc:'副業への注力が評価に響き、降格の可能性が出てきた。',
-       choiceA:'副業を本業にすると決断し退職する',choiceB:'副業を一時停止して本業に集中する',tagA:'independent'},
-      {title:'チームがAI代替で士気崩壊',desc:'周囲が諦めムードの中、自分はどうするかを迫られた。',
-       choiceA:'チームを鼓舞し新しいロールを提案する',choiceB:'自分の生き残りに集中する',tagA:'leadership'},
-      {title:'燃え尽き症候群の予兆',desc:'3年フル稼働の疲弊が限界に来た。',
-       choiceA:'意識的に休養を取り設計し直す',choiceB:'気力で乗り切り走り続ける',tagA:'strategic'},
-    ],
-    // Phase 2
-    [
-      {title:'メインクライアントが撤退',desc:'売上の40%を占める取引先が突然契約解除した。',
-       choiceA:'失った穴を自分で埋めるべく新規開拓へ',choiceB:'組織に頼りリスク分散を依頼する',tagA:'independent'},
-      {title:'3年かけたプロジェクトが白紙に',desc:'経営戦略の転換で積み上げた成果がゼロになった。',
-       choiceA:'プロセスを資産化しよそに展開する',choiceB:'次のプロジェクトへ気持ちを切り替える',tagA:'rare-combination'},
-      {title:'業界再編で自分のポジションが消滅',desc:'M&Aにより役割が重複し肩書きが宙に浮いた。',
-       choiceA:'新組織で新ポジションを自ら提案する',choiceB:'転職市場に出て外部評価を確認する',tagA:'strategic'},
-      {title:'マネジメントで部下がついてこない',desc:'初めてのリーダー職。チームが空中分解の危機になった。',
-       choiceA:'1on1を増やし個別に向き合う',choiceB:'チームの仕組みと評価制度を整備する',tagA:'leadership'},
-      {title:'健康上の問題が発生',desc:'過労で倒れ、3ヶ月の療養を余儀なくされた。',
-       choiceA:'復帰後は働き方を根本から設計し直す',choiceB:'早期復帰を目指し無理をしてでも戻る',tagA:'strategic'},
-      {title:'技術の急変でスキルが陳腐化',desc:'5年磨いた専門性が新技術に一夜で飲み込まれた。',
-       choiceA:'新技術を即座に学習し先行者になる',choiceB:'自分の経験値を活かせる領域を探す',tagA:'ai-native'},
-    ],
-    // Phase 3
-    [
-      {title:'組織のリストラ対象になった',desc:'40代でまさか自分が対象になるとは、という事態が訪れた。',
-       choiceA:'早期退職パッケージを受け独立する',choiceB:'残留交渉を行い組織内での再起を図る',tagA:'independent'},
-      {title:'AIに意思決定の一部を奪われた',desc:'自分がやっていた判断業務がシステム化された。',
-       choiceA:'AIを使いこなす側にポジションを移す',choiceB:'人間にしかできない定性判断に特化する',tagA:'ai-native'},
-      {title:'長年のパートナーとの決裂',desc:'ビジネスパートナーと価値観の相違で決別した。',
-       choiceA:'関係を再構築するための対話を試みる',choiceB:'完全に縁を切り新たなパートナーを探す',tagA:'community-builder'},
-      {title:'家庭とキャリア投資が両立できない',desc:'子どもの教育費と自己投資のトレードオフが訪れた。',
-       choiceA:'自己投資を優先し長期で回収する',choiceB:'家庭を優先し安定収入を確保する',tagA:'specialization'},
-      {title:'組織の方向性と自分のビジョンが乖離',desc:'会社がAI化を推進する中、自分は人的価値を重視していた。',
-       choiceA:'声を上げ内部から変えようとする',choiceB:'自分のビジョンを実現できる場に移る',tagA:'strategic'},
-      {title:'突然の親の介護問題',desc:'フルタイムとの両立が難しくなってきた。',
-       choiceA:'仕事の形を変えてでもキャリアを継続する',choiceB:'一時離職して家族に向き合う',tagA:'independent'},
-    ],
-    // Phase 4
-    [
-      {title:'技術の急変で専門性が陳腐化',desc:'50代での技術的な再学習を迫られた。',
-       choiceA:'第一線に戻るべく猛烈に学び直す',choiceB:'経験値を武器に戦略・管理側に転向する',tagA:'ai-native'},
-      {title:'健康問題が深刻化',desc:'医師から働き方の根本的な見直しを勧告された。',
-       choiceA:'働く量を減らし質に転換する',choiceB:'完治を目指して一定期間完全休養する',tagA:'strategic'},
-      {title:'社会制度の大変化で資産計画が崩れた',desc:'年金・税制の大改正が老後設計を直撃した。',
-       choiceA:'新制度を深く理解しリアロケーションする',choiceB:'専門家（FP等）に全面的に委託する',tagA:'strategic'},
-      {title:'後輩・部下の成長に複雑な感情',desc:'自分を超えてくる存在への複雑な感情が生まれた。',
-       choiceA:'素直に認め彼らのスポンサーになる',choiceB:'自分だけにしかできない道を極める',tagA:'leadership'},
-      {title:'大切なパートナーの喪失',desc:'長年の仕事仲間・人生のパートナーを失った。',
-       choiceA:'悲しみを力に変え意志を継ぐ',choiceB:'十分に悼む時間を取り静かに前進する',tagA:'legacy'},
-      {title:'自分のブランドが時代遅れになってきた',desc:'SNS・メディアでの発信が若い世代に届かなくなった。',
-       choiceA:'発信スタイルを全面刷新する',choiceB:'対面・少人数に絞って深める',tagA:'community-builder'},
-    ],
-    // Phase 5
-    [
-      {title:'最後に描いた計画が崩れた',desc:'引退を前にした大きな計画が頓挫した。',
-       choiceA:'縮小版でもいいから形にして終わらせる',choiceB:'手放して「完了」と定義し直す',tagA:'legacy'},
-      {title:'認知機能の衰えを実感し始めた',desc:'判断の精度が落ちてきたと自覚した瞬間が訪れた。',
-       choiceA:'早めに権限を委譲し仕組みで残す',choiceB:'今の自分にできることに集中する',tagA:'strategic'},
-      {title:'社会との繋がりが急に薄くなった',desc:'退職後、呼ばれる機会が激減した。',
-       choiceA:'自ら新しいコミュニティを作る',choiceB:'家族・旧友との関係に軸を移す',tagA:'community-builder'},
-      {title:'蓄積した資産の大部分を失った',desc:'投資判断の失敗で老後設計が崩れた。',
-       choiceA:'残りの能力を活かして働き続ける',choiceB:'支出を最適化して今あるもので生きる',tagA:'independent'},
-      {title:'自分の遺産・記録が散逸しそうになった',desc:'積み上げた知見が継承されないまま消えそうになっている。',
-       choiceA:'体系化・デジタルアーカイブ化に着手する',choiceB:'信頼できる後継者一人に口頭で伝える',tagA:'legacy'},
-      {title:'老いることへの虚無感',desc:'残り時間の少なさに直面し意欲が落ちてきた。',
-       choiceA:'「残り時間」を逆算して今を濃密にする',choiceB:'過去の蓄積に意味を見出し受け入れる',tagA:'legacy'},
-    ],
-  ],
+let diceCallback=null;
+
+// D：フェーズ×結果別の具体的なイベントテキスト
+const DICE_EVENTS={
+  bad:{
+    0:['突然の業界再編。配属先の部署が縮小された。','新卒同期の3人がAI導入で仕事を失った。自分の番はいつか。','最初のプロジェクトが頓挫。自分の判断を疑い始めた。'],
+    1:['担当業務の60%がAIに置き換えられた。役割の再定義が急務になった。','景気後退で採用凍結。転職の道が一時的に閉ざされた。','信頼していた上司が突然退職。よりどころが消えた。'],
+    2:['メインクライアントが競合他社に流れた。実力を問い直す時間が来た。','業界の主要プレイヤーが統合・再編。自分のポジションが揺れた。','3年がかりのプロジェクトが中断。積み上げたものが白紙になった。'],
+    3:['組織が突然リストラを発表。あなたの部署も対象になった。','AIに意思決定の一部を奪われ始めた。人間の役割を再考する時が来た。','長年のパートナーとの決裂。関係性の作り直しを迫られた。'],
+    4:['健康上の問題が発生。働き方を根本から見直す必要が出てきた。','技術の急変で積み上げた専門性の一部が陳腐化した。','予期しない社会変動で、計画が大きく狂った。'],
+    5:['社会保障制度が大きく変わった。老後の設計を見直す必要が出た。','長年の仲間が急逝した。何のために働くかを、改めて問い直した。','最後の計画が崩れた。しかしそれが、新しい始まりになった。'],
+  },
+  good:{
+    0:['業界誌に書いたコラムがバズった。思わぬ場所から声がかかった。','偶然の出会いが、最初のメンターとの縁を作った。','社内ハッカソンで優秀賞。自分の可能性に気づいた瞬間だった。'],
+    1:['転職活動で、想定より高いオファーが届いた。市場価値が見えた。','副業で取り組んでいたプロジェクトが注目を集めた。','異業種のイベントで、後の仕事相手となる人物に出会った。'],
+    2:['取り組んでいた研究・プロジェクトが業界誌に掲載された。','掛け算が機能した。二つの専門性が交差する仕事が舞い込んだ。','海外からオファーが届いた。グローバルな評価を実感した。'],
+    3:['長年育てていた後輩が、大きなプロジェクトで結果を出した。','経営陣から直接声がかかった。意思決定の中枢に入る機会が来た。','コミュニティが動いた。自分の発信が、社会課題の解決につながった。'],
+    4:['積み上げてきた知見が、書籍として形になった。','コミュニティが自走し始めた。自分がいなくても動く仕組みができた。','若い世代から「あなたのようになりたい」という言葉をもらった。'],
+    5:['人生の集大成となるプロジェクトの話が舞い込んだ。','後進が自分を超えた瞬間を目撃した。それが最大の喜びだった。','長年の活動が、思わぬ形で社会に認められた。'],
+  },
+  none:{
+    0:['特に大きな出来事はなかった。静かに、着実に積み上げる時間が続いた。','波乱なく過ぎた日常の中で、小さな習慣が土台を作っていた。'],
+    1:['大きな変化はなかった。しかし、その「静けさ」が集中を生んだ。','特筆すべき出来事はなかった。それがむしろ、積み上げの時間になった。'],
+    2:['嵐の中の凪のような時期だった。静かに次の準備をする時間として使った。','業界が揺れる中で、自分の周辺は比較的穏やかだった。'],
+    3:['大きな波はなかった。その分、深く考え、内側を鍛える時間になった。','特別な出来事はなかった。ただ、確実に何かが育っていた。'],
+    4:['静かな時期が続いた。積み上げたものを整理し、言語化する時間になった。','波乱のない時間だった。それが、深く振り返るための余白になった。'],
+    5:['静かな最終章の始まりだった。自分の人生を、静かに俯瞰する時間。','大きな出来事はなかった。それが、穏やかな着地点への道になった。'],
+  },
 };
 
-// スコア影響設定
-const FATE_SCORE={
-  good_A:{eraFit:+10,adaptability:+5,expertise:+5},   // 大ボーナス
-  good_B:{eraFit:+5, adaptability:+3},                 // 小ボーナス
-  bad_A: {crisis:+8, consistency:+4},                  // 部分ボーナス
-  bad_B: {eraFit:-8, adaptability:-5, consistency:-4}, // 全体マイナス
-};
-
-// フィードバックテキスト
-const FATE_FEEDBACK={
-  good_A:{icon:'🌟',label:'GREAT CHOICE',title:'最高の選択だ。',
-    desc:'あなたのキャリア軸と完全に一致した行動。この時代を味方にできた。'},
-  good_B:{icon:'✅',label:'SAFE CHOICE',title:'堅実な判断だった。',
-    desc:'リスクを抑えた選択。大きな飛躍はないが、着実に前に進んだ。'},
-  bad_A: {icon:'💪',label:'SURVIVED',title:'試練を乗り越えた。',
-    desc:'逆境でも軸に沿って動いた。ダメージは最小限に抑えられた。'},
-  bad_B: {icon:'⚡',label:'DAMAGED',title:'代償を払った。',
-    desc:'この選択は時代の流れと逆行した。影響は次のフェーズにも残る。'},
-};
-
-// ── STEP1：予告画面 ──────────────────────────────────────────────
-function showFateAnnounce(){
-  const ol=document.createElement('div');
-  ol.className='fate-overlay';ol.id='fate-overlay';
-  ol.innerHTML=`
-    <div class="fate-announce">
-      <div class="fate-announce-label">FATE EVENT</div>
-      <div class="fate-announce-icon">🃏</div>
-      <div class="fate-announce-title">運命の選択<br>イベント発生！</div>
-      <div class="fate-announce-sub" style="margin-top:12px">カードを1枚選べ</div>
-    </div>`;
-  document.body.appendChild(ol);
-  // 1.8秒後にカード選択画面へ自動遷移
-  setTimeout(()=>{ ol.remove(); showFateCards(); },1800);
-}
-
-// ── STEP2：カード選択画面 ─────────────────────────────────────────
-function showFateCards(){
+function getDiceEventText(result){
   const pi=Math.min(G.currentPhase,5);
-  const phaseName=FATE_PHASE_NAMES[pi]||'';
+  const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
+  return pool[Math.floor(Math.random()*pool.length)];
+}
 
-  // Good1枚・Bad2枚をシャッフルして配置
-  const goodPool=FATE_EVENTS.good[pi];
-  const badPool =FATE_EVENTS.bad[pi];
-  const goodEv=goodPool[Math.floor(Math.random()*goodPool.length)];
-  // Badは重複なく2枚選ぶ
-  const shuffledBad=[...badPool].sort(()=>Math.random()-.5);
-  const badEv1=shuffledBad[0];
-  const badEv2=shuffledBad[1]||shuffledBad[0];
-
-  // 3枚をシャッフル配置
-  const cards=[
-    {type:'good',ev:goodEv},
-    {type:'bad', ev:badEv1},
-    {type:'bad', ev:badEv2},
-  ].sort(()=>Math.random()-.5);
-
+function showDice(onResult){
+  diceCallback=onResult;
   const ol=document.createElement('div');
-  ol.className='fate-overlay';ol.id='fate-overlay';
+  ol.className='dice-overlay';ol.id='dice-overlay';
   ol.innerHTML=`
-    <div class="fate-card-screen" style="width:100%;max-width:360px">
-      <div class="fate-card-label">FATE CARD</div>
-      <div class="fate-card-title">1枚のカードを選べ</div>
-      <div class="fate-card-phase">${phaseName}</div>
-      <div class="fate-cards-row">
-        ${cards.map((_,i)=>`
-          <div class="fate-card" id="fate-card-${i}" onclick="selectFateCard(${i})" data-idx="${i}">
-            <span class="fate-card-back-icon">🃏</span>
-            <div class="fate-card-back-text">FATE</div>
-          </div>`).join('')}
-      </div>
-      <div class="fate-hint">TAP TO CHOOSE</div>
+    <div class="dice-card">
+      <div class="dice-intro">FATE ROLL — 人生には選択だけでは決まらないことがある</div>
+      <div class="dice-face" id="dice-face" onclick="rollDice()">🎲</div>
+      <div class="dice-tap-hint" id="dice-tap-hint">TAP TO ROLL</div>
+      <div class="dice-label" id="dice-label"></div>
+      <div class="dice-event-text" id="dice-event-text"></div>
+      <div class="dice-result-badge" id="dice-badge"></div>
+      <button class="dice-cta" id="dice-cta" onclick="closeDice()">次のフェーズへ →</button>
     </div>`;
   document.body.appendChild(ol);
-
-  // カードデータをDOMに保持
-  ol._fateCards=cards;
 }
 
-// ── STEP3：カード選択 → 結果表示 ────────────────────────────────
-function selectFateCard(idx){
-  const ol=document.getElementById('fate-overlay');
-  if(!ol||ol._fateChosen)return;
-  ol._fateChosen=true;
+function rollDice(){
+  const face=document.getElementById('dice-face');
+  const hint=document.getElementById('dice-tap-hint');
+  const label=document.getElementById('dice-label');
+  const eventTextEl=document.getElementById('dice-event-text');
+  const badge=document.getElementById('dice-badge');
+  const cta=document.getElementById('dice-cta');
 
-  const cards=ol._fateCards;
-  const chosen=cards[idx];
-  const {type,ev}=chosen;
-  const domTag=getDomTag();
+  // 1回のみ：rolling中またはすでに振り終えた場合は無効
+  if(face.classList.contains('rolling')||face.dataset.rolled)return;
+  hint.style.display='none';
+  face.classList.add('rolling');
+  face.dataset.rolled='1'; // 振り済みフラグ
+  face.style.cursor='default';
 
-  // 選んだカードを強調、他をフェードアウト
-  cards.forEach((_,i)=>{
-    const el=document.getElementById('fate-card-'+i);
-    if(!el)return;
-    if(i===idx){
-      el.style.transform='translateY(-10px) scale(1.08)';
-      el.style.borderColor=type==='good'?'rgba(52,211,153,.7)':'rgba(232,98,26,.7)';
-      el.style.boxShadow=type==='good'?'0 16px 40px rgba(52,211,153,.25)':'0 16px 40px rgba(232,98,26,.25)';
-    }else{
-      el.style.opacity='.25';el.style.transform='scale(.94)';
+  const FACES=['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣'];
+  let count=0;
+  const spin=setInterval(()=>{
+    face.textContent=FACES[Math.floor(Math.random()*6)];
+    count++;
+    if(count>12){
+      clearInterval(spin);
+      face.classList.remove('rolling');
+      const result=Math.ceil(Math.random()*6);
+
+      setTimeout(()=>{
+        let type,badgeClass,badgeText,faceIcon,labelText;
+        if(result<=2){
+          type='bad';badgeClass='event-bad';badgeText='⚡ SHOCK';faceIcon='2️⃣';
+          labelText='試練が訪れた。';
+          const evs=(G.data.events||[]).filter(e=>{
+            const tp=Array.isArray(e.trigger_phases)?e.trigger_phases:String(e.trigger_phases).split(',').map(s=>s.trim());
+            return tp.includes(PHASE_IDS[G.currentPhase]);
+          });
+          if(evs.length){
+            const ev=evs[Math.floor(Math.random()*evs.length)];
+            diceCallback={type:'bad',event:ev};
+          }else{
+            type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
+            labelText='特に大きな変化はなかった。';
+            diceCallback={type:'none'};
+          }
+        }else if(result<=4){
+          type='none';badgeClass='event-none';badgeText='◎ CALM';faceIcon='4️⃣';
+          labelText='波乱のないフェーズだった。';
+          diceCallback={type:'none'};
+        }else{
+          type='good';badgeClass='event-good';badgeText='✨ TAILWIND';faceIcon='6️⃣';
+          labelText='追い風が吹いた。';
+          const bonus=BONUS_EVENTS[Math.floor(Math.random()*BONUS_EVENTS.length)];
+          diceCallback={type:'good',bonus};
+        }
+
+        face.textContent=faceIcon;
+        label.textContent=labelText;
+
+        // 具体的なイベントテキスト
+        const eventText=getDiceEventText(type==='bad'&&diceCallback.type==='none'?'none':type);
+        if(eventTextEl){
+          eventTextEl.textContent=eventText;
+          eventTextEl.style.opacity='1';
+        }
+
+        badge.className='dice-result-badge show '+badgeClass;
+        badge.textContent=badgeText;
+        cta.className='dice-cta show';
+      },200);
     }
-  });
-
-  // 0.5秒後に結果画面へ
-  setTimeout(()=>{
-    ol.innerHTML=`
-      <div class="fate-result-screen" style="width:100%;max-width:360px">
-        <div class="fate-result-card ${type}">
-          <div class="fate-result-type ${type}">${type==='good'?'✨ GOOD EVENT':'⚡ BAD EVENT'}</div>
-          <div class="fate-result-event-title">${ev.title}</div>
-          <div class="fate-result-event-desc">${ev.desc}</div>
-          <div class="fate-result-choices">
-            <button class="fate-choice-btn ${type}-style" onclick="selectFateChoice('${type}','A','${ev.tagA}',this.closest('.fate-overlay'))">
-              <span class="fate-choice-label">CHOICE A</span>${ev.choiceA}
-            </button>
-            <button class="fate-choice-btn ${type}-style" onclick="selectFateChoice('${type}','B','${ev.tagA}',this.closest('.fate-overlay'))">
-              <span class="fate-choice-label">CHOICE B</span>${ev.choiceB}
-            </button>
-          </div>
-        </div>
-      </div>`;
-    ol._fateCards=cards; // 保持継続
-  },500);
+  },55);
 }
 
-// ── STEP4：選択肢選択 → フィードバック ──────────────────────────
-function selectFateChoice(type,choice,tagA,ol){
-  if(!ol||ol._fateDone)return;
-  ol._fateDone=true;
+function closeDice(){
+  const result=diceCallback;
+  document.getElementById('dice-overlay')?.remove();
+  diceCallback=null;
 
-  // 選択ボタンをすべて無効化
-  ol.querySelectorAll('.fate-choice-btn').forEach(b=>b.style.pointerEvents='none');
-
-  const domTag=getDomTag();
-  // 判定：ユーザーのドミナントタグとイベントのtagAが一致 → A判定
-  const isAxisMatch=(choice==='A');
-  const key=type==='good'
-    ?(isAxisMatch?'good_A':'good_B')
-    :(isAxisMatch?'bad_A' :'bad_B');
-
-  const delta=FATE_SCORE[key];
-  const fb=FATE_FEEDBACK[key];
-
-  // vmStateに反映
-  applyValueMeterDelta(delta);
-
-  // スコア変動チップ生成
-  const chips=Object.entries(delta).map(([k,v])=>{
-    const labels={eraFit:'時代適合',adaptability:'適応力',expertise:'専門性',crisis:'危機対応',consistency:'一貫性'};
-    return `<span class="fate-delta-chip ${v>0?'plus':'minus'}">${v>0?'+':''}${v} ${labels[k]||k}</span>`;
-  }).join('');
-
-  // フィードバック画面へ
-  setTimeout(()=>{
-    ol.innerHTML=`
-      <div class="fate-feedback" style="width:100%;max-width:360px">
-        <div class="fate-feedback-icon">${fb.icon}</div>
-        <div class="fate-feedback-result ${key.replace('_','')}">${fb.label}</div>
-        <div class="fate-feedback-title">${fb.title}</div>
-        <div class="fate-feedback-desc">${fb.desc}</div>
-        <div class="fate-feedback-delta">${chips}</div>
-        <button class="fate-next-btn" onclick="closeFate()">次のフェーズへ →</button>
-      </div>`;
-  },300);
+  if(result?.type==='bad'&&result.event){
+    showEvent(result.event); // 既存のイベント表示
+  }else if(result?.type==='good'&&result.bonus){
+    const bonusCorr=result.bonus.correction||0;
+    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:bonusCorr,phaseIdx:G.currentPhase});
+    applyValueMeterChoice(result.bonus.tag);
+    // 追い風ボーナス: eraFit・adaptabilityを強化
+    vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
+    vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
+    renderValueMeter(null);
+    nextPhase();
+  }else{
+    nextPhase();
+  }
 }
-
-// ── クローズ ──────────────────────────────────────────────────────
-function closeFate(){
-  document.getElementById('fate-overlay')?.remove();
-  nextPhase();
-}
-
-// 旧API互換（showDice呼び出しが残っている場合の保険）
-function showDice(cb){ showFateAnnounce(); }
-function closeDice(){ closeFate(); }
 
 // ── 専門用語ツールチップ ─────────────────────────────────────────
 const TERMS={
@@ -5010,93 +4638,6 @@ function loadDemoReport(){
   G.selectedIndustry='事業開発・新規事業';
 
   showResult();
-}
-
-// ━━━ SHARE：氏名・メアド登録 → URL生成 → メール送付 ━━━━━━━━━━━━━━
-let _cachedReportUrl = null;
-
-async function submitShareForm() {
-  const nameVal  = (document.getElementById('share-name')?.value  || '').trim();
-  const emailVal = (document.getElementById('share-email')?.value || '').trim();
-  const errEl    = document.getElementById('share-form-error');
-  const btn      = document.getElementById('share-submit-btn');
-
-  // バリデーション
-  errEl.style.display = 'none';
-  if (!nameVal) {
-    errEl.textContent = 'お名前を入力してください。';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (!emailVal || !emailVal.includes('@')) {
-    errEl.textContent = 'メールアドレスを正しく入力してください。';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = '送信中…';
-
-  try {
-    // STEP 1：トークン生成（キャッシュがあれば再利用）
-    let reportUrl = _cachedReportUrl;
-    if (!reportUrl) {
-      const payload = {
-        action:         'createReport',
-        sessionId:      G.sessionId,
-        nickname:       G.nickname      || '',
-        score:          window._lastScore || 0,
-        tier:           window._lastTier  || '',
-        mbtiType:       G.mbtiType      || '',
-        mbtiLabel:      G.mbtiData?.label || '',
-        dominantTag:    getDomTag(),
-        industryScores: (window._lastIndScores || []).slice(0, 5),
-        narratives:     (G.narratives || []).map(n => ({
-          ageRange: n.ageRange, era: n.era,
-          text: (n.text||'').replace(/<[^>]+>/g,'').slice(0,300),
-        })),
-        headline:  document.getElementById('res-headline')?.textContent || '',
-        analysis:  document.getElementById('res-body')?.textContent?.slice(0,500) || '',
-        jobSheet:  {
-          axis:     document.getElementById('jws-axis')?.textContent || '',
-          industry: document.getElementById('jws-industry')?.textContent || '',
-        },
-      };
-      const res  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(payload) });
-      const data = await res.json();
-      if (!data.ok || !data.token) throw new Error(data.error || 'Token error');
-      reportUrl = GAS_URL.replace(/\/exec$/, '/exec') + '?r=' + data.token;
-      _cachedReportUrl = reportUrl;
-    }
-
-    // STEP 2：メール送信（GAS sendShareUrl アクション）
-    const mailPayload = {
-      action:     'sendShareUrl',
-      name:       nameVal,
-      email:      emailVal,
-      reportUrl:  reportUrl,
-      nickname:   G.nickname    || '',
-      score:      window._lastScore || 0,
-      tier:       window._lastTier  || '',
-      sessionId:  G.sessionId,
-    };
-    const mRes  = await fetch(GAS_URL, { method:'POST', body: JSON.stringify(mailPayload) });
-    const mData = await mRes.json();
-    if (!mData.ok) throw new Error(mData.error || 'Mail send error');
-
-    // 完了画面へ
-    document.getElementById('share-step-form').style.display = 'none';
-    document.getElementById('share-step-done').style.display = 'block';
-    document.getElementById('share-done-email').textContent =
-      nameVal + ' 様（' + emailVal + '）\nにレポートURLを送信しました。';
-
-  } catch(e) {
-    console.error('submitShareForm error:', e);
-    errEl.textContent = '送信に失敗しました。もう一度お試しください。';
-    errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.textContent = 'URLをメールで受け取る';
-  }
 }
 
 init();
