@@ -18,6 +18,9 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0a0a0a;
+  --bg-light:#F2F4F8;
+  --ink:#1A1A2E;
+  --ink60:rgba(26,26,46,.6);
   --accent:#e8621a;
   --accent2:#f07d35;
   --gold:#f0b429;
@@ -89,8 +92,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .recommend-stars{color:var(--gold);font-size:.95rem;letter-spacing:2px}
 .departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:.05;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
 .departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
-.departure-tag{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;opacity:.8}
-.departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px;color:var(--white)}
+.departure-tag{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px}
+.departure-copy{font-family:var(--ff-head);font-size:clamp(1.8rem,6vw,3.2rem);line-height:1.1;letter-spacing:2px;margin-bottom:24px;color:var(--ink)}
 .departure-copy span{color:var(--cyan)}
 .departure-desc{font-size:1rem;color:var(--w70);line-height:2.1;margin-bottom:40px}
 #screen-phase{display:none;flex-direction:column;height:100vh;overflow:hidden}
@@ -674,6 +677,37 @@ div[style*="CAREER TRANSLATION"] {
 .industry-detail-score{font-family:var(--ff-head);font-size:1.4rem;color:var(--accent);margin-bottom:6px}
 .industry-detail-text{font-size:.92rem;color:#555;line-height:1.85}
 
+/* ── 白ベース画面（MBTI・業種・フェーズ時代背景） ── */
+.screen-light{background:var(--bg-light)!important;color:var(--ink)!important}
+.screen-light .onboard-wrap{color:var(--ink)}
+.screen-light .onboard-eyebrow{color:var(--accent)}
+.screen-light .onboard-title{color:var(--ink);text-shadow:none}
+.screen-light .onboard-sub{color:var(--ink60)}
+/* MBTI 選択ボタン */
+.screen-light .mbti-type-btn{background:#fff;border:1.5px solid #E5E7EB;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.screen-light .mbti-type-btn:hover,.screen-light .mbti-type-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.05)}
+.screen-light .mbti-group-title{color:var(--ink)}
+/* 業種選択 */
+.screen-light .ind-btn{background:#fff;border:1.5px solid #E5E7EB;color:var(--ink)}
+.screen-light .ind-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.07)}
+/* 旅立ち画面 */
+.screen-light .depart-wrap{color:var(--ink)}
+/* トップバー（白ベース時） */
+.screen-light .top-bar{background:rgba(242,244,248,.95);border-bottom:1px solid rgba(0,0,0,.08)}
+.screen-light .top-logo{color:var(--accent)}
+.screen-light #phase-counter{color:var(--ink60)}
+.screen-light #phase-era-name{color:var(--ink60)}
+.screen-light .phase-dot{background:rgba(0,0,0,.15)}
+.screen-light .phase-dot.done{background:var(--accent)}
+.screen-light .phase-dot.active{background:rgba(232,98,26,.6)}
+/* era-page（時代背景）は白ベース */
+.screen-light .era-page{background:var(--bg-light)}
+.screen-light .era-desc-block{background:rgba(232,98,26,.04);border-color:var(--accent)}
+.screen-light .era-desc-text{color:var(--ink)}
+.screen-light .era-stat-card{background:#fff;color:var(--ink)}
+/* Q画面（choice4）は黒ベース維持 */
+.screen-light.q-active{background:var(--bg)!important;color:var(--white)!important}
+
 @media(max-width:480px){
   .phase-body{padding:14px 14px 36px}
   .era-stats-grid{grid-template-columns:1fr}
@@ -743,7 +777,7 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- MBTI選択 -->
-<div class="screen" id="screen-mbti">
+<div class="screen screen-light" id="screen-mbti">
   <div style="width:100%">
     <div class="top-bar">
       <div class="top-bar-inner">
@@ -811,7 +845,7 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- ONBOARD Q-A〜D -->
-<div class="screen" id="screen-onboard">
+<div class="screen screen-light" id="screen-onboard">
   <div style="width:100%">
     <div class="top-bar">
       <div class="top-bar-inner">
@@ -831,7 +865,7 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- INDUSTRY -->
-<div class="screen" id="screen-industry">
+<div class="screen screen-light" id="screen-industry">
   <div style="width:100%">
     <div class="top-bar">
       <div class="top-bar-inner">
@@ -860,7 +894,7 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- DEPARTURE -->
-<div class="screen" id="screen-departure">
+<div class="screen screen-light" id="screen-departure">
   <div class="departure-year-bg">2075</div>
   <div class="departure-main">
     <p class="departure-tag">DEPARTURE — 2026</p>
@@ -891,7 +925,7 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- PHASE -->
-<div class="screen" id="screen-phase">
+<div class="screen screen-light" id="screen-phase">
   <div class="top-bar">
     <div class="top-bar-inner">
       <span class="top-logo">LSS 2075</span>
@@ -1654,6 +1688,9 @@ function renderEraPage(phase){
   // エージェントカラーテーマをphase-body-innerに適用
   const body=document.getElementById('phase-body-inner');
   body.classList.remove('q-mode'); // era-page：外側スクロールを有効に戻す
+  // 時代背景は白ベースに戻す
+  const ps2=document.getElementById('screen-phase');
+  if(ps2) ps2.classList.remove('q-active');
   // 親のscreen-phaseにもグラデーション背景を適用
   const phaseScreen=document.getElementById('screen-phase');
   const eraGrads=[
@@ -1724,51 +1761,44 @@ function renderEraPage(phase){
 
       </div>
 
-      <!-- Q1を時代背景カードに統合 -->
+      <!-- Q1選択肢はrenderEraPage関数内でDOMを構築 -->
       <div id="era-q1-block" style="margin-top:20px">
-        <div style="font-size:.84rem;color:rgba(0,0,0,.6);font-weight:700;margin-bottom:12px;letter-spacing:.5px">
-          AIの変化を、あなたはどう読んでいた？
-        </div>
+        <div id="era-q1-label" style="font-size:.9rem;color:#555;font-weight:700;margin-bottom:12px;letter-spacing:.5px">AIの変化を、あなたはどう読んでいた？</div>
         <div id="era-q1-choices" style="display:flex;flex-direction:column;gap:8px"></div>
       </div>
-      <script>
-        (function(){
-          const phase=(G.data.phases||[]).find(p=>p.id===PHASE_IDS[G.currentPhase]);
-          const q1=(G.data.q1||[]).find(q=>q.phase_id===phase?.id);
-          if(!q1)return;
-          const choices=[
-            {label:'A',text:q1.choice_a_text,erafit:Number(q1.choice_a_erafit)},
-            {label:'B',text:q1.choice_b_text,erafit:Number(q1.choice_b_erafit)},
-            {label:'C',text:q1.choice_c_text,erafit:Number(q1.choice_c_erafit)},
-            {label:'D',text:q1.choice_d_text,erafit:Number(q1.choice_d_erafit)},
-          ].filter(ch=>ch.text);
-          const wrap=document.getElementById('era-q1-choices');
-          if(!wrap)return;
-          choices.forEach(ch=>{
-            const btn=document.createElement('button');
-            btn.style.cssText='background:rgba(255,255,255,.85);border:1.5px solid rgba(0,0,0,.1);border-radius:10px;padding:13px 16px;font-size:.96rem;font-weight:600;color:#1A1A2E;text-align:left;cursor:pointer;transition:all .15s;width:100%;display:flex;gap:12px;align-items:center;-webkit-tap-highlight-color:transparent';
-            btn.innerHTML='<span style="font-family:var(--ff-head);font-size:1.2rem;color:var(--accent);min-width:18px">'+ch.label+'</span><span>'+ch.text+'</span>';
-            btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.12)';this.style.borderColor='var(--accent)';};
-            btn.onclick=function(){
-              // Q1を記録して即Q2へ
-              const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
-              G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
-              // eraFit変化
-              const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
-              applyValueMeterDelta({eraFit:delta});
-              // Q2へ
-              G.currentQ=0;
-              renderPhase();
-            };
-            wrap.appendChild(btn);
-          });
-        })();
-      <\/script>
     </div>`;
   applyTooltipsToPage();
   // 時代背景ページではVALUE METERを非表示
   const vmEl=document.getElementById('value-meter');
   if(vmEl)vmEl.classList.remove('vm-visible');
+
+  // Q1選択肢をDOMで構築（innerHTML内のscriptは実行されないため）
+  const q1data=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
+  const q1wrap=document.getElementById('era-q1-choices');
+  if(q1data&&q1wrap){
+    const q1choices=[
+      {label:'A',text:q1data.choice_a_text,erafit:Number(q1data.choice_a_erafit)},
+      {label:'B',text:q1data.choice_b_text,erafit:Number(q1data.choice_b_erafit)},
+      {label:'C',text:q1data.choice_c_text,erafit:Number(q1data.choice_c_erafit)},
+      {label:'D',text:q1data.choice_d_text,erafit:Number(q1data.choice_d_erafit)},
+    ].filter(ch=>ch.text&&ch.text.trim());
+    q1wrap.innerHTML='';
+    q1choices.forEach(function(ch){
+      const btn=document.createElement('button');
+      btn.style.cssText='background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;padding:14px 16px;font-size:.98rem;font-weight:600;color:#1A1A2E;text-align:left;cursor:pointer;transition:all .15s;width:100%;display:flex;gap:12px;align-items:center;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,.06)';
+      btn.innerHTML='<span style="font-family:var(--ff-head);font-size:1.3rem;color:var(--accent);min-width:20px;flex-shrink:0">'+ch.label+'</span><span>'+ch.text+'</span>';
+      btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.06)';this.style.borderColor='rgba(232,98,26,.4)';};
+      btn.onclick=function(){
+        const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
+        G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
+        const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
+        applyValueMeterDelta({eraFit:delta});
+        G.currentQ=0;
+        renderPhase();
+      };
+      q1wrap.appendChild(btn);
+    });
+  }
 }
 
 // Q共通：ヘッダとボディを構築
@@ -1778,8 +1808,9 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   const phaseAges=[20,25,30,40,50,60];
   const age=phaseAges[G.currentPhase];
 
-  // Q1〜Q3は黒背景に戻す
+  // Q1〜Q3は黒背景に戻す（screen-lightを一時的にq-activeで上書き）
   const ps=document.getElementById('screen-phase');
+  if(ps) ps.classList.add('q-active');
   ps.style.background='#000';
   ps.style.backgroundImage='none';
   const ov=document.getElementById('era-bg-overlay');
