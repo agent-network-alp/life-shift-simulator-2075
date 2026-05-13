@@ -215,8 +215,58 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .q-year-badge{font-size:.84rem;color:var(--cyan);background:rgba(56,189,248,.07);padding:4px 10px;border-radius:4px;border:1px solid rgba(56,189,248,.18)}
 /* ③ Q番号ラベルを大きく太字に */
 .q-num{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px;font-weight:700;opacity:1;padding-top:4px}
-.q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--white);line-height:1.75}
-.choices4{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--white);line-height:1.75;padding-bottom:4px}
+.q-scroll-hint{font-size:.72rem;color:rgba(255,255,255,.3);text-align:center;padding:0 20px 6px;letter-spacing:.5px}
+/* 横スクロールカードトラック */
+.q-card-scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:16px 0 20px;scroll-snap-type:x mandatory}
+.q-card-scroll-wrap::-webkit-scrollbar{display:none}
+.q-card-track{display:flex;gap:12px;padding:0 20px;width:max-content}
+.choices4{display:flex;gap:12px;padding:0 20px;width:max-content}
+
+/* カード本体 */
+.choice4-btn{
+  width:160px;
+  min-width:160px;
+  flex-shrink:0;
+  background:rgba(255,255,255,.07);
+  border:1.5px solid rgba(255,255,255,.15);
+  border-radius:16px;
+  cursor:pointer;
+  transition:all .2s cubic-bezier(.2,0,.1,1);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:0 0 14px;
+  -webkit-tap-highlight-color:transparent;
+  scroll-snap-align:start;
+  overflow:hidden;
+}
+.choice4-btn:active,.choice4-btn.selected{
+  border-color:var(--accent);
+  background:rgba(232,98,26,.15);
+  transform:scale(.97);
+}
+.card-svg-area{width:100%;height:90px;flex-shrink:0}
+.card-svg-area svg{width:100%;height:100%;display:block}
+.card-short{
+  font-size:.96rem;
+  font-weight:700;
+  color:var(--white);
+  text-align:center;
+  padding:8px 10px 4px;
+  line-height:1.3;
+}
+.card-sub{
+  font-size:.72rem;
+  color:rgba(255,255,255,.45);
+  text-align:center;
+  padding:0 8px;
+  line-height:1.4;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
 .choice4-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);color:var(--white);font-family:var(--ff-body);text-align:center;padding:20px 14px 18px;border-radius:16px;cursor:pointer;transition:all .2s cubic-bezier(.2,0,.1,1);display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;-webkit-tap-highlight-color:transparent;min-height:120px;justify-content:center}
 .choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.08);transform:translateX(3px);box-shadow:0 2px 12px rgba(232,98,26,.12)}
 .choice4-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.13);box-shadow:0 0 0 1px var(--accent)}
@@ -1762,9 +1812,9 @@ function renderEraPage(phase){
       </div>
 
       <!-- Q1選択肢はrenderEraPage関数内でDOMを構築 -->
-      <div id="era-q1-block" style="margin-top:20px">
-        <div id="era-q1-label" style="font-size:.9rem;color:#555;font-weight:700;margin-bottom:12px;letter-spacing:.5px">AIの変化を、あなたはどう読んでいた？</div>
-        <div id="era-q1-choices" style="display:flex;flex-direction:column;gap:8px"></div>
+      <div id="era-q1-block" style="margin-top:16px;background:#0a0a0a;border-radius:16px 16px 0 0;padding:16px 16px 0;margin-left:-20px;margin-right:-20px">
+        <div id="era-q1-label" style="font-size:.9rem;color:rgba(255,255,255,.8);font-weight:700;margin-bottom:12px;letter-spacing:.5px;padding:0 4px">AIの変化を、あなたはどう読んでいた？</div>
+        <div id="era-q1-choices" style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 4px 8px;scroll-snap-type:x mandatory"></div>
       </div>
     </div>`;
   applyTooltipsToPage();
@@ -1785,9 +1835,14 @@ function renderEraPage(phase){
     q1wrap.innerHTML='';
     q1choices.forEach(function(ch){
       const btn=document.createElement('button');
-      btn.style.cssText='background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;padding:14px 16px;font-size:.98rem;font-weight:600;color:#1A1A2E;text-align:left;cursor:pointer;transition:all .15s;width:100%;display:flex;gap:12px;align-items:center;-webkit-tap-highlight-color:transparent;box-shadow:0 1px 4px rgba(0,0,0,.06)';
-      btn.innerHTML='<span style="font-family:var(--ff-head);font-size:1.3rem;color:var(--accent);min-width:20px;flex-shrink:0">'+ch.label+'</span><span>'+ch.text+'</span>';
-      btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.06)';this.style.borderColor='rgba(232,98,26,.4)';};
+      btn.style.cssText='width:150px;min-width:150px;flex-shrink:0;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.18);border-radius:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;padding:0 0 12px;-webkit-tap-highlight-color:transparent;scroll-snap-align:start;overflow:hidden;color:var(--white)';
+      // Q1のerafit値からカードUIを選択
+      const q1CUI=ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:Q1_CARD_UI.low;
+      btn.innerHTML=
+        '<div style="width:100%;height:80px;flex-shrink:0">'+(q1CUI?q1CUI.svg:'')+'</div>'
+        +'<div style="font-size:.92rem;font-weight:700;text-align:center;padding:6px 8px 4px;line-height:1.3">'+(q1CUI?q1CUI.short:ch.label)+'</div>'
+        +'<div style="font-size:.68rem;color:rgba(255,255,255,.45);text-align:center;padding:0 6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+ch.text+'</div>';
+      btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.15)';this.style.borderColor='rgba(232,98,26,.6)';this.style.transform='scale(.97)';};
       btn.onclick=function(){
         const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
         G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
@@ -1802,6 +1857,53 @@ function renderEraPage(phase){
 }
 
 // Q共通：ヘッダとボディを構築
+// ━━━ タグ別カードSVGイラスト（横スクロールカード用）
+const TAG_CARD_UI={
+  'specialization':{
+    short:'専門を極める',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(232,98,26,.08)" rx="8"/><circle cx="50" cy="32" r="18" fill="rgba(232,98,26,.15)" stroke="rgba(232,98,26,.5)" stroke-width="1.5"/><line x1="50" y1="14" x2="50" y2="50" stroke="rgba(232,98,26,.7)" stroke-width="2"/><line x1="32" y1="32" x2="68" y2="32" stroke="rgba(232,98,26,.7)" stroke-width="2"/><circle cx="50" cy="32" r="5" fill="rgba(232,98,26,.9)"/><path d="M38,58 L62,58 L62,68 L38,68 Z" fill="rgba(232,98,26,.2)" rx="3"/><line x1="50" y1="50" x2="50" y2="58" stroke="rgba(232,98,26,.4)" stroke-width="1.5"/></svg>`,
+  },
+  'ai-native':{
+    short:'AIを武器に',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(43,143,197,.08)" rx="8"/><rect x="25" y="18" width="50" height="36" rx="6" fill="rgba(43,143,197,.15)" stroke="rgba(43,143,197,.5)" stroke-width="1.5"/><circle cx="36" cy="33" r="4" fill="rgba(43,143,197,.8)"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="50" cy="33" r="4" fill="rgba(43,143,197,.8)"><animate attributeName="opacity" values=".3;1;.3" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="64" cy="33" r="4" fill="rgba(43,143,197,.8)"><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle><path d="M30,62 L70,62" stroke="rgba(43,143,197,.4)" stroke-width="1.5"/><circle cx="50" cy="62" r="3" fill="rgba(43,143,197,.6)"/></svg>`,
+  },
+  'strategic':{
+    short:'全体を設計',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(245,158,11,.08)" rx="8"/><polygon points="50,12 88,66 12,66" fill="none" stroke="rgba(245,158,11,.5)" stroke-width="1.5"/><line x1="50" y1="12" x2="50" y2="66" stroke="rgba(245,158,11,.3)" stroke-width="1"/><line x1="12" y1="66" x2="88" y2="66" stroke="rgba(245,158,11,.3)" stroke-width="1"/><circle cx="50" cy="12" r="4" fill="rgba(245,158,11,.9)"/><circle cx="12" cy="66" r="3" fill="rgba(245,158,11,.6)"/><circle cx="88" cy="66" r="3" fill="rgba(245,158,11,.6)"/><circle cx="50" cy="44" r="5" fill="rgba(245,158,11,.4)" stroke="rgba(245,158,11,.7)" stroke-width="1"/></svg>`,
+  },
+  'independent':{
+    short:'独立して動く',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(52,211,153,.08)" rx="8"/><circle cx="50" cy="30" r="14" fill="rgba(52,211,153,.15)" stroke="rgba(52,211,153,.5)" stroke-width="1.5"/><path d="M44,26 L56,30 L44,34 Z" fill="rgba(52,211,153,.8)"/><path d="M50,44 L50,62" stroke="rgba(52,211,153,.5)" stroke-width="1.5" stroke-dasharray="4,3"/><circle cx="50" cy="65" r="3" fill="rgba(52,211,153,.7)"/><path d="M35,55 Q50,48 65,55" fill="none" stroke="rgba(52,211,153,.3)" stroke-width="1"/></svg>`,
+  },
+  'rare-combination':{
+    short:'掛け算を作る',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(167,139,250,.08)" rx="8"/><circle cx="35" cy="35" r="16" fill="rgba(167,139,250,.15)" stroke="rgba(167,139,250,.5)" stroke-width="1.5"/><circle cx="65" cy="35" r="16" fill="rgba(43,143,197,.15)" stroke="rgba(43,143,197,.5)" stroke-width="1.5"/><ellipse cx="50" cy="35" rx="8" ry="14" fill="rgba(232,98,26,.25)"/><text x="50" y="65" font-size="16" text-anchor="middle" fill="rgba(232,98,26,.8)" font-weight="700">✕</text></svg>`,
+  },
+  'leadership':{
+    short:'人を育てる',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(52,211,153,.08)" rx="8"/><circle cx="50" cy="22" r="10" fill="rgba(52,211,153,.3)" stroke="rgba(52,211,153,.6)" stroke-width="1.5"/><path d="M40,36 Q50,50 60,36" fill="rgba(52,211,153,.2)"/><circle cx="25" cy="50" r="7" fill="rgba(52,211,153,.2)" stroke="rgba(52,211,153,.4)" stroke-width="1"/><circle cx="75" cy="50" r="7" fill="rgba(52,211,153,.2)" stroke="rgba(52,211,153,.4)" stroke-width="1"/><line x1="50" y1="36" x2="30" y2="46" stroke="rgba(52,211,153,.4)" stroke-width="1.5"/><line x1="50" y1="36" x2="70" y2="46" stroke="rgba(52,211,153,.4)" stroke-width="1.5"/></svg>`,
+  },
+  'community-builder':{
+    short:'つながりを築く',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(56,189,248,.08)" rx="8"/><circle cx="50" cy="32" r="8" fill="rgba(56,189,248,.3)" stroke="rgba(56,189,248,.6)" stroke-width="1.5"/><circle cx="22" cy="55" r="7" fill="rgba(56,189,248,.2)" stroke="rgba(56,189,248,.4)" stroke-width="1"/><circle cx="78" cy="55" r="7" fill="rgba(56,189,248,.2)" stroke="rgba(56,189,248,.4)" stroke-width="1"/><circle cx="50" cy="65" r="7" fill="rgba(56,189,248,.2)" stroke="rgba(56,189,248,.4)" stroke-width="1"/><line x1="50" y1="40" x2="26" y2="50" stroke="rgba(56,189,248,.5)" stroke-width="1.5"/><line x1="50" y1="40" x2="74" y2="50" stroke="rgba(56,189,248,.5)" stroke-width="1.5"/><line x1="50" y1="40" x2="50" y2="58" stroke="rgba(56,189,248,.5)" stroke-width="1.5"/></svg>`,
+  },
+  'global':{
+    short:'越境する',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(99,179,237,.08)" rx="8"/><circle cx="50" cy="36" r="22" fill="none" stroke="rgba(99,179,237,.5)" stroke-width="1.5"/><ellipse cx="50" cy="36" rx="11" ry="22" fill="none" stroke="rgba(99,179,237,.3)" stroke-width="1"/><line x1="28" y1="36" x2="72" y2="36" stroke="rgba(99,179,237,.3)" stroke-width="1"/><line x1="28" y1="24" x2="72" y2="24" stroke="rgba(99,179,237,.2)" stroke-width=".8"/><line x1="28" y1="48" x2="72" y2="48" stroke="rgba(99,179,237,.2)" stroke-width=".8"/><path d="M40,65 L60,65" stroke="rgba(99,179,237,.5)" stroke-width="2"/><polygon points="62,62 68,65 62,68" fill="rgba(99,179,237,.7)"/></svg>`,
+  },
+  'legacy':{
+    short:'継承する',
+    svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(245,158,11,.08)" rx="8"/><line x1="50" y1="10" x2="50" y2="60" stroke="rgba(245,158,11,.6)" stroke-width="2"/><circle cx="50" cy="10" r="5" fill="rgba(245,158,11,.9)"><animate attributeName="opacity" values="1;.4;1" dur="2s" repeatCount="indefinite"/></circle><circle cx="50" cy="28" r="4" fill="rgba(245,158,11,.6)"/><circle cx="50" cy="44" r="3" fill="rgba(245,158,11,.4)"/><path d="M36,62 Q50,56 64,62" fill="none" stroke="rgba(245,158,11,.5)" stroke-width="1.5"/><path d="M28,70 Q50,62 72,70" fill="none" stroke="rgba(245,158,11,.3)" stroke-width="1"/></svg>`,
+  },
+};
+
+// Q1用（erafit値別）
+const Q1_CARD_UI={
+  'high':{short:'先読みしていた',svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(52,211,153,.08)" rx="8"/><path d="M20,55 L38,30 L56,42 L75,18" fill="none" stroke="rgba(52,211,153,.7)" stroke-width="2.5" stroke-linecap="round"/><polygon points="74,14 82,22 70,24" fill="rgba(52,211,153,.8)"/><circle cx="20" cy="55" r="3" fill="rgba(52,211,153,.6)"/><circle cx="38" cy="30" r="3" fill="rgba(52,211,153,.6)"/><circle cx="56" cy="42" r="3" fill="rgba(52,211,153,.6)"/></svg>`},
+  'mid': {short:'様子見していた', svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(245,158,11,.08)" rx="8"/><path d="M18,40 Q35,28 50,40 Q65,52 82,40" fill="none" stroke="rgba(245,158,11,.7)" stroke-width="2.5" stroke-linecap="round"/><circle cx="50" cy="40" r="5" fill="rgba(245,158,11,.5)" stroke="rgba(245,158,11,.8)" stroke-width="1.5"/><line x1="50" y1="15" x2="50" y2="26" stroke="rgba(245,158,11,.4)" stroke-width="1.5"/><line x1="50" y1="54" x2="50" y2="65" stroke="rgba(245,158,11,.4)" stroke-width="1.5"/></svg>`},
+  'low': {short:'後から気づいた', svg:`<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(239,68,68,.08)" rx="8"/><path d="M20,30 L38,55 L56,42 L75,60" fill="none" stroke="rgba(239,68,68,.6)" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,3"/><circle cx="75" cy="60" r="5" fill="rgba(239,68,68,.5)" stroke="rgba(239,68,68,.8)" stroke-width="1.5"/><text x="50" y="22" font-size="13" text-anchor="middle" fill="rgba(239,68,68,.5)">?</text></svg>`},
+};
+
 function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   const phases=G.data.phases||[];
   const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
@@ -1824,15 +1926,13 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
       <div class="q-context-bar">
         <span class="q-age-badge">${age}歳</span>
         <span class="q-era-badge">${phase.era}</span>
-        <span class="q-year-badge">${phase.yearRange}</span>
       </div>
-      <div class="q-num">Q${qNum} / 3 — ${qLabel}</div>
       <div class="q-text">${questionText}</div>
     </div>
-    <div class="q-scroll-body">
-      <div class="choices4" id="choices4"></div>
-      <div id="mirror-area"></div>
-    </div>`;
+    <div class="q-card-scroll-wrap">
+      <div class="q-card-track" id="choices4"></div>
+    </div>
+    <div id="mirror-area" style="padding:0 20px"></div>`;
 
   // VALUE METER 表示
   const vmEl=document.getElementById('value-meter');
@@ -1840,16 +1940,21 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
 
   const wrap=document.getElementById('choices4');
   choiceData.forEach(ch=>{
+    // タグ別UIまたはQ1用UIを取得
+    const tagUI=ch.tag?TAG_CARD_UI[ch.tag]:null;
+    const q1UI=ch.erafit!=null?(ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:Q1_CARD_UI.low):null;
+    const cardUI=tagUI||q1UI||{short:ch.label,svg:''};
+
     const btn=document.createElement('button');
     btn.className='choice4-btn';
-    btn.innerHTML=`<span class="choice4-lbl">${ch.label}</span><div class="choice4-body"><div class="choice4-text">${ch.text}</div>${ch.sub?`<div class="choice4-ex">${ch.sub}</div>`:''}</div>`;
-
-    // ホバー/タッチのプレビューは廃止（選択前に変化量がわかるのを防ぐ）
+    btn.innerHTML=
+      '<div class="card-svg-area">'+(cardUI.svg||'')+'</div>'
+      +'<div class="card-short">'+cardUI.short+'</div>'
+      +(ch.text?'<div class="card-sub">'+ch.text+'</div>':'');
 
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
-      // 振動フィードバック（モバイル）
       if(navigator.vibrate) navigator.vibrate(30);
       // Q2はタグで反映、Q1はerafitで反映、Q3はinvestで反映
       if(ch.tag){
@@ -2350,108 +2455,32 @@ function pickNarrative(tag,phaseIdx){
 
 // イベント発生有無によるナラティブ後半
 // 70歳の自分からのコメンタリー（選択直後にフラッシュ表示）
-const COMMENTARY_FALLBACK={
-  'ai-native':['「ためらうな、AIは武器だ」','「波に乗れ、これが時代だ」','「速さより、方向が大事だ」'],
-  'strategic':['「問いを持て、それがすべてだ」','「全体を見よ、細部は後だ」','「迷ったら本質に戻れ」'],
-  'specialization':['「深さは裏切らない」','「続けろ、深みが力になる」','「専門家は孤独だが強い」'],
-  'independent':['「誰かに頼むな、自分で動け」','「自律が最大の武器になる」','「孤独を恐れるな」'],
-  'rare-combination':['「掛け算は足し算より強い」','「境界線を越えろ」','「2つを持つ者が勝つ」'],
-  'leadership':['「育てた人間が返ってくる」','「人への投資は必ず実る」','「リーダーは一人でない」'],
-  'community-builder':['「つながりが力になる日が来る」','「信頼は複利で増える」','「人を結べ、それが価値だ」'],
-  'global':['「視野が広い者が生き残る」','「境界を越えた者が強い」','「世界で考えろ」'],
-  'legacy':['「残したものだけが続く」','「知恵は渡してこそ意味がある」','「次の世代のために打て」'],
-};
-let _commentaryShown=false;
-async function fetchCommentary(phaseIdx, tagJP, q1mood, mbtiLabel){
-  // フォールバック即表示（Gemini不使用・コスト0）
-  const pool=COMMENTARY_FALLBACK[G.tags[phaseIdx]]||['「この選択が、未来の自分をつくる」'];
-  const text=pool[phaseIdx%pool.length];
-  showCommentaryFlash(text);
-}
-function showCommentaryFlash(text){
-  const el=document.createElement('div');
-  el.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(26,26,46,.95);color:#fff;font-size:.94rem;padding:10px 18px;border-radius:20px;border:1px solid rgba(232,98,26,.4);z-index:200;opacity:0;transition:all .4s ease;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;font-style:italic';
-  el.textContent='70歳の自分から：'+text;
-  document.body.appendChild(el);
-  setTimeout(()=>{el.style.opacity='1';el.style.transform='translateX(-50%) translateY(0)';},50);
-  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(-50%) translateY(-10px)';},2800);
-  setTimeout(()=>el.remove(),3300);
-}
+
 
 function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
-  const opening=pickNarrative(tag,phaseIdx);
-  // why×how×horizonでナラティブの「味付け」を決定
-  const sl=(G.styleLog||[])[phaseIdx]||{};
-  const why=sl.why||'resolver';
-  const how=sl.how||'pragmatic';
-  const q1=G.q1Choices[phaseIdx]||{};
-  const horizon=q1.horizon||'adaptive';
-
-  // イベント描写
-  let eventStr='';
+  var q2c=G.choices[phaseIdx];
+  var q1c=G.q1Choices[phaseIdx];
+  var q2text=q2c&&q2c.text?q2c.text:'';
+  var TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  var tagJP=TL[tag]||tag;
+  var ERA_CTX=['AIが仕事を書き換え始めた時代に、','AGIの予兆が広がる中で、','産業の地図が塗り替えられていく中で、','人とAIが当然のように協働する時代に、','社会の骨格そのものが変わっていく中で、','人生100年時代の後半戦が始まった今、'];
+  var eraCtx=ERA_CTX[phaseIdx]||'この時代、';
+  var q1pat=q1c&&q1c.erafit>=8?'先読みしていた':q1c&&q1c.erafit>=5?'ながらも前に進んだ':'後から気づいた';
+  var body=q2text&&q2text.length>3
+    ?eraCtx+'私は「'+q2text.trim()+'」という道を選んだ。その選択を、私は'+q1pat+'。'
+    :eraCtx+'私は'+tagJP+'の道を選んだ。その時代を、私は'+q1pat+'。';
+  var eventStr='';
   if(hadEvent){
-    const eventDescs={
-      bad:{
-        'strategic':'想定外の出来事が私を試した。それでも私は、状況を俯瞰することをやめなかった。',
-        'ai-native':'時代の波が突然向きを変えた。私はその変化を素早く読み取り、動いた。',
-        'specialization':'嵐のような変化の中でも、私は自分の専門性という錨を手放さなかった。',
-        'independent':'予期せぬ出来事が、むしろ私の自律性を強めた。',
-        default:'時代は想定通りには動かなかった。しかし、それが私を鍛えた。',
-      },
-      good:{
-        'community-builder':'思わぬ出会いが、新しい可能性を開いた。',
-        'strategic':'追い風が吹いた。私はその流れを逃さず、次のステップへ踏み出した。',
-        'ai-native':'市場が動いた。準備していた私には、それがチャンスに見えた。',
-        default:'時代が私に微笑んだ瞬間があった。',
-      },
-    };
-    const evType=hadEvent==='good'?'good':'bad';
-    eventStr='\n'+((eventDescs[evType][eventTag])||eventDescs[evType].default);
+    var evG=hadEvent==='good';
+    var EDB={strategic:'想定外の出来事が来た。それでも私は、全体を見る目を失わなかった。','ai-native':'時代の流れが突然変わった。私はその変化を素早く読み取った。',specialization:'嵐の中でも、私は自分の専門性という錨を手放さなかった。',independent:'予期せぬ逆風が、むしろ私の自律性を鍛えた。','rare-combination':'思わぬ壁にぶつかった。しかし掛け算の発想が活路を開いた。',leadership:'逆境の中でこそ、人を育てる覚悟が問われた。','community-builder':'試練の中で、つながりの力が私を支えた。',global:'壁が生まれた。しかし越境する理由はより鮮明になった。',legacy:'積み上げたものが揺らいだ。でも継承への意志は変わらなかった。'};
+    var EDG={strategic:'追い風が吹いた。私はその流れを逃さず次へ踏み出した。','ai-native':'変化の波が来た。準備していた私には、それがチャンスに見えた。',specialization:'時代が専門性を求め始めた。磨いてきたものが輝いた。',independent:'自律的に動いてきた積み重ねが、思わぬ機会を引き寄せた。','rare-combination':'掛け算の組み合わせが、予想外の化学反応を起こした。',leadership:'育てた人間が、予想以上の力を発揮した。','community-builder':'つながりが、新しい可能性を連れてきた。',global:'越境が、新たな世界を開いた。',legacy:'積み上げてきたものの価値が、ついに認められた。'};
+    eventStr='\n'+(evG?(EDG[eventTag]||'時代が私に微笑んだ瞬間があった。'):(EDB[eventTag]||'時代は想定通りには動かなかった。しかし、それが私を鍛えた。'));
   }
-
-  // 締めの一文：why×how×horizonの組み合わせで個人化
-  const WHY_CLOSING={
-    resolver:{
-      visionary: 'この時代に、私が選んだのは「なぜ」という問いに答え続けることだった。',
-      disruptive:'この時代に、私は常識を疑うことで社会の「困った」に切り込んだ。',
-      relational:'この時代に、私は人との対話の中から「解くべき問い」を見つけ続けた。',
-      pragmatic: 'この時代に、私は「動くこと」が最大の答えだと信じていた。',
-    },
-    contributor:{
-      relational:'この時代に、私は「誰かの役に立つこと」を自分の燃料にした。',
-      visionary: 'この時代に、私は仲間と共に「まだない未来」を描いた。',
-      pragmatic: 'この時代に、私はチームの中で「確実に届ける力」を磨いた。',
-      disruptive:'この時代に、私は組織の常識を壊すことで貢献の形を変えた。',
-    },
-    ownership:{
-      pragmatic: 'この時代に、私は「誰かに頼まれる前に動く人間」であり続けた。',
-      disruptive:'この時代に、私は「自分にしかできないこと」を追い求めた。',
-      visionary: 'この時代に、私は長い時間軸で「自分の責任」を定義した。',
-      relational:'この時代に、私は「自立しながらもつながること」の価値を実証した。',
-    },
-  };
-  const HORIZON_SUFFIX={
-    'long-term': 'その選択の意味は、ずっと後になってわかった。',
-    'adaptive':  'その選択の正しさは、行動しながら確かめるしかなかった。',
-    'reactive':  '後から振り返って、それが自分を変えた転換点だとわかった。',
-  };
-  const TAG_CLOSING_DEFAULT={
-    specialization:'この時代に、私は「深さ」で勝負した。',
-    'ai-native':'この時代に、私は「変化に乗る力」で前に進んだ。',
-    strategic:'この時代に、私は「全体を見る目」で価値を出した。',
-    independent:'この時代に、私は「自分の軸」を大切にした。',
-    'rare-combination':'この時代に、私は「掛け算」で希少な存在になった。',
-    leadership:'この時代に、私は「誰かを育てること」に力を注いだ。',
-    'community-builder':'この時代に、私は「つながり」から価値を生み出した。',
-    global:'この時代に、私は「境界を越える力」を武器にした。',
-    legacy:'この時代に、私は「残すこと」を自分の仕事にした。',
-  };
-  const closingBase=WHY_CLOSING[why]?.[how]||TAG_CLOSING_DEFAULT[tag]||'この時代を、私は自分の選択で歩んだ。';
-  const closingSuffix=HORIZON_SUFFIX[horizon]||'';
-  const closing=closingBase+(closingSuffix?' '+closingSuffix:'');
-
-  return opening+eventStr+'\n\n'+closing;
+  var RIS=['その選択は、恐怖から来ていたか。確信から来ていたか。','あなたのスキルは、変容する側だったか。消える側だったか。','人が減った社会で、あなたは何をする人間だったか。','あなたには、AIが立てられない問いがあったか。','言語の壁が消えた世界で、あなたに残るものは何だったか。','この50年で、あなたは何を残したか。'];
+  return body+eventStr+'\n\n'+(RIS[phaseIdx]||'あなたはその選択を、恐怖から選んだか。確信から選んだか。');
 }
+
+
 
 function showNarrative(completedPhaseIdx, onNext){
   const tag=G.tags[completedPhaseIdx]||'strategic';
@@ -2481,15 +2510,6 @@ function showNarrative(completedPhaseIdx, onNext){
   };
 
   // 70歳の自分からのコメンタリーを取得して表示（非同期・バックグラウンド）
-  if(G.sessionId&&G.mbtiType){
-    const phaseIdx=completedPhaseIdx;
-    const tagJP=({'specialization':'専門特化','ai-native':'AI活用','strategic':'意思決定','independent':'独立','rare-combination':'掛け算','leadership':'育成','community-builder':'コミュニティ','global':'グローバル','legacy':'知見継承'})[tag]||tag;
-    const q1rec=G.q1Choices[phaseIdx];
-    const q1mood=q1rec?.erafit>=8?'先読みしていた':'様子見していた';
-    // コメンタリーをフェーズナラティブ表示と並列で取得
-    fetchCommentary(phaseIdx,tagJP,q1mood,G.mbtiData?.label||'');
-  }
-
   // オーバーレイ表示
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
 
@@ -3239,10 +3259,49 @@ function extractPartialJSON(raw){
   return Object.keys(result).length>0?result:null;
 }
 
+// ━━━ AI類型判定（TIMES_AI / PLUS_AI / MINUS_AI）━━━━━━━━━━━━━━━━━
+function calcAIStance(){
+  const tags=G.tags||[];
+  const q1s=G.q1Choices||[];
+  const aiNativeCount=tags.filter(t=>t==='ai-native').length;
+  const strategicCount=tags.filter(t=>t==='strategic').length;
+  const highErafitCount=q1s.filter(q=>q&&q.erafit>=8).length;
+  const lowErafitCount=q1s.filter(q=>q&&q.erafit<5).length;
+  // ai-nativeを多用 → 道具として使う人
+  if(aiNativeCount>=2) return 'PLUS_AI';
+  // 先読み型Q1が多い or strategicを多用 → 問いを立てる人
+  if(highErafitCount>=4||strategicCount>=2) return 'TIMES_AI';
+  // 低erafitが多い → 距離を置く人
+  if(lowErafitCount>=3) return 'MINUS_AI';
+  // デフォルト（ai-native 1回 or その他）
+  if(aiNativeCount>=1) return 'PLUS_AI';
+  return 'TIMES_AI';
+}
+
+// ━━━ 問いの力スコア計算（10〜95）━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function calcNValue(){
+  const q1s=G.q1Choices||[];
+  const tags=G.tags||[];
+  const styleLog=G.styleLog||[];
+  // Q1認識精度スコア（高erafit=10点, 中=5点, 低=0点）合計→40点満点に正規化
+  const q1Raw=q1s.reduce((s,q)=>s+(q&&q.erafit>=8?10:q&&q.erafit>=5?5:0),0);
+  const q1Norm=Math.min(40,Math.round(q1Raw*40/60));
+  // 問いを立てるタグの出現数→30点満点
+  const QTAGS=['strategic','ai-native','rare-combination','independent'];
+  const tagNorm=Math.min(30,tags.filter(t=>QTAGS.includes(t)).length*5);
+  // resolver/ownership動機の一貫性→25点満点
+  const motiveCount=styleLog.filter(s=>s&&(s.why==='resolver'||s.why==='ownership')).length;
+  const motiveNorm=Math.min(25,motiveCount*4);
+  return Math.min(95,Math.max(10,Math.round(10+q1Norm+tagNorm+motiveNorm)));
+}
+
 async function generateWithGemini(score, tierLabel, domTag, top3){
   // ━━━ 共通コンテキスト（両リクエストで使用）
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
   const mbtiData=G.mbtiData||null;
+  const aiStanceType=calcAIStance(); G.aiStanceType=aiStanceType;
+  const nVal=calcNValue(); G.nValueResult=nVal;
+  const aiTypeLabel={'TIMES_AI':'問いを立てる人','PLUS_AI':'道具として使う人','MINUS_AI':'距離を置く人'}[aiStanceType]||'';
 
   // mbtiDesc：短縮版（入力トークン削減）
   const mbtiDesc=mbtiData
@@ -3262,15 +3321,15 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
   const domTagJP=TL[domTag]||domTag;
 
   // ━━━ リクエスト①：MY STORY（独立して最重要・先に投げる）
-  // フェーズ別選択ログを詳細に構築（因果の糸のため）
+  // フェーズ別選択ログ：選択肢テキストそのものを含む（個人化の核心）
+  const PHASE_AGE_LBL=['20〜25歳(AI実装期)','25〜30歳(AGI移行期)','30〜40歳(産業再編期)','40〜50歳(人機協働期)','50〜60歳(社会変容期)','60〜70歳(ポスト労働期)'];
+  const TJPM={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
   const phaseChoiceLog=G.tags.map((tag,i)=>{
-    const q1=G.q1Choices[i];const q3=G.q3Choices[i]||'';
-    const sl=(G.styleLog||[])[i]||{};
-    const q1label=q1?.erafit>=8?'先読み':q1?.erafit>=5?'様子見':'後追い';
-    const PHASE_AGE_LABELS=['20〜25歳（AI実装期）','25〜30歳（AGI移行期）','30〜40歳（産業再編期）','40〜50歳（人機協働成熟期）','50〜60歳（社会構造変容期）','60〜70歳（ポスト労働期）'];
-    const ageLabel=PHASE_AGE_LABELS[i]||`フェーズ${i+1}`;
-    return `${ageLabel}[${(['専門特化','AI活用','意思決定','独立','掛け算','育成','コミュニティ','グローバル','知見継承'][['specialization','ai-native','strategic','independent','rare-combination','leadership','community-builder','global','legacy'].indexOf(tag)]||tag)}/${q1label}/${q3}/${sl.why||''}/${sl.how||''}]`;
-  }).join(' → ');
+    const q1l=G.q1Choices[i];const q2l=G.choices[i];const sl=(G.styleLog||[])[i]||{};
+    const q1label=q1l?.erafit>=8?'先読み':q1l?.erafit>=5?'様子見':'後追い';
+    const q2txt=q2l?.text?`「${q2l.text.slice(0,25)}」`:'';
+    return `${PHASE_AGE_LBL[i]||'P'+(i+1)}：${TJPM[tag]||tag}${q2txt} Q1=${q1label} WHY=${sl.why||''} HOW=${sl.how||''}`;
+  }).join('\n  ');
 
   // MBTI認知機能パターン（L3データ）
   const cogFn=mbtiData?`主機能:${{
@@ -3285,9 +3344,11 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 選択の流れ: ${phaseChoiceLog}
 動機軸: ${{'resolver':'解決者型','contributor':'貢献者型','ownership':'オーナー型'}[G.dominantWhy]||''} / 行動: ${{'visionary':'長期設計','pragmatic':'現実実行','relational':'関係構築','disruptive':'常識破壊'}[G.dominantHow]||''}
 スコア: ${score}点（${tierLabel}）
+AI類型: ${aiTypeLabel}（${aiStanceType}）
 
 【生成ルール】
-1. 各フェーズで「${G.mbtiType||'このタイプ'}ならではの内的葛藤」を1文含める（例：ENFJなら承認欲求との葛藤、INTJなら孤独と確信の葛藤）
+1. 各フェーズで選択したこと（ログの「」内テキスト）を物語の核心として使え。抽象的な言い換えをせず、その具体的な言葉を文脈に落とし込め。
+1b. MBTI（${G.mbtiType||'不明'}）ならではの内的葛藤と、AI類型（${aiTypeLabel}）に合うAIとの関わり方を各フェーズに描く。
 2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
 3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
 4. 各80〜100字、完全な一人称過去形
@@ -4623,6 +4684,14 @@ function loadDemoReport(){
   G.profileCode='action-combine-intuition-social';
   G.profile={change:'action',value:'combine',decide:'intuition',energy:'social'};
   G.tags=['ai-native','strategic','rare-combination','leadership','community-builder','legacy'];
+  G.choices=[
+    {label:'A',text:'AIをフル活用して専門性を高める',tag:'ai-native'},
+    {label:'B',text:'問いを立てる側に回る',tag:'strategic'},
+    {label:'C',text:'掛け算の希少人材を目指す',tag:'rare-combination'},
+    {label:'D',text:'次の世代を育てるリーダーになる',tag:'leadership'},
+    {label:'A',text:'コミュニティを通じて社会を変える',tag:'community-builder'},
+    {label:'B',text:'知見を体系化して次世代に渡す',tag:'legacy'},
+  ];
   G.q1Choices=[
     {label:'B',erafit:8},{label:'D',erafit:8},{label:'A',erafit:8},
     {label:'C',erafit:5},{label:'B',erafit:8},{label:'D',erafit:3}
