@@ -163,21 +163,15 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   max-width:100%;
 }
 #value-meter.vm-visible{display:block}
-.vm-inner{max-width:660px;margin:0 auto}
-.vm-title{font-size:.7rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.9;font-weight:700}
-.vm-grid{display:flex;gap:0;align-items:stretch}
-.vm-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:0 4px;border-right:1px solid rgba(255,255,255,.07)}
-.vm-item:last-child{border-right:none}
-.vm-dot-wrap{position:relative;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.vm-signal{width:14px;height:14px;border-radius:50%;transition:background .4s ease,box-shadow .4s ease}
-.vm-arrow{position:absolute;right:-4px;top:-2px;font-size:9px;line-height:1;font-weight:700;width:10px;text-align:center}
-.vm-arrow.up{color:#34D399}
-.vm-arrow.dn{color:#EF4444}
-.vm-label{font-size:9px;color:rgba(255,255,255,.45);letter-spacing:.3px;text-align:center;white-space:nowrap;line-height:1.2}
-.vm-legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;padding-top:7px;border-top:1px solid rgba(255,255,255,.07)}
-.vm-legend-item{display:flex;align-items:center;gap:4px;font-size:8px;color:rgba(255,255,255,.3)}
-.vm-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.vm-track{display:none}
+.vm-inner{max-width:660px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.vm-n-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);font-weight:700;white-space:nowrap;flex-shrink:0}
+.vm-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden}
+.vm-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#34D399);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.vm-n-val{font-family:var(--ff-head);font-size:1.2rem;color:var(--accent);min-width:32px;text-align:right;flex-shrink:0}
+.vm-n-delta{font-size:.7rem;min-width:28px;text-align:right;flex-shrink:0;transition:color .3s}
+.vm-n-delta.up{color:#34D399}.vm-n-delta.dn{color:#EF4444}.vm-n-delta.zero{color:transparent}
+.vm-grid{display:none}.vm-item{display:none}.vm-legend{display:none}
+.vm-signal{display:none}.vm-dot-wrap{display:none}.vm-track{display:none}.vm-fill{display:none}.vm-delta{display:none}
 .vm-fill{display:none}
 .vm-delta{display:none}
 .vm-delta.up{color:var(--cyan)}
@@ -269,7 +263,9 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 }
 .choice4-btn{background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.15);color:var(--white);font-family:var(--ff-body);text-align:center;padding:20px 14px 18px;border-radius:16px;cursor:pointer;transition:all .2s cubic-bezier(.2,0,.1,1);display:flex;flex-direction:column;gap:10px;align-items:center;width:100%;-webkit-tap-highlight-color:transparent;min-height:120px;justify-content:center}
 .choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.08);transform:translateX(3px);box-shadow:0 2px 12px rgba(232,98,26,.12)}
+.choice4-btn{position:relative}
 .choice4-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.13);box-shadow:0 0 0 1px var(--accent)}
+.choice4-btn.selected::after{content:"✓ 選択中";position:absolute;top:7px;right:10px;font-size:.65rem;color:var(--accent);font-weight:700;letter-spacing:.5px}
 .choice4-lbl{font-family:var(--ff-head);font-size:1.6rem;color:var(--accent);line-height:1;opacity:.9;margin-bottom:2px}
 .choice4-body{flex:1}
 .choice4-text{font-size:.98rem;font-weight:700;color:var(--white);margin-bottom:4px;line-height:1.4;text-align:center}
@@ -985,6 +981,11 @@ div[style*="CAREER TRANSLATION"] {
       </div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="phase-prog"></div></div>
+    <div id="phase-dots" style="display:flex;gap:6px;justify-content:center;padding:4px 20px 2px">
+      <div class="phase-dot" id="pd-0"></div><div class="phase-dot" id="pd-1"></div>
+      <div class="phase-dot" id="pd-2"></div><div class="phase-dot" id="pd-3"></div>
+      <div class="phase-dot" id="pd-4"></div><div class="phase-dot" id="pd-5"></div>
+    </div>
   </div>
   <div class="phase-body" id="phase-body-inner">
     <!-- JS で時代背景ページ or Q1/Q2/Q3ページを動的描画 -->
@@ -1512,6 +1513,19 @@ async function init(){
     const json=await res.json();
     if(!json.ok)throw new Error('fail');
     G.data=json;G.config=json.config||{};
+    // ━━━ スプシから取得したマスターデータをハードコードに上書き
+    if(json.mbtiMaster&&Object.keys(json.mbtiMaster).length>=16){
+      Object.assign(MBTI_MAP,json.mbtiMaster);
+      console.log('MBTI_MAP: スプシ版適用済み (' + Object.keys(json.mbtiMaster).length + 'タイプ)');
+    }
+    if(json.eraKeyData&&json.eraKeyData.length>=6){
+      json.eraKeyData.forEach(function(d,i){if(ERA_KEY_DATA[i]){ERA_KEY_DATA[i].num=d.num;ERA_KEY_DATA[i].q=d.q;}});
+    }
+    if(json.q3Questions&&json.q3Questions.length>=6){
+      json.q3Questions.forEach(function(d,i){if(typeof Q3_PHASE_QUESTIONS[i]!=='undefined')Q3_PHASE_QUESTIONS[i]=d.question;});
+    }
+    if(json.terms&&Object.keys(json.terms).length>0) Object.assign(TERMS,json.terms);
+    if(json.tagAxisImpact&&Object.keys(json.tagAxisImpact).length>0) Object.assign(TAG_AXIS_IMPACT,json.tagAxisImpact);
   }catch(e){G.data=FB;G.config=FB.config||{};}
   bar.style.width='100%';
   // ENTERキー対応
@@ -1706,6 +1720,8 @@ function renderPhase(){
   const phases=G.data.phases||[];
   const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
   if(!phase)return;
+  for(var _d=0;_d<6;_d++){var _dot=document.getElementById('pd-'+_d);if(_dot){_dot.className='phase-dot'+((_d<G.currentPhase)?' done':(_d===G.currentPhase)?' active':'');}}
+
   // フェーズドット更新
   for(let d=0;d<6;d++){
     const dot=document.getElementById('pd-'+d);
@@ -1777,6 +1793,21 @@ function renderEraPage(phase){
   ];
 
 
+  // フェーズ別「1数字＋1問い」
+  const ERA_KEY_DATA=[
+    {num:'92%',  q:'あなたの得意なことは、この中にあるか。'},
+    {num:'44%',  q:'あなたのスキルは、変容する側か。消える側か。'},
+    {num:'\u25bc20%',q:'人が減った社会で、あなたは何をする人間か。'},
+    {num:'問いの力',q:'あなたには、AIが立てられない問いがあるか。'},
+    {num:'95%',  q:'言語の壁が消えた世界で、あなたに残るものは何か。'},
+    {num:'50年後',q:'この50年で、あなたは何を残したか。'},
+  ];
+  // ERA_KEY_DATAをスプシ版で上書き
+  if(G.data&&G.data.eraKeyData&&G.data.eraKeyData.length>=6){
+    G.data.eraKeyData.forEach(function(d,i){if(ERA_KEY_DATA[i])Object.assign(ERA_KEY_DATA[i],{num:d.num,q:d.q});});
+  }
+
+
   // フェーズ別SVGイラスト
   const PHASE_SVGS=[
     // Phase1: 20代 AI実装期
@@ -1799,12 +1830,9 @@ function renderEraPage(phase){
       <div class="era-desc-block">
         <div class="era-desc-text">${phase.eraDescription}</div>
       </div>
-      <div class="era-stats-grid" style="grid-template-columns:1fr">
-        <div class="era-stat-card">
-          <div class="era-stat-val">${formatStatVal(phase.stat1_value)}</div>
-          <div class="era-stat-lbl">${phase.stat1_label}</div>
-          <div class="era-stat-src">${phase.stat1_source}</div>
-        </div>
+      <div style="text-align:center;padding:12px 0 2px">
+        <div style="font-family:var(--ff-head);font-size:clamp(2.8rem,12vw,4rem);color:var(--accent);line-height:1;letter-spacing:-1px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
+        <div style="font-size:.72rem;color:rgba(0,0,0,.45);margin-top:4px">${phase.stat1_label||''}</div>
       </div>
           <div class="era-stat-src">${phase.stat1_source}</div>
         </div>
@@ -1813,7 +1841,7 @@ function renderEraPage(phase){
 
       <!-- Q1選択肢はrenderEraPage関数内でDOMを構築 -->
       <div id="era-q1-block" style="margin-top:16px;background:#0a0a0a;border-radius:16px 16px 0 0;padding:16px 16px 0;margin-left:-20px;margin-right:-20px">
-        <div id="era-q1-label" style="font-size:.9rem;color:rgba(255,255,255,.8);font-weight:700;margin-bottom:12px;letter-spacing:.5px;padding:0 4px">AIの変化を、あなたはどう読んでいた？</div>
+        <div id="era-q1-label" style="font-size:.88rem;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:12px;letter-spacing:.3px;padding:0 4px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].q:'AIの変化を、あなたはどう読んでいた？'}</div>
         <div id="era-q1-choices" style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 4px 8px;scroll-snap-type:x mandatory"></div>
       </div>
     </div>`;
@@ -2581,6 +2609,11 @@ const Q3_PHASE_QUESTIONS=[
   '残りのキャリアで、あなたは何を優先する？',                         // Phase5
   '最後の10年に、あなたが選ぶ投資先は？',                            // Phase6
 ];
+  // Q3_PHASE_QUESTIONSをスプシ版で上書き
+  if(G.data&&G.data.q3Questions&&G.data.q3Questions.length>=6){
+    G.data.q3Questions.forEach(function(d,i){if(Q3_PHASE_QUESTIONS[i])Q3_PHASE_QUESTIONS[i]=d.question;});
+  }
+
 
 // ━━━ スコアエンジン v4
 function getPW(){const c=G.config;return{phase_1:c.phaseWeight_1_g2??0.20,phase_2:c.phaseWeight_2_g2??0.22,phase_3:c.phaseWeight_3_g2??0.18,phase_4:c.phaseWeight_4_g2??0.16,phase_5:c.phaseWeight_5_g2??0.13,phase_6:c.phaseWeight_6_g2??0.11};}
@@ -3259,42 +3292,6 @@ function extractPartialJSON(raw){
   return Object.keys(result).length>0?result:null;
 }
 
-// ━━━ AI類型判定（TIMES_AI / PLUS_AI / MINUS_AI）━━━━━━━━━━━━━━━━━
-function calcAIStance(){
-  const tags=G.tags||[];
-  const q1s=G.q1Choices||[];
-  const aiNativeCount=tags.filter(t=>t==='ai-native').length;
-  const strategicCount=tags.filter(t=>t==='strategic').length;
-  const highErafitCount=q1s.filter(q=>q&&q.erafit>=8).length;
-  const lowErafitCount=q1s.filter(q=>q&&q.erafit<5).length;
-  // ai-nativeを多用 → 道具として使う人
-  if(aiNativeCount>=2) return 'PLUS_AI';
-  // 先読み型Q1が多い or strategicを多用 → 問いを立てる人
-  if(highErafitCount>=4||strategicCount>=2) return 'TIMES_AI';
-  // 低erafitが多い → 距離を置く人
-  if(lowErafitCount>=3) return 'MINUS_AI';
-  // デフォルト（ai-native 1回 or その他）
-  if(aiNativeCount>=1) return 'PLUS_AI';
-  return 'TIMES_AI';
-}
-
-// ━━━ 問いの力スコア計算（10〜95）━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-function calcNValue(){
-  const q1s=G.q1Choices||[];
-  const tags=G.tags||[];
-  const styleLog=G.styleLog||[];
-  // Q1認識精度スコア（高erafit=10点, 中=5点, 低=0点）合計→40点満点に正規化
-  const q1Raw=q1s.reduce((s,q)=>s+(q&&q.erafit>=8?10:q&&q.erafit>=5?5:0),0);
-  const q1Norm=Math.min(40,Math.round(q1Raw*40/60));
-  // 問いを立てるタグの出現数→30点満点
-  const QTAGS=['strategic','ai-native','rare-combination','independent'];
-  const tagNorm=Math.min(30,tags.filter(t=>QTAGS.includes(t)).length*5);
-  // resolver/ownership動機の一貫性→25点満点
-  const motiveCount=styleLog.filter(s=>s&&(s.why==='resolver'||s.why==='ownership')).length;
-  const motiveNorm=Math.min(25,motiveCount*4);
-  return Math.min(95,Math.max(10,Math.round(10+q1Norm+tagNorm+motiveNorm)));
-}
-
 async function generateWithGemini(score, tierLabel, domTag, top3){
   // ━━━ 共通コンテキスト（両リクエストで使用）
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
@@ -3345,6 +3342,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 動機軸: ${{'resolver':'解決者型','contributor':'貢献者型','ownership':'オーナー型'}[G.dominantWhy]||''} / 行動: ${{'visionary':'長期設計','pragmatic':'現実実行','relational':'関係構築','disruptive':'常識破壊'}[G.dominantHow]||''}
 スコア: ${score}点（${tierLabel}）
 AI類型: ${aiTypeLabel}（${aiStanceType}）
+問いの力: ${nVal}
 
 【生成ルール】
 1. 各フェーズで選択したこと（ログの「」内テキスト）を物語の核心として使え。抽象的な言い換えをせず、その具体的な言葉を文脈に落とし込め。
@@ -3871,6 +3869,13 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
       mbtiGroups:['番人','外交官'],
     },
   ];
+// DIVISIONS: スプシ版があればそちらを使用
+function getDivisions(){
+  if(G.data&&G.data.divisions&&G.data.divisions.length>0) return G.data.divisions;
+  return DIVISIONS; // フォールバック
+}
+
+
 
   // ━━━ 事業部フィットスコア計算
   const mbtiGroup = G.mbtiData?.group||'';
@@ -3885,7 +3890,7 @@ function renderAgentFit(score, tier, domTag, indScores, radar){
     return Math.min(100, tagScore + mbtiScore + scoreBonus);
   }
 
-  const divScores = DIVISIONS.map(d=>({...d, fit:calcDivFit(d)}))
+  const divScores = getDivisions().map(d=>({...d, fit:calcDivFit(d)}))
     .sort((a,b)=>b.fit-a.fit);
   const top3 = divScores.slice(0,3);
 
@@ -4378,6 +4383,11 @@ const TAG_AXIS_IMPACT={
   global:            {expertise:+2, adaptability:+6, eraFit:+6, crisis:+2, consistency:-1},
   legacy:            {expertise:+7, adaptability:+1, eraFit:+3, crisis:+1, consistency:+7},
 };
+  // TAG_AXIS_IMPACTをスプシ版で上書き
+  if(G.data&&G.data.tagAxisImpact&&Object.keys(G.data.tagAxisImpact).length>0){
+    Object.assign(TAG_AXIS_IMPACT,G.data.tagAxisImpact);
+  }
+
 
 function renderValueMeter(previewTag){
   const el=document.getElementById('value-meter');
@@ -4513,20 +4523,64 @@ function getDiceEventText(result){
 
 function showDice(onResult){
   diceCallback=onResult;
-  const ol=document.createElement('div');
-  ol.className='dice-overlay';ol.id='dice-overlay';
-  ol.innerHTML=`
-    <div class="dice-card">
-      <div class="dice-intro">FATE ROLL — 人生には選択だけでは決まらないことがある</div>
-      <div class="dice-face" id="dice-face" onclick="rollDice()">🎲</div>
-      <div class="dice-tap-hint" id="dice-tap-hint">TAP TO ROLL</div>
-      <div class="dice-label" id="dice-label"></div>
-      <div class="dice-event-text" id="dice-event-text"></div>
-      <div class="dice-result-badge" id="dice-badge"></div>
-      <button class="dice-cta" id="dice-cta" onclick="closeDice()">次のフェーズへ →</button>
-    </div>`;
+  var pi=G.currentPhase;
+  var EG=[
+    {t:'AI規制が人間の判断を守った',    b:'EU規制強化で、人間の判断が法的に必要とされる領域が拡大した。'},
+    {t:'AGI前夜の人材不足',            b:'思考できる人間が急激に希少になった。'},
+    {t:'産業の空白地帯が生まれた',       b:'AI自動化で旧産業が変容し、新領域を開拓できる人材の需要が急増した。'},
+    {t:'人間らしさが価値になった',       b:'AIが普及するほど、人間にしかできないことの希少価値が高まった。'},
+    {t:'越境人材の時代が来た',          b:'専門性を持ち越境できる人材の需要が急拡大した。'},
+    {t:'知恵の継承が求められた',         b:'急速な変化の中で、経験と文脈を持つ人間が改めて必要とされた。'},
+  ];
+  var EB=[
+    {t:'AI代替の波が加速した',          b:'情報収集・調査の自動化が予想より早く進み、専門性の定義が変わった。'},
+    {t:'産業再編が予想を超えた',         b:'複数の業界が同時に変容し、専門領域の境界が急速に溶けた。'},
+    {t:'気候変動が産業を直撃した',       b:'環境制約が経済選択を上回り始め、従来のキャリアパスが変容した。'},
+    {t:'雇用の意味が変わった',          b:'働く理由を自分で持てない者が迷走し始めた。'},
+    {t:'同質化の罠にはまった',          b:'AIが使いやすくなるほど、同じ答えを出す人間が増え差別化が難しくなった。'},
+    {t:'AIへの依存が深まった',          b:'自分で考える場面が急激に減少した。'},
+  ];
+  var isGood=Math.random()<0.5;
+  window._diceIsGood=isGood;
+  var ev=(isGood?EG:EB)[pi%6];
+  var nBefore=G.nValueResult||50;
+  var nAfter=isGood?Math.min(95,nBefore+Math.floor(Math.random()*8+4)):Math.max(10,nBefore-Math.floor(Math.random()*8+3));
+  var diff=nAfter-nBefore;
+  var col=diff>=0?'#34D399':'#EF4444';
+  var ol=document.createElement('div');
+  ol.id='dice-overlay';
+  ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .3s';
+  ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center">'
+    +'<div style="font-size:.6rem;letter-spacing:5px;color:rgba(232,98,26,.7);margin-bottom:16px;font-family:var(--ff-head)">⚡ 時代が動いた</div>'
+    +'<div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.4">'+ev.t+'</div>'
+    +'<div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:24px;padding:0 8px">'+ev.b+'</div>'
+    +'<div style="margin-bottom:24px">'
+      +'<div style="font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:6px">問いの力</div>'
+      +'<div style="display:flex;align-items:center;justify-content:center;gap:10px">'
+        +'<span style="font-family:var(--ff-head);font-size:1.8rem;color:rgba(255,255,255,.4)">'+nBefore+'</span>'
+        +'<span style="color:rgba(255,255,255,.3)">→</span>'
+        +'<span style="font-family:var(--ff-head);font-size:2rem;color:'+col+'">'+nAfter+'</span>'
+        +'<span style="font-size:.9rem;color:'+col+'">'+(diff>=0?'▲':'▼')+Math.abs(diff)+'</span>'
+      +'</div>'
+      +'<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:6px;font-style:italic">'
+        +(diff>=0?'この変化を受け止める力があった':'逆風に押された。次の選択が試される')
+      +'</div>'
+    +'</div>'
+    +'<button onclick="closeDiceNew()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:14px 40px;font-size:.96rem;font-weight:700;cursor:pointer;font-family:var(--ff-body);width:100%">次へ →</button>'
+    +'</div>';
   document.body.appendChild(ol);
+  requestAnimationFrame(function(){ol.style.opacity='1';});
+  if(!isGood) G._nextPhaseN2x=true;
 }
+
+function closeDiceNew(){
+  var ol=document.getElementById('dice-overlay');
+  if(ol){ol.style.opacity='0';setTimeout(function(){try{ol.remove();}catch(e){}},300);}
+  var result=window._diceIsGood?'good':'bad';
+  if(diceCallback){diceCallback(result);diceCallback=null;}
+}
+
+
 
 function rollDice(){
   const face=document.getElementById('dice-face');
@@ -4635,6 +4689,11 @@ const TERMS={
   'コンサルティング':'企業や個人の課題を分析し、解決策を提案する仕事・業界のこと。',
   'DX推進':'会社全体でデジタル化・AI活用を進めていく取り組みのこと。その担当者をDX推進担当と呼ぶ。',
 };
+  // TERMSをスプシ版で上書き
+  if(G.data&&G.data.terms&&Object.keys(G.data.terms).length>0){
+    Object.assign(TERMS,G.data.terms);
+  }
+
 
 function applyTooltips(html){
   let result=html;
@@ -4684,14 +4743,6 @@ function loadDemoReport(){
   G.profileCode='action-combine-intuition-social';
   G.profile={change:'action',value:'combine',decide:'intuition',energy:'social'};
   G.tags=['ai-native','strategic','rare-combination','leadership','community-builder','legacy'];
-  G.choices=[
-    {label:'A',text:'AIをフル活用して専門性を高める',tag:'ai-native'},
-    {label:'B',text:'問いを立てる側に回る',tag:'strategic'},
-    {label:'C',text:'掛け算の希少人材を目指す',tag:'rare-combination'},
-    {label:'D',text:'次の世代を育てるリーダーになる',tag:'leadership'},
-    {label:'A',text:'コミュニティを通じて社会を変える',tag:'community-builder'},
-    {label:'B',text:'知見を体系化して次世代に渡す',tag:'legacy'},
-  ];
   G.q1Choices=[
     {label:'B',erafit:8},{label:'D',erafit:8},{label:'A',erafit:8},
     {label:'C',erafit:5},{label:'B',erafit:8},{label:'D',erafit:3}
