@@ -62,11 +62,13 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--gold));transition:width .5s cubic-bezier(.4,0,.2,1)}
 .onboard-wrap{width:100%;max-width:540px;padding:48px 24px;text-align:center}
 .onboard-eyebrow{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;text-transform:uppercase;opacity:.9}
-.onboard-title{font-family:var(--ff-head);font-size:clamp(2.4rem,10vw,4.2rem);line-height:.9;letter-spacing:2px;margin-bottom:20px;color:var(--white)}
+.onboard-title{font-family:var(--ff-head);font-size:clamp(2.4rem,10vw,4.2rem);line-height:.9;letter-spacing:2px;margin-bottom:20px;color:var(--ink)}
 .onboard-title span{color:var(--accent)}
 .onboard-sub{font-size:1rem;color:var(--w70);line-height:2;margin-bottom:40px}
 .onboard-hint{font-size:.82rem;color:var(--w40);margin-bottom:24px;letter-spacing:2px}
-.input-box{width:100%;background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.25);color:var(--white);font-family:var(--ff-body);font-size:1.05rem;padding:16px 20px;border-radius:6px;text-align:center;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:8px}
+.input-box{width:100%;background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.6);color:var(--white);font-family:var(--ff-body);font-size:1.05rem;padding:16px 20px;border-radius:6px;text-align:center;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.input-box::placeholder{color:rgba(255,255,255,.65)}
+.input-box:focus{background:rgba(255,255,255,.35);border-color:rgba(255,255,255,.9);box-shadow:0 0 0 3px rgba(255,255,255,.15)}
 .input-box::placeholder{color:rgba(255,255,255,.4)}
 .input-box:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(232,98,26,.15)}
 .input-box::placeholder{color:rgba(255,255,255,.28)}
@@ -212,15 +214,15 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--white);line-height:1.75;padding-bottom:4px}
 .q-scroll-hint{font-size:.72rem;color:rgba(255,255,255,.3);text-align:center;padding:0 20px 6px;letter-spacing:.5px}
 /* 横スクロールカードトラック */
-.q-card-scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:16px 0 20px;scroll-snap-type:x mandatory}
+.q-card-scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:12px 0 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
 .q-card-scroll-wrap::-webkit-scrollbar{display:none}
-.q-card-track{display:flex;gap:12px;padding:0 20px;width:max-content}
+.q-card-track{display:flex;gap:10px;padding:0 16px 0 16px;width:max-content}
 .choices4{display:flex;gap:12px;padding:0 20px;width:max-content}
 
 /* カード本体 */
 .choice4-btn{
-  width:160px;
-  min-width:160px;
+  width:clamp(140px,42vw,180px);
+  min-width:clamp(140px,42vw,180px);
   flex-shrink:0;
   background:rgba(255,255,255,.07);
   border:1.5px solid rgba(255,255,255,.15);
@@ -690,9 +692,9 @@ div[style*="CAREER TRANSLATION"] {
 .mbti-section-label{font-size:.72rem;letter-spacing:4px;color:var(--accent);margin-bottom:10px;opacity:.8}
 .mbti-groups{display:flex;flex-direction:column;gap:16px;width:100%;margin-bottom:20px}
 .mbti-group{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 16px}
-.mbti-group-title{font-size:.78rem;letter-spacing:3px;color:var(--w70);margin-bottom:10px;font-weight:700}
+.mbti-group-title{font-size:.82rem;letter-spacing:2px;margin-bottom:12px;font-weight:700;padding:8px 12px;border-radius:6px}
 .mbti-types{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.mbti-type-btn{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:10px 6px;border-radius:6px;cursor:pointer;font-size:.94rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
+.mbti-type-btn{background:#fff;border:2px solid #E5E7EB;color:#1A1A2E;font-family:var(--ff-body);padding:12px 6px;border-radius:8px;cursor:pointer;font-size:.94rem;font-weight:700;text-align:center;transition:all .18s;line-height:1.3}
 .mbti-type-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.1);color:var(--white)}
 .mbti-type-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.18);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
 .mbti-type-sub{font-size:.74rem;color:var(--w40);display:block;margin-top:2px;font-weight:700}
@@ -725,6 +727,14 @@ div[style*="CAREER TRANSLATION"] {
 
 /* ── 白ベース画面（MBTI・業種・フェーズ時代背景） ── */
 .screen-light{background:var(--bg-light)!important;color:var(--ink)!important}
+.screen-light h1,.screen-light h2,.screen-light h3,.screen-light p,.screen-light span,.screen-light div{color:inherit}
+.screen-light .onboard-title{color:var(--ink)!important}
+.screen-light .onboard-eyebrow{color:var(--accent)!important}
+.screen-light .onboard-sub{color:var(--ink60)!important}
+.screen-light .top-logo{color:var(--accent)!important}
+.screen-light .top-step{color:var(--ink60)!important}
+.screen-light .departure-copy{color:var(--ink)!important}
+.screen-light .departure-tag{color:var(--accent)!important}
 .screen-light .onboard-wrap{color:var(--ink)}
 .screen-light .onboard-eyebrow{color:var(--accent)}
 .screen-light .onboard-title{color:var(--ink);text-shadow:none}
@@ -823,41 +833,164 @@ div[style*="CAREER TRANSLATION"] {
 </div>
 
 <!-- MBTI選択 -->
+<!-- 導入画面：ゲーム説明＋イラスト -->
+<div class="screen" id="screen-intro" style="background:#0a0a1a;position:relative;overflow:hidden">
+  <div id="intro-bg-svg" style="position:absolute;inset:0;z-index:0;pointer-events:none">
+    <svg viewBox="0 0 375 667" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;object-fit:cover" preserveAspectRatio="xMidYMid slice">
+      <!-- 背景グラデーション -->
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0a0a1a"/>
+          <stop offset="60%" stop-color="#1a1a3e"/>
+          <stop offset="100%" stop-color="#2a1a10"/>
+        </linearGradient>
+        <linearGradient id="roadGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2a2a2a"/>
+          <stop offset="100%" stop-color="#1a1a1a"/>
+        </linearGradient>
+      </defs>
+      <rect width="375" height="667" fill="url(#skyGrad)"/>
+      <!-- 星 -->
+      <circle cx="50" cy="60" r="1.5" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.2;.7" dur="2s" repeatCount="indefinite"/></circle>
+      <circle cx="120" cy="30" r="1" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.1;.5" dur="3s" repeatCount="indefinite"/></circle>
+      <circle cx="250" cy="50" r="1.5" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.2;.6" dur="2.5s" repeatCount="indefinite"/></circle>
+      <circle cx="320" cy="80" r="1" fill="#fff" opacity=".4"><animate attributeName="opacity" values=".4;.1;.4" dur="1.8s" repeatCount="indefinite"/></circle>
+      <circle cx="180" cy="20" r="1" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.15;.6" dur="3.2s" repeatCount="indefinite"/></circle>
+      <circle cx="340" cy="40" r="1.5" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.1;.5" dur="2.8s" repeatCount="indefinite"/></circle>
+      <!-- 地平線の光 -->
+      <ellipse cx="187" cy="420" rx="200" ry="40" fill="rgba(232,98,26,.08)"/>
+      <ellipse cx="187" cy="430" rx="140" ry="20" fill="rgba(232,98,26,.05)"/>
+      <!-- 道路 -->
+      <path d="M100,667 L150,420 L225,420 L275,667 Z" fill="url(#roadGrad)" opacity=".6"/>
+      <line x1="187" y1="667" x2="187" y2="420" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-dasharray="20,15"/>
+      <!-- 遠くの都市シルエット -->
+      <rect x="30" y="350" width="25" height="70" fill="rgba(255,255,255,.06)" rx="1"/>
+      <rect x="50" y="330" width="20" height="90" fill="rgba(255,255,255,.08)" rx="1"/>
+      <rect x="65" y="345" width="30" height="75" fill="rgba(255,255,255,.07)" rx="1"/>
+      <rect x="270" y="340" width="28" height="80" fill="rgba(255,255,255,.07)" rx="1"/>
+      <rect x="293" y="325" width="22" height="95" fill="rgba(255,255,255,.08)" rx="1"/>
+      <rect x="310" y="350" width="35" height="70" fill="rgba(255,255,255,.06)" rx="1"/>
+      <!-- 中央遠くにAIシティの光 -->
+      <circle cx="187" cy="415" r="8" fill="rgba(232,98,26,.4)"/>
+      <circle cx="187" cy="415" r="16" fill="rgba(232,98,26,.1)"><animate attributeName="r" values="16;22;16" dur="3s" repeatCount="indefinite"/></circle>
+      <!-- 女性シルエット（左） -->
+      <g transform="translate(120,480)">
+        <!-- 頭 -->
+        <ellipse cx="0" cy="-80" rx="12" ry="14" fill="#1a1a2e" stroke="rgba(232,98,26,.6)" stroke-width="1.5"/>
+        <!-- 髪（ポニーテール） -->
+        <path d="M-8,-70 Q-18,-60 -14,-45" fill="none" stroke="#1a1a2e" stroke-width="8" stroke-linecap="round"/>
+        <!-- スーツジャケット -->
+        <path d="M-14,-64 L-18,-20 L18,-20 L14,-64 Q0,-55 0,-55 Q0,-55 -14,-64 Z" fill="#2a2a3e"/>
+        <!-- 脚 -->
+        <rect x="-8" y="-20" width="7" height="50" rx="3" fill="#1a1a2e"/>
+        <rect x="1" y="-20" width="7" height="50" rx="3" fill="#1a1a2e"/>
+        <!-- 歩行（前の脚） -->
+        <rect x="-8" y="25" width="7" height="25" rx="3" fill="#1a1a2e" transform="rotate(15,-4,25)"/>
+        <!-- バッグ -->
+        <rect x="14" y="-45" width="10" height="14" rx="2" fill="rgba(232,98,26,.7)"/>
+      </g>
+      <!-- 男性シルエット（右） -->
+      <g transform="translate(255,490)">
+        <!-- 頭 -->
+        <ellipse cx="0" cy="-78" rx="13" ry="15" fill="#1a1a2e" stroke="rgba(43,143,197,.6)" stroke-width="1.5"/>
+        <!-- スーツ -->
+        <path d="M-16,-62 L-20,-15 L20,-15 L16,-62 Q0,-52 0,-52 Q0,-52 -16,-62 Z" fill="#1a2a3e"/>
+        <!-- ネクタイ -->
+        <path d="M-3,-58 L0,-52 L3,-58" fill="rgba(232,98,26,.8)"/>
+        <path d="M0,-52 L-4,-30 L0,-25 L4,-30 Z" fill="rgba(232,98,26,.7)"/>
+        <!-- 脚 -->
+        <rect x="-8" y="-15" width="7" height="52" rx="3" fill="#1a1a2e" transform="rotate(-10,-4,-15)"/>
+        <rect x="1" y="-15" width="7" height="52" rx="3" fill="#1a1a2e"/>
+        <!-- ブリーフケース -->
+        <rect x="-22" y="-40" width="12" height="10" rx="2" fill="rgba(43,143,197,.7)" stroke="rgba(43,143,197,.4)" stroke-width="1"/>
+        <line x1="-16" y1="-40" x2="-16" y2="-43" stroke="rgba(43,143,197,.6)" stroke-width="1.5"/>
+      </g>
+      <!-- 2075のテキスト -->
+      <text x="187" y="130" font-family="serif" font-size="56" fill="rgba(232,98,26,.12)" text-anchor="middle" font-weight="700" letter-spacing="4">2075</text>
+    </svg>
+  </div>
+  <!-- コンテンツ -->
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:40px 24px;text-align:center">
+    <div style="font-family:var(--ff-head);font-size:.7rem;letter-spacing:5px;color:var(--accent);margin-bottom:16px;opacity:.9">LIFE SHIFT SIMULATOR 2075</div>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.6rem,6vw,2.8rem);color:#fff;line-height:1.15;margin-bottom:20px;letter-spacing:1px">
+      これから先、<br>50年のキャリアを<br>疑似体験します。
+    </h2>
+    <p style="font-size:.96rem;color:rgba(255,255,255,.7);line-height:1.85;margin-bottom:12px;max-width:320px">
+      あなたの選択が、AIと共に生きる<br>50年のキャリアを作っていきます。
+    </p>
+    <p style="font-size:.86rem;color:rgba(255,255,255,.5);line-height:1.7;margin-bottom:36px;max-width:320px">
+      各フェーズで選択肢が提示されます。<br>直感で選んで進めてください。
+    </p>
+    <button onclick="closeIntroScreen()" class="btn-start" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:16px 48px;font-size:1rem;font-weight:700;cursor:pointer;font-family:var(--ff-body);letter-spacing:1px">
+      はじめる →
+    </button>
+    <p id="intro-countdown" style="font-size:.72rem;color:rgba(255,255,255,.3);margin-top:16px">タップで進む（3秒で自動進行）</p>
+  </div>
+</div>
+
+<!-- コンピテンシー選択画面 -->
+<div class="screen screen-light" id="screen-competency">
+  <div style="width:100%">
+    <div class="top-bar">
+      <div class="top-bar-inner">
+        <span class="top-logo">LSS 2075</span>
+        <span class="top-step">STEP 1 / 6</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+    </div>
+  </div>
+  <div class="onboard-wrap" style="padding-top:40px;max-width:500px">
+    <p class="onboard-eyebrow">COMPETENCY</p>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.3rem,4.5vw,2rem);color:var(--ink);margin-bottom:10px;line-height:1.2">あなたの思考・行動スタイルを<br>教えてください</h2>
+    <p style="font-size:.9rem;color:var(--ink60);line-height:1.7;margin-bottom:32px">あなたの個性をもとに、ゲームとレポートがパーソナライズされます。</p>
+    <div style="display:flex;flex-direction:column;gap:14px;width:100%">
+      <button onclick="competencyChooseMBTI()" style="background:#fff;border:2px solid #E5E7EB;border-radius:14px;padding:20px 24px;text-align:left;cursor:pointer;transition:all .18s;font-family:var(--ff-body);width:100%">
+        <div style="font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:4px">🔍 MBTIタイプで選ぶ</div>
+        <div style="font-size:.82rem;color:var(--ink60);line-height:1.5">16種類のMBTIタイプから自分のタイプを選択します。</div>
+      </button>
+      <button onclick="competencyChooseSimple()" style="background:#fff;border:2px solid #E5E7EB;border-radius:14px;padding:20px 24px;text-align:left;cursor:pointer;transition:all .18s;font-family:var(--ff-body);width:100%">
+        <div style="font-size:1rem;font-weight:700;color:var(--ink);margin-bottom:4px">📝 簡易診断をする</div>
+        <div style="font-size:.82rem;color:var(--ink60);line-height:1.5">いくつかの質問に答えて、あなたのタイプを診断します（約1分）。</div>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="screen screen-light" id="screen-mbti">
   <div style="width:100%">
     <div class="top-bar">
       <div class="top-bar-inner">
         <span class="top-logo">LSS 2075</span>
-        <span class="top-step">STEP 2 / 6</span>
+        <span class="top-step">コンピテンシー選択</span>
       </div>
       <div class="progress-bar"><div class="progress-fill" style="width:22%"></div></div>
     </div>
   </div>
   <div class="onboard-wrap" style="padding-top:28px;max-width:580px">
     <p class="onboard-eyebrow">PERSONALITY</p>
-    <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.9rem);margin-bottom:10px;line-height:1.1">あなたのMBTIタイプは？</h2>
+    <h2 style="font-family:var(--ff-head);font-size:clamp(1.2rem,4vw,1.9rem);margin-bottom:10px;line-height:1.1">MBTIタイプを選んでください</h2>
     <p style="font-size:.9rem;color:var(--w70);line-height:1.7;margin-bottom:20px">登録するとレポートがあなたの個性に最適化されます。<br>わからない場合は「簡易診断でスタート」を選んでください。</p>
     <div class="mbti-groups">
       <div class="mbti-group">
-        <div class="mbti-group-title" style="color:#7C3AED;border-left:3px solid #7C3AED">
+        <div class="mbti-group-title" style="color:#7C3AED;border-left:3px solid #7C3AED;background:rgba(124,58,237,.06);padding:8px 12px;border-radius:6px">
           <span style="font-size:.74rem;opacity:.7">論理・システム・革新</span>　分析家
         </div>
         <div class="mbti-types">
-          <button class="mbti-type-btn" onclick="selectMBTI('INTJ',this)" style="border-color:#7C3AED33">INTJ<span class="mbti-type-sub">建築家</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('INTP',this)" style="border-color:#7C3AED33">INTP<span class="mbti-type-sub">論理学者</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ENTJ',this)" style="border-color:#7C3AED33">ENTJ<span class="mbti-type-sub">指揮官</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ENTP',this)" style="border-color:#7C3AED33">ENTP<span class="mbti-type-sub">討論者</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('INTJ',this)" style="border-color:#7C3AED33">INTJ<span class="mbti-type-sub">建築家</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('INTP',this)" style="border-color:#7C3AED33">INTP<span class="mbti-type-sub">論理学者</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ENTJ',this)" style="border-color:#7C3AED33">ENTJ<span class="mbti-type-sub">指揮官</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ENTP',this)" style="border-color:#7C3AED33">ENTP<span class="mbti-type-sub">討論者</span></button>
         </div>
       </div>
       <div class="mbti-group">
-        <div class="mbti-group-title" style="color:#059669;border-left:3px solid #059669">
+        <div class="mbti-group-title" style="color:#059669;border-left:3px solid #059669;background:rgba(5,150,105,.06);padding:8px 12px;border-radius:6px">
           <span style="font-size:.74rem;opacity:.7">共感・意味・人間関係</span>　外交官
         </div>
         <div class="mbti-types">
-          <button class="mbti-type-btn" onclick="selectMBTI('INFJ',this)" style="border-color:#05966933">INFJ<span class="mbti-type-sub">提唱者</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('INFP',this)" style="border-color:#05966933">INFP<span class="mbti-type-sub">仲介者</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ENFJ',this)" style="border-color:#05966933">ENFJ<span class="mbti-type-sub">主人公</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ENFP',this)" style="border-color:#05966933">ENFP<span class="mbti-type-sub">運動家</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('INFJ',this)" style="border-color:#05966933">INFJ<span class="mbti-type-sub">提唱者</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('INFP',this)" style="border-color:#05966933">INFP<span class="mbti-type-sub">仲介者</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ENFJ',this)" style="border-color:#05966933">ENFJ<span class="mbti-type-sub">主人公</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ENFP',this)" style="border-color:#05966933">ENFP<span class="mbti-type-sub">運動家</span></button>
         </div>
       </div>
       <div class="mbti-group">
@@ -865,21 +998,21 @@ div[style*="CAREER TRANSLATION"] {
           <span style="font-size:.74rem;opacity:.7">秩序・責任・安定</span>　番人
         </div>
         <div class="mbti-types">
-          <button class="mbti-type-btn" onclick="selectMBTI('ISTJ',this)" style="border-color:#1D6FA433">ISTJ<span class="mbti-type-sub">ロジスティシャン</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ISFJ',this)" style="border-color:#1D6FA433">ISFJ<span class="mbti-type-sub">擁護者</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ESTJ',this)" style="border-color:#1D6FA433">ESTJ<span class="mbti-type-sub">幹部</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ESFJ',this)" style="border-color:#1D6FA433">ESFJ<span class="mbti-type-sub">領事</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ISTJ',this)" style="border-color:#1D6FA433">ISTJ<span class="mbti-type-sub">ロジスティシャン</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ISFJ',this)" style="border-color:#1D6FA433">ISFJ<span class="mbti-type-sub">擁護者</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ESTJ',this)" style="border-color:#1D6FA433">ESTJ<span class="mbti-type-sub">幹部</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ESFJ',this)" style="border-color:#1D6FA433">ESFJ<span class="mbti-type-sub">領事</span></button>
         </div>
       </div>
       <div class="mbti-group">
-        <div class="mbti-group-title" style="color:#D97706;border-left:3px solid #D97706">
+        <div class="mbti-group-title" style="color:#D97706;border-left:3px solid #D97706;background:rgba(217,119,6,.06);padding:8px 12px;border-radius:6px">
           <span style="font-size:.74rem;opacity:.7">適応・実践・現在</span>　探検家
         </div>
         <div class="mbti-types">
-          <button class="mbti-type-btn" onclick="selectMBTI('ISTP',this)" style="border-color:#D9770633">ISTP<span class="mbti-type-sub">巨匠</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ISFP',this)" style="border-color:#D9770633">ISFP<span class="mbti-type-sub">冒険家</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ESTP',this)" style="border-color:#D9770633">ESTP<span class="mbti-type-sub">起業家</span></button>
-          <button class="mbti-type-btn" onclick="selectMBTI('ESFP',this)" style="border-color:#D9770633">ESFP<span class="mbti-type-sub">エンターテイナー</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ISTP',this)" style="border-color:#D9770633">ISTP<span class="mbti-type-sub">巨匠</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ISFP',this)" style="border-color:#D9770633">ISFP<span class="mbti-type-sub">冒険家</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ESTP',this)" style="border-color:#D9770633">ESTP<span class="mbti-type-sub">起業家</span></button>
+          <button class="mbti-type-btn" onclick="confirmMBTI('ESFP',this)" style="border-color:#D9770633">ESFP<span class="mbti-type-sub">エンターテイナー</span></button>
         </div>
       </div>
     </div>
@@ -1560,14 +1693,30 @@ function updateStartBtn(){
 }
 
 function goStart(){
-  const rawNick=document.getElementById('nickname-input').value.trim();
-  if(!rawNick){document.getElementById('nickname-input').focus();return;}
-  if(!document.getElementById('privacy-check')?.checked)return;
-  G.nickname=sanitizeNickname(rawNick);G.sessionId=crypto.randomUUID();
-  showScreen('screen-mbti');
+  const raw=document.getElementById('nickname-input');
+  if(!raw||!raw.value.trim()){if(raw)raw.focus();return;}
+  G.nickname=sanitizeNickname(raw.value.trim());
+  G.sessionId=crypto.randomUUID();
+  showScreen('screen-intro');
+  // 3秒後に自動進行
+  var _introTimer=setTimeout(function(){closeIntroScreen();},3000);
+  window._introTimer=_introTimer;
+  // タップでもスキップ
+  var introEl=document.getElementById('screen-intro');
+  if(introEl){
+    introEl.addEventListener('click',function onIntroClick(){
+      clearTimeout(window._introTimer);
+      introEl.removeEventListener('click',onIntroClick);
+      closeIntroScreen();
+    },{once:true});
+  }
 }
 
-// ━━━ MBTI関連 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function closeIntroScreen(){
+  clearTimeout(window._introTimer);
+  showScreen('screen-competency');
+}
+
 function selectMBTI(type, el){
   document.querySelectorAll('.mbti-type-btn').forEach(b=>b.classList.remove('selected'));
   el.classList.add('selected');
@@ -1840,7 +1989,7 @@ function renderEraPage(phase){
       </div>
 
       <!-- Q1選択肢はrenderEraPage関数内でDOMを構築 -->
-      <div id="era-q1-block" style="margin-top:16px;background:#0a0a0a;border-radius:16px 16px 0 0;padding:16px 16px 0;margin-left:-20px;margin-right:-20px">
+      <div id="era-q1-block" style="margin-top:4px;background:#0a0a0a;border-radius:16px 16px 0 0;padding:16px 16px 0;margin-left:-20px;margin-right:-20px">
         <div id="era-q1-label" style="font-size:.88rem;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:12px;letter-spacing:.3px;padding:0 4px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].q:'AIの変化を、あなたはどう読んでいた？'}</div>
         <div id="era-q1-choices" style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 4px 8px;scroll-snap-type:x mandatory"></div>
       </div>
@@ -1876,7 +2025,7 @@ function renderEraPage(phase){
         G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
         const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
         applyValueMeterDelta({eraFit:delta});
-        G.currentQ=0;
+        G.currentQ=1; // Q1完了→Q2へ（0はQ1なのでバグ修正）
         renderPhase();
       };
       q1wrap.appendChild(btn);
@@ -2553,7 +2702,7 @@ function showNarrative(completedPhaseIdx, onNext){
         ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:var(--cyan);color:var(--cyan)">✨ 追い風あり</span>':''}
         ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:var(--accent);color:var(--accent)">⚡ 試練あり</span>':''}
       </div>
-      <button class="narrative-next" onclick="closeNarrative()">次の時代へ →<br><span style="font-size:.72rem;opacity:.5;font-weight:400">（タップで進む）</span></button>
+      <button class="narrative-next" onclick="closeNarrative()">スキップする →</button>
     </div>`;
   document.body.appendChild(ol);
 
@@ -2568,7 +2717,7 @@ function showNarrative(completedPhaseIdx, onNext){
       el.style.transform='translateY(-10px)';
       setTimeout(()=>{el.remove();if(window._narrativeNext){window._narrativeNext();window._narrativeNext=null;}},350);
     }
-  },3200);
+  },5000);
   window._narAutoTimer=_narAuto;
 
   // スワイプ上 / タップで即スキップ
@@ -4549,31 +4698,34 @@ function showDice(onResult){
   var col=diff>=0?'#34D399':'#EF4444';
   var ol=document.createElement('div');
   ol.id='dice-overlay';
-  ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .3s';
+  ol.style.cssText='position:fixed;inset:0;background:#080810;z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .35s';
   ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center">'
     +'<div style="font-size:.6rem;letter-spacing:5px;color:rgba(232,98,26,.7);margin-bottom:16px;font-family:var(--ff-head)">⚡ 時代が動いた</div>'
-    +'<div style="font-size:1.2rem;font-weight:700;color:#fff;margin-bottom:12px;line-height:1.4">'+ev.t+'</div>'
-    +'<div style="font-size:.88rem;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:24px;padding:0 8px">'+ev.b+'</div>'
+    +'<div style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.35">'+ev.t+'</div>'
+    +'<div style="font-size:1rem;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:24px;padding:0 8px">'+ev.b+'</div>'
     +'<div style="margin-bottom:24px">'
       +'<div style="font-size:.72rem;color:rgba(255,255,255,.4);letter-spacing:2px;margin-bottom:6px">問いの力</div>'
       +'<div style="display:flex;align-items:center;justify-content:center;gap:10px">'
-        +'<span style="font-family:var(--ff-head);font-size:1.8rem;color:rgba(255,255,255,.4)">'+nBefore+'</span>'
+        +'<span style="font-family:var(--ff-head);font-size:2.2rem;color:rgba(255,255,255,.4)">'+nBefore+'</span>'
         +'<span style="color:rgba(255,255,255,.3)">→</span>'
-        +'<span style="font-family:var(--ff-head);font-size:2rem;color:'+col+'">'+nAfter+'</span>'
+        +'<span style="font-family:var(--ff-head);font-size:2.4rem;color:'+col+'">'+nAfter+'</span>'
         +'<span style="font-size:.9rem;color:'+col+'">'+(diff>=0?'▲':'▼')+Math.abs(diff)+'</span>'
       +'</div>'
       +'<div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:6px;font-style:italic">'
         +(diff>=0?'この変化を受け止める力があった':'逆風に押された。次の選択が試される')
       +'</div>'
     +'</div>'
-    +'<button onclick="closeDiceNew()" style="background:var(--accent);color:#fff;border:none;border-radius:8px;padding:14px 40px;font-size:.96rem;font-weight:700;cursor:pointer;font-family:var(--ff-body);width:100%">次へ →</button>'
+    +'<button onclick="closeDiceNew()" style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.25);border-radius:8px;padding:12px 32px;font-size:.86rem;font-weight:600;cursor:pointer;font-family:var(--ff-body)">スキップする →</button>'
     +'</div>';
   document.body.appendChild(ol);
   requestAnimationFrame(function(){ol.style.opacity='1';});
   if(!isGood) G._nextPhaseN2x=true;
+  // 4秒後に自動進行
+  window._diceAutoTimer=setTimeout(function(){closeDiceNew();},4000);
 }
 
 function closeDiceNew(){
+  clearTimeout(window._diceAutoTimer);
   var ol=document.getElementById('dice-overlay');
   if(ol){ol.style.opacity='0';setTimeout(function(){try{ol.remove();}catch(e){}},300);}
   var result=window._diceIsGood?'good':'bad';
@@ -4792,6 +4944,43 @@ function loadDemoReport(){
 }
 
 init();
+
+// コンピテンシー選択→MBTIまたは簡易診断
+function showCompetencyScreen(){
+  showScreen('screen-competency');
+}
+function competencyChooseMBTI(){
+  showScreen('screen-mbti');
+}
+function competencyChooseSimple(){
+  // 簡易診断：既存のonboarding画面へ
+  G.obStep=0;
+  renderOb();
+  showScreen('screen-onboard');
+}
+
+function confirmMBTI(type){
+  const data=MBTI_MAP[type];
+  if(!data){selectMBTI(type);return;}
+  const ol=document.createElement('div');
+  ol.id='mbti-confirm-ol';
+  ol.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px';
+  const grpColor=data.groupColor||'#E8621A';
+  ol.innerHTML=
+    '<div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:340px;width:100%;text-align:center">'
+    +'<div style="font-size:.7rem;letter-spacing:4px;color:'+grpColor+';margin-bottom:8px;font-weight:700">'+data.group+'</div>'
+    +'<div style="font-family:var(--ff-head);font-size:2rem;color:#1A1A2E;letter-spacing:2px;margin-bottom:4px">'+type+'</div>'
+    +'<div style="font-size:1rem;font-weight:700;color:#1A1A2E;margin-bottom:12px">'+data.label+'</div>'
+    +'<div style="font-size:.84rem;color:#6B7280;line-height:1.7;margin-bottom:20px">このタイプでよろしいですか？</div>'
+    +'<div style="display:flex;gap:10px">'
+      +'<button id="mbti-no" style="flex:1;padding:13px;border:1.5px solid #E5E7EB;border-radius:10px;background:#fff;color:#6B7280;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--ff-body)">戻る</button>'
+      +'<button id="mbti-yes" style="flex:1;padding:13px;border:none;border-radius:10px;background:'+grpColor+';color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;font-family:var(--ff-body)">はい、進む</button>'
+    +'</div>'
+    +'</div>';
+  document.body.appendChild(ol);
+  document.getElementById('mbti-no').onclick=function(){ol.remove();};
+  document.getElementById('mbti-yes').onclick=function(){ol.remove();selectMBTI(type);};
+}
 </script>
 </body>
 </html>
