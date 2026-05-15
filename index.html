@@ -827,6 +827,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-b</p>
   </div>
 </div>
 
@@ -4408,7 +4409,7 @@ function confirmMBTI(type){
     +'</div>';
   document.body.appendChild(ol);
   document.getElementById('mbti-no').onclick=function(){ol.remove();};
-  document.getElementById('mbti-yes').onclick=function(){ol.remove();selectMBTI(type);};
+  document.getElementById('mbti-yes').onclick=function(){ol.remove();selectMBTI(type);goMBTINext();};
 }
 
 // ━━━ MBTI 2ステップ選択
