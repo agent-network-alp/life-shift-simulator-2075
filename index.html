@@ -83,14 +83,14 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .btn-secondary{background:transparent;border:1px solid var(--border2);color:var(--w70);cursor:pointer;font-family:var(--ff-body);font-size:.96rem;padding:10px 24px;border-radius:6px;transition:all .2s;margin-top:8px}
 .btn-secondary:hover{border-color:var(--w90);color:var(--white);background:var(--card)}
 .industry-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px;width:100%;margin-bottom:16px;max-height:340px;overflow-y:auto}
-.industry-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);padding:12px 10px;border-radius:6px;cursor:pointer;font-size:.92rem;text-align:center;transition:all .18s;line-height:1.4}
-.industry-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.08);color:var(--white)}
-.industry-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.15);color:var(--white);box-shadow:0 0 0 1px var(--accent)}
-.recommend-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:16px}
-.recommend-card:hover{border-color:var(--accent);background:rgba(232,98,26,.08);transform:translateX(3px)}
-.recommend-card.selected{border-color:var(--accent);background:rgba(232,98,26,.14);box-shadow:0 0 0 1px var(--accent)}
+.industry-btn{background:#fff;border:1.5px solid #E5E7EB;color:var(--ink);font-family:var(--ff-body);padding:10px 10px 8px;border-radius:8px;cursor:pointer;font-size:.85rem;text-align:center;transition:all .18s;line-height:1.4;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.industry-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.05);color:var(--ink)}
+.industry-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.08);color:var(--ink);box-shadow:0 0 0 2px var(--accent)}
+.recommend-card{background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:all .2s;text-align:left;display:flex;align-items:center;gap:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.recommend-card:hover{border-color:var(--accent);background:rgba(232,98,26,.04);transform:translateX(3px)}
+.recommend-card.selected{border-color:var(--accent);background:rgba(232,98,26,.07);box-shadow:0 0 0 2px var(--accent)}
 .recommend-rank{font-family:var(--ff-head);font-size:2rem;color:var(--accent);min-width:32px}
-.recommend-name{font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:4px}
+.recommend-name{font-size:.92rem;font-weight:700;color:var(--ink);margin-bottom:4px}
 .recommend-stars{color:var(--gold);font-size:.95rem;letter-spacing:2px}
 .departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
 .departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
@@ -827,7 +827,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-f</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-g</p>
   </div>
 </div>
 
@@ -1633,8 +1633,10 @@ function renderIndScreen(){
   const grid=document.getElementById('industry-grid');
   grid.innerHTML='';
   inds.forEach(ind=>{
+    const star=myStars[ind]||1;
     const btn=document.createElement('button');
-    btn.className='industry-btn';btn.textContent=ind;btn.dataset.ind=ind;
+    btn.className='industry-btn';btn.dataset.ind=ind;
+    btn.innerHTML=`<div style="font-size:.85rem;color:var(--ink);font-weight:600;margin-bottom:4px;line-height:1.3">${ind}</div><div style="font-size:.7rem;color:var(--gold);letter-spacing:1px">${'★'.repeat(star)}${'☆'.repeat(5-star)}</div>`;
     btn.onclick=()=>selectInd(ind,btn);
     grid.appendChild(btn);
   });
@@ -1730,21 +1732,21 @@ function renderEraPage(phase){
     // Phase1: 20代 AI実装期
     `<div style="position:relative;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
       <img src="https://agent-network-alp.github.io/life-shift-simulator-2075/img/2025-2030.png" alt="2025-2030 AI実装期" style="width:100%;height:auto;display:block">
-      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.6) 100%)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.65) 100%)"></div>
       <!-- 左上：年代バッジ -->
-      <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:10px;padding:8px 14px;border:1px solid rgba(255,255,255,.12)">
-        <div style="font-family:var(--ff-head);font-size:1.25rem;color:#fff;letter-spacing:2px;line-height:1">2025–2030</div>
-        <div style="font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:3px;margin-top:2px">AI実装期</div>
+      <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:12px;padding:11px 18px;border:1px solid rgba(255,255,255,.14)">
+        <div style="font-family:var(--ff-head);font-size:1.75rem;color:#fff;letter-spacing:2px;line-height:1">2025–2030</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.75);letter-spacing:3px;margin-top:3px">AI実装期</div>
       </div>
       <!-- 右上：年代バッジ（円形） -->
-      <div style="position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;justify-content:center">
-        <div style="font-size:.55rem;color:rgba(255,255,255,.6);letter-spacing:1px">あなたは</div>
-        <div style="font-family:var(--ff-head);font-size:1.4rem;color:#fff;line-height:1">20<span style="font-size:.75rem">代</span></div>
+      <div style="position:absolute;top:14px;right:14px;width:76px;height:76px;border-radius:50%;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.22);display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:1px">あなたは</div>
+        <div style="font-family:var(--ff-head);font-size:1.9rem;color:#fff;line-height:1">20<span style="font-size:1rem">代</span></div>
       </div>
       <!-- 右下：統計バッジ -->
-      <div style="position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);border-radius:12px;padding:10px 14px;border:1px solid rgba(255,255,255,.1);text-align:right">
-        <div style="font-size:.65rem;color:rgba(255,255,255,.6);line-height:1.5;margin-bottom:2px">AI・自動化の影響が<br>大きい職種割合</div>
-        <div style="font-family:var(--ff-head);font-size:2rem;color:#fff;line-height:1;letter-spacing:-1px">92<span style="font-size:1rem">%</span></div>
+      <div style="position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);border-radius:14px;padding:12px 18px;border:1px solid rgba(255,255,255,.1);text-align:right">
+        <div style="font-size:.8rem;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:3px">AI・自動化の影響が<br>大きい職種割合</div>
+        <div style="font-family:var(--ff-head);font-size:2.8rem;color:#fff;line-height:1;letter-spacing:-1px">92<span style="font-size:1.3rem">%</span></div>
       </div>
     </div>`,
     // Phase2: 25代 AGI移行期
