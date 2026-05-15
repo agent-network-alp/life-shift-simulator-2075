@@ -827,7 +827,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-e</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-f</p>
   </div>
 </div>
 
@@ -1728,11 +1728,23 @@ function renderEraPage(phase){
   // フェーズ別SVGイラスト
   const PHASE_SVGS=[
     // Phase1: 20代 AI実装期
-    `<div style="position:relative;width:100%;border-radius:12px;overflow:hidden;margin-bottom:16px">
+    `<div style="position:relative;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
       <img src="https://agent-network-alp.github.io/life-shift-simulator-2075/img/2025-2030.png" alt="2025-2030 AI実装期" style="width:100%;height:auto;display:block">
-      <div style="position:absolute;bottom:12px;left:12px;right:12px;background:rgba(0,0,0,.65);border-radius:10px;padding:10px 14px;backdrop-filter:blur(4px)">
-        <div style="font-size:1rem;font-weight:700;color:#fff;letter-spacing:1px;margin-bottom:2px">2025-2030 AI実装期</div>
-        <div style="font-size:.85rem;color:rgba(255,255,255,.8)">あなたは20代</div>
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.6) 100%)"></div>
+      <!-- 左上：年代バッジ -->
+      <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:10px;padding:8px 14px;border:1px solid rgba(255,255,255,.12)">
+        <div style="font-family:var(--ff-head);font-size:1.25rem;color:#fff;letter-spacing:2px;line-height:1">2025–2030</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:3px;margin-top:2px">AI実装期</div>
+      </div>
+      <!-- 右上：年代バッジ（円形） -->
+      <div style="position:absolute;top:14px;right:14px;width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:.55rem;color:rgba(255,255,255,.6);letter-spacing:1px">あなたは</div>
+        <div style="font-family:var(--ff-head);font-size:1.4rem;color:#fff;line-height:1">20<span style="font-size:.75rem">代</span></div>
+      </div>
+      <!-- 右下：統計バッジ -->
+      <div style="position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);border-radius:12px;padding:10px 14px;border:1px solid rgba(255,255,255,.1);text-align:right">
+        <div style="font-size:.65rem;color:rgba(255,255,255,.6);line-height:1.5;margin-bottom:2px">AI・自動化の影響が<br>大きい職種割合</div>
+        <div style="font-family:var(--ff-head);font-size:2rem;color:#fff;line-height:1;letter-spacing:-1px">92<span style="font-size:1rem">%</span></div>
       </div>
     </div>`,
     // Phase2: 25代 AGI移行期
