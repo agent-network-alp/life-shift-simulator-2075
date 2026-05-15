@@ -827,7 +827,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-b</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-c</p>
   </div>
 </div>
 
@@ -1514,7 +1514,7 @@ function selectMBTI(type, el){
   G.mbtiType=type;
   G.mbtiData=MBTI_MAP[type]||null;
   const btn=document.getElementById('mbti-next-btn');
-  btn.disabled=false;btn.style.opacity='1';
+  if(btn){btn.disabled=false;btn.style.opacity='1';}
 }
 
 function goMBTINext(){
