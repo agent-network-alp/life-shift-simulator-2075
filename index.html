@@ -138,7 +138,16 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .era-stat-card{background:rgba(255,255,255,.65);border:1px solid rgba(0,0,0,.09);border-radius:8px;padding:14px 16px;backdrop-filter:blur(4px)}
 .era-stat-val{font-family:var(--ff-head);font-size:1.55rem;color:var(--accent);margin-bottom:4px}
 .era-stat-lbl{font-size:.73rem;color:#2c2c3e;line-height:1.4;margin-bottom:3px}
-.era-stat-src{font-size:.72rem;color:#777;letter-spacing:.3px}
+/* 時代のトレンド コラム */
+.era-trend-block{background:#fff;border-radius:16px;padding:18px 18px 16px;margin-bottom:4px;box-shadow:0 1px 6px rgba(0,0,0,.07);border-left:4px solid var(--accent)}
+.era-trend-header{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.era-trend-label{font-size:.72rem;font-weight:700;color:var(--accent);letter-spacing:3px}
+.era-trend-block .era-desc-text{font-size:.95rem;color:var(--ink);line-height:1.9;margin-bottom:14px}
+.era-stat-row{display:flex;align-items:center;gap:12px;padding-top:12px;border-top:1px solid rgba(0,0,0,.06)}
+.era-stat-num{font-family:var(--ff-head);font-size:clamp(2.2rem,9vw,3rem);color:var(--accent);line-height:1;letter-spacing:-1px;flex-shrink:0}
+.era-stat-meta{flex:1}
+.era-stat-lbl-text{font-size:.78rem;color:var(--ink);font-weight:600;line-height:1.4;margin-bottom:3px}
+.era-stat-src{font-size:.68rem;color:rgba(0,0,0,.4);letter-spacing:.3px}
 .prev-phase-recap{background:rgba(255,255,255,.6);border:1px solid rgba(0,0,0,.1);border-radius:8px;padding:12px 16px;margin-bottom:14px;border-left:3px solid var(--cyan)}
 .prev-phase-label{font-size:.72rem;letter-spacing:3px;color:var(--cyan);margin-bottom:6px}
 .prev-phase-content{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -827,7 +836,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.15-g</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-a</p>
   </div>
 </div>
 
@@ -1732,7 +1741,7 @@ function renderEraPage(phase){
     // Phase1: 20代 AI実装期
     `<div style="position:relative;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
       <img src="https://agent-network-alp.github.io/life-shift-simulator-2075/img/2025-2030.png" alt="2025-2030 AI実装期" style="width:100%;height:auto;display:block">
-      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.65) 100%)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.45) 100%)"></div>
       <!-- 左上：年代バッジ -->
       <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:12px;padding:11px 18px;border:1px solid rgba(255,255,255,.14)">
         <div style="font-family:var(--ff-head);font-size:1.75rem;color:#fff;letter-spacing:2px;line-height:1">2025–2030</div>
@@ -1743,10 +1752,9 @@ function renderEraPage(phase){
         <div style="font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:1px">あなたは</div>
         <div style="font-family:var(--ff-head);font-size:1.9rem;color:#fff;line-height:1">20<span style="font-size:1rem">代</span></div>
       </div>
-      <!-- 右下：統計バッジ -->
-      <div style="position:absolute;bottom:14px;right:14px;background:rgba(0,0,0,.78);backdrop-filter:blur(8px);border-radius:14px;padding:12px 18px;border:1px solid rgba(255,255,255,.1);text-align:right">
-        <div style="font-size:.8rem;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:3px">AI・自動化の影響が<br>大きい職種割合</div>
-        <div style="font-family:var(--ff-head);font-size:2.8rem;color:#fff;line-height:1;letter-spacing:-1px">92<span style="font-size:1.3rem">%</span></div>
+      <!-- 右下：出典バッジ -->
+      <div style="position:absolute;bottom:12px;right:14px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);border-radius:8px;padding:5px 10px;border:1px solid rgba(255,255,255,.08)">
+        <div style="font-size:.62rem;color:rgba(255,255,255,.5);letter-spacing:.5px">OECD 2023</div>
       </div>
     </div>`,
     // Phase2: 25代 AGI移行期
@@ -1764,22 +1772,27 @@ function renderEraPage(phase){
   body.innerHTML=`
     <div class="era-page">
       ${PHASE_SVGS[pi]||''}
-      <div class="era-desc-block">
-        <div class="era-desc-text">${phase.eraDescription}</div>
-      </div>
-      <div style="text-align:center;padding:12px 0 2px">
-        <div style="font-family:var(--ff-head);font-size:clamp(2.8rem,12vw,4rem);color:var(--accent);line-height:1;letter-spacing:-1px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
-        <div style="font-size:.72rem;color:rgba(0,0,0,.45);margin-top:4px">${phase.stat1_label||''}</div>
-      </div>
-          <div class="era-stat-src">${phase.stat1_source}</div>
+
+      <!-- 時代のトレンド コラム -->
+      <div class="era-trend-block">
+        <div class="era-trend-header">
+          <span class="era-trend-label">時代のトレンド</span>
         </div>
-
+        <div class="era-desc-text">${phase.eraDescription}</div>
+        <div class="era-stat-row">
+          <div class="era-stat-num">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
+          <div class="era-stat-meta">
+            <div class="era-stat-lbl">${phase.stat1_label||''}</div>
+            <div class="era-stat-src">${phase.stat1_source||''}</div>
+          </div>
+        </div>
       </div>
 
-      <!-- Q1選択肢はrenderEraPage関数内でDOMを構築 -->
-      <div id="era-q1-block" style="margin-top:12px;background:#fff;border-radius:16px;padding:16px 16px 0;box-shadow:0 1px 6px rgba(0,0,0,.07)">
-        <div id="era-q1-label" style="font-size:.88rem;color:var(--ink);font-weight:700;margin-bottom:12px;letter-spacing:.3px;padding:0 4px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].q:'AIの変化を、あなたはどう読んでいた？'}</div>
-        <div id="era-q1-choices" style="display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:0 4px 8px;scroll-snap-type:x mandatory"></div>
+      <!-- Q1選択肢 -->
+      <div id="era-q1-block" style="margin-top:16px;background:#fff;border-radius:16px;padding:18px 16px 16px;box-shadow:0 1px 6px rgba(0,0,0,.07)">
+        <div style="font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:3px;margin-bottom:8px">QUESTION</div>
+        <div id="era-q1-label" style="font-size:1rem;color:var(--ink);font-weight:700;line-height:1.6;margin-bottom:16px">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].q:'この時代のトレンドの中で、あなたはどう動く？'}</div>
+        <div id="era-q1-choices" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
       </div>
     </div>`;
   applyTooltipsToPage();
@@ -1800,13 +1813,13 @@ function renderEraPage(phase){
     q1wrap.innerHTML='';
     q1choices.forEach(function(ch){
       const btn=document.createElement('button');
-      btn.style.cssText='width:150px;min-width:150px;flex-shrink:0;background:#fff;border:1.5px solid #E5E7EB;border-radius:16px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;padding:0 0 12px;-webkit-tap-highlight-color:transparent;scroll-snap-align:start;overflow:hidden;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.06)';
+      btn.style.cssText='width:100%;background:#fff;border:1.5px solid #E5E7EB;border-radius:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;padding:0 0 14px;-webkit-tap-highlight-color:transparent;overflow:hidden;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.06)';
       // Q1のerafit値からカードUIを選択
       const q1CUI=ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:Q1_CARD_UI.low;
       btn.innerHTML=
-        '<div style="width:100%;height:80px;flex-shrink:0">'+(q1CUI?q1CUI.svg:'')+'</div>'
-        +'<div style="font-size:.92rem;font-weight:700;text-align:center;padding:6px 8px 4px;line-height:1.3;color:var(--ink)">'+(q1CUI?q1CUI.short:ch.label)+'</div>'
-        +'<div style="font-size:.68rem;color:var(--ink60);text-align:center;padding:0 6px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+ch.text+'</div>';
+        '<div style="width:100%;height:72px;flex-shrink:0">'+(q1CUI?q1CUI.svg:'')+'</div>'
+        +'<div style="font-size:.88rem;font-weight:700;text-align:center;padding:8px 10px 5px;line-height:1.35;color:var(--ink)">'+(q1CUI?q1CUI.short:ch.label)+'</div>'
+        +'<div style="font-size:.72rem;color:var(--ink60);text-align:center;padding:0 10px 0;line-height:1.5">'+ch.text+'</div>';
       btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.08)';this.style.borderColor='var(--accent)';this.style.transform='scale(.97)';};
       btn.onclick=function(){
         const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
