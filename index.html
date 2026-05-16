@@ -296,7 +296,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .event-choices{display:flex;flex-direction:column;gap:8px}
 .event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:6px;cursor:pointer;font-size:.96rem;line-height:1.55;transition:all .18s;width:100%}
 .event-choice-btn:hover{border-color:var(--cyan);background:rgba(56,189,248,.07);color:var(--white)}
-.narrative-overlay{position:fixed;inset:0;background:rgba(0,0,0,.95);display:flex;align-items:center;justify-content:center;z-index:250;padding:24px;animation:fadeIn .4s ease;transition:opacity .35s ease,transform .35s ease;cursor:pointer}
+.narrative-overlay{position:fixed;inset:0;background:rgba(0,0,0,.98);display:flex;align-items:center;justify-content:center;z-index:600;padding:24px;animation:fadeIn .3s ease;cursor:pointer}
 .narrative-card{max-width:540px;width:100%;padding:0 4px;position:relative}
 .narrative-phase-label{font-size:.72rem;letter-spacing:5px;color:var(--accent);margin-bottom:18px;opacity:.8}
 .narrative-year{font-family:var(--ff-head);font-size:clamp(4rem,12vw,7rem);line-height:1;color:var(--white);opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-o</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-p</p>
   </div>
 </div>
 
@@ -2169,10 +2169,18 @@ function selectEv(id,ch,tag,corr){
 function nextPhase(){
   const completedPhase=G.currentPhase;
   G.currentPhase++;G.currentQ=-1;
+
+  // phase-body-innerを即座にクリアして黒に（Q2カードが透けないよう）
+  const pb=document.getElementById('phase-body-inner');
+  if(pb){pb.innerHTML='';pb.style.background='#000';pb.classList.remove('q-mode');}
+  const phaseScreen=document.getElementById('screen-phase');
+  if(phaseScreen){phaseScreen.style.background='#000';}
+  const vmEl=document.getElementById('value-meter');
+  if(vmEl)vmEl.classList.remove('vm-visible');
+
   if(G.currentPhase>=6){
     showResult();
   }else{
-    // フェーズ間ナラティブを表示してから次へ
     showNarrative(completedPhase,()=>renderPhase());
   }
 }
@@ -2315,26 +2323,24 @@ function showNarrative(completedPhaseIdx, onNext){
 // 暗転→コールバック実行→フェードイン
 function phaseTransition(fn, darkDuration){
   darkDuration=darkDuration||220;
-  // 既存の暗転レイヤーを再利用 or 新規作成
   let veil=document.getElementById('phase-veil');
   if(!veil){
     veil=document.createElement('div');
     veil.id='phase-veil';
-    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:500;opacity:0;transition:opacity .2s ease;pointer-events:none';
+    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .2s ease;pointer-events:none';
     document.body.appendChild(veil);
   }
-  // フェードイン（暗転）
   veil.style.opacity='1';
   setTimeout(()=>{
-    // 裏でフェーズ描画
     fn();
-    // フェードアウト（明転）
+    // phase-body-innerの一時的な黒背景をリセット
+    const pb=document.getElementById('phase-body-inner');
+    if(pb)pb.style.background='';
     setTimeout(()=>{
       veil.style.opacity='0';
-    },80); // 描画完了を待つ最小マージン
+    },100);
   },darkDuration);
 }
-
 function closeNarrative(){
   clearTimeout(window._narAutoTimer);
   const ol=document.getElementById('narrative-overlay');
