@@ -1396,7 +1396,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <!-- AGENT FIT（折りたたみ） -->
-    <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2)"></div>
+    <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2);padding:0;overflow:hidden"></div>
 
     <div style="margin:24px 16px 0;padding:14px 16px;background:rgba(0,0,0,.03);border-radius:8px;border-left:2px solid rgba(0,0,0,.1)">
       <p style="font-size:.8rem;color:#9CA3AF;line-height:1.8">
@@ -4104,14 +4104,12 @@ function getDivisions(){
     +'</div></div>'
   :'';
 
-  // ━━━ 描画
+  // ━━━ 描画（折りたたみ構造）
   const el=document.getElementById('agent-fit-block');
   if(!el)return;
-  el.innerHTML=
-    '<div style="font-size:.72rem;letter-spacing:3px;color:var(--accent);margin-bottom:14px">AGENT FIT — 株式会社エージェントへの適性</div>'
-
+  const contentHtml=
     // 総合スコア行
-    +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,.07)">'
+    '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(0,0,0,.07)">'
       +'<div style="text-align:center">'
         +'<div style="font-family:var(--ff-head);font-size:2.6rem;color:'+fitRank.color+';line-height:1">'+agentFitScore+'</div>'
         +'<div style="font-size:.74rem;color:#888;margin-top:2px">適性スコア</div>'
@@ -4143,6 +4141,17 @@ function getDivisions(){
         +'このレポートを持って、株式会社エージェントのキャリア相談へ。<br>'
         +'<span style="font-size:.84rem;color:#888">診断結果をもとに、あなたに合った事業部をさらに深く分析します。</span>'
       +'</div>'
+    +'</div>';
+
+  el.innerHTML=
+    // トグルボタンヘッダー
+    '<button onclick="toggleAgentFit()" style="width:100%;background:none;border:none;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:var(--ff-body)">'
+    +'<span style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:2px">🔥 AGENT FIT — 適性診断</span>'
+    +'<span id="agent-fit-chevron" style="font-size:.8rem;color:#9CA3AF">▼ 開く</span>'
+    +'</button>'
+    // 折りたたみコンテンツ（初期：非表示）
+    +'<div id="agent-fit-content" style="display:none;padding:0 20px 20px">'
+    +contentHtml
     +'</div>';
 }
 
@@ -4426,6 +4435,31 @@ function toggleJobSheet(){
   const isOpen=el.style.display!=='none';
   el.style.display=isOpen?'none':'block';
   if(ch)ch.textContent=isOpen?'▼ 開く':'▲ 閉じる';
+}
+
+function toggleAgentFit(){
+  const el=document.getElementById('agent-fit-content');
+  const ch=document.getElementById('agent-fit-chevron');
+  if(!el)return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(ch)ch.textContent=isOpen?'▼ 開く':'▲ 閉じる';
+}
+
+function openPopup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display='flex';
+  document.body.style.overflow='hidden';
+  // オーバーレイ背景クリックで閉じる
+  el.onclick=(e)=>{ if(e.target===el) closePopup(id); };
+}
+
+function closePopup(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.style.display='none';
+  document.body.style.overflow='';
 }
 
 function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
