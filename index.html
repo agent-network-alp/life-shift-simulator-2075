@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-l</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-m</p>
   </div>
 </div>
 
@@ -1821,7 +1821,7 @@ function renderEraPage(phase){
         </div>
         <div class="era-desc-text">${phase.eraDescription}</div>
         <div class="era-stat-row">
-          <div class="era-stat-num">${(ERA_KEY_DATA[pi]&&ERA_KEY_DATA[pi].num)?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
+          <div class="era-stat-num">${(ERA_KEY_DATA[pi]&&ERA_KEY_DATA[pi].num)?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value||'')}</div>
           <div class="era-stat-meta">
             <div class="era-stat-lbl">${phase.stat1_label||''}</div>
             <div class="era-stat-src">${phase.stat1_source||''}</div>
@@ -2125,9 +2125,8 @@ function renderQ3(phase){
 
 // ── イベント ─────────────────────────────────────────────────────
 function proceedPhase(){
-  // 33%の確率でダイスロール演出、それ以外は直接次フェーズへ
   if(Math.random()<0.33){
-    showDice(()=>{});
+    showDice(nextPhase);
   }else{
     nextPhase();
   }
@@ -4202,7 +4201,8 @@ function getDiceEventText(result){
 }
 
 function showDice(onResult){
-  diceCallback=onResult;
+  window._onDiceComplete=onResult; // nextPhaseへの参照を別途保存
+  diceCallback=null;
   var pi=G.currentPhase;
   var EG=[
     {t:'AI規制が人間の判断を守った',    b:'EU規制強化で、人間の判断が法的に必要とされる領域が拡大した。'},
@@ -4259,8 +4259,31 @@ function closeDiceNew(){
   clearTimeout(window._diceAutoTimer);
   var ol=document.getElementById('dice-overlay');
   if(ol){ol.style.opacity='0';setTimeout(function(){try{ol.remove();}catch(e){}},300);}
-  var result=window._diceIsGood?'good':'bad';
-  if(diceCallback){diceCallback(result);diceCallback=null;}
+  // rollDice()のdiceCallbackオブジェクトで結果処理
+  var result=diceCallback;
+  diceCallback=null;
+  var onComplete=window._onDiceComplete;
+  window._onDiceComplete=null;
+
+  if(result&&typeof result==='object'){
+    // rollDice()経由：bad/good/noneの結果処理
+    if(result.type==='bad'&&result.event){
+      showEvent(result.event);
+    }else if(result.type==='good'&&result.bonus){
+      const bonusCorr=result.bonus.correction||0;
+      G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:bonusCorr,phaseIdx:G.currentPhase});
+      applyValueMeterChoice(result.bonus.tag);
+      vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
+      vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
+      renderValueMeter(null);
+      if(onComplete)onComplete();
+    }else{
+      if(onComplete)onComplete();
+    }
+  }else{
+    // rollDiceせずにスキップした場合
+    if(onComplete)onComplete();
+  }
 }
 
 
@@ -4389,27 +4412,30 @@ function applyTooltipsToPage(){
 
 // stat値のフォーマット（スプレッドシートが数値変換した場合のフォールバック）
 function formatStatVal(val){
-  if(val===null||val===undefined)return'--';
+  if(val===null||val===undefined||val==='')return'--';
   const s=String(val).trim();
-  if(s.startsWith('#')||s===''||s==='undefined'||s==='null')return'--';
-  if(typeof val==='string'){
-    // 「約XX%」→「XX%」
-    let r=s.replace(/^約/,'');
-    // 「▼XX%」→「XX%ダウン」
-    r=r.replace(/^▼\s*(-?\d+\.?\d*)%?$/,'$1%ダウン');
-    // 「-XX%」→「XX%ダウン」
-    r=r.replace(/^-(\d+\.?\d*)%?$/,'$1%ダウン');
-    return r;
-  }
+  if(s.startsWith('#')||s==='undefined'||s==='null')return'--';
   if(typeof val==='number'){
-    // 負の小数（例: -0.20）→ XX%ダウン
     if(val<0&&val>-1)return Math.round(Math.abs(val)*100)+'%ダウン';
     if(val<0)return Math.abs(Math.round(val))+'%ダウン';
     if(val>0&&val<1)return Math.round(val*100)+'%';
     if(val>=1&&val<100)return Math.round(val)+'%';
     return s;
   }
-  return s;
+  // 文字列の場合
+  let r=s;
+  r=r.replace(/^約/,'');              // 「約92%」→「92%」
+  r=r.replace(/^▼\s*(-?\d+\.?\d*)%?$/,'$1%ダウン'); // 「▼20%」
+  r=r.replace(/^-(\d+\.?\d*)%?$/,'$1%ダウン');       // 「-20%」
+  // 文字列「0.92」→「92%」
+  const num=parseFloat(r);
+  if(!isNaN(num)&&r===String(num)){
+    if(num<0&&num>-1)return Math.round(Math.abs(num)*100)+'%ダウン';
+    if(num<0)return Math.abs(Math.round(num))+'%ダウン';
+    if(num>0&&num<1)return Math.round(num*100)+'%';
+    if(num>=1&&num<100)return Math.round(num)+'%';
+  }
+  return r;
 }
 
 // ━━━ デモモード（?demo=1 でレポートを直接表示） ━━━━━━━━━━━━━━━━━━━━
