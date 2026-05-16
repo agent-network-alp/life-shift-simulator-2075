@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-h</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-i</p>
   </div>
 </div>
 
@@ -1950,15 +1950,16 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   body.classList.add('q-mode');
   body.innerHTML=`
     <div class="q-fixed-header">
-      <div class="q-context-bar">
-        <span class="q-age-badge">${age}歳</span>
-        <span class="q-era-badge">${phase.era}</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 8px;border-bottom:1px solid rgba(255,255,255,.08)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="q-age-badge">${age}歳</span>
+          <span class="q-era-badge">${phase.era}</span>
+        </div>
+        <span style="font-size:.65rem;font-weight:700;color:#fff;background:#2563EB;padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 2 アクション</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-        <span style="font-size:.68rem;font-weight:700;color:#fff;background:#2563EB;padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 2</span>
-        <span style="font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:1px">アクションを選ぶ</span>
+      <div style="padding:10px 0 8px">
+        <div style="font-size:clamp(.95rem,2.6vw,1.1rem);font-weight:700;color:#fff;line-height:1.6">${questionText.replace('どこで勝負する？','どのようなアクションを取る？')}</div>
       </div>
-      <div class="q-text">${questionText.replace('どこで勝負する？','どのようなアクションを取る？')}</div>
     </div>
     <div class="q-card-scroll-wrap">
       <div class="q-card-track" id="choices4"></div>
@@ -1971,34 +1972,38 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
 
   const wrap=document.getElementById('choices4');
   choiceData.forEach(ch=>{
-    // タグ別UIまたはQ1用UIを取得
     const tagUI=ch.tag?TAG_CARD_UI[ch.tag]:null;
     const q1UI=ch.erafit!=null?(ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:ch.erafit>=3?Q1_CARD_UI.low1:Q1_CARD_UI.low2):null;
     const cardUI=tagUI||q1UI||{short:ch.label,svg:''};
 
     const btn=document.createElement('button');
     btn.className='choice4-btn';
-    const shortLabel=ch.short||(tagUI?tagUI.short:ch.text?ch.text.slice(0,14):ch.label);
+    // shortの優先順位: スプシのshort列 > TAG_CARD_UIのshort > テキスト冒頭
+    const shortLabel=ch.short||(tagUI?tagUI.short:'')|| (ch.text?ch.text.replace(/[「」]/g,'').slice(0,12):ch.label);
     btn.innerHTML=
       '<div class="card-svg-area">'+(cardUI.svg||'')+'</div>'
       +'<div class="card-short">'+shortLabel+'</div>'
       +(ch.text?'<div class="card-sub" style="-webkit-line-clamp:unset;overflow:visible;display:block">'+ch.text+'</div>':'');
 
+    // ホバー時にVALUE METERプレビュー
+    if(ch.tag){
+      btn.addEventListener('mouseenter',()=>renderValueMeter(ch.tag));
+      btn.addEventListener('mouseleave',()=>renderValueMeter(null));
+      btn.addEventListener('touchstart',()=>renderValueMeter(ch.tag),{passive:true});
+    }
+
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
       if(navigator.vibrate) navigator.vibrate(30);
-      // Q2はタグで反映、Q1はerafitで反映、Q3はinvestで反映
       if(ch.tag){
         applyValueMeterChoice(ch.tag);
       }else if(ch.erafit!=null){
-        // Q1：erafitの高低に応じてeraFit軸を変化
-        const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5; // 変化量削減
+        const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
         applyValueMeterDelta({eraFit:delta});
       }else if(ch.invest){
-        // Q3：投資先に応じた軸変化
         const investImpact={
-          skill:      {expertise:+5, adaptability:+3},  // 調整済み
+          skill:      {expertise:+5, adaptability:+3},
           network:    {adaptability:+4,'consistency':+3},
           experiment: {adaptability:+6, crisis:+4},
           current_job:{expertise:+4, consistency:+5},
