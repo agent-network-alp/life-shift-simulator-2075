@@ -222,8 +222,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   border-bottom:1px solid rgba(255,255,255,.08);
   margin-bottom:12px;
 }
-.q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:#fff;background:rgba(255,255,255,.12);padding:4px 12px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
-.q-era-badge{font-size:.84rem;color:var(--accent);background:rgba(232,98,26,.15);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.3);letter-spacing:.5px}
+.q-age-badge{font-family:var(--ff-head);font-size:1.05rem;color:#fff;background:rgba(255,255,255,.18);padding:5px 14px;border-radius:6px;border:1.5px solid rgba(255,255,255,.35);letter-spacing:1px}
+.q-era-badge{font-size:.82rem;color:#fff;background:var(--accent);padding:5px 12px;border-radius:6px;font-weight:700;letter-spacing:.5px}
 .q-year-badge{font-size:.84rem;color:var(--ink60);background:rgba(0,0,0,.04);padding:4px 10px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
 /* ③ Q番号ラベルを大きく太字に */
 .q-num{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px;font-weight:700;opacity:1;padding-top:4px}
@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-i</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-j</p>
   </div>
 </div>
 
@@ -1970,18 +1970,29 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   const vmEl=document.getElementById('value-meter');
   if(vmEl){vmEl.classList.add('vm-visible');renderValueMeter(null);}
 
-  const wrap=document.getElementById('choices4');
-  choiceData.forEach(ch=>{
-    const tagUI=ch.tag?TAG_CARD_UI[ch.tag]:null;
-    const q1UI=ch.erafit!=null?(ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:ch.erafit>=3?Q1_CARD_UI.low1:Q1_CARD_UI.low2):null;
-    const cardUI=tagUI||q1UI||{short:ch.label,svg:''};
+  // Q2カード用 位置別SVG（タグが重複しても必ず4種異なる図になる）
+  const Q2_SLOT_SVG=[
+    // slot 0: 専門・深さ（同心円＋十字）
+    `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(232,98,26,.07)" rx="8"/><circle cx="50" cy="38" r="22" fill="none" stroke="rgba(232,98,26,.2)" stroke-width="1"/><circle cx="50" cy="38" r="14" fill="none" stroke="rgba(232,98,26,.35)" stroke-width="1.5"/><circle cx="50" cy="38" r="6" fill="rgba(232,98,26,.5)"/><line x1="50" y1="16" x2="50" y2="60" stroke="rgba(232,98,26,.25)" stroke-width="1"/><line x1="28" y1="38" x2="72" y2="38" stroke="rgba(232,98,26,.25)" stroke-width="1"/></svg>`,
+    // slot 1: 接続・ネットワーク（三角ノード）
+    `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(43,143,197,.07)" rx="8"/><circle cx="50" cy="20" r="6" fill="rgba(43,143,197,.7)"/><circle cx="24" cy="58" r="5" fill="rgba(43,143,197,.5)"/><circle cx="76" cy="58" r="5" fill="rgba(43,143,197,.5)"/><line x1="50" y1="26" x2="28" y2="53" stroke="rgba(43,143,197,.4)" stroke-width="1.5"/><line x1="50" y1="26" x2="72" y2="53" stroke="rgba(43,143,197,.4)" stroke-width="1.5"/><line x1="29" y1="58" x2="71" y2="58" stroke="rgba(43,143,197,.3)" stroke-width="1.5"/><circle cx="50" cy="42" r="4" fill="rgba(43,143,197,.3)" stroke="rgba(43,143,197,.5)" stroke-width="1"/></svg>`,
+    // slot 2: 戦略・設計（グリッドとポインタ）
+    `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(245,158,11,.07)" rx="8"/><rect x="20" y="18" width="60" height="44" rx="4" fill="none" stroke="rgba(245,158,11,.3)" stroke-width="1.5"/><line x1="40" y1="18" x2="40" y2="62" stroke="rgba(245,158,11,.2)" stroke-width="1"/><line x1="60" y1="18" x2="60" y2="62" stroke="rgba(245,158,11,.2)" stroke-width="1"/><line x1="20" y1="33" x2="80" y2="33" stroke="rgba(245,158,11,.2)" stroke-width="1"/><line x1="20" y1="47" x2="80" y2="47" stroke="rgba(245,158,11,.2)" stroke-width="1"/><circle cx="60" cy="33" r="5" fill="rgba(245,158,11,.8)"/></svg>`,
+    // slot 3: 継承・流れ（縦のフロー）
+    `<svg viewBox="0 0 100 80" xmlns="http://www.w3.org/2000/svg"><rect width="100" height="80" fill="rgba(168,85,247,.07)" rx="8"/><circle cx="50" cy="18" r="6" fill="rgba(168,85,247,.7)"/><line x1="50" y1="24" x2="50" y2="36" stroke="rgba(168,85,247,.5)" stroke-width="2"/><circle cx="50" cy="40" r="5" fill="rgba(168,85,247,.5)"/><line x1="50" y1="45" x2="50" y2="54" stroke="rgba(168,85,247,.4)" stroke-width="2"/><circle cx="35" cy="62" r="5" fill="rgba(168,85,247,.35)"/><circle cx="65" cy="62" r="5" fill="rgba(168,85,247,.35)"/><line x1="46" y1="57" x2="38" y2="59" stroke="rgba(168,85,247,.3)" stroke-width="1.5"/><line x1="54" y1="57" x2="62" y2="59" stroke="rgba(168,85,246,.3)" stroke-width="1.5"/></svg>`,
+  ];
 
+  const wrap=document.getElementById('choices4');
+  choiceData.forEach((ch,idx)=>{
     const btn=document.createElement('button');
     btn.className='choice4-btn';
-    // shortの優先順位: スプシのshort列 > TAG_CARD_UIのshort > テキスト冒頭
-    const shortLabel=ch.short||(tagUI?tagUI.short:'')|| (ch.text?ch.text.replace(/[「」]/g,'').slice(0,12):ch.label);
+    // shortの優先順位: スプシのshort列 > TAG_CARD_UIのshort > テキスト冒頭12文字
+    const tagUI=ch.tag?TAG_CARD_UI[ch.tag]:null;
+    const shortLabel=ch.short||(tagUI?tagUI.short:'')||(ch.text?ch.text.replace(/[「」]/g,'').slice(0,12):ch.label);
+    const svgHtml=Q2_SLOT_SVG[idx%4];
+
     btn.innerHTML=
-      '<div class="card-svg-area">'+(cardUI.svg||'')+'</div>'
+      '<div class="card-svg-area">'+svgHtml+'</div>'
       +'<div class="card-short">'+shortLabel+'</div>'
       +(ch.text?'<div class="card-sub" style="-webkit-line-clamp:unset;overflow:visible;display:block">'+ch.text+'</div>':'');
 
@@ -2053,10 +2064,10 @@ function renderQ2(phase){
     ? `<span style="font-size:.84rem;color:var(--cyan);display:block;margin-bottom:8px;letter-spacing:.5px">▍ ${prefix2}</span>${q2.question}`
     : q2.question;
   buildQPage(2,'行動選択',q2text,[
-    {label:'A',text:q2.choice_a_text,sub:q2.choice_a_example,tag:q2.choice_a_tag},
-    {label:'B',text:q2.choice_b_text,sub:q2.choice_b_example,tag:q2.choice_b_tag},
-    {label:'C',text:q2.choice_c_text,sub:q2.choice_c_example,tag:q2.choice_c_tag},
-    {label:'D',text:q2.choice_d_text,sub:q2.choice_d_example,tag:q2.choice_d_tag},
+    {label:'A',text:q2.choice_a_text,short:q2.choice_a_short||'',sub:q2.choice_a_example,tag:q2.choice_a_tag},
+    {label:'B',text:q2.choice_b_text,short:q2.choice_b_short||'',sub:q2.choice_b_example,tag:q2.choice_b_tag},
+    {label:'C',text:q2.choice_c_text,short:q2.choice_c_short||'',sub:q2.choice_c_example,tag:q2.choice_c_tag},
+    {label:'D',text:q2.choice_d_text,short:q2.choice_d_short||'',sub:q2.choice_d_example,tag:q2.choice_d_tag},
   ],c=>{
     G.choices[G.currentPhase]=c;G.tags[G.currentPhase]=c.tag;
     // Q3は廃止 → Q2選択後は直接proceedPhaseへ（ナラティブ→次フェーズ）
