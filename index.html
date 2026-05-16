@@ -836,7 +836,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-b</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-c</p>
   </div>
 </div>
 
@@ -1802,10 +1802,10 @@ function renderEraPage(phase){
   const q1wrap=document.getElementById('era-q1-choices');
   if(q1data&&q1wrap){
     const q1choices=[
-      {label:'A',text:q1data.choice_a_text,erafit:Number(q1data.choice_a_erafit)},
-      {label:'B',text:q1data.choice_b_text,erafit:Number(q1data.choice_b_erafit)},
-      {label:'C',text:q1data.choice_c_text,erafit:Number(q1data.choice_c_erafit)},
-      {label:'D',text:q1data.choice_d_text,erafit:Number(q1data.choice_d_erafit)},
+      {label:'A',text:q1data.choice_a_text,short:q1data.choice_a_short||'',erafit:Number(q1data.choice_a_erafit)},
+      {label:'B',text:q1data.choice_b_text,short:q1data.choice_b_short||'',erafit:Number(q1data.choice_b_erafit)},
+      {label:'C',text:q1data.choice_c_text,short:q1data.choice_c_short||'',erafit:Number(q1data.choice_c_erafit)},
+      {label:'D',text:q1data.choice_d_text,short:q1data.choice_d_short||'',erafit:Number(q1data.choice_d_erafit)},
     ].filter(ch=>ch.text&&ch.text.trim());
     q1wrap.innerHTML='';
     q1choices.forEach(function(ch){
@@ -1813,9 +1813,9 @@ function renderEraPage(phase){
       btn.style.cssText='width:100%;background:#fff;border:1.5px solid #E5E7EB;border-radius:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;padding:0 0 14px;-webkit-tap-highlight-color:transparent;overflow:hidden;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.06)';
       // Q1のerafit値からカードUIを選択
       const q1CUI=ch.erafit>=8?Q1_CARD_UI.high:ch.erafit>=5?Q1_CARD_UI.mid:Q1_CARD_UI.low;
-      // shortはテキストの冒頭10文字（「」を除く）から自動生成して重複を防ぐ
-      const rawShort=ch.text?ch.text.replace(/[「」]/g,'').replace(/。.*$/,'').slice(0,14):'';
-      const shortLabel=rawShort||(q1CUI?q1CUI.short:ch.label);
+      // shortの優先順位: スプシのshort列 > 自動要約(冒頭14文字) > Q1_CARD_UIのshort
+      const autoShort=ch.text?ch.text.replace(/[「」]/g,'').replace(/。.*$/,'').slice(0,14):'';
+      const shortLabel=ch.short||autoShort||(q1CUI?q1CUI.short:ch.label);
       btn.innerHTML=
         '<div style="width:100%;height:72px;flex-shrink:0">'+(q1CUI?q1CUI.svg:'')+'</div>'
         +'<div style="font-size:.82rem;font-weight:700;text-align:center;padding:8px 10px 5px;line-height:1.35;color:var(--ink)">'+shortLabel+'</div>'
