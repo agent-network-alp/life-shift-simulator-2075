@@ -1002,7 +1002,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-x</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-y</p>
   </div>
 </div>
 
@@ -2580,6 +2580,20 @@ function getPW(){const c=G.config;return{phase_1:c.phaseWeight_1_g2??0.20,phase_
 function calcEra(){
   const pw=getPW(),td=G.data.tagDefinitions||{};
   const q2d=G.data.q2||[];
+
+  // tagDefinitionsが空（スプシ未設定）の場合はQ1のerafitとvmStateから直接計算
+  if(!Object.keys(td).length){
+    // Q1スコア：erafit高いほど良い（最大10）
+    const q1Score=G.q1Choices.length
+      ?G.q1Choices.reduce((s,q)=>s+(q?q.erafit||5:5),0)/G.q1Choices.length
+      :5;
+    // vmState.eraFitを0-10にスケール
+    const vmScore=Math.min(10,Math.max(0,(vmState.eraFit-30)/7));
+    // タグ数（選択の多様性ボーナス）
+    const tagScore=G.tags&&G.tags.length?Math.min(2,G.tags.length/3):0;
+    return Math.min(10,q1Score*0.5+vmScore*0.4+tagScore*0.1);
+  }
+
   const ranges={};
   PHASE_IDS.forEach(pid=>{
     const ph=q2d.find(q=>q.phase_id===pid);
@@ -2590,7 +2604,7 @@ function calcEra(){
     if(!sc.length){ranges[pid]={min:4,max:6};return;}
     ranges[pid]={min:Math.min(...sc),max:Math.max(...sc)};
   });
-  if(!G.tags||!G.tags.length)return 5; // フォールバック
+  if(!G.tags||!G.tags.length)return 5;
   return G.tags.reduce((tot,tag,i)=>{
     const pid=PHASE_IDS[i];
     if(!pid)return tot;
@@ -2692,17 +2706,17 @@ function calcScore(){
   const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
   const ownership=calcOwnershipBonus();
   const mbtiBonus=getMBTITagBonus();
-  const cap=G.config.bonusCap??2.0;  // cap=2.0
-  // NaNガード：各値を数値に強制変換
-  const safeEra   = isNaN(era)?5:era;
+  const cap=G.config.bonusCap??2.0;
+  const safeEra   = isNaN(era)?5:Math.min(10,Math.max(0,era));
   const safeBonus = isNaN(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus)?0:(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus);
   const allBonus  = Math.min(safeBonus,cap);
-  // 方針B：vmStateの平均値をスコアに組み込む（相関確保）
+  // vmStateの平均（初期値40から実際のプレイで上昇）
   const vmVals=[vmState.expertise,vmState.adaptability,vmState.eraFit,vmState.crisis,vmState.consistency];
   const vmAvg=vmVals.reduce((s,v)=>s+(isNaN(v)?40:Math.min(100,Math.max(0,v))),0)/5;
-  // vmAvgをボーナスとして加算（スケール：vmが50→0ボーナス、vmが80→0.3ボーナス）
-  const vmBonus=Math.max(0,(vmAvg-40)/100)*0.5; // 最大+0.5（vmAvg=140相当、実際は最大0.3程度）
-  const raw = 13 + safeEra*5 + Math.min(allBonus+vmBonus,cap)*16;  // vmを含む
+  // vmAvg 40=0pts, 60=+0.5pts, 80=+1.0pts（スケール改善）
+  const vmBonus=Math.max(0,(vmAvg-40)/40);
+  const raw = 13 + safeEra*5 + Math.min(allBonus+vmBonus,cap)*16;
+  console.log('[Score] era:'+safeEra.toFixed(2)+' bonus:'+allBonus.toFixed(2)+' vm:'+vmBonus.toFixed(2)+' raw:'+raw.toFixed(1));
   return Math.min(100,Math.max(0,Math.round(isNaN(raw)?40:raw)));
 }
 
@@ -3147,6 +3161,7 @@ async function showResult(){
       // AI就活軸をグローバルに保存（1要素の場合はコードで補完）
       if(aiResult.careerAxis){
         let axis=aiResult.careerAxis;
+        if(!Array.isArray(axis)) axis=typeof axis==="string"?[axis]:[];
         // 配列で1〜2要素しかない場合、残りをコードで生成
         // 要素数が3未満、または各要素が短すぎる（不完全）場合はフォールバック
         if(Array.isArray(axis)&&(axis.length<3||axis.some(s=>!s||String(s).trim().length<15))){
@@ -4077,6 +4092,9 @@ async function saveToGAS(score,tier,domTag,chainRule,indScores){
 }
 
 async function fetchStats(myScore,myTier){
+  // compare-blockは廃止済みのため何もしない
+  return;
+}
   try{
     const res=await fetch(`${GAS_URL}?action=stats`);
     const data=await res.json();
