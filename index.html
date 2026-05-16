@@ -1002,7 +1002,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-v</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-w</p>
   </div>
 </div>
 
@@ -1301,8 +1301,9 @@ div[style*="CAREER TRANSLATION"] {
       <div class="phase-dot" id="pd-4"></div><div class="phase-dot" id="pd-5"></div>
     </div>
   </div>
-  <div class="phase-body" id="phase-body-inner">
-    <!-- JS で時代背景ページ or Q1/Q2/Q3ページを動的描画 -->
+  <div class="phase-body" style="position:relative">
+    <div id="phase-buf-a" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
+    <div id="phase-buf-b" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;visibility:hidden"></div>
   </div>
 </div>
 
@@ -1328,99 +1329,74 @@ div[style*="CAREER TRANSLATION"] {
       <p class="ending-copy" id="ending-copy"></p>
     </div>
 
-    <!-- ━━━ スコアパート ━━━ -->
-    <div class="rpt-part-label">SCORE</div>
+    <!-- ━━━ 幕1：スコア・診断 ━━━ -->
+    <div class="rpt-part-label">ACT 1 — 診断結果</div>
 
-    <!-- ①総合スコア -->
+    <!-- N値 + AI類型 -->
+    <div class="rpt-card">
+      <div class="rpt-card-header accent">問いの力 / AI類型</div>
+      <div id="act1-nval-content"></div>
+    </div>
+
+    <!-- スコア -->
     <div class="score-block">
       <div class="score-num" id="res-score">--</div>
       <div class="score-tier" id="res-tier">--</div>
       <div class="score-headline" id="res-headline"></div>
     </div>
 
-    <!-- ②6角チャート（タイトル付き）+ LIVE COMPARISON統合 -->
-    <div class="rpt-card" style="padding-bottom:16px">
-      <div class="rpt-card-header accent">VALUE RADAR — あなたの6軸プロフィール</div>
-      <div id="radar-chart-container" style="position:relative;height:260px">
-        <canvas id="radar-chart"></canvas>
-      </div>
-      <!-- LIVE COMPARISON（レーダーの下に統合） -->
-      <div id="compare-block" style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6;display:none">
-        <div style="font-size:.72rem;letter-spacing:3px;color:#2B8FC5;font-weight:700;margin-bottom:12px">LIVE COMPARISON</div>
-        <div class="compare-stats" style="display:flex;gap:0;margin-bottom:14px">
-          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
-            <div class="compare-num" id="cmp-total" style="font-size:1.6rem;font-weight:900;color:#2B8FC5;display:block;margin-bottom:3px">--</div>
-            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">参加者数</div>
-          </div>
-          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px;border-right:1px solid #F3F4F6">
-            <div class="compare-num" id="cmp-avg" style="font-size:1.6rem;font-weight:900;color:var(--gold);display:block;margin-bottom:3px">--</div>
-            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">平均スコア</div>
-          </div>
-          <div class="compare-item" style="flex:1;text-align:center;padding:10px 8px">
-            <div class="compare-num" id="cmp-beat" style="font-size:1.6rem;font-weight:900;color:var(--accent);display:block;margin-bottom:3px">--%</div>
-            <div class="compare-lbl" style="font-size:.76rem;color:#9CA3AF">上位</div>
-          </div>
-        </div>
-        <div id="tier-bars"></div>
-      </div>
-    </div>
-
-    <!-- ③ANALYSIS（六角チャートの分析） -->
+    <!-- ANALYSIS -->
     <div class="rpt-card">
       <div class="rpt-card-header accent">ANALYSIS</div>
       <div id="res-body" style="font-size:1rem;line-height:1.95;color:#2c2c3e"></div>
     </div>
 
-    <!-- ④MY STORY -->
+    <!-- ━━━ 幕2：MY STORY ━━━ -->
+    <div class="rpt-part-label">ACT 2 — MY STORY</div>
+
     <div class="rpt-card">
       <div class="rpt-card-header gold">MY STORY — あなたの50年</div>
       <div id="story-entries"></div>
     </div>
 
+    <!-- ━━━ 幕3：アクション ━━━ -->
+    <div class="rpt-part-label">ACT 3 — アクション</div>
 
-
-    <!-- ━━━ 就活パート ━━━ -->
-    <div class="rpt-part-label">CAREER</div>
-
-    <!-- ⑥INDUSTRY FIT -->
-    <div class="rpt-card">
-      <div class="rpt-card-header cyan">INDUSTRY FIT</div>
-      <div id="ind-bars"></div>
-      <div class="industry-detail" id="industry-detail"></div>
-    </div>
-
-    <!-- 就活ワンシート（⑥の中） -->
-    <div class="job-sheet" id="job-sheet" style="display:none">
-      <div class="job-sheet-title">📋 就活ワンシート — 今日から使える</div>
-      <div class="job-sheet-row">
-        <span class="job-sheet-label">キャリアの軸</span>
-        <span class="job-sheet-value" id="jws-axis">--</span>
-      </div>
-      <div class="job-sheet-row">
-        <span class="job-sheet-label">第一志望業種</span>
-        <span class="job-sheet-value" id="jws-industry">--</span>
-      </div>
-      <div class="job-sheet-row">
-        <span class="job-sheet-label">AI代替リスク</span>
-        <span class="job-sheet-value" id="jws-risk">--</span>
-      </div>
-      <div class="job-sheet-row" style="flex-direction:column">
-        <span class="job-sheet-label" style="margin-bottom:6px">就活軸の提案</span>
-        <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.96rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
-      </div>
-
-    </div>
-
-    <!-- ⑦TODAY'S ACTION -->
+    <!-- TODAY'S ACTION -->
     <div class="rpt-card" style="border-color:rgba(232,98,26,.2);background:rgba(232,98,26,.04)">
       <div class="rpt-card-header accent">TODAY'S ACTION</div>
       <p style="font-size:.88rem;color:#888;margin-bottom:12px">3つのアクションから今日やることを選ぼう</p>
       <div id="action-list"></div>
     </div>
 
-    <!-- ⑧AGENT FIT -->
-    <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2)">
+    <!-- 就活ワンシート（折りたたみ） -->
+    <div class="rpt-card" style="padding:0;overflow:hidden">
+      <button onclick="toggleJobSheet()" style="width:100%;background:none;border:none;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-family:var(--ff-body)">
+        <span style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:2px">📋 就活ワンシート</span>
+        <span id="job-sheet-chevron" style="font-size:.8rem;color:#9CA3AF">▼ 開く</span>
+      </button>
+      <div id="job-sheet" style="display:none;padding:0 20px 20px">
+        <div class="job-sheet-row">
+          <span class="job-sheet-label">キャリアの軸</span>
+          <span class="job-sheet-value" id="jws-axis">--</span>
+        </div>
+        <div class="job-sheet-row">
+          <span class="job-sheet-label">第一志望業種</span>
+          <span class="job-sheet-value" id="jws-industry">--</span>
+        </div>
+        <div class="job-sheet-row">
+          <span class="job-sheet-label">AI代替リスク</span>
+          <span class="job-sheet-value" id="jws-risk">--</span>
+        </div>
+        <div class="job-sheet-row" style="flex-direction:column">
+          <span class="job-sheet-label" style="margin-bottom:6px">就活軸の提案</span>
+          <div id="jws-career-axis" style="background:rgba(232,98,26,.05);border-left:3px solid var(--accent);padding:12px 16px;border-radius:0 8px 8px 0;font-size:.96rem;color:#1c1c2e;line-height:1.8;margin-top:4px">生成中...</div>
+        </div>
+      </div>
     </div>
+
+    <!-- AGENT FIT（折りたたみ） -->
+    <div class="rpt-card" id="agent-fit-block" style="border-color:rgba(232,98,26,.2)"></div>
 
     <div style="margin:24px 16px 0;padding:14px 16px;background:rgba(0,0,0,.03);border-radius:8px;border-left:2px solid rgba(0,0,0,.1)">
       <p style="font-size:.8rem;color:#9CA3AF;line-height:1.8">
@@ -1896,7 +1872,7 @@ function renderEraPage(phase){
   const pi=G.currentPhase;
 
   // エージェントカラーテーマをphase-body-innerに適用
-  const body=document.getElementById('phase-body-inner');
+  const body=getPhaseBody();
   body.classList.remove('q-mode'); // era-page：外側スクロールを有効に戻す
   // 時代背景は白ベースに戻す
   const ps2=document.getElementById('screen-phase');
@@ -2146,7 +2122,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   if(ov)ov.style.background='none';
   // VALUE METERは表示（Q1〜Q3ページで表示）
 
-  const body=document.getElementById('phase-body-inner');
+  const body=getPhaseBody();
   body.classList.add('q-mode');
   body.innerHTML=`
     <div class="q-fixed-header">
@@ -2364,7 +2340,7 @@ function nextPhase(){
   if(sp){sp.style.visibility='hidden';sp.style.opacity='0';}
 
   // phase-body-innerをクリア
-  const pb=document.getElementById('phase-body-inner');
+  const pb=getPhaseBody();
   if(pb){pb.innerHTML='';pb.style.background='';pb.classList.remove('q-mode');}
 
   // VALUE METERを非表示
@@ -2537,26 +2513,70 @@ function showNarrative(completedPhaseIdx, onNext){
   });
 }
 
-// ━━━ フェーズ遷移：暗転ユーティリティ ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-// 暗転→コールバック実行→フェードイン
-function phaseTransition(fn, darkDuration){
+// ━━━ ダブルバッファリング管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// AI回答（OpenAI）の提案を採用：別ツリーで構築→フレーム同期→swap
+let _bufFront=null, _bufBack=null;
+
+function _getBufs(){
+  if(!_bufFront){
+    _bufFront=document.getElementById('phase-buf-a');
+    _bufBack =document.getElementById('phase-buf-b');
+  }
+  return {front:_bufFront, back:_bufBack};
+}
+
+// 現在のアクティブバッファ（frontを返す）
+function getPhaseBody(){
+  return _getBufs().front;
+}
+
+// backに構築してからswap
+function swapBuffer(buildFn){
+  const {front,back}=_getBufs();
+  // backをクリアして構築
+  back.innerHTML='';
+  back.className='';
+  buildFn(back);
+  // swap
+  back.style.visibility='visible';
+  front.style.visibility='hidden';
+  // front/backを入れ替え
+  _bufFront=back;
+  _bufBack=front;
+}
+
+function nextFrame(){
+  return new Promise(r=>requestAnimationFrame(r));
+}
+
+// ━━━ フェーズ遷移：ダブルバッファ＋rAF×2方式（決定版） ━━━━━━━━━━━━━━━━
+async function phaseTransition(fn, darkDuration){
   darkDuration=darkDuration||150;
   let veil=document.getElementById('phase-veil');
   if(!veil){
     veil=document.createElement('div');
     veil.id='phase-veil';
-    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .15s ease;pointer-events:none';
+    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .15s ease;pointer-events:none;will-change:opacity';
     document.body.appendChild(veil);
   }
+  // 1. 暗転をコンポジット確定
   veil.style.opacity='1';
-  setTimeout(()=>{
-    fn();
-    const pb=document.getElementById('phase-body-inner');
-    if(pb)pb.style.background='';
-    setTimeout(()=>{
-      veil.style.opacity='0';
-    },80);
-  },darkDuration);
+  await nextFrame();
+  await nextFrame();
+  // 2. backバッファに新DOM構築（見えない）
+  const {back}=_getBufs();
+  back.innerHTML='';
+  back.className='';
+  back.style.visibility='hidden';
+  fn(); // ← renderPhase()等がgetPhaseBody()→backに書き込む
+  // 3. swap（レイアウト影響ゼロ）
+  const {front}=_getBufs();
+  back.style.visibility='visible';
+  front.style.visibility='hidden';
+  _bufFront=back; _bufBack=front;
+  // 4. 明転
+  await nextFrame();
+  veil.style.opacity='0';
 }
 function closeNarrative(){
   clearTimeout(window._narAutoTimer);
@@ -3058,63 +3078,35 @@ async function showResult(){
   // Xサマリ生成
   renderXSummary(score,tier.label,domTag,indScores[0]);
 
-  // 業種バー（上位7）
-  const colors=['#e94560','#f5a623','#00d4ff','#666','#666','#666','#666'];
-  document.getElementById('ind-bars').innerHTML=indScores.slice(0,7).map((item,i)=>{
-    const barColor=i===0?'#2B8FC5':i===1?'#3BA0D4':i===2?'#4DB0E0':`rgba(43,143,197,${Math.max(0.25,0.55-i*0.06)})`;
-    return `<div class="industry-bar-row">
-      <div class="industry-bar-name ${i===0?'top1':''}">${item.name}</div>
-      <div class="industry-bar-track"><div class="industry-bar-fill" style="width:${item.score}%;background:${barColor};border-radius:4px"></div></div>
-      <div class="industry-bar-pct">${item.score}%</div>
-    </div>`;
-  }).join('');
-
-  // レーダー
-  if(G.radarChart)G.radarChart.destroy();
-  const radarColor=tier.label==='先駆者'?'#E8621A':tier.label==='適応者'?'#2B8FC5':tier.label==='転換期'?'#EF4444':'#9CA3AF';
-  G.radarChart=new Chart(document.getElementById('radar-chart').getContext('2d'),{
-    type:'radar',
-    data:{
-      labels:['専門性','適応力','時代適合性','危機対応力','一貫性','投資効率'],
-      datasets:[{
-        data:radar,
-        borderColor:radarColor,
-        backgroundColor:radarColor+'22',
-        borderWidth:2.5,
-        pointBackgroundColor:'#fff',
-        pointBorderColor:tier.color,
-        pointBorderWidth:2,
-        pointRadius:5,
-        pointHoverRadius:7,
-        pointHoverBackgroundColor:tier.color,
-      }]
-    },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      animation:{duration:800,easing:'easeInOutQuart'},
-      scales:{r:{
-        min:0,max:100,
-        ticks:{display:false},
-        grid:{color:'rgba(0,0,0,.08)',lineWidth:1},
-        angleLines:{color:'rgba(0,0,0,.12)',lineWidth:1},
-        pointLabels:{
-          color:'#555',
-          font:{family:"'Noto Sans JP'",size:12,weight:'500'},
-          padding:8,
-        }
-      }},
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'rgba(255,255,255,.95)',
-          titleColor:'#1c1c2e',bodyColor:'#555',
-          borderColor:'rgba(0,0,0,.1)',borderWidth:1,
-          padding:10,
-          callbacks:{label:ctx=>`${ctx.label}：${ctx.raw}`}
-        }
-      }
-    }
-  });
+  // ━━ 幕1：N値 + AI類型を描画
+  const nVal=calcNValue(); G.nValueResult=nVal;
+  const aiStanceType=calcAIStance(); G.aiStanceType=aiStanceType;
+  const aiTypeLabel={'TIMES_AI':'問いを立てる人','PLUS_AI':'道具として使う人','MINUS_AI':'距離を置く人'}[aiStanceType]||'';
+  const aiTypeDesc={'TIMES_AI':'AIが答えられない問いを設定できる人。この時代に最も希少な存在。',
+    'PLUS_AI':'AIを道具として使いこなし、人間の判断と組み合わせて価値を生む人。',
+    'MINUS_AI':'AIとの距離を保ちながら、人間固有の強みで勝負する人。'}[aiStanceType]||'';
+  const nValColor=nVal>=70?'var(--accent)':nVal>=40?'var(--gold)':'#9CA3AF';
+  const act1El=document.getElementById('act1-nval-content');
+  if(act1El){
+    act1El.innerHTML=
+      // N値バー
+      '<div style="margin-bottom:20px">'
+      +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">'
+      +'<span style="font-family:var(--ff-head);font-size:2.8rem;color:'+nValColor+';line-height:1;letter-spacing:-1px">'+nVal+'</span>'
+      +'<span style="font-size:.78rem;color:#9CA3AF">/ 95</span>'
+      +'</div>'
+      +'<div style="height:8px;background:#F3F4F6;border-radius:4px;overflow:hidden;margin-bottom:6px">'
+      +'<div style="height:100%;width:'+Math.round(nVal/95*100)+'%;background:linear-gradient(90deg,'+nValColor+',var(--gold));border-radius:4px;transition:width 1s cubic-bezier(.4,0,.2,1)"></div>'
+      +'</div>'
+      +'<div style="font-size:.76rem;color:#9CA3AF">問いの力（N値）— 時代の変化を正確に読み、自分の問いを立てる力</div>'
+      +'</div>'
+      // AI類型
+      +'<div style="background:rgba(232,98,26,.04);border:1px solid rgba(232,98,26,.15);border-radius:10px;padding:14px 16px">'
+      +'<div style="font-size:.7rem;color:var(--accent);font-weight:700;letter-spacing:3px;margin-bottom:6px">AI類型</div>'
+      +'<div style="font-size:1.05rem;font-weight:700;color:#1A1A2E;margin-bottom:6px">'+aiTypeLabel+'</div>'
+      +'<div style="font-size:.88rem;color:#6B7280;line-height:1.7">'+aiTypeDesc+'</div>'
+      +'</div>';
+  }
 
   // アクション
   // J：就活への具体的アクション（フォールバック版）
@@ -4374,7 +4366,16 @@ function shareX(){const s=document.getElementById('res-score').textContent,t=doc
 
 function copyRes(){const s=document.getElementById('res-score').textContent,t=document.getElementById('res-tier').textContent;navigator.clipboard.writeText(`【LIFE SHIFT SIMULATOR 2075】\nAI時代適合スコア：${s}点 [${t}]\nhttps://agent-network-alp.github.io/life-shift-simulator-2075/\nby 株式会社エージェント`).then(()=>alert('コピーしました！'));}
 
-function resetGame(){if(G.radarChart){G.radarChart.destroy();}G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
+function toggleJobSheet(){
+  const el=document.getElementById('job-sheet');
+  const ch=document.getElementById('job-sheet-chevron');
+  if(!el)return;
+  const isOpen=el.style.display!=='none';
+  el.style.display=isOpen?'none':'block';
+  if(ch)ch.textContent=isOpen?'▼ 開く':'▲ 閉じる';
+}
+
+function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:''};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
 
 // FB (フォールバック) はスプシに移行済み。GAS障害時は空構造でフォールバック（init()参照）
 
