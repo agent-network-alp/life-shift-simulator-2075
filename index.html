@@ -234,11 +234,10 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .choices4{display:flex;gap:12px;padding:0 20px;width:max-content}
 
 /* カード本体 */
-/* カード本体 — 横スクロール固定幅カード（ライト背景用） */
+/* カード本体 — 2×2グリッド用（ライト背景用） */
 .choice4-btn{
   position:relative;
-  width:clamp(140px,42vw,180px);
-  min-width:clamp(140px,42vw,180px);
+  width:100%;
   flex-shrink:0;
   background:#fff;
   border:1.5px solid #E5E7EB;
@@ -248,14 +247,14 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:0 0 14px;
+  padding:0 0 16px;
   color:var(--ink);
   font-family:var(--ff-body);
   text-align:center;
   -webkit-tap-highlight-color:transparent;
-  scroll-snap-align:start;
   overflow:hidden;
   box-shadow:0 1px 4px rgba(0,0,0,.06);
+  min-height:220px;
 }
 .choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.04);box-shadow:0 4px 16px rgba(232,98,26,.12)}
 .choice4-btn:active{transform:scale(.97)}
@@ -841,7 +840,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-d</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-e</p>
   </div>
 </div>
 
@@ -1785,7 +1784,7 @@ function renderEraPage(phase){
           <div class="era-stat-num">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
           <div class="era-stat-meta">
             <div class="era-stat-lbl">${phase.stat1_label||''}</div>
-            <div class="era-stat-src" style="display:none">${phase.stat1_source||''}</div>
+            <div class="era-stat-src">${phase.stat1_source||''}</div>
           </div>
         </div>
       </div>
@@ -4046,51 +4045,21 @@ function renderValueMeter(previewTag){
   const el=document.getElementById('value-meter');
   if(!el)return;
 
-  const axes=[
-    {key:'expertise',  label:'専門性'},
-    {key:'adaptability',label:'適応力'},
-    {key:'eraFit',     label:'時代適合'},
-    {key:'crisis',     label:'危機対応'},
-    {key:'consistency',label:'一貫性'},
-  ];
-
-  function sigColor(v){
-    if(v>=90)return{bg:'#2B8FC5',sh:'#2B8FC555'};
-    if(v>=80)return{bg:'#34D399',sh:'#34D39955'};
-    if(v>=70)return{bg:'#86EFAC',sh:'#86EFAC44'};
-    if(v>=60)return{bg:'#F59E0B',sh:'#F59E0B44'};
-    if(v>=50)return{bg:'#F97316',sh:'#F9731644'};
-    return{bg:'#EF4444',sh:'#EF444444'};
-  }
-
+  // N値を現在のvmStateから近似（eraFit・adaptability・expertiseの平均）
+  const base=Math.round((vmState.eraFit+vmState.adaptability+vmState.expertise)/3);
   const impact=previewTag?TAG_AXIS_IMPACT[previewTag]||{}:{};
+  const delta=previewTag?Math.round(((impact.eraFit||0)+(impact.adaptability||0)+(impact.expertise||0))/3):0;
+  const pct=Math.min(95,Math.max(5,base+(previewTag?delta:0)));
+  const deltaHtml=previewTag&&delta!==0
+    ?'<span class="vm-n-delta '+(delta>0?'up':'dn')+'">'+(delta>0?'▲':'▼')+Math.abs(delta)+'</span>'
+    :'<span class="vm-n-delta zero">-</span>';
 
-  const items=axes.map(a=>{
-    const base=Math.min(100,Math.max(0,vmState[a.key]));
-    const delta=impact[a.key]||0;
-    const pct=previewTag?Math.min(100,Math.max(0,base+delta)):base;
-    const sc=sigColor(Math.round(pct));
-    const arrowHtml=previewTag&&delta!==0
-      ?'<div class="vm-arrow '+(delta>0?'up':'dn')+'">'+(delta>0?'↑':'↓')+'</div>'
-      :'';
-    return '<div class="vm-item">'
-      +'<div class="vm-dot-wrap">'
-        +'<div class="vm-signal" style="background:'+sc.bg+';box-shadow:0 0 7px '+sc.sh+'"></div>'
-        +arrowHtml
-      +'</div>'
-      +'<div class="vm-label">'+a.label+'</div>'
-      +'</div>';
-  }).join('');
-
-  const legend=[
-    {c:'#2B8FC5',l:'90+'},{c:'#34D399',l:'80+'},{c:'#86EFAC',l:'70+'},
-    {c:'#F59E0B',l:'60+'},{c:'#F97316',l:'50+'},{c:'#EF4444',l:'〜49'},
-  ].map(d=>'<div class="vm-legend-item"><div class="vm-legend-dot" style="background:'+d.c+'"></div>'+d.l+'</div>').join('');
-
-  el.innerHTML='<div class="vm-inner">'
-    +'<div class="vm-title">VALUE METER</div>'
-    +'<div class="vm-grid">'+items+'</div>'
-    +'<div class="vm-legend">'+legend+'</div>'
+  el.innerHTML=
+    '<div class="vm-inner">'
+    +'<span class="vm-n-label">問いの力</span>'
+    +'<div class="vm-bar-wrap"><div class="vm-bar" style="width:'+pct+'%"></div></div>'
+    +'<span class="vm-n-val">'+pct+'</span>'
+    +deltaHtml
     +'</div>';
 }
 
@@ -4342,13 +4311,13 @@ function applyTooltipsToPage(){
 function formatStatVal(val){
   if(val===null||val===undefined)return'--';
   const s=String(val).trim();
-  // スプレッドシートのエラー値をガード
   if(s.startsWith('#')||s===''||s==='undefined'||s==='null')return'--';
-  // 文字列ならそのまま返す
-  if(typeof val==='string')return s;
-  // 数値の場合（スプレッドシートが%を小数に変換した場合）
+  // GASが「約XX%」に変換した文字列から「約」を除去
+  if(typeof val==='string'){
+    return s.replace(/^約/,'');
+  }
   if(typeof val==='number'){
-    if(val>0&&val<1)return'約'+Math.round(val*100)+'%';
+    if(val>0&&val<1)return Math.round(val*100)+'%';
     if(val>=1&&val<100)return Math.round(val)+'%';
     return s;
   }
