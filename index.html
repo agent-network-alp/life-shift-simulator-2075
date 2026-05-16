@@ -181,13 +181,18 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .vm-n-val{font-family:var(--ff-head);font-size:1.2rem;color:var(--accent);min-width:32px;text-align:right;flex-shrink:0}
 .vm-n-delta{font-size:.7rem;min-width:28px;text-align:right;flex-shrink:0;transition:color .3s}
 .vm-n-delta.up{color:#34D399}.vm-n-delta.dn{color:#EF4444}.vm-n-delta.zero{color:transparent}
-.vm-grid{display:none}.vm-item{display:none}.vm-legend{display:none}
-.vm-signal{display:none}.vm-dot-wrap{display:none}.vm-track{display:none}.vm-fill{display:none}.vm-delta{display:none}
-.vm-fill{display:none}
-.vm-delta{display:none}
-.vm-delta.up{color:var(--cyan)}
-.vm-delta.down{color:var(--accent)}
-.vm-delta.zero{color:transparent}
+.vm-grid{display:flex;gap:10px;flex:1}
+.vm-item{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+.vm-legend{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.vm-signal{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.vm-dot-wrap{display:flex;align-items:center;gap:2px}
+.vm-track{display:none}.vm-fill{display:none}.vm-delta{display:none}
+.vm-label{font-size:.55rem;color:rgba(255,255,255,.45);text-align:center;letter-spacing:.3px}
+.vm-arrow{font-size:.65rem;line-height:1}
+.vm-arrow.up{color:#34D399}.vm-arrow.dn{color:#EF4444}
+.vm-title{font-size:.6rem;letter-spacing:3px;color:var(--accent);font-weight:700;white-space:nowrap;flex-shrink:0}
+.vm-legend-item{display:flex;align-items:center;gap:3px;font-size:.55rem;color:rgba(255,255,255,.4)}
+.vm-legend-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 /* VALUE METER分の余白はq-scroll-bodyで管理 */
 .dice-overlay{position:fixed;inset:0;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center;z-index:300;padding:20px;animation:fadeIn .25s ease}
 .dice-card{background:#0d0d0d;border:1px solid var(--border2);border-radius:14px;padding:36px 28px;max-width:360px;width:100%;text-align:center;box-shadow:0 0 80px rgba(0,0,0,.9)}
@@ -223,9 +228,9 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--ink);line-height:1.75;padding-bottom:4px}
 .q-scroll-hint{font-size:.72rem;color:var(--ink60);text-align:center;padding:0 20px 6px;letter-spacing:.5px}
 /* 横スクロールカードトラック */
-.q-card-scroll-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding:12px 0 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+.q-card-scroll-wrap{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px 120px}
 .q-card-scroll-wrap::-webkit-scrollbar{display:none}
-.q-card-track{display:flex;gap:10px;padding:0 16px 0 16px;width:max-content}
+.q-card-track{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
 .choices4{display:flex;gap:12px;padding:0 20px;width:max-content}
 
 /* カード本体 */
@@ -836,7 +841,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-c</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-d</p>
   </div>
 </div>
 
@@ -1787,8 +1792,11 @@ function renderEraPage(phase){
 
       <!-- Q1選択肢 -->
       <div id="era-q1-block" style="margin-top:16px;background:#fff;border-radius:16px;padding:18px 16px 16px;box-shadow:0 1px 6px rgba(0,0,0,.07)">
-        <div style="font-size:.72rem;color:var(--accent);font-weight:700;letter-spacing:3px;margin-bottom:8px">QUESTION</div>
-        <div id="era-q1-label" style="font-size:1rem;color:var(--ink);font-weight:700;line-height:1.6;margin-bottom:16px">この時代のトレンドの中で、あなたはどう動く？</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:.68rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 1</span>
+          <span style="font-size:.72rem;color:var(--ink60);letter-spacing:1px">時代を読む</span>
+        </div>
+        <div id="era-q1-label" style="font-size:1rem;color:var(--ink);font-weight:700;line-height:1.6;margin-bottom:16px">この時代の変化を、あなたはどう読んでいたか？</div>
         <div id="era-q1-choices" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
       </div>
     </div>`;
@@ -1899,12 +1907,16 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   // VALUE METERは表示（Q1〜Q3ページで表示）
 
   const body=document.getElementById('phase-body-inner');
-  body.classList.add('q-mode'); // Q1〜Q3：外側スクロール無効化
+  body.classList.add('q-mode');
   body.innerHTML=`
     <div class="q-fixed-header">
       <div class="q-context-bar">
         <span class="q-age-badge">${age}歳</span>
         <span class="q-era-badge">${phase.era}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:.68rem;font-weight:700;color:#fff;background:#1D4ED8;padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 2</span>
+        <span style="font-size:.72rem;color:var(--ink60);letter-spacing:1px">アクションを選ぶ</span>
       </div>
       <div class="q-text">${questionText}</div>
     </div>
@@ -1926,10 +1938,11 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
 
     const btn=document.createElement('button');
     btn.className='choice4-btn';
+    const shortLabel=ch.short||(tagUI?tagUI.short:ch.text?ch.text.slice(0,14):ch.label);
     btn.innerHTML=
       '<div class="card-svg-area">'+(cardUI.svg||'')+'</div>'
-      +'<div class="card-short">'+cardUI.short+'</div>'
-      +(ch.text?'<div class="card-sub">'+ch.text+'</div>':'');
+      +'<div class="card-short">'+shortLabel+'</div>'
+      +(ch.text?'<div class="card-sub" style="-webkit-line-clamp:unset;overflow:visible;display:block">'+ch.text+'</div>':'');
 
     btn.onclick=()=>{
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
