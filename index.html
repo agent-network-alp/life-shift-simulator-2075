@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-r</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-s</p>
   </div>
 </div>
 
@@ -1829,7 +1829,18 @@ function renderEraPage(phase){
       </div>
     </div>`,
     // Phase6: 60代 ポスト労働期
-    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p6bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0d0d1a"/><stop offset="100%" stop-color="#1a1a2a"/></linearGradient></defs><rect width="320" height="140" fill="url(#p6bg)"/><circle cx="100" cy="50" r="19" fill="rgba(245,158,11,.8)"/><path d="M81,74 Q100,96 119,74" fill="rgba(245,158,11,.6)"/><circle cx="190" cy="68" r="11" fill="rgba(43,143,197,.7)"/><path d="M179,80 Q190,92 201,80" fill="rgba(43,143,197,.5)"/><circle cx="224" cy="72" r="9" fill="rgba(52,211,153,.7)"/><path d="M215,82 Q224,92 233,82" fill="rgba(52,211,153,.5)"/><circle cx="252" cy="74" r="8" fill="rgba(167,139,250,.7)"/><path d="M119,62 Q155,48 179,65" fill="none" stroke="rgba(245,158,11,.7)" stroke-width="2" stroke-dasharray="5,3"><animate attributeName="stroke-dashoffset" values="0;-16" dur="1.5s" repeatCount="indefinite"/></path><circle cx="50" cy="18" r="1.5" fill="#fff" opacity=".6"><animate attributeName="opacity" values=".6;.1;.6" dur="2s" repeatCount="indefinite"/></circle><circle cx="270" cy="22" r="1" fill="#fff" opacity=".5"><animate attributeName="opacity" values=".5;.1;.5" dur="3s" repeatCount="indefinite"/></circle><circle cx="300" cy="14" r="1.5" fill="#fff" opacity=".7"><animate attributeName="opacity" values=".7;.2;.7" dur="2.5s" repeatCount="indefinite"/></circle><circle cx="100" cy="36" r="6" fill="none" stroke="rgba(245,158,11,.4)" stroke-width="1"><animate attributeName="r" values="6;10;6" dur="3s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="3s" repeatCount="indefinite"/></circle><text x="16" y="22" fill="rgba(245,158,11,.9)" font-size="11" font-weight="700" letter-spacing="2">60代 / ポスト労働期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2065 — 2075</text></svg>`,
+    `<div style="position:relative;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
+      <img src="https://agent-network-alp.github.io/life-shift-simulator-2075/img/2065-2075.png" alt="2065-2075 ポスト労働期" style="width:100%;height:auto;display:block">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.45) 100%)"></div>
+      <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:12px;padding:11px 18px;border:1px solid rgba(255,255,255,.14)">
+        <div style="font-family:var(--ff-head);font-size:1.75rem;color:#fff;letter-spacing:2px;line-height:1">2065–2075</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.75);letter-spacing:3px;margin-top:3px">ポスト労働期</div>
+      </div>
+      <div style="position:absolute;top:14px;right:14px;width:76px;height:76px;border-radius:50%;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.22);display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:1px">あなたは</div>
+        <div style="font-family:var(--ff-head);font-size:1.9rem;color:#fff;line-height:1">60<span style="font-size:1rem">代</span></div>
+      </div>
+    </div>`,
   ];
 
   body.innerHTML=`
