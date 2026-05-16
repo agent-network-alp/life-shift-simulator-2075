@@ -1455,24 +1455,29 @@ div[style*="CAREER TRANSLATION"] {
 <div class="popup-overlay" id="popup-agent" style="display:none">
   <div class="popup-card">
     <button class="popup-close" onclick="closePopup('popup-agent')">×</button>
-    <div class="popup-title">株式会社エージェントに相談する</div>
-    <div id="popup-agent-content">
-      <p style="font-size:.96rem;color:#555;line-height:1.7;margin-bottom:10px">診断結果をもとに、専任アドバイザーが個別にお話を伺います。</p>
-      <div id="agent-fit-popup-score" style="margin-bottom:12px"></div>
-      <div id="agent-contact-form">
-        <input id="agf-name"  type="text"  placeholder="お名前（例：山田 太郎）"  style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
-        <input id="agf-email" type="email" placeholder="メールアドレス"             style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
-        <input id="agf-phone" type="tel"   placeholder="電話番号（任意）"           style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:12px;font-family:inherit;outline:none">
-        <button class="popup-action-btn" id="agf-submit" onclick="submitAgentContact()">相談を申し込む</button>
-        <p style="font-size:.8rem;color:#9CA3AF;margin-top:8px;text-align:center">送信した情報は採用目的にのみ使用します</p>
-      </div>
-      <div id="agent-form-done" style="display:none;text-align:center;padding:20px 0">
-        <div style="font-size:2rem;margin-bottom:8px">✅</div>
-        <div style="font-size:.9rem;font-weight:700;color:#1A1A2E">送信完了しました</div>
-        <div style="font-size:.9rem;color:#6B7280;margin-top:6px;line-height:1.7">担当者より3営業日以内にご連絡します</div>
-      </div>
+    <div class="popup-title">株式会社エージェント</div>
+    <p style="font-size:.94rem;color:#555;line-height:1.7;margin-bottom:20px">診断結果をもとに、あなたのキャリアをサポートします。</p>
+
+    <!-- 相談を申し込む（フォーム送信） -->
+    <div id="agent-contact-form">
+      <div style="font-size:.78rem;font-weight:700;color:#1c1c2e;letter-spacing:1px;margin-bottom:10px">📩 キャリア相談を申し込む</div>
+      <input id="agf-name"  type="text"  placeholder="お名前（例：山田 太郎）"  style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
+      <input id="agf-email" type="email" placeholder="メールアドレス"             style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:8px;font-family:inherit;outline:none">
+      <input id="agf-phone" type="tel"   placeholder="電話番号（任意）"           style="display:block;width:100%;border:1.5px solid #E5E7EB;border-radius:8px;padding:11px 14px;font-size:.98rem;margin-bottom:12px;font-family:inherit;outline:none">
+      <button class="popup-action-btn" id="agf-submit" onclick="submitAgentContact()">相談を申し込む</button>
+      <p style="font-size:.8rem;color:#9CA3AF;margin-top:8px;text-align:center">送信した情報は採用目的にのみ使用します</p>
     </div>
-    <button class="popup-action-btn" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに相談する →</button>
+    <div id="agent-form-done" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:2rem;margin-bottom:8px">✅</div>
+      <div style="font-size:.9rem;font-weight:700;color:#1A1A2E">送信完了しました</div>
+      <div style="font-size:.9rem;color:#6B7280;margin-top:6px;line-height:1.7">担当者より3営業日以内にご連絡します</div>
+    </div>
+
+    <div style="font-size:.82rem;color:#C0C0C0;text-align:center;margin:14px 0">— または —</div>
+
+    <!-- エージェントに応募する（外部リンク） -->
+    <button class="popup-action-btn secondary" onclick="window.open('https://agent-network.com/recruit/entry/','_blank','noopener,noreferrer')">エージェントに応募する →</button>
+
     <button class="popup-back" onclick="closePopup('popup-agent')">← レポートに戻る</button>
   </div>
 </div>
@@ -3586,7 +3591,7 @@ function renderJobSheet(score, tierLabel, domTag, indScores, aiResult){
 
   const sheet=document.getElementById('job-sheet');
   if(!sheet)return;
-  sheet.style.display='block';
+  // display は toggleJobSheet() で制御するため、ここでは変更しない
 
   // キャリアの軸
   const axisEl=document.getElementById('jws-axis');
