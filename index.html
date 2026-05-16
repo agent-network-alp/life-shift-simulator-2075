@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-m</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-n</p>
   </div>
 </div>
 
@@ -1873,15 +1873,11 @@ function renderEraPage(phase){
         G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
         const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
         applyValueMeterDelta({eraFit:delta});
-        // チラつき防止：一瞬フェードしてからQ2を描画
-        const phaseBody=document.getElementById('phase-body-inner');
-        if(phaseBody){phaseBody.style.opacity='0';phaseBody.style.transition='opacity .15s';}
+        // Q1→Q2：暗転経由でスムーズに切り替え
         setTimeout(()=>{
           G.currentQ=1;
-          renderPhase();
-          const pb=document.getElementById('phase-body-inner');
-          if(pb){pb.style.transition='opacity .2s';pb.style.opacity='1';}
-        },150);
+          phaseTransition(()=>renderPhase(), 150);
+        }, 200);
       };
       q1wrap.appendChild(btn);
     });
@@ -2167,7 +2163,7 @@ function selectEv(id,ch,tag,corr){
     vmState.consistency =Math.max(0,vmState.consistency-Math.round(penalty*0.2));
     renderValueMeter(null);
   }
-  nextPhase();
+  phaseTransition(nextPhase);
 }
 
 function nextPhase(){
@@ -2302,33 +2298,58 @@ function showNarrative(completedPhaseIdx, onNext){
   // スワイプ上 / タップで即スキップ
   ol.addEventListener('click',()=>{
     clearTimeout(window._narAutoTimer);
-    ol.style.opacity='0';
-    setTimeout(()=>{ol.remove();if(window._narrativeNext){window._narrativeNext();window._narrativeNext=null;}},300);
-  });
-}
-
-function closeNarrative(){
-  const ol=document.getElementById('narrative-overlay');
-  if(ol){
-    ol.style.transition='opacity .25s ease';
+    ol.style.transition='opacity .15s ease';
     ol.style.opacity='0';
     setTimeout(()=>{
       ol.remove();
       if(window._narrativeNext){
         const fn=window._narrativeNext;
         window._narrativeNext=null;
-        // phase-body-innerもフェードして描画
-        const pb=document.getElementById('phase-body-inner');
-        if(pb){pb.style.opacity='0';}
-        fn();
-        requestAnimationFrame(()=>{
-          const pb2=document.getElementById('phase-body-inner');
-          if(pb2){pb2.style.transition='opacity .3s ease';pb2.style.opacity='1';}
-        });
+        phaseTransition(fn);
       }
-    },250);
-  }
+    },150);
+  });
 }
+
+// ━━━ フェーズ遷移：暗転ユーティリティ ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// 暗転→コールバック実行→フェードイン
+function phaseTransition(fn, darkDuration){
+  darkDuration=darkDuration||220;
+  // 既存の暗転レイヤーを再利用 or 新規作成
+  let veil=document.getElementById('phase-veil');
+  if(!veil){
+    veil=document.createElement('div');
+    veil.id='phase-veil';
+    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:500;opacity:0;transition:opacity .2s ease;pointer-events:none';
+    document.body.appendChild(veil);
+  }
+  // フェードイン（暗転）
+  veil.style.opacity='1';
+  setTimeout(()=>{
+    // 裏でフェーズ描画
+    fn();
+    // フェードアウト（明転）
+    setTimeout(()=>{
+      veil.style.opacity='0';
+    },80); // 描画完了を待つ最小マージン
+  },darkDuration);
+}
+
+function closeNarrative(){
+  clearTimeout(window._narAutoTimer);
+  const ol=document.getElementById('narrative-overlay');
+  if(!ol)return;
+  ol.style.transition='opacity .2s ease';
+  ol.style.opacity='0';
+  setTimeout(()=>{
+    ol.remove();
+    if(window._narrativeNext){
+      const fn=window._narrativeNext;
+      window._narrativeNext=null;
+      phaseTransition(fn);
+    }
+  },200);
+}}
 
 // ━━━ Q1感情軸スコアリング（オーナーシップ評価）━━━━━━━━━━━━━━━━━
 
@@ -4259,14 +4280,12 @@ function closeDiceNew(){
   clearTimeout(window._diceAutoTimer);
   var ol=document.getElementById('dice-overlay');
   if(ol){ol.style.opacity='0';setTimeout(function(){try{ol.remove();}catch(e){}},300);}
-  // rollDice()のdiceCallbackオブジェクトで結果処理
   var result=diceCallback;
   diceCallback=null;
   var onComplete=window._onDiceComplete;
   window._onDiceComplete=null;
 
   if(result&&typeof result==='object'){
-    // rollDice()経由：bad/good/noneの結果処理
     if(result.type==='bad'&&result.event){
       showEvent(result.event);
     }else if(result.type==='good'&&result.bonus){
@@ -4276,13 +4295,12 @@ function closeDiceNew(){
       vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
       vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
       renderValueMeter(null);
-      if(onComplete)onComplete();
+      if(onComplete)phaseTransition(onComplete);
     }else{
-      if(onComplete)onComplete();
+      if(onComplete)phaseTransition(onComplete);
     }
   }else{
-    // rollDiceせずにスキップした場合
-    if(onComplete)onComplete();
+    if(onComplete)phaseTransition(onComplete);
   }
 }
 
