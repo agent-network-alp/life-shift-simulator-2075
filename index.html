@@ -110,9 +110,11 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 /* Q1〜Q3：固定ヘッダー */
 .q-fixed-header{
   flex-shrink:0;
-  padding:16px 20px 0;
+  padding:14px 20px 0;
   position:sticky;top:0;z-index:10;
-  background:transparent;
+  background:rgba(10,10,26,.96);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,.08);
 }
 /* Q1〜Q3：スクロール可能な選択肢エリア */
 .q-scroll-body{
@@ -217,15 +219,15 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .q-context-bar{
   display:flex;align-items:center;gap:8px;flex-wrap:wrap;
   padding:10px 0 12px;
-  border-bottom:1px solid rgba(0,0,0,.1);
+  border-bottom:1px solid rgba(255,255,255,.08);
   margin-bottom:12px;
 }
-.q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:var(--ink);background:rgba(0,0,0,.06);padding:4px 12px;border-radius:4px;border:1px solid rgba(0,0,0,.12)}
-.q-era-badge{font-size:.84rem;color:var(--accent);background:rgba(232,98,26,.08);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.2);letter-spacing:.5px}
+.q-age-badge{font-family:var(--ff-head);font-size:1.1rem;color:#fff;background:rgba(255,255,255,.12);padding:4px 12px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
+.q-era-badge{font-size:.84rem;color:var(--accent);background:rgba(232,98,26,.15);padding:4px 10px;border-radius:4px;border:1px solid rgba(232,98,26,.3);letter-spacing:.5px}
 .q-year-badge{font-size:.84rem;color:var(--ink60);background:rgba(0,0,0,.04);padding:4px 10px;border-radius:4px;border:1px solid rgba(0,0,0,.1)}
 /* ③ Q番号ラベルを大きく太字に */
 .q-num{font-family:var(--ff-head);font-size:1.1rem;letter-spacing:3px;color:var(--accent);margin-bottom:12px;font-weight:700;opacity:1;padding-top:4px}
-.q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:var(--ink);line-height:1.75;padding-bottom:4px}
+.q-text{font-size:clamp(.98rem,2.8vw,1.18rem);font-weight:700;color:#fff;line-height:1.75;padding-bottom:12px}
 .q-scroll-hint{font-size:.72rem;color:var(--ink60);text-align:center;padding:0 20px 6px;letter-spacing:.5px}
 /* 横スクロールカードトラック */
 .q-card-scroll-wrap{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 16px 120px}
@@ -260,7 +262,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .choice4-btn:active{transform:scale(.97)}
 .choice4-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.07);box-shadow:0 0 0 2px var(--accent);transform:scale(.97)}
 .choice4-btn.selected::after{content:"✓ 選択中";position:absolute;top:7px;right:10px;font-size:.65rem;color:var(--accent);font-weight:700;letter-spacing:.5px}
-.card-svg-area{width:100%;height:90px;flex-shrink:0}
+.card-svg-area{width:100%;height:90px;flex-shrink:0;padding-top:10px;box-sizing:border-box}
 .card-svg-area svg{width:100%;height:100%;display:block}
 .card-short{
   font-size:.96rem;
@@ -840,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-g</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-h</p>
   </div>
 </div>
 
@@ -1808,7 +1810,7 @@ function renderEraPage(phase){
         </div>
         <div class="era-desc-text">${phase.eraDescription}</div>
         <div class="era-stat-row">
-          <div class="era-stat-num">${ERA_KEY_DATA[pi]?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
+          <div class="era-stat-num">${(ERA_KEY_DATA[pi]&&ERA_KEY_DATA[pi].num)?ERA_KEY_DATA[pi].num:formatStatVal(phase.stat1_value)}</div>
           <div class="era-stat-meta">
             <div class="era-stat-lbl">${phase.stat1_label||''}</div>
             <div class="era-stat-src">${phase.stat1_source||''}</div>
@@ -1860,8 +1862,15 @@ function renderEraPage(phase){
         G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
         const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
         applyValueMeterDelta({eraFit:delta});
-        G.currentQ=1; // Q1完了→Q2へ（0はQ1なのでバグ修正）
-        renderPhase();
+        // チラつき防止：一瞬フェードしてからQ2を描画
+        const phaseBody=document.getElementById('phase-body-inner');
+        if(phaseBody){phaseBody.style.opacity='0';phaseBody.style.transition='opacity .15s';}
+        setTimeout(()=>{
+          G.currentQ=1;
+          renderPhase();
+          const pb=document.getElementById('phase-body-inner');
+          if(pb){pb.style.transition='opacity .2s';pb.style.opacity='1';}
+        },150);
       };
       q1wrap.appendChild(btn);
     });
@@ -1945,11 +1954,11 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
         <span class="q-age-badge">${age}歳</span>
         <span class="q-era-badge">${phase.era}</span>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
-        <span style="font-size:.68rem;font-weight:700;color:#fff;background:#1D4ED8;padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 2</span>
-        <span style="font-size:.72rem;color:var(--ink60);letter-spacing:1px">アクションを選ぶ</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:.68rem;font-weight:700;color:#fff;background:#2563EB;padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 2</span>
+        <span style="font-size:.72rem;color:rgba(255,255,255,.5);letter-spacing:1px">アクションを選ぶ</span>
       </div>
-      <div class="q-text">${questionText}</div>
+      <div class="q-text">${questionText.replace('どこで勝負する？','どのようなアクションを取る？')}</div>
     </div>
     <div class="q-card-scroll-wrap">
       <div class="q-card-track" id="choices4"></div>
