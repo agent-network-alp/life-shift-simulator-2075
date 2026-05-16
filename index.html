@@ -45,6 +45,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 @keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes story-pulse{0%,100%{opacity:.7;transform:scale(1)}50%{opacity:1;transform:scale(1.3)}}
 #loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;transition:opacity .5s ease}
 #loading-overlay.hide{opacity:0;pointer-events:none}
 .loading-logo{font-family:var(--ff-head),'Arial Black',sans-serif;font-size:clamp(2rem,6vw,3.2rem);letter-spacing:8px;color:var(--accent);text-shadow:0 0 40px rgba(232,98,26,.3);min-height:3.5rem;display:flex;align-items:center;justify-content:center}
@@ -179,7 +180,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .vm-inner{max-width:660px;margin:0 auto;display:flex;align-items:center;gap:10px}
 .vm-n-label{font-size:.6rem;letter-spacing:3px;color:var(--accent);font-weight:700;white-space:nowrap;flex-shrink:0}
 .vm-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden}
-.vm-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#34D399);transition:width .8s cubic-bezier(.4,0,.2,1)}
+.vm-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#34D399);transition:width .7s cubic-bezier(.34,1.56,.64,1)}
 .vm-n-val{font-family:var(--ff-head);font-size:1.2rem;color:var(--accent);min-width:32px;text-align:right;flex-shrink:0}
 .vm-n-delta{font-size:.7rem;min-width:28px;text-align:right;flex-shrink:0;transition:color .3s}
 .vm-n-delta.up{color:#34D399}.vm-n-delta.dn{color:#EF4444}.vm-n-delta.zero{color:transparent}
@@ -258,7 +259,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
   box-shadow:0 1px 4px rgba(0,0,0,.06);
   min-height:220px;
 }
-.choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.04);box-shadow:0 4px 16px rgba(232,98,26,.12)}
+.choice4-btn:hover{border-color:var(--accent);background:rgba(232,98,26,.04);box-shadow:0 4px 16px rgba(232,98,26,.12);transform:translateY(-3px)}
 .choice4-btn:active{transform:scale(.97)}
 .choice4-btn.selected{border-color:var(--accent);background:rgba(232,98,26,.07);box-shadow:0 0 0 2px var(--accent);transform:scale(.97)}
 .choice4-btn.selected::after{content:"✓ 選択中";position:absolute;top:7px;right:10px;font-size:.65rem;color:var(--accent);font-weight:700;letter-spacing:.5px}
@@ -1529,7 +1530,7 @@ const FEEDBACK_STYLE={
 };
 const PHASE_IDS=['phase_1','phase_2','phase_3','phase_4','phase_5','phase_6'];
 // ━━━ スプシから上書きされるコンテンツ変数（初期値は空）━━━━━━━━━━━━━━━━━━━━━━
-const CHAIN_REACTION={};   // renderQ2() 内で使用
+// CHAIN_REACTION は廃止済み（スプシの chainReaction シートが空のため使用なし）
 const MBTI_Q1_PREFIX={};   // getMBTIQuestionPrefix() で使用
 const MBTI_Q2_PREFIX={};
 const MBTI_Q3_PREFIX={};
@@ -1541,23 +1542,41 @@ const ERA_KEY_DATA=[
 ];
 
 let G={
-  nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',
-  currentPhase:0,currentQ:0,
-  choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],
-  narratives:[],
-  mbtiType:null,   // 'INTJ' など or null（簡易診断）
-  mbtiData:null,   // MBTI_MAPの該当エントリ
+  nickname:'',
+  sessionId:(typeof crypto!=='undefined'&&crypto.randomUUID)?crypto.randomUUID():'sess-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+  profile:{},profileCode:'',selectedIndustry:'',
+  currentPhase:0,currentQ:-1,
+  choices:[],q1Choices:[],q3Choices:[],tags:[],
+  styleLog:[],eventChoices:[],narratives:[],
+  mbtiType:null,mbtiData:null,
   email:'',
-  radarChart:null,data:null,config:{}
+  aiStanceType:null,nValueResult:0,
+  dominantWhy:null,dominantHow:null,
+  radarChart:null,data:null,config:{},
 };
 
 // ── 起動 ────────────────────────────────────────────────────────
 async function init(){
   let w=0;const bar=document.getElementById('loading-bar');
   const t=setInterval(()=>{w=Math.min(w+Math.random()*15,90);bar.style.width=w+'%';if(w>=90)clearInterval(t);},150);
+  // AbortController + 指数バックオフリトライでGASデータを取得
+  const fetchContents = async (retries=2) => {
+    for(let i=0;i<=retries;i++){
+      const ctrl=new AbortController();
+      const tid=setTimeout(()=>ctrl.abort(),12000); // 12秒タイムアウト
+      try{
+        const res=await fetch(`${GAS_URL}?action=contents`,{referrerPolicy:'no-referrer',signal:ctrl.signal});
+        clearTimeout(tid);
+        return await res.json();
+      }catch(err){
+        clearTimeout(tid);
+        if(i<retries){ await new Promise(r=>setTimeout(r,1000*Math.pow(2,i))); continue; }
+        throw err;
+      }
+    }
+  };
   try{
-    const res=await fetch(`${GAS_URL}?action=contents`,{referrerPolicy:'no-referrer'});
-    const json=await res.json();
+    const json=await fetchContents();
     if(!json.ok)throw new Error('fail');
     G.data=json;G.config=json.config||{};
     // ━━━ スプシから取得したマスターデータをハードコードに上書き
@@ -1572,8 +1591,7 @@ async function init(){
     }
     if(json.terms&&Object.keys(json.terms).length>0) Object.assign(TERMS,json.terms);
     if(json.tagAxisImpact&&Object.keys(json.tagAxisImpact).length>0) Object.assign(TAG_AXIS_IMPACT,json.tagAxisImpact);
-    // ━━━ 新規：スプシから chainReaction・mbtiPrefixes・phaseHints を適用
-    if(json.chainReaction&&Object.keys(json.chainReaction).length>0) Object.assign(CHAIN_REACTION,json.chainReaction);
+    // ━━━ スプシから mbtiPrefixes・phaseHints を適用
     if(json.mbtiPrefixes){
       if(json.mbtiPrefixes.q1&&Object.keys(json.mbtiPrefixes.q1).length>0) Object.assign(MBTI_Q1_PREFIX,json.mbtiPrefixes.q1);
       if(json.mbtiPrefixes.q2&&Object.keys(json.mbtiPrefixes.q2).length>0) Object.assign(MBTI_Q2_PREFIX,json.mbtiPrefixes.q2);
@@ -1716,7 +1734,7 @@ function renderOb(){
     btn.onclick=()=>selectOb(opt.val,btn);
     wrap.appendChild(btn);
   });
-  setTimeout(applyTooltipsToPage,50);
+  scheduleTooltips();
 }
 
 function selectOb(val,btn){
@@ -1839,8 +1857,6 @@ function renderPhase(){
   const phases=G.data.phases||[];
   const phase=phases.find(p=>p.id===PHASE_IDS[G.currentPhase]);
   if(!phase)return;
-  for(var _d=0;_d<6;_d++){var _dot=document.getElementById('pd-'+_d);if(_dot){_dot.className='phase-dot'+((_d<G.currentPhase)?' done':(_d===G.currentPhase)?' active':'');}}
-
   // フェーズドット更新
   for(let d=0;d<6;d++){
     const dot=document.getElementById('pd-'+d);
@@ -2007,7 +2023,7 @@ function renderEraPage(phase){
         <div id="era-q1-choices" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
       </div>
     </div>`;
-  applyTooltipsToPage();
+  scheduleTooltips();
   // Q1でもVALUE METERを表示（選択結果が見えるように）
   const vmEl=document.getElementById('value-meter');
   if(vmEl){vmEl.classList.add('vm-visible');renderValueMeter(null);}
@@ -2198,7 +2214,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
     };
     wrap.appendChild(btn);
   });
-  setTimeout(applyTooltipsToPage,50);
+  scheduleTooltips();
 }
 
 // MBTI_Q1/Q2/Q3_PREFIX はグローバル宣言済み（上部）。スプシから init() でロードされる。
@@ -2285,7 +2301,7 @@ function renderQ3(phase){
 
 // ── イベント ─────────────────────────────────────────────────────
 function proceedPhase(){
-  if(Math.random()<0.33){
+  if(Math.random()<(G.config.eventTriggerProbability??0.35)){
     showDice(nextPhase);
   }else{
     nextPhase();
@@ -2496,19 +2512,16 @@ function showNarrative(completedPhaseIdx, onNext){
   },5000);
   window._narAutoTimer=_narAuto;
 
-  // スワイプ上 / タップで即スキップ
-  ol.addEventListener('click',()=>{
+  // スワイプ上 / タップで即スキップ（ボタン経由はcloseNarrativeに任せる）
+  ol.addEventListener('click',(e)=>{
+    if(e.target.closest('.narrative-next')) return;
     clearTimeout(window._narAutoTimer);
+    // 即座にコールバックを回収してダブルコールを防止
+    const fn=window._narrativeNext;
+    window._narrativeNext=null;
     ol.style.transition='opacity .15s ease';
     ol.style.opacity='0';
-    setTimeout(()=>{
-      ol.remove();
-      if(window._narrativeNext){
-        const fn=window._narrativeNext;
-        window._narrativeNext=null;
-        phaseTransition(fn);
-      }
-    },150);
+    setTimeout(()=>{ ol.remove(); if(fn) phaseTransition(fn); },150);
   });
 }
 
@@ -2533,11 +2546,27 @@ async function phaseTransition(fn, darkDuration){
   // 2. rAF×2：veilがコンポジット確定するまで待機
   await nextFrame();
   await nextFrame();
-  // 3. veil黒確定後にDOM書き換え（チラつき不可能な状態）
+  // 3. 年数テキスト演出（暗転中に次フェーズの年代を表示）
+  const nextIdx=Math.min((G.currentPhase||0)+1,PHASE_YEARS.length-1);
+  const yearStr=PHASE_YEARS[nextIdx]||'';
+  if(yearStr){
+    let yt=document.getElementById('phase-veil-year');
+    if(!yt){
+      yt=document.createElement('div');
+      yt.id='phase-veil-year';
+      yt.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:rgba(255,255,255,.55);font-family:var(--ff-head);font-size:clamp(1.4rem,6vw,2.4rem);letter-spacing:.12em;opacity:0;transition:opacity .25s ease;pointer-events:none;z-index:701;white-space:nowrap';
+      document.body.appendChild(yt);
+    }
+    yt.textContent=yearStr;
+    yt.style.opacity='1';
+    await new Promise(r=>setTimeout(r,320));
+    yt.style.opacity='0';
+  }
+  // 4. veil黒確定後にDOM書き換え（チラつき不可能な状態）
   fn();
   const pb=document.getElementById('phase-body-inner');
   if(pb)pb.style.background='';
-  // 4. 明転
+  // 5. 明転
   await nextFrame();
   veil.style.opacity='0';
 }
@@ -2545,16 +2574,12 @@ function closeNarrative(){
   clearTimeout(window._narAutoTimer);
   const ol=document.getElementById('narrative-overlay');
   if(!ol)return;
+  // 即座にコールバックを回収してダブルコールを防止（バブリング対策）
+  const fn=window._narrativeNext;
+  window._narrativeNext=null;
   ol.style.transition='opacity .2s ease';
   ol.style.opacity='0';
-  setTimeout(()=>{
-    ol.remove();
-    if(window._narrativeNext){
-      const fn=window._narrativeNext;
-      window._narrativeNext=null;
-      phaseTransition(fn);
-    }
-  },200);
+  setTimeout(()=>{ ol.remove(); if(fn) phaseTransition(fn); },200);
 }
 
 // ━━━ Q1感情軸スコアリング（オーナーシップ評価）━━━━━━━━━━━━━━━━━
@@ -2618,6 +2643,7 @@ function calcEra(){
 
 function calcChain(){
   const t=G.tags,c=G.config;
+  if(!t||!t.length) return {bonus:0, rule:'none'};
   // multiplication: Phase1〜4のどこかでspecializationを選び、それ以降でrare-combinationを選んだ場合
   const specIdx=t.findIndex(tag=>tag==='specialization');
   const rareIdx=t.findIndex(tag=>tag==='rare-combination');
@@ -2703,20 +2729,25 @@ function getMBTITagBonus(){
 }
 
 function calcScore(){
+  // 防御チェック：未初期化状態でも安全に動作させる
+  if(!Array.isArray(G.q1Choices)) G.q1Choices=[];
+  if(!Array.isArray(G.choices))   G.choices=[];
+  if(!Array.isArray(G.tags))      G.tags=[];
   const era=calcEra(),chain=calcChain(),ctx=calcCtx(),q1=calcQ1B(),q2q3=calcQ2Q3B();
   const ownership=calcOwnershipBonus();
   const mbtiBonus=getMBTITagBonus();
   const cap=G.config.bonusCap??2.0;
   const safeEra   = isNaN(era)?5:Math.min(10,Math.max(0,era));
   const safeBonus = isNaN(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus)?0:(chain.bonus+ctx+q1+q2q3+ownership+mbtiBonus);
+  // allBonus は cap で上限を設ける。vmBonus は cap の外で独立加算（VALUE METERの貢献を保証）
   const allBonus  = Math.min(safeBonus,cap);
   // vmStateの平均（初期値40から実際のプレイで上昇）
   const vmVals=[vmState.expertise,vmState.adaptability,vmState.eraFit,vmState.crisis,vmState.consistency];
   const vmAvg=vmVals.reduce((s,v)=>s+(isNaN(v)?40:Math.min(100,Math.max(0,v))),0)/5;
-  // vmAvg 40=0pts, 60=+0.5pts, 80=+1.0pts（スケール改善）
+  // vmAvg 40=+0pts, 60=+0.5pts, 80=+1.0pts（capの外で独立加算）
   const vmBonus=Math.max(0,(vmAvg-40)/40);
-  const raw = 13 + safeEra*5 + Math.min(allBonus+vmBonus,cap)*16;
-  console.log('[Score] era:'+safeEra.toFixed(2)+' bonus:'+allBonus.toFixed(2)+' vm:'+vmBonus.toFixed(2)+' raw:'+raw.toFixed(1));
+  const raw = 13 + safeEra*5 + (allBonus + vmBonus)*16;
+  console.log('[Score] era:'+safeEra.toFixed(2)+' allBonus:'+allBonus.toFixed(2)+' vmBonus:'+vmBonus.toFixed(2)+' raw:'+raw.toFixed(1));
   return Math.min(100,Math.max(0,Math.round(isNaN(raw)?40:raw)));
 }
 
@@ -2822,7 +2853,7 @@ function calcNValue(){
 
 function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
 
-function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??70))return{label:'先駆者',color:'#E8621A'};if(s>=(c.tier_adapter_min??57))return{label:'適応者',color:'#2B8FC5'};if(s>=(c.tier_seeker_min??43))return{label:'模索者',color:'#6B7280'};return{label:'転換期',color:'#EF4444'};}
+function getTier(s){const c=G.config;if(s>=(c.tier_pioneer_min??80))return{label:'先駆者',color:'#E8621A'};if(s>=(c.tier_adapter_min??60))return{label:'適応者',color:'#2B8FC5'};if(s>=(c.tier_seeker_min??40))return{label:'模索者',color:'#6B7280'};return{label:'転換期',color:'#EF4444'};}
 
 // ── 結果 ─────────────────────────────────────────────────────────
 async function showResult(){
@@ -2864,10 +2895,17 @@ async function showResult(){
   const fb=(G.data.feedback||{})[tier.label]||{};
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
 
-  const safeScore=isNaN(score)||score===null?'--':score;
-  document.getElementById('res-score').textContent=safeScore;
-  document.getElementById('res-tier').textContent=tier.label;
-  document.getElementById('res-tier').style.color=tier.color;
+  const safeScore=isNaN(score)||score===null?0:score;
+  const scoreEl=document.getElementById('res-score');
+  const tierEl=document.getElementById('res-tier');
+  // スコアをカウントアップで表示
+  animateCountUp(scoreEl, safeScore, 1400);
+  // ティアはカウントアップ完了後にフェードイン
+  tierEl.textContent=tier.label;
+  tierEl.style.color=tier.color;
+  tierEl.style.opacity='0';
+  tierEl.style.transition='opacity .5s ease';
+  setTimeout(()=>{ tierEl.style.opacity='1'; }, 1500);
   // ティアクラスをresult-innerに付与（スコア色・グラフ色グループ化）
   const ri=document.querySelector('.result-inner');
   if(ri){
@@ -3040,10 +3078,23 @@ async function showResult(){
 
 
   // MY STORY（50年まとめストーリー）
+  // Gemini生成前にスケルトン表示、生成完了後に差し替える
   const storyEl=document.getElementById('story-entries');
   if(storyEl&&G.narratives.length){
     const previewStory=buildPreviewStory(G.narratives,domTag,TL);
     storyEl.innerHTML=`<div class="story-50years" id="story-50years">${previewStory}</div>`;
+    // AI生成中のローディング表示をMY STORYセクションのヘッダ付近に追加
+    const storySection=document.getElementById('story-section')||storyEl.closest('section');
+    if(storySection){
+      let skl=document.getElementById('story-ai-badge');
+      if(!skl){
+        skl=document.createElement('div');
+        skl.id='story-ai-badge';
+        skl.style.cssText='font-size:.65rem;letter-spacing:3px;color:var(--accent);opacity:.7;margin-bottom:8px;display:flex;align-items:center;gap:6px';
+        skl.innerHTML='<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);animation:story-pulse 1s ease-in-out infinite"></span>AI GENERATING...';
+        storyEl.insertAdjacentElement('beforebegin', skl);
+      }
+    }
   }
 
   // 業種詳細（上位3業種の説明）
@@ -3069,7 +3120,7 @@ async function showResult(){
       // N値バー
       '<div style="margin-bottom:20px">'
       +'<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px">'
-      +'<span style="font-family:var(--ff-head);font-size:2.8rem;color:'+nValColor+';line-height:1;letter-spacing:-1px">'+nVal+'</span>'
+      +'<span id="nval-count" style="font-family:var(--ff-head);font-size:2.8rem;color:'+nValColor+';line-height:1;letter-spacing:-1px">0</span>'
       +'<span style="font-size:.78rem;color:#9CA3AF">/ 95</span>'
       +'</div>'
       +'<div style="height:8px;background:#F3F4F6;border-radius:4px;overflow:hidden;margin-bottom:6px">'
@@ -3083,6 +3134,8 @@ async function showResult(){
       +'<div style="font-size:1.05rem;font-weight:700;color:#1A1A2E;margin-bottom:6px">'+aiTypeLabel+'</div>'
       +'<div style="font-size:.88rem;color:#6B7280;line-height:1.7">'+aiTypeDesc+'</div>'
       +'</div>';
+    // N値カウントアップ（DOMに追加後に呼ぶ）
+    setTimeout(()=>animateCountUp(document.getElementById('nval-count'), nVal, 1200), 50);
   }
 
   // アクション
@@ -3211,15 +3264,18 @@ async function showResult(){
         axEl.innerHTML=renderCareerAxis(G.aiCareerAxis);
       }
     }
+    // AI生成完了 → バッジ削除
+    document.getElementById('story-ai-badge')?.remove();
   }catch(e){
     console.warn('Gemini生成エラー（フォールバック継続）:', e);
     // Gemini失敗時もフォールバックで就活ワンシートを表示
     renderJobSheet(score,tier.label,domTag,indScores,null);
+    // AI生成失敗 → バッジ削除
+    document.getElementById('story-ai-badge')?.remove();
   }
 
   window._lastIndScores=indScores; // PDF送信用
   await saveToGAS(score,tier.label,domTag,chain.rule,indScores);
-  fetchStats(score,tier.label);
 
   // ローディング終了
   clearInterval(progressTimer);
@@ -3436,8 +3492,14 @@ Q3投資傾向: ${q3Top||'スキル'}
   };
 
   try{
-    // ━━ Req①：MY STORY
-    const storyResult = await callGAS(promptStory, 2500);
+    // ━━ Req①：MY STORY（6フェーズ分の長文生成のためトークン数を多めに確保）
+    const storyResult = await callGAS(promptStory, 3000);
+    // 6要素に満たない場合はフォールバックで補完
+    if(storyResult?.myStory){
+      const stories = Array.isArray(storyResult.myStory) ? storyResult.myStory : Object.values(storyResult.myStory||{});
+      while(stories.length < 6){ stories.push('このフェーズのストーリーを生成できませんでした。'); }
+      storyResult.myStory = stories;
+    }
     console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
     // ━━ Req②：業種コメント・アクション（軽量）
@@ -4085,38 +4147,48 @@ function getDivisions(){
 }
 
 
+// ── カウントアップアニメーション ────────────────────────────────
+function animateCountUp(el, targetVal, duration, suffix){
+  if(!el) return;
+  duration = duration||1500; suffix = suffix||'';
+  const start=performance.now();
+  (function tick(now){
+    const p=Math.min((now-start)/duration,1);
+    const eased=1-Math.pow(1-p,3); // ease-out cubic
+    el.textContent=Math.round(eased*targetVal)+suffix;
+    if(p<1) requestAnimationFrame(tick);
+  })(start);
+}
+
 async function saveToGAS(score,tier,domTag,chainRule,indScores){
   try{
-    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({action:'save',sessionId:G.sessionId,nickname:G.nickname,score,tier,dominantTag:domTag,chainRule,profileCode:G.profileCode,choices:G.choices.map(c=>c?.label||''),eventChoices:G.eventChoices,phaseTags:G.tags,q1Choices:G.q1Choices.map(q=>q?.label||''),q3Choices:G.q3Choices,industryScores:indScores.slice(0,3)})});
+    await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
+      action:'save',
+      sessionId:G.sessionId,
+      nickname:G.nickname,
+      mbtiType:G.mbtiType||'',
+      mbtiLabel:G.mbtiData?.label||'',
+      profileCode:G.profileCode,
+      score,tier,
+      dominantTag:domTag,
+      chainRule,
+      industryScores:indScores.slice(0,3),
+      choices:G.choices.map(c=>c?.label||''),
+      eventChoices:G.eventChoices,
+      phaseTags:G.tags,
+      q1Choices:G.q1Choices.map(q=>q?.label||''),
+      q3Choices:G.q3Choices,
+      email:G.email||'',
+      aiStanceType:G.aiStanceType||'',
+      nValue:G.nValueResult||0,
+      questionLevel:0,
+    })});
   }catch(e){console.warn('GAS save:',e);}
 }
 
 async function fetchStats(myScore,myTier){
   // compare-blockは廃止済みのため何もしない
   return;
-}
-  try{
-    const res=await fetch(`${GAS_URL}?action=stats`);
-    const data=await res.json();
-    if(!data.ok||!data.total){document.getElementById('compare-block').style.display='none';return;}
-    document.getElementById('compare-block').style.display='block';
-    document.getElementById('cmp-total').textContent=data.total;
-    document.getElementById('cmp-avg').textContent=data.avgScore;
-    const to=['先駆者','適応者','模索者','転換期'];
-    const above=to.slice(0,to.indexOf(myTier)).reduce((s,t)=>s+(data.tiers[t]||0),0);
-    document.getElementById('cmp-beat').textContent=Math.round((1-above/data.total)*100)+'%';
-    const clr={先駆者:'#E8621A',適応者:'#2B8FC5',模索者:'#9CA3AF',転換期:'#EF4444'};
-    document.getElementById('tier-bars').innerHTML=to.map(t=>{
-      const cnt=data.tiers[t]||0;
-      const pct=data.total>0?Math.round(cnt/data.total*100):0;
-      const isMe=t===myTier;
-      return`<div class="tier-bar-row">
-        <span class="tier-bar-lbl" style="${isMe?'font-weight:700;color:'+clr[t]:''}">${t}</span>
-        <div class="tier-bar-track"><div class="tier-bar-fill" style="width:${pct}%;background:${clr[t]};opacity:${isMe?1:0.4};border-radius:3px"></div></div>
-        <span class="tier-bar-pct">${pct}%</span>
-      </div>`;
-    }).join('');
-  }catch(e){document.getElementById('compare-block').style.display='none';}
 }
 
 // ━━━ 業種詳細レンダリング ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -4356,7 +4428,7 @@ function toggleJobSheet(){
   if(ch)ch.textContent=isOpen?'▼ 開く':'▲ 閉じる';
 }
 
-function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:''};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
+function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
 
 // FB (フォールバック) はスプシに移行済み。GAS障害時は空構造でフォールバック（init()参照）
 
@@ -4364,7 +4436,7 @@ function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',
 
 // 各フェーズの累積軸スコア（0-100）
 const AXIS_LABELS=['専門性','適応力','時代適合','危機対応','一貫性'];
-let vmState={expertise:50,adaptability:50,eraFit:50,crisis:50,consistency:50};
+let vmState={expertise:40,adaptability:40,eraFit:40,crisis:40,consistency:40};
 
 // タグ→軸への影響定義（簡易版・リアルタイム表示用）
 const TAG_AXIS_IMPACT={
@@ -4379,11 +4451,7 @@ const TAG_AXIS_IMPACT={
   global:            {expertise:+2, adaptability:+6, eraFit:+6, crisis:+2, consistency:-1},
   legacy:            {expertise:+7, adaptability:+1, eraFit:+3, crisis:+1, consistency:+7},
 };
-  // TAG_AXIS_IMPACTをスプシ版で上書き
-  if(G.data&&G.data.tagAxisImpact&&Object.keys(G.data.tagAxisImpact).length>0){
-    Object.assign(TAG_AXIS_IMPACT,G.data.tagAxisImpact);
-  }
-
+// TAG_AXIS_IMPACTのスプシ上書きは init() 内の Object.assign で行う（L1574参照）
 
 function renderValueMeter(previewTag){
   const el=document.getElementById('value-meter');
@@ -4627,33 +4695,13 @@ function rollDice(){
 }
 
 function closeDice(){
-  const result=diceCallback;
-  document.getElementById('dice-overlay')?.remove();
-  diceCallback=null;
-
-  if(result?.type==='bad'&&result.event){
-    showEvent(result.event); // 既存のイベント表示
-  }else if(result?.type==='good'&&result.bonus){
-    const bonusCorr=result.bonus.correction||0;
-    G.eventChoices.push({id:'bonus_'+Date.now(),ch:'bonus',tag:result.bonus.tag,corr:bonusCorr,phaseIdx:G.currentPhase});
-    applyValueMeterChoice(result.bonus.tag);
-    // 追い風ボーナス: eraFit・adaptabilityを強化
-    vmState.eraFit      =Math.min(100,vmState.eraFit+Math.round(bonusCorr*0.5));
-    vmState.adaptability=Math.min(100,vmState.adaptability+Math.round(bonusCorr*0.3));
-    renderValueMeter(null);
-    nextPhase();
-  }else{
-    nextPhase();
-  }
+  // 旧実装：phaseTransitionを経由しないため廃止。新実装に委譲する。
+  closeDiceNew();
 }
 
 // ── 専門用語ツールチップ ─────────────────────────────────────────
-// TERMS — スプシ terms シートで管理（init()で上書き）
+// TERMS — スプシ terms シートで管理（init()内の Object.assign で上書き）
 const TERMS={};
-  // TERMSをスプシ版で上書き
-  if(G.data&&G.data.terms&&Object.keys(G.data.terms).length>0){
-    Object.assign(TERMS,G.data.terms);
-  }
 
 
 function applyTooltips(html){
@@ -4675,6 +4723,14 @@ function applyTooltipsToPage(){
     ...document.querySelectorAll('.choice4-text:not([data-tipped])'),
   ];
   targets.forEach(el=>{el.innerHTML=applyTooltips(el.innerHTML);el.dataset.tipped='1';});
+}
+// 短時間に複数回呼ばれる場合をまとめる（debounce）
+function scheduleTooltips(){
+  if(window._tooltipPending) return;
+  window._tooltipPending=setTimeout(()=>{
+    window._tooltipPending=null;
+    applyTooltipsToPage();
+  },80);
 }
 
 // stat値のフォーマット（スプレッドシートが数値変換した場合のフォールバック）
