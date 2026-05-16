@@ -1002,7 +1002,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-w</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-x</p>
   </div>
 </div>
 
@@ -1301,9 +1301,8 @@ div[style*="CAREER TRANSLATION"] {
       <div class="phase-dot" id="pd-4"></div><div class="phase-dot" id="pd-5"></div>
     </div>
   </div>
-  <div class="phase-body" style="position:relative">
-    <div id="phase-buf-a" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch"></div>
-    <div id="phase-buf-b" style="position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;visibility:hidden"></div>
+  <div class="phase-body" id="phase-body-inner">
+    <!-- JS で時代背景ページ or Q1/Q2ページを動的描画 -->
   </div>
 </div>
 
@@ -1872,7 +1871,7 @@ function renderEraPage(phase){
   const pi=G.currentPhase;
 
   // エージェントカラーテーマをphase-body-innerに適用
-  const body=getPhaseBody();
+  const body=document.getElementById('phase-body-inner');
   body.classList.remove('q-mode'); // era-page：外側スクロールを有効に戻す
   // 時代背景は白ベースに戻す
   const ps2=document.getElementById('screen-phase');
@@ -2122,7 +2121,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   if(ov)ov.style.background='none';
   // VALUE METERは表示（Q1〜Q3ページで表示）
 
-  const body=getPhaseBody();
+  const body=document.getElementById('phase-body-inner');
   body.classList.add('q-mode');
   body.innerHTML=`
     <div class="q-fixed-header">
@@ -2340,7 +2339,7 @@ function nextPhase(){
   if(sp){sp.style.visibility='hidden';sp.style.opacity='0';}
 
   // phase-body-innerをクリア
-  const pb=getPhaseBody();
+  const pb=document.getElementById('phase-body-inner');
   if(pb){pb.innerHTML='';pb.style.background='';pb.classList.remove('q-mode');}
 
   // VALUE METERを非表示
@@ -2515,43 +2514,13 @@ function showNarrative(completedPhaseIdx, onNext){
 
 // ━━━ ダブルバッファリング管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // AI回答（OpenAI）の提案を採用：別ツリーで構築→フレーム同期→swap
-let _bufFront=null, _bufBack=null;
-
-function _getBufs(){
-  if(!_bufFront){
-    _bufFront=document.getElementById('phase-buf-a');
-    _bufBack =document.getElementById('phase-buf-b');
-  }
-  return {front:_bufFront, back:_bufBack};
-}
-
-// 現在のアクティブバッファ（frontを返す）
-function getPhaseBody(){
-  return _getBufs().front;
-}
-
-// backに構築してからswap
-function swapBuffer(buildFn){
-  const {front,back}=_getBufs();
-  // backをクリアして構築
-  back.innerHTML='';
-  back.className='';
-  buildFn(back);
-  // swap
-  back.style.visibility='visible';
-  front.style.visibility='hidden';
-  // front/backを入れ替え
-  _bufFront=back;
-  _bufBack=front;
-}
+// ━━━ フェーズ遷移：rAF×2方式（確実にveil暗転後にDOM書き換え） ━━━━━━━━━━━━
 
 function nextFrame(){
   return new Promise(r=>requestAnimationFrame(r));
 }
 
-// ━━━ フェーズ遷移：ダブルバッファ＋rAF×2方式（決定版） ━━━━━━━━━━━━━━━━
 async function phaseTransition(fn, darkDuration){
-  darkDuration=darkDuration||150;
   let veil=document.getElementById('phase-veil');
   if(!veil){
     veil=document.createElement('div');
@@ -2559,21 +2528,15 @@ async function phaseTransition(fn, darkDuration){
     veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .15s ease;pointer-events:none;will-change:opacity';
     document.body.appendChild(veil);
   }
-  // 1. 暗転をコンポジット確定
+  // 1. 暗転トリガー
   veil.style.opacity='1';
+  // 2. rAF×2：veilがコンポジット確定するまで待機
   await nextFrame();
   await nextFrame();
-  // 2. backバッファに新DOM構築（見えない）
-  const {back}=_getBufs();
-  back.innerHTML='';
-  back.className='';
-  back.style.visibility='hidden';
-  fn(); // ← renderPhase()等がgetPhaseBody()→backに書き込む
-  // 3. swap（レイアウト影響ゼロ）
-  const {front}=_getBufs();
-  back.style.visibility='visible';
-  front.style.visibility='hidden';
-  _bufFront=back; _bufBack=front;
+  // 3. veil黒確定後にDOM書き換え（チラつき不可能な状態）
+  fn();
+  const pb=document.getElementById('phase-body-inner');
+  if(pb)pb.style.background='';
   // 4. 明転
   await nextFrame();
   veil.style.opacity='0';
