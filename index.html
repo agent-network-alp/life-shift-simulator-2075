@@ -787,6 +787,166 @@ div[style*="CAREER TRANSLATION"] {
   .top-era-name{display:none}
   .mbti-types{grid-template-columns:repeat(2,1fr)}
 }
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   UX POLISH — 磨き上げCSS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* 選択カード：選択確定アニメーション */
+@keyframes cardSelect{
+  0%{transform:scale(1)}
+  40%{transform:scale(.95)}
+  70%{transform:scale(1.03)}
+  100%{transform:scale(1)}
+}
+.choice4-btn.selected{
+  animation:cardSelect .35s cubic-bezier(.34,1.56,.64,1) forwards;
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 2.5px var(--accent),0 6px 24px rgba(232,98,26,.2)!important;
+}
+.choice2-btn.selected{
+  animation:cardSelect .3s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+
+/* Q1カード選択アニメーション */
+@keyframes q1Select{
+  0%{transform:scale(1)}
+  35%{transform:scale(.94)}
+  65%{transform:scale(1.02)}
+  100%{transform:scale(1)}
+}
+
+/* VALUE METER：変化時パルス */
+@keyframes vmPulse{
+  0%{opacity:1}
+  30%{opacity:.5;transform:scaleX(1.04)}
+  100%{opacity:1;transform:scaleX(1)}
+}
+.vm-bar.pulse{animation:vmPulse .5s ease}
+
+/* ナラティブ：テキストのフェードイン */
+@keyframes narrativeFadeIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.narrative-text{
+  animation:narrativeFadeIn .6s ease .15s both;
+}
+.narrative-phase-label{
+  animation:narrativeFadeIn .4s ease both;
+}
+
+/* era-trend-block：視認性向上 */
+.era-trend-block{
+  border-left:4px solid var(--accent)!important;
+  border-radius:16px!important;
+  box-shadow:0 2px 12px rgba(0,0,0,.08)!important;
+}
+.era-trend-label{
+  font-size:.68rem!important;
+  letter-spacing:4px!important;
+}
+
+/* Q2ヘッダー：問題文の視認性 */
+.q-fixed-header{
+  border-bottom:1px solid rgba(255,255,255,.1)!important;
+}
+
+/* btn-primary：押し込み感 */
+.btn-primary:active{
+  transform:scale(.97) translateY(1px)!important;
+  box-shadow:0 2px 8px rgba(232,98,26,.3)!important;
+  transition:all .08s!important;
+}
+
+/* recommend-card：ホバー強化 */
+.recommend-card:hover{
+  transform:translateX(5px) scale(1.01)!important;
+  box-shadow:0 4px 20px rgba(232,98,26,.15)!important;
+}
+
+/* industry-btn：選択時バウンス */
+@keyframes indSelect{
+  0%{transform:scale(1)}
+  45%{transform:scale(.94)}
+  80%{transform:scale(1.04)}
+  100%{transform:scale(1)}
+}
+.industry-btn.selected{
+  animation:indSelect .3s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+
+/* input-box：フォーカス時の光彩 */
+.input-box:focus{
+  border-color:var(--accent)!important;
+  box-shadow:0 0 0 4px rgba(232,98,26,.18),0 2px 12px rgba(232,98,26,.1)!important;
+  background:rgba(255,255,255,.1)!important;
+}
+
+/* トップ画面の説明ブロック */
+.start-desc-block{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  padding:20px 22px;
+  margin-bottom:24px;
+  text-align:left;
+  backdrop-filter:blur(4px);
+}
+.start-desc-num{
+  color:var(--accent);
+  font-weight:700;
+  font-family:var(--ff-head);
+  font-size:1.1rem;
+  margin-right:8px;
+}
+
+/* ナラティブオーバーレイの改善 */
+.narrative-overlay{
+  background:linear-gradient(160deg,#0a0a18 0%,#12120a 100%)!important;
+}
+.narrative-card{
+  padding:0 8px!important;
+}
+.narrative-next{
+  border-radius:8px!important;
+  padding:13px 32px!important;
+  letter-spacing:1px!important;
+  font-size:.9rem!important;
+}
+
+/* phase-dot改善 */
+.phase-dot{
+  transition:all .4s cubic-bezier(.34,1.56,.64,1)!important;
+}
+.phase-dot.active{
+  transform:scale(1.4)!important;
+}
+.phase-dot.done{
+  transform:scale(1)!important;
+}
+
+/* era-stat-num：数値の迫力を高める */
+.era-stat-num{
+  font-size:clamp(2.4rem,10vw,3.4rem)!important;
+  letter-spacing:-2px!important;
+}
+
+/* スクロール挙動の滑らか化 */
+.phase-body,.q-card-scroll-wrap,.q-scroll-body{
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* choice4-btn：ホバー時の浮き上がり */
+.choice4-btn:hover{
+  transform:translateY(-3px)!important;
+  box-shadow:0 6px 24px rgba(0,0,0,.12)!important;
+}
+.choice4-btn:active{
+  transform:scale(.97)!important;
+  transition:all .08s!important;
+}
 </style>
 </head>
 <body>
@@ -842,7 +1002,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-s</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-u</p>
   </div>
 </div>
 
@@ -1865,8 +2025,8 @@ function renderEraPage(phase){
       <!-- Q1選択肢 -->
       <div id="era-q1-block" style="margin-top:16px;background:#fff;border-radius:16px;padding:18px 16px 16px;box-shadow:0 1px 6px rgba(0,0,0,.07)">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <span style="font-size:.68rem;font-weight:700;color:#fff;background:var(--accent);padding:3px 10px;border-radius:20px;letter-spacing:1px">STEP 1</span>
-          <span style="font-size:.72rem;color:var(--ink60);letter-spacing:1px">時代を読む</span>
+          <span style="font-size:.68rem;font-weight:700;color:#fff;background:var(--accent);padding:4px 12px;border-radius:20px;letter-spacing:1px;box-shadow:0 2px 8px rgba(232,98,26,.3)">STEP 1</span>
+          <span style="font-size:.72rem;color:var(--ink60);letter-spacing:1px;font-weight:600">時代を読む</span>
         </div>
         <div id="era-q1-label" style="font-size:1rem;color:var(--ink);font-weight:700;line-height:1.6;margin-bottom:16px">この時代の変化を、あなたはどう読む？</div>
         <div id="era-q1-choices" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div>
@@ -2318,16 +2478,30 @@ function showNarrative(completedPhaseIdx, onNext){
   const ol=document.createElement('div');
   ol.className='narrative-overlay';ol.id='narrative-overlay';
   ol.innerHTML=`
-    <div class="narrative-card" style="position:relative;overflow:hidden">
+    <div class="narrative-card" style="position:relative;overflow:hidden;max-width:500px;width:100%">
+      <!-- 背景の年齢ウォーターマーク -->
       <div class="narrative-year">${PHASE_END_AGES[completedPhaseIdx]}</div>
-      <div class="narrative-phase-label">${phase?.era||''} | ${PHASE_YEARS[completedPhaseIdx]}</div>
-      <div class="narrative-text">${text.replace(/\n\n/g,'</p><p style="margin-top:16px">').replace(/\n/g,'<br>')}</div>
-      <div class="narrative-tag-row">
-        <span class="narrative-tag" style="border-color:var(--accent);color:var(--accent)">${TL[tag]||tag}</span>
-        ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:var(--cyan);color:var(--cyan)">✨ 追い風あり</span>':''}
-        ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:var(--accent);color:var(--accent)">⚡ 試練あり</span>':''}
+      <!-- ヘッダー -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <div style="font-family:var(--ff-head);font-size:3.2rem;color:var(--accent);line-height:1;letter-spacing:-1px;flex-shrink:0">${PHASE_END_AGES[completedPhaseIdx]}<span style="font-size:1.2rem;letter-spacing:0;opacity:.7">歳</span></div>
+        <div>
+          <div style="font-size:.62rem;letter-spacing:4px;color:rgba(255,255,255,.45);margin-bottom:3px">${PHASE_YEARS[completedPhaseIdx]}</div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:1px">${phase?.era||''}</div>
+        </div>
       </div>
-      <button class="narrative-next" onclick="closeNarrative()">スキップする →</button>
+      <!-- 区切り線 -->
+      <div style="height:1px;background:linear-gradient(90deg,rgba(232,98,26,.6),transparent);margin-bottom:22px"></div>
+      <!-- 本文 -->
+      <div class="narrative-text" style="font-size:clamp(.98rem,2.8vw,1.08rem);line-height:2.1;color:rgba(255,255,255,.88);margin-bottom:24px">${text.replace(/\n\n/g,'</p><p style="margin-top:18px">').replace(/\n/g,'<br>')}</div>
+      <!-- タグ行 -->
+      <div class="narrative-tag-row" style="margin-bottom:28px">
+        <span class="narrative-tag" style="border-color:rgba(232,98,26,.5);color:var(--accent);background:rgba(232,98,26,.08);padding:5px 14px;border-radius:20px;font-size:.75rem;letter-spacing:1px">${TL[tag]||tag}</span>
+        ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:rgba(56,189,248,.4);color:var(--cyan);background:rgba(56,189,248,.08);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px">✨ 追い風あり</span>':''}
+        ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:rgba(232,98,26,.4);color:var(--accent2);background:rgba(232,98,26,.06);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px">⚡ 試練あり</span>':''}
+      </div>
+      <!-- スキップボタン -->
+      <button class="narrative-next" onclick="closeNarrative()" style="width:100%;text-align:center">次のフェーズへ →</button>
+      <p style="font-size:.68rem;color:rgba(255,255,255,.2);text-align:center;margin-top:12px;letter-spacing:2px">タップで進む</p>
     </div>`;
   document.body.appendChild(ol);
 
@@ -2370,23 +2544,22 @@ function showNarrative(completedPhaseIdx, onNext){
 // ━━━ フェーズ遷移：暗転ユーティリティ ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // 暗転→コールバック実行→フェードイン
 function phaseTransition(fn, darkDuration){
-  darkDuration=darkDuration||220;
+  darkDuration=darkDuration||150;
   let veil=document.getElementById('phase-veil');
   if(!veil){
     veil=document.createElement('div');
     veil.id='phase-veil';
-    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .2s ease;pointer-events:none';
+    veil.style.cssText='position:fixed;inset:0;background:#000;z-index:700;opacity:0;transition:opacity .15s ease;pointer-events:none';
     document.body.appendChild(veil);
   }
   veil.style.opacity='1';
   setTimeout(()=>{
     fn();
-    // phase-body-innerの一時的な黒背景をリセット
     const pb=document.getElementById('phase-body-inner');
     if(pb)pb.style.background='';
     setTimeout(()=>{
       veil.style.opacity='0';
-    },100);
+    },80);
   },darkDuration);
 }
 function closeNarrative(){
@@ -2609,10 +2782,49 @@ function calcRadar(){
   const crisis      = safe(vmState.crisis);
   const consistency = safe(vmState.consistency);
   const q2q3val = calcQ2Q3B();
-  // 投資効率: Q2×Q3の整合性スコアを投資効率軸に変換（20〜80の範囲）
   const q2q3norm = isNaN(q2q3val)?0:Math.max(-1.5,Math.min(1.5,q2q3val));
   const inv = safe(50 + q2q3norm * 20);
   return[expertise, adaptability, eraFitVal, crisis, consistency, Math.round(inv)];
+}
+
+// AI類型判定（stanceスコアに基づく）
+function calcAIStance(){
+  // Q2タグからAI活用姿勢を計算
+  const AI_NATIVE_TAGS=['ai-native','strategic','rare-combination'];
+  const MINUS_TAGS=['specialization'];
+  let stance=4; // 初期値：中立
+  (G.tags||[]).forEach(tag=>{
+    if(AI_NATIVE_TAGS.includes(tag)) stance+=1.5;
+    else if(MINUS_TAGS.includes(tag)) stance-=0.5;
+  });
+  // Q1のerafitも考慮
+  (G.q1Choices||[]).forEach(q=>{
+    if(q&&q.erafit>=8) stance+=0.5;
+    else if(q&&q.erafit<=2) stance-=0.5;
+  });
+  stance=Math.max(0,Math.min(10,Math.round(stance)));
+  G.aiStanceScore=stance;
+  if(stance>=8) return 'TIMES_AI';
+  if(stance>=2) return 'PLUS_AI';
+  return 'MINUS_AI';
+}
+
+// 問いの力スコア（N値）計算
+function calcNValue(){
+  // Q1の正確認識数（erafit>=8）
+  const q1Choices=G.q1Choices||[];
+  const highCount=q1Choices.filter(q=>q&&q.erafit>=8).length;
+  // タグの多様性
+  const tags=G.tags||[];
+  const uniqueTags=new Set(tags).size;
+  const tagDiversity=Math.min(uniqueTags/3,1);
+  // vmStateのeraFit
+  const eraFitNorm=Math.min(100,Math.max(0,vmState.eraFit||40))/100;
+  // 総合スコア（0-95）
+  const raw=(highCount/Math.max(q1Choices.length,1))*40
+    +tagDiversity*30
+    +eraFitNorm*25;
+  return Math.min(95,Math.max(5,Math.round(raw)));
 }
 
 function getDomTag(){const c={};G.tags.forEach(t=>{c[t]=(c[t]||0)+1;});return Object.entries(c).sort((a,b)=>b[1]-a[1])[0]?.[0]||'';}
@@ -4241,12 +4453,17 @@ function applyValueMeterDelta(delta){
   const tempTag='_delta';
   TAG_AXIS_IMPACT[tempTag]=delta;
   renderValueMeter(tempTag);
+  // パルスアニメーション
+  const bar=document.querySelector('.vm-bar');
+  if(bar){bar.classList.remove('pulse');void bar.offsetWidth;bar.classList.add('pulse');}
   setTimeout(()=>{
     delete TAG_AXIS_IMPACT[tempTag];
     Object.keys(delta).forEach(k=>{
       vmState[k]=vmSoftApply(vmState[k],delta[k]||0);
     });
     renderValueMeter(null);
+    const bar2=document.querySelector('.vm-bar');
+    if(bar2){bar2.classList.remove('pulse');void bar2.offsetWidth;bar2.classList.add('pulse');}
   },800);
 }
 
