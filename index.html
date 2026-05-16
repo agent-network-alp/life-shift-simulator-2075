@@ -840,7 +840,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-f</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-g</p>
   </div>
 </div>
 
@@ -1653,7 +1653,7 @@ function renderIndScreen(){
     grid.appendChild(btn);
   });
 
-  const nb=document.getElementById('ind-next-btn');nb.disabled=true;
+  const nb=document.getElementById('ind-next-btn');if(nb)nb.disabled=true;
 }
 
 function selectInd(name,el){
