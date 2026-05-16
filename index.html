@@ -842,7 +842,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-k</p>
+    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-l</p>
   </div>
 </div>
 
@@ -1790,7 +1790,18 @@ function renderEraPage(phase){
       </div>
     </div>`,
     // Phase3: 30代 産業再編期
-    `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1a0d00"/><stop offset="100%" stop-color="#2d1a00"/></linearGradient></defs><rect width="320" height="140" fill="url(#p3bg)"/><rect x="20" y="62" width="50" height="78" fill="rgba(100,100,100,.25)" rx="2"/><rect x="25" y="58" width="40" height="82" fill="rgba(80,80,80,.18)" rx="2"><animateTransform attributeName="transform" type="rotate" values="0 45 98;2 45 98;0 45 98" dur="4s" repeatCount="indefinite"/></rect><rect x="220" y="80" width="40" height="60" fill="rgba(232,98,26,.3)" rx="4"><animate attributeName="y" values="88;80;88" dur="3s" repeatCount="indefinite"/></rect><rect x="255" y="70" width="45" height="70" fill="rgba(43,143,197,.3)" rx="4"><animate attributeName="y" values="78;70;78" dur="3.5s" repeatCount="indefinite"/></rect><path d="M90,90 Q160,52 210,90" fill="none" stroke="rgba(232,98,26,.6)" stroke-width="2" stroke-dasharray="6,4"><animate attributeName="stroke-dashoffset" values="0;-20" dur="1.5s" repeatCount="indefinite"/></path><polygon points="206,84 215,90 206,96" fill="rgba(232,98,26,.8)"/><circle cx="155" cy="76" r="12" fill="rgba(232,98,26,.8)"/><text x="16" y="22" fill="rgba(232,98,26,.9)" font-size="11" font-weight="700" letter-spacing="2">30代 / 産業再編期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2035 — 2045</text></svg>`,
+    `<div style="position:relative;width:100%;border-radius:16px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 20px rgba(0,0,0,.15)">
+      <img src="https://agent-network-alp.github.io/life-shift-simulator-2075/img/2035-2040.png" alt="2035-2040 産業再編期" style="width:100%;height:auto;display:block">
+      <div style="position:absolute;inset:0;background:linear-gradient(160deg,rgba(0,0,0,.6) 0%,rgba(0,0,0,.05) 45%,rgba(0,0,0,.0) 60%,rgba(0,0,0,.45) 100%)"></div>
+      <div style="position:absolute;top:14px;left:14px;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border-radius:12px;padding:11px 18px;border:1px solid rgba(255,255,255,.14)">
+        <div style="font-family:var(--ff-head);font-size:1.75rem;color:#fff;letter-spacing:2px;line-height:1">2035–2040</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.75);letter-spacing:3px;margin-top:3px">産業再編期</div>
+      </div>
+      <div style="position:absolute;top:14px;right:14px;width:76px;height:76px;border-radius:50%;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.22);display:flex;flex-direction:column;align-items:center;justify-content:center">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.65);letter-spacing:1px">あなたは</div>
+        <div style="font-family:var(--ff-head);font-size:1.9rem;color:#fff;line-height:1">30<span style="font-size:1rem">代</span></div>
+      </div>
+    </div>`,
     // Phase4: 40代 人機協働期
     `<svg viewBox="0 0 320 140" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;border-radius:12px;margin-bottom:16px"><defs><linearGradient id="p4bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0d0d2a"/><stop offset="100%" stop-color="#1a1a4a"/></linearGradient></defs><rect width="320" height="140" fill="url(#p4bg)"/><circle cx="120" cy="52" r="15" fill="rgba(232,98,26,.85)"/><path d="M105,72 Q120,92 135,72" fill="rgba(232,98,26,.7)"/><rect x="177" y="38" width="26" height="26" rx="6" fill="rgba(43,143,197,.8)" stroke="rgba(43,143,197,.4)" stroke-width="1"/><circle cx="184" cy="50" r="2.5" fill="rgba(255,255,255,.9)"><animate attributeName="opacity" values="1;.3;1" dur="1.5s" repeatCount="indefinite"/></circle><circle cx="193" cy="50" r="2.5" fill="rgba(255,255,255,.9)"><animate attributeName="opacity" values=".3;1;.3" dur="1.5s" repeatCount="indefinite"/></circle><path d="M177,72 Q190,92 203,72" fill="rgba(43,143,197,.6)"/><path d="M135,62 Q160,57 177,62" fill="none" stroke="rgba(52,211,153,.8)" stroke-width="2"><animate attributeName="stroke-width" values="2;4;2" dur="2s" repeatCount="indefinite"/></path><rect x="60" y="108" width="200" height="2" fill="rgba(255,255,255,.2)" rx="1"/><rect x="60" y="103" width="36" height="7" fill="rgba(232,98,26,.6)" rx="1"/><rect x="101" y="96" width="36" height="14" fill="rgba(43,143,197,.6)" rx="1"/><rect x="142" y="88" width="36" height="22" fill="rgba(52,211,153,.6)" rx="1"/><rect x="183" y="80" width="36" height="30" fill="rgba(245,158,11,.6)" rx="1"/><text x="16" y="22" fill="rgba(43,143,197,.9)" font-size="11" font-weight="700" letter-spacing="2">40代 / 人機協働期</text><text x="16" y="36" fill="rgba(255,255,255,.45)" font-size="9">2045 — 2055</text></svg>`,
     // Phase5: 50代 社会変容期
@@ -2298,11 +2309,25 @@ function showNarrative(completedPhaseIdx, onNext){
 }
 
 function closeNarrative(){
-  document.getElementById('narrative-overlay')?.remove();
-  if(window._narrativeNext){
-    const fn=window._narrativeNext;
-    window._narrativeNext=null;
-    fn();
+  const ol=document.getElementById('narrative-overlay');
+  if(ol){
+    ol.style.transition='opacity .25s ease';
+    ol.style.opacity='0';
+    setTimeout(()=>{
+      ol.remove();
+      if(window._narrativeNext){
+        const fn=window._narrativeNext;
+        window._narrativeNext=null;
+        // phase-body-innerもフェードして描画
+        const pb=document.getElementById('phase-body-inner');
+        if(pb){pb.style.opacity='0';}
+        fn();
+        requestAnimationFrame(()=>{
+          const pb2=document.getElementById('phase-body-inner');
+          if(pb2){pb2.style.transition='opacity .3s ease';pb2.style.opacity='1';}
+        });
+      }
+    },250);
   }
 }
 
@@ -4367,11 +4392,19 @@ function formatStatVal(val){
   if(val===null||val===undefined)return'--';
   const s=String(val).trim();
   if(s.startsWith('#')||s===''||s==='undefined'||s==='null')return'--';
-  // GASが「約XX%」に変換した文字列から「約」を除去
   if(typeof val==='string'){
-    return s.replace(/^約/,'');
+    // 「約XX%」→「XX%」
+    let r=s.replace(/^約/,'');
+    // 「▼XX%」→「XX%ダウン」
+    r=r.replace(/^▼\s*(-?\d+\.?\d*)%?$/,'$1%ダウン');
+    // 「-XX%」→「XX%ダウン」
+    r=r.replace(/^-(\d+\.?\d*)%?$/,'$1%ダウン');
+    return r;
   }
   if(typeof val==='number'){
+    // 負の小数（例: -0.20）→ XX%ダウン
+    if(val<0&&val>-1)return Math.round(Math.abs(val)*100)+'%ダウン';
+    if(val<0)return Math.abs(Math.round(val))+'%ダウン';
     if(val>0&&val<1)return Math.round(val*100)+'%';
     if(val>=1&&val<100)return Math.round(val)+'%';
     return s;
