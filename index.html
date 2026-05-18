@@ -4178,8 +4178,12 @@ async function saveToGAS(score,tier,domTag,chainRule,indScores){
   try{
     await fetch(GAS_URL,{method:'POST',body:JSON.stringify({
       action:'save',
+      event_id:'20260520',
       sessionId:G.sessionId,
+      session_id:G.sessionId,
       nickname:G.nickname,
+      current_phase:Math.min(G.currentPhase||5,5),
+      completed:true,
       mbtiType:G.mbtiType||'',
       mbtiLabel:G.mbtiData?.label||'',
       profileCode:G.profileCode,
@@ -4190,11 +4194,15 @@ async function saveToGAS(score,tier,domTag,chainRule,indScores){
       choices:G.choices.map(c=>c?.label||''),
       eventChoices:G.eventChoices,
       phaseTags:G.tags,
+      q2_tags:G.tags,
+      q1_choices:G.q1Choices.map(q=>q?{label:q.label||'',erafit:q.erafit||0,horizon:q.horizon||''}:null).filter(Boolean),
       q1Choices:G.q1Choices.map(q=>q?.label||''),
       q3Choices:G.q3Choices,
       email:G.email||'',
       aiStanceType:G.aiStanceType||'',
+      ai_type:G.aiStanceType||'',
       nValue:G.nValueResult||0,
+      n_value:G.nValueResult||0,
       questionLevel:0,
     })});
   }catch(e){console.warn('GAS save:',e);}
