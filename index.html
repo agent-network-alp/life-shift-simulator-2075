@@ -93,6 +93,8 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .recommend-rank{font-family:var(--ff-head);font-size:2rem;color:var(--accent);min-width:32px}
 .recommend-name{font-size:.92rem;font-weight:700;color:var(--ink);margin-bottom:4px}
 .recommend-stars{color:var(--gold);font-size:.95rem;letter-spacing:2px}
+#screen-industry #all-industry-section[hidden],
+#screen-industry #all-industry-section:not(.open){display:none!important}
 .departure-year-bg{font-family:var(--ff-head);font-size:clamp(5rem,20vw,14rem);line-height:1;color:var(--accent);opacity:0;position:absolute;top:50%;left:50%;transform:translate(-50%,-55%);pointer-events:none;letter-spacing:-4px;white-space:nowrap}
 .departure-main{position:relative;z-index:1;text-align:center;padding:40px 24px;max-width:600px}
 .departure-tag{font-size:.74rem;letter-spacing:5px;color:var(--accent);margin-bottom:20px;text-shadow:0 1px 4px rgba(0,0,0,.4)}
@@ -1552,6 +1554,12 @@ const MBTI_MAP={
   ESFP:{code:'action-combine-intuition-social',label:'エンターテイナー',group:'探検家',groupColor:'#D97706',feedbackStyle:'action',desc:'',strengths:[],weaknesses:[],aiEra:{},axisWeights:{E:2,N:1,T:-2,J:-2,A:2},tagBonus:{'community-builder':.20,independent:.12,legacy:.05},industryBoost:{}},
 };
 
+const MBTI_FALLBACKS=Object.fromEntries(Object.entries(MBTI_MAP).map(([type,data])=>[type,{
+  code:data.code,
+  tagBonus:{...(data.tagBonus||{})},
+  industryBoost:{...(data.industryBoost||{})}
+}]));
+
 // MBTIフィードバックスタイル別の文体設定
 const FEEDBACK_STYLE={
   logic:  {prefix:'データが示す通り、',   suffix:'論理的な裏付けがあります。'},
@@ -1654,16 +1662,25 @@ async function init(){
   // ENTERキー対応
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'){
+      if(e.target&&e.target.id==='nickname-input'){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        updateStartBtn();
+        showScreen('screen-start');
+        document.getElementById('nickname-input')?.focus();
+        return false;
+      }
       const cur=document.querySelector('.screen.active');
       if(cur?.id==='screen-start'){
         e.preventDefault();
-        e.stopPropagation();
+        e.stopImmediatePropagation();
         showScreen('screen-start');
         updateStartBtn();
         document.getElementById('nickname-input')?.focus();
+        return false;
       }
     }
-  });
+  },true);
   setTimeout(()=>{
     document.getElementById('loading-overlay').classList.add('hide');
     // ?demo=1 でレポートデモを直接表示
@@ -1704,6 +1721,8 @@ function goStart(){
   const raw=document.getElementById('nickname-input');
   if(!raw||!raw.value.trim()){if(raw)raw.focus();return;}
   if(!document.getElementById('privacy-check')?.checked){updateStartBtn();return;}
+  const btn=document.getElementById('start-btn');
+  if(btn&&btn.disabled)return;
   G.nickname=sanitizeNickname(raw.value.trim());
   G.sessionId=crypto.randomUUID();
   showScreen('screen-intro');
@@ -1738,6 +1757,10 @@ function selectMBTI(type, el){
 function goMBTINext(){
   if(!G.mbtiType)return;
   const md=G.mbtiData||MBTI_MAP[G.mbtiType]||null;
+  const fb=MBTI_FALLBACKS[G.mbtiType]||{};
+  if(md&&fb.code&&!md.code)md.code=fb.code;
+  if(md&&fb.tagBonus&&(!md.tagBonus||!Object.keys(md.tagBonus).length))md.tagBonus={...fb.tagBonus};
+  if(md&&fb.industryBoost&&(!md.industryBoost||!Object.keys(md.industryBoost).length))md.industryBoost={...fb.industryBoost};
   G.mbtiData=md;
   if(md&&md.code){
     G.profileCode=md.code;
@@ -1810,6 +1833,7 @@ function obBack(){
   const cur=document.querySelector('.screen.active');
   if(cur.id==='screen-industry'){
     // 業種選択 → MBTI画面 or オンボーディング最終問
+    resetIndustrySelectionView();
     if(G.mbtiType){showScreen('screen-mbti');}
     else{G.obStep=3;renderOb();showScreen('screen-onboard');}
     return;
@@ -1864,13 +1888,22 @@ function profileSeedTags(){
 
 function deriveInitialIndustryStars(inds){
   const tagInd=G.data.tagIndustry||{};
-  const weights={...(G.mbtiData?.tagBonus||{})};
+  const mbtiFallback=MBTI_FALLBACKS[G.mbtiType]||{};
+  const weights={...(mbtiFallback.tagBonus||{}),...(G.mbtiData?.tagBonus||{})};
   Object.entries(profileSeedTags()).forEach(([tag,w])=>{weights[tag]=(weights[tag]||0)+w;});
+  if(!Object.keys(weights).length){
+    Object.entries(mbtiFallback.tagBonus||{}).forEach(([tag,w])=>{weights[tag]=(weights[tag]||0)+w;});
+  }
   const raw={};
+  const hasUsefulDbRow=(tag)=>{
+    const row=tagInd[tag]||{};
+    const vals=inds.map(ind=>Number(row[ind]||0)).filter(v=>Number.isFinite(v)&&v!==0);
+    return vals.length>0&&new Set(vals.map(v=>String(v))).size>1;
+  };
   inds.forEach(ind=>{
     let sum=0, weight=0;
     Object.entries(weights).forEach(([tag,w])=>{
-      const row=tagInd[tag]||INITIAL_INDUSTRY_AFFINITY[tag]||{};
+      const row=hasUsefulDbRow(tag)?tagInd[tag]:(INITIAL_INDUSTRY_AFFINITY[tag]||tagInd[tag]||{});
       const v=Number(row[ind]||0);
       if(!Number.isFinite(v)||v===0)return;
       const normalized=v<=1?v*6:v;
@@ -1879,7 +1912,8 @@ function deriveInitialIndustryStars(inds){
       weight+=safeW;
     });
     let score=weight>0?sum/weight:0;
-    const boost=Number((G.mbtiData?.industryBoost||{})[ind]||0);
+    const boostMap={...(mbtiFallback.industryBoost||{}),...(G.mbtiData?.industryBoost||{})};
+    const boost=Number(boostMap[ind]||0);
     if(boost>1)score*=Math.min(boost,1.25);
     else if(boost>0)score+=boost*2;
     raw[ind]=score;
@@ -1895,7 +1929,10 @@ function deriveInitialIndustryStars(inds){
 }
 
 function renderIndScreen(){
-  const inds=G.data.industries||[];
+  const inds=(G.data.industries&&G.data.industries.length?G.data.industries:Object.keys(INITIAL_INDUSTRY_AFFINITY).reduce((acc,tag)=>{
+    Object.keys(INITIAL_INDUSTRY_AFFINITY[tag]).forEach(ind=>{if(!acc.includes(ind))acc.push(ind);});
+    return acc;
+  },[]));
   const profStars=(G.data.profileIndustry||{})[G.profileCode]||{};
   const derivedStars=deriveInitialIndustryStars(inds);
   let myStars=G.mbtiData?derivedStars:profStars;
@@ -1903,9 +1940,12 @@ function renderIndScreen(){
     myStars=hasStarSpread(derivedStars,inds)?derivedStars:profStars;
   }
   if(!hasStarSpread(myStars,inds)){
-    myStars=inds.reduce((acc,ind)=>{acc[ind]=clampStar(myStars[ind]||3);return acc;},{});
+    const ordered=inds.slice();
+    myStars=ordered.reduce((acc,ind,i)=>{acc[ind]=i<3?5:i<7?4:i<11?3:i<14?2:1;return acc;},{});
   }
   const sorted=inds.map(n=>({name:n,star:clampStar(myStars[n]||1)})).sort((a,b)=>b.star-a.star).slice(0,3);
+
+  resetIndustrySelectionView();
 
   const recList=document.getElementById('recommend-list');
   recList.innerHTML='';
@@ -1931,6 +1971,21 @@ function renderIndScreen(){
   const nb=document.getElementById('ind-next-btn');if(nb)nb.disabled=true;
 }
 
+function resetIndustrySelectionView(){
+  const recSec=document.getElementById('recommend-section');
+  const allSec=document.getElementById('all-industry-section');
+  if(recSec){recSec.hidden=false;recSec.style.display='block';}
+  if(allSec){
+    allSec.classList.remove('open');
+    allSec.hidden=true;
+    allSec.style.display='none';
+  }
+  document.querySelectorAll('.recommend-card,.industry-btn').forEach(e=>e.classList.remove('selected'));
+  G.selectedIndustry='';
+  const nb=document.getElementById('ind-next-btn');
+  if(nb)nb.disabled=true;
+}
+
 function selectInd(name,el){
   document.querySelectorAll('.recommend-card,.industry-btn').forEach(e=>e.classList.remove('selected'));
   el.classList.add('selected');G.selectedIndustry=name;
@@ -1953,8 +2008,10 @@ function selectInd(name,el){
 }
 
 function showAllInd(){
-  document.getElementById('recommend-section').style.display='none';
-  document.getElementById('all-industry-section').style.display='block';
+  const rec=document.getElementById('recommend-section');
+  if(rec){rec.hidden=true;rec.style.display='none';}
+  const all=document.getElementById('all-industry-section');
+  if(all){all.hidden=false;all.classList.add('open');all.style.display='block';}
 }
 
 function goIndNext(){if(G.selectedIndustry)showScreen('screen-departure');}
@@ -2602,11 +2659,11 @@ function showNarrative(completedPhaseIdx, onNext){
       <!-- 背景の年齢ウォーターマーク -->
       <div class="narrative-year">${PHASE_END_AGES[completedPhaseIdx]}</div>
       <!-- ヘッダー -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
-        <div style="font-family:var(--ff-head);font-size:3.2rem;color:var(--accent);line-height:1;letter-spacing:-1px;flex-shrink:0">${PHASE_END_AGES[completedPhaseIdx]}<span style="font-size:1.2rem;letter-spacing:0;opacity:.7">歳</span></div>
-        <div>
-          <div style="font-size:.62rem;letter-spacing:4px;color:rgba(255,255,255,.45);margin-bottom:3px">${PHASE_YEARS[completedPhaseIdx]}</div>
-          <div style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:1px">${phase?.era||''}</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;min-width:0">
+        <div style="font-family:var(--ff-head);font-size:clamp(2.4rem,12vw,3.2rem);color:var(--accent);line-height:1;letter-spacing:0;flex-shrink:0">${PHASE_END_AGES[completedPhaseIdx]}<span style="font-size:1.1rem;letter-spacing:0;opacity:.7">歳</span></div>
+        <div style="min-width:0;flex:1">
+          <div style="font-size:.62rem;letter-spacing:2px;color:rgba(255,255,255,.45);margin-bottom:4px;white-space:nowrap;line-height:1.2">${PHASE_YEARS[completedPhaseIdx]}</div>
+          <div style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:.5px;line-height:1.35">${phase?.era||''}</div>
         </div>
       </div>
       <!-- 区切り線 -->
@@ -4579,6 +4636,10 @@ async function sendReportEmail(){
     headline:document.getElementById('res-headline').textContent,
     analysis:document.getElementById('res-body').textContent,
     narratives:G.narratives.map(n=>({phase:n.era,age:n.ageRange,text:n.text})),
+    choiceRecaps:(G.narratives||[]).map((n,i)=>({
+      q1:(G.q1Choices||[])[i]||null,
+      q2:(G.choices||[])[i]||null
+    })),
     industryScores:window._lastIndScores||[],
     xSummary:window._xSummary||'',
     sessionId:G.sessionId,
@@ -4812,14 +4873,26 @@ const DICE_EVENT_IMAGE_URLS={
 };
 
 function getDiceEventText(result){
-  const pi=Math.min(G.currentPhase,5);
+  const pi=Math.max(0,Math.min(G.currentPhase||0,5));
   const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
-  return pool[Math.floor(Math.random()*pool.length)];
+  return pool[Math.floor(Math.random()*pool.length)]||'';
+}
+
+function getDiceSlotImageUrl(result,phaseIdx,itemIdx){
+  const baseMap={bad:1,good:7,none:13};
+  const base=baseMap[result];
+  if(!base)return'';
+  const maxVariant=result==='none'?2:3;
+  const variant=Math.max(1,Math.min(maxVariant,(itemIdx||0)+1));
+  return `https://agent-network-alp.github.io/life-shift-simulator-2075/img/${base+phaseIdx}-${variant}.png`;
 }
 
 function getDiceIncident(result){
-  const text=getDiceEventText(result);
-  return {text:text,imageUrl:DICE_EVENT_IMAGE_URLS[text]||''};
+  const pi=Math.max(0,Math.min(G.currentPhase||0,5));
+  const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
+  const itemIdx=Math.floor(Math.random()*Math.max(pool.length,1));
+  const text=pool[itemIdx]||'';
+  return {text:text,imageUrl:DICE_EVENT_IMAGE_URLS[text]||getDiceSlotImageUrl(result,pi,itemIdx)};
 }
 
 function showDice(onResult){
@@ -4858,11 +4931,15 @@ function showDice(onResult){
   var col=diff>=0?'#34D399':'#EF4444';
   var ol=document.createElement('div');
   ol.id='dice-overlay';
+  var bgCssUrl=String(bgUrl||'').replace(/"/g,'%22');
   var bgStyle=bgUrl
-    ? 'background-image:linear-gradient(180deg,rgba(5,5,12,.58),rgba(5,5,12,.86)),url('+bgUrl+');background-size:cover;background-position:center'
+    ? 'background-image:linear-gradient(180deg,rgba(5,5,12,.45),rgba(5,5,12,.78)),url("'+bgCssUrl+'");background-size:cover;background-position:center;background-repeat:no-repeat'
     : 'background:#080810';
   ol.style.cssText='position:fixed;inset:0;'+bgStyle+';z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .35s';
-  ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center;background:linear-gradient(180deg,rgba(8,8,16,.42),rgba(8,8,16,.74));border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:24px 18px;box-shadow:0 20px 80px rgba(0,0,0,.45);backdrop-filter:blur(2px)">'
+  var cardBgStyle=bgUrl
+    ? 'background-image:linear-gradient(180deg,rgba(8,8,16,.50),rgba(8,8,16,.82)),url("'+bgCssUrl+'");background-size:cover;background-position:center;background-repeat:no-repeat'
+    : 'background:linear-gradient(180deg,rgba(8,8,16,.42),rgba(8,8,16,.74))';
+  ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center;'+cardBgStyle+';border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:24px 18px;box-shadow:0 20px 80px rgba(0,0,0,.45);backdrop-filter:blur(2px)">'
     +'<div style="font-size:.6rem;letter-spacing:5px;color:rgba(232,98,26,.7);margin-bottom:16px;font-family:var(--ff-head)">⚡ 時代が動いた</div>'
     +'<div style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.35">'+ev.t+'</div>'
     +'<div style="font-size:1rem;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:24px;padding:0 8px">'+ev.b+'</div>'
