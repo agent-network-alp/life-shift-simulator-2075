@@ -2818,7 +2818,7 @@ function buildNarrativeParts(phaseIdx, tag, hadEvent, eventTag){
     {label:'時代背景',text:eraLine+'\n'+industryLine,duration:3000},
     {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:4000},
     {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:5000},
-    {label:'次の問い',text:questions[phaseIdx],duration:3000}
+    {label:'次の問い',text:questions[phaseIdx],duration:4000}
   ];
   parts.forEach(part=>{part.bgUrl=getNarrativeBgUrl(phaseIdx,part.label);});
   return parts;
