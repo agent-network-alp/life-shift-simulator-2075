@@ -460,6 +460,12 @@ div[style*="CAREER TRANSLATION"] {
 .result-inner .story-50years p strong{
   color:#1A1A2E;font-weight:700;
 }
+.result-inner .story-choice-recap{
+  margin-top:8px;padding:10px 12px;border-left:3px solid #2B8FC5;
+  background:rgba(43,143,197,.06);color:#2B6F96;
+  font-size:.82rem;line-height:1.65;border-radius:0 8px 8px 0;
+}
+.result-inner .story-choice-recap strong{color:#E8621A;font-weight:800}
 
 /* ━━━ アクション ━━━ */
 .result-inner .action-item{
@@ -1023,7 +1029,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-y</p>
+    <p id="app-version" style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-y</p>
   </div>
 </div>
 
@@ -1644,11 +1650,18 @@ async function init(){
     G.config={};
   }
   bar.style.width='100%';
+  updateAppVersion();
   // ENTERキー対応
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'){
       const cur=document.querySelector('.screen.active');
-      if(cur?.id==='screen-start')goStart();
+      if(cur?.id==='screen-start'){
+        e.preventDefault();
+        e.stopPropagation();
+        showScreen('screen-start');
+        updateStartBtn();
+        document.getElementById('nickname-input')?.focus();
+      }
     }
   });
   setTimeout(()=>{
@@ -1666,6 +1679,17 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
+}
+
+function updateAppVersion(){
+  const el=document.getElementById('app-version');
+  if(!el)return;
+  const d=new Date(document.lastModified);
+  if(Number.isNaN(d.getTime()))return;
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  el.textContent=`v${y}.${m}.${day}`;
 }
 
 // ── START ────────────────────────────────────────────────────────
@@ -1800,23 +1824,88 @@ function obBack(){
 }
 
 // ── 業種選択 ─────────────────────────────────────────────────────
+const INITIAL_INDUSTRY_AFFINITY={
+  specialization:  {コンサルティング:6,'ITサービス・SaaS':5,'研究・アカデミア':6,'メーカー（製造業）':5,'医療・ヘルスケア':5},
+  'ai-native':     {'ITサービス・SaaS':6,'事業開発・新規事業':5,コンサルティング:5,'スタートアップ・VC':5,'広告・マーケティング':4},
+  strategic:       {'事業開発・新規事業':6,コンサルティング:6,'投資銀行・証券':5,'総合商社':5,'スタートアップ・VC':4},
+  independent:     {'スタートアップ・VC':6,'事業開発・新規事業':5,'広告・マーケティング':4,'メディア・エンタメ':4,'ITサービス・SaaS':4},
+  'rare-combination':{'事業開発・新規事業':6,コンサルティング:5,'スタートアップ・VC':5,'ITサービス・SaaS':4,'総合商社':4},
+  leadership:      {'事業開発・新規事業':5,コンサルティング:5,'教育・EdTech':6,'メガバンク・金融':4,'公務員・公共政策':4},
+  'community-builder':{'事業開発・新規事業':5,'広告・マーケティング':5,'メディア・エンタメ':4,'教育・EdTech':6,'公務員・公共政策':4},
+  global:          {'総合商社':6,'投資銀行・証券':5,コンサルティング:5,'スタートアップ・VC':4,'事業開発・新規事業':5},
+  legacy:          {'教育・EdTech':6,'研究・アカデミア':5,'メディア・エンタメ':4,'公務員・公共政策':4,'医療・ヘルスケア':4},
+};
+
+function clampStar(v){
+  const n=Number(v);
+  if(!Number.isFinite(n)||n<=0)return 3;
+  return Math.max(1,Math.min(5,Math.round(n)));
+}
+
+function hasStarSpread(stars, inds){
+  const vals=inds.map(ind=>clampStar(stars[ind])).filter(Boolean);
+  return vals.length>0&&new Set(vals).size>1;
+}
+
+function profileSeedTags(){
+  const tags={};
+  const add=(tag,w)=>{if(tag)tags[tag]=(tags[tag]||0)+w;};
+  const p=G.profile||{};
+  if(p.change==='action'){add('independent',.16);add('ai-native',.08);}
+  if(p.change==='thought'){add('specialization',.16);add('strategic',.08);}
+  if(p.value==='combine'){add('rare-combination',.16);add('community-builder',.08);}
+  if(p.value==='deep'){add('specialization',.16);add('legacy',.08);}
+  if(p.decide==='logic'){add('strategic',.16);add('ai-native',.08);}
+  if(p.decide==='intuition'){add('community-builder',.14);add('rare-combination',.1);}
+  if(p.energy==='social'){add('leadership',.14);add('community-builder',.1);}
+  if(p.energy==='solo'){add('specialization',.12);add('independent',.1);}
+  return tags;
+}
+
+function deriveInitialIndustryStars(inds){
+  const tagInd=G.data.tagIndustry||{};
+  const weights={...(G.mbtiData?.tagBonus||{})};
+  Object.entries(profileSeedTags()).forEach(([tag,w])=>{weights[tag]=(weights[tag]||0)+w;});
+  const raw={};
+  inds.forEach(ind=>{
+    let sum=0, weight=0;
+    Object.entries(weights).forEach(([tag,w])=>{
+      const row=tagInd[tag]||INITIAL_INDUSTRY_AFFINITY[tag]||{};
+      const v=Number(row[ind]||0);
+      if(!Number.isFinite(v)||v===0)return;
+      const normalized=v<=1?v*6:v;
+      const safeW=Math.max(Number(w)||0,.04);
+      sum+=normalized*safeW;
+      weight+=safeW;
+    });
+    let score=weight>0?sum/weight:0;
+    const boost=Number((G.mbtiData?.industryBoost||{})[ind]||0);
+    if(boost>1)score*=Math.min(boost,1.25);
+    else if(boost>0)score+=boost*2;
+    raw[ind]=score;
+  });
+  const vals=inds.map(ind=>raw[ind]).filter(v=>v>0);
+  const min=vals.length?Math.min(...vals):0;
+  const max=vals.length?Math.max(...vals):0;
+  const stars={};
+  inds.forEach(ind=>{
+    stars[ind]=max>min?Math.max(1,Math.min(5,Math.round(1+((raw[ind]-min)/(max-min))*4))):3;
+  });
+  return stars;
+}
+
 function renderIndScreen(){
   const inds=G.data.industries||[];
-  let myStars=(G.data.profileIndustry||{})[G.profileCode]||{};
-  // profileCodeが空（MBTIで直接選択した場合）→ タグ×業種マトリクスで代替
-  if(!G.profileCode||Object.keys(myStars).length===0){
-    const tagInd=G.data.tagIndustry||{};
-    const mbtiGrp=G.mbtiData?.group||'';
-    myStars={};
-    inds.forEach(ind=>{
-      let score=3; // ベース
-      // タグ×業種スコアをMBTIグループで加算
-      const grpData=tagInd[mbtiGrp]||{};
-      if(grpData[ind]) score=Math.min(5,score+Math.round(grpData[ind]*2));
-      myStars[ind]=score;
-    });
+  const profStars=(G.data.profileIndustry||{})[G.profileCode]||{};
+  const derivedStars=deriveInitialIndustryStars(inds);
+  let myStars=G.mbtiData?derivedStars:profStars;
+  if(!hasStarSpread(myStars,inds)){
+    myStars=hasStarSpread(derivedStars,inds)?derivedStars:profStars;
   }
-  const sorted=inds.map(n=>({name:n,star:myStars[n]||1})).sort((a,b)=>b.star-a.star).slice(0,3);
+  if(!hasStarSpread(myStars,inds)){
+    myStars=inds.reduce((acc,ind)=>{acc[ind]=clampStar(myStars[ind]||3);return acc;},{});
+  }
+  const sorted=inds.map(n=>({name:n,star:clampStar(myStars[n]||1)})).sort((a,b)=>b.star-a.star).slice(0,3);
 
   const recList=document.getElementById('recommend-list');
   recList.innerHTML='';
@@ -1831,7 +1920,7 @@ function renderIndScreen(){
   const grid=document.getElementById('industry-grid');
   grid.innerHTML='';
   inds.forEach(ind=>{
-    const star=myStars[ind]||1;
+    const star=clampStar(myStars[ind]||1);
     const btn=document.createElement('button');
     btn.className='industry-btn';btn.dataset.ind=ind;
     btn.innerHTML=`<div style="font-size:.85rem;color:var(--ink);font-weight:600;margin-bottom:4px;line-height:1.3">${ind}</div><div style="font-size:.7rem;color:var(--gold);letter-spacing:1px">${'★'.repeat(star)}${'☆'.repeat(5-star)}</div>`;
@@ -2070,6 +2159,7 @@ function renderEraPage(phase){
       {label:'D',text:q1data.choice_d_text,short:q1data.choice_d_short||'',erafit:Number(q1data.choice_d_erafit)},
     ].filter(ch=>ch.text&&ch.text.trim());
     q1wrap.innerHTML='';
+    let q1SelectionLocked=false;
     q1choices.forEach(function(ch){
       const btn=document.createElement('button');
       btn.style.cssText='width:100%;background:#fff;border:1.5px solid #E5E7EB;border-radius:14px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;padding:0 0 14px;-webkit-tap-highlight-color:transparent;overflow:hidden;color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.06)';
@@ -2082,11 +2172,17 @@ function renderEraPage(phase){
         '<div style="width:100%;height:72px;flex-shrink:0">'+(q1CUI?q1CUI.svg:'')+'</div>'
         +'<div style="font-size:.82rem;font-weight:700;text-align:center;padding:8px 10px 5px;line-height:1.35;color:var(--ink)">'+shortLabel+'</div>'
         +'<div style="font-size:.72rem;color:var(--ink60);text-align:center;padding:0 10px 0;line-height:1.5">'+ch.text+'</div>';
-      btn.ontouchstart=function(){this.style.background='rgba(232,98,26,.08)';this.style.borderColor='var(--accent)';this.style.transform='scale(.97)';};
       btn.onclick=function(){
-        const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
-        G.q1Choices[G.currentPhase]={label:ch.label,erafit:ch.erafit,horizon:q1Horizon};
-        const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
+        if(q1SelectionLocked)return;
+        q1SelectionLocked=true;
+        q1wrap.querySelectorAll('button').forEach(b=>{if(b!==btn)b.disabled=true;});
+        btn.style.background='rgba(232,98,26,.08)';
+        btn.style.borderColor='var(--accent)';
+        btn.style.transform='scale(.97)';
+    const q1Horizon=ch.erafit>=8?'long-term':ch.erafit>=5?'adaptive':'reactive';
+    G.q1Choices[G.currentPhase]={label:ch.label,text:ch.text,short:shortLabel,erafit:ch.erafit,horizon:q1Horizon};
+    saveEventProgress();
+    const delta=ch.erafit>=8?+6:ch.erafit>=5?0:-5;
         applyValueMeterDelta({eraFit:delta});
         // Q1→Q2：暗転経由でスムーズに切り替え
         setTimeout(()=>{
@@ -2275,7 +2371,8 @@ function renderQ1(phase){
   ],c=>{// Q1：erafit＋時間軸・認識スタイルを記録
     // erafit 8-10:適正認識=long-term視点, 5-7:楽観的=short-term, 0-4:過小評価=reactive
     const q1Horizon = c.erafit>=8?'long-term':c.erafit>=5?'adaptive':'reactive';
-    G.q1Choices[G.currentPhase]={label:c.label,erafit:c.erafit,horizon:q1Horizon};
+    G.q1Choices[G.currentPhase]={label:c.label,text:c.text,short:c.short||'',erafit:c.erafit,horizon:q1Horizon};
+    saveEventProgress();
     G.currentQ=1;renderPhase();});
 }
 
@@ -2311,6 +2408,7 @@ function renderQ2(phase){
     const choiceHow = TAG_HOW[c.tag]||'pragmatic';
     if(!G.styleLog) G.styleLog=[];
     G.styleLog[G.currentPhase]={tag:c.tag, why:choiceWhy, how:choiceHow};
+    saveEventProgress();
     // メッセージ演出は廃止
     setTimeout(()=>{proceedPhase();},300);
   });
@@ -2383,6 +2481,7 @@ function selectEv(id,ch,tag,corr){
 function nextPhase(){
   const completedPhase=G.currentPhase;
   G.currentPhase++;G.currentQ=-1;
+  saveEventProgress();
 
   // screen-phase全体を即座に不可視化（いかなる描画も見せない）
   const sp=document.getElementById('screen-phase');
@@ -2926,6 +3025,8 @@ async function showResult(){
 
   const score=calcScore(),chain=calcChain(),tier=getTier(score),domTag=getDomTag();
   const indScores=calcIndScores(),radar=calcRadar();
+  window._lastScore=score;
+  window._lastTierLabel=tier.label;
   const fb=(G.data.feedback||{})[tier.label]||{};
   const TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立・起業','rare-combination':'掛け算希少',leadership:'育成・管理','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
 
@@ -3218,7 +3319,7 @@ async function showResult(){
           const validStories=storyArr.filter(s=>s&&String(s).trim().length>10);
           console.log('MY STORY: AI生成 '+validStories.length+'/6フェーズ');
           const fullStory=G.narratives.map((n,i)=>{
-            const aiText=validStories[i];
+            const aiText=storyArr[i];
             if(aiText&&String(aiText).trim().length>10) return String(aiText).trim();
             // フォールバック：ゲーム中に生成したナラティブを使用
             const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
@@ -3527,12 +3628,20 @@ Q3投資傾向: ${q3Top||'スキル'}
 
   try{
     // ━━ Req①：MY STORY（6フェーズ分の長文生成のためトークン数を多めに確保）
-    const storyResult = await callGAS(promptStory, 3000);
-    // 6要素に満たない場合はフォールバックで補完
+    let storyResult = await callGAS(promptStory, 4200);
+    const fallbackStories=(G.narratives||[]).map((n,i)=>{
+      const fallback=(n?.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
+      return fallback.length>10?fallback:`PHASE ${i+1}での選択をもとに、この時代のキャリアを振り返ります。`;
+    });
+    // 6要素に満たない場合は、エラーメッセージではなくゲーム中のナラティブで補完
     if(storyResult?.myStory){
       const stories = Array.isArray(storyResult.myStory) ? storyResult.myStory : Object.values(storyResult.myStory||{});
-      while(stories.length < 6){ stories.push('このフェーズのストーリーを生成できませんでした。'); }
-      storyResult.myStory = stories;
+      storyResult.myStory = fallbackStories.map((fb,i)=>{
+        const s=stories[i];
+        return s&&String(s).trim().length>10?String(s).trim():fb;
+      });
+    }else{
+      storyResult={myStory:fallbackStories};
     }
     console.log('MY STORY取得:', storyResult?.myStory?.length||0, 'フェーズ');
 
@@ -3743,20 +3852,32 @@ function renderCareerAxis(data){
   return html;
 }
 
+function buildChoiceRecapHtml(phaseIdx){
+  const q1=(G.q1Choices||[])[phaseIdx];
+  const q2=(G.choices||[])[phaseIdx];
+  if(!q1&&!q2)return'';
+  const q1Text=(q1?.text||q1?.short||'').trim();
+  const q2Text=(q2?.text||q2?.short||q2?.sub||'').trim();
+  const q1Html=q1
+    ? '<div>Q1 <strong>'+escHtml(q1.label||'-')+'</strong>：'+escHtml(q1Text||'選択内容を記録中')+'</div>'
+    : '<div>Q1：選択内容を記録中</div>';
+  const q2Html=q2
+    ? '<div>Q2 <strong>'+escHtml(q2.label||'-')+'</strong>：'+escHtml(q2Text||'選択内容を記録中')+'</div>'
+    : '<div>Q2：選択内容を記録中</div>';
+  return '<div class="story-choice-recap"><strong>あなたの選択</strong>'+q1Html+q2Html+'</div>';
+}
+
 
 function buildPreviewStory(narratives, domTag, TL){
   const tags=narratives.map(n=>n.tag).filter(Boolean);
   const dominant=domTag;
-  const hasEvent=narratives.some(n=>n.text.includes('試練')||n.text.includes('追い風'));
 
   const opening=`20歳から50年間、私は${TL[dominant]||dominant}という軸を核に、6つの時代の岐路を歩んできた。`;
 
-  const phases=narratives.map((n,i)=>{
+  const phaseBlocks=narratives.map((n,i)=>{
     const short=n.text.split('\n')[0].slice(0,80);
-    return short;
+    return '<div style="margin-bottom:18px"><p style="margin-bottom:0">'+short+'</p>'+buildChoiceRecapHtml(i)+'</div>';
   });
-
-  const body=phases.join(' そして、');
 
   const tagSet=[...new Set(tags)];
   const closing=tagSet.length>=2
@@ -3765,7 +3886,7 @@ function buildPreviewStory(narratives, domTag, TL){
 
   return `<div style="font-size:.9rem;color:var(--w90);line-height:2.1">
     <p style="margin-bottom:16px">${opening}</p>
-    <p style="margin-bottom:16px">${body}</p>
+    ${phaseBlocks.join('')}
     <p style="color:var(--accent2);font-style:italic">${emphasisStoryText(closing)}</p>
     <div style="font-size:.8rem;color:var(--w40);margin-top:16px;letter-spacing:1px">※ AIによる個別最適化を生成中…</div>
   </div>`;
@@ -3807,7 +3928,7 @@ function buildAIStory50(storyArr, narratives){
     const conn=i===0?'':connectors[i]||'';
     // 強調自動処理
     const emphasized=emphasisStoryText(text);
-    return `<p style="margin-bottom:20px">${conn}${emphasized}</p>`;
+    return `<div style="margin-bottom:20px"><p style="margin-bottom:0">${conn}${emphasized}</p>${buildChoiceRecapHtml(i)}</div>`;
   });
 
   return `<div style="font-size:.9rem;line-height:2.1">
@@ -4224,7 +4345,7 @@ async function saveToGAS(score,tier,domTag,chainRule,indScores){
       eventChoices:G.eventChoices,
       phaseTags:G.tags,
       q2_tags:G.tags,
-      q1_choices:G.q1Choices.map(q=>q?{label:q.label||'',erafit:q.erafit||0,horizon:q.horizon||''}:null).filter(Boolean),
+      q1_choices:G.q1Choices.map(q=>q?{label:q.label||'',text:q.text||'',short:q.short||'',erafit:q.erafit||0,horizon:q.horizon||''}:null).filter(Boolean),
       q1Choices:G.q1Choices.map(q=>q?.label||''),
       q3Choices:G.q3Choices,
       email:G.email||'',
@@ -4235,6 +4356,37 @@ async function saveToGAS(score,tier,domTag,chainRule,indScores){
       questionLevel:0,
     })});
   }catch(e){console.warn('GAS save:',e);}
+}
+
+function buildEventProgressPayload(completed){
+  const score=completed&&typeof window._lastScore==='number'?window._lastScore:0;
+  return {
+    action:'saveProgress',
+    event_id:'20260520',
+    sessionId:G.sessionId,
+    session_id:G.sessionId,
+    nickname:G.nickname,
+    current_phase:Math.max(0,Math.min(G.currentPhase||0,5)),
+    completed:!!completed,
+    q1_choices:G.q1Choices.map(q=>q?{label:q.label||'',text:q.text||'',short:q.short||'',erafit:q.erafit||0,horizon:q.horizon||''}:null).filter(Boolean),
+    q1Choices:G.q1Choices.map(q=>q?.label||''),
+    q2_tags:G.tags,
+    phaseTags:G.tags,
+    score,
+    tier:completed?window._lastTierLabel||'':'',
+    ai_type:G.aiStanceType||'',
+    aiStanceType:G.aiStanceType||'',
+    n_value:G.nValueResult||0,
+    nValue:G.nValueResult||0,
+  };
+}
+
+function saveEventProgress(completed){
+  if(!G.sessionId)return;
+  try{
+    fetch(GAS_URL,{method:'POST',body:JSON.stringify(buildEventProgressPayload(completed))})
+      .catch(e=>console.warn('GAS progress:',e));
+  }catch(e){console.warn('GAS progress:',e);}
 }
 
 async function fetchStats(myScore,myTier){
@@ -4504,7 +4656,7 @@ function closePopup(id){
   document.body.style.overflow='';
 }
 
-function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
+function resetGame(){G={...G,nickname:'',sessionId:'',profile:{},profileCode:'',selectedIndustry:'',currentPhase:0,currentQ:-1,choices:[],q1Choices:[],q3Choices:[],tags:[],eventChoices:[],narratives:[],mbtiType:null,mbtiData:null,email:'',radarChart:null};document.getElementById('nickname-input').value='';const pc=document.getElementById('privacy-check');if(pc)pc.checked=false;updateStartBtn();showScreen('screen-start');document.getElementById('fixed-cta').style.display='none';}
 
 // FB (フォールバック) はスプシに移行済み。GAS障害時は空構造でフォールバック（init()参照）
 
@@ -4608,10 +4760,66 @@ const DICE_EVENTS={
   bad:{},good:{},none:{},
 };
 
+const DICE_EVENT_IMAGE_URLS={
+  "突然の業界再編。配属先の部署が縮小された。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/1-1.png",
+  "新卒同期の3人がAI導入で仕事を失った。自分の番はいつか。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/1-2.png",
+  "最初のプロジェクトが頓挫。自分の判断を疑い始めた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/1-3.png",
+  "担当業務の60%がAIに置き換えられた。役割の再定義が急務になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/2-1.png",
+  "景気後退で採用凍結。転職の道が一時的に閉ざされた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/2-2.png",
+  "信頼していた上司が突然退職。よりどころが消えた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/2-3.png",
+  "メインクライアントが競合他社に流れた。実力を問い直す時間が来た。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/3-1.png",
+  "業界の主要プレイヤーが統合・再編。自分のポジションが揺れた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/3-2.png",
+  "3年がかりのプロジェクトが中断。積み上げたものが白紙になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/3-3.png",
+  "組織が突然リストラを発表。あなたの部署も対象になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/4-1.png",
+  "AIに意思決定の一部を奪われ始めた。人間の役割を再考する時が来た。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/4-2.png",
+  "長年のパートナーとの決裂。関係性の作り直しを迫られた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/4-3.png",
+  "健康上の問題が発生。働き方を根本から見直す必要が出てきた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/5-1.png",
+  "技術の急変で積み上げた専門性の一部が陳腐化した。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/5-2.png",
+  "予期しない社会変動で、計画が大きく狂った。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/5-3.png",
+  "社会保障制度が大きく変わった。老後の設計を見直す必要が出た。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/6-1.png",
+  "長年の仲間が急逝した。何のために働くかを、改めて問い直した。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/6-2.png",
+  "最後の計画が崩れた。しかしそれが、新しい始まりになった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/6-3.png",
+  "業界誌に書いたコラムがバズった。思わぬ場所から声がかかった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/7-1.png",
+  "偶然の出会いが、最初のメンターとの縁を作った。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/7-2.png",
+  "社内ハッカソンで優秀賞。自分の可能性に気づいた瞬間だった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/7-3.png",
+  "転職活動で、想定より高いオファーが届いた。市場価値が見えた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/8-1.png",
+  "副業で取り組んでいたプロジェクトが注目を集めた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/8-2.png",
+  "異業種のイベントで、後の仕事相手となる人物に出会った。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/8-3.png",
+  "取り組んでいた研究・プロジェクトが業界誌に掲載された。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/9-1.png",
+  "掛け算が機能した。二つの専門性が交差する仕事が舞い込んだ。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/9-2.png",
+  "海外からオファーが届いた。グローバルな評価を実感した。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/9-3.png",
+  "長年育てていた後輩が、大きなプロジェクトで結果を出した。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/10-1.png",
+  "経営陣から直接声がかかった。意思決定の中枢に入る機会が来た。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/10-2.png",
+  "コミュニティが動いた。自分の発信が、社会課題の解決につながった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/10-3.png",
+  "積み上げてきた知見が、書籍として形になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/11-1.png",
+  "コミュニティが自走し始めた。自分がいなくても動く仕組みができた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/11-2.png",
+  "若い世代から「あなたのようになりたい」という言葉をもらった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/11-3.png",
+  "人生の集大成となるプロジェクトの話が舞い込んだ。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/12-1.png",
+  "後進が自分を超えた瞬間を目撃した。それが最大の喜びだった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/12-2.png",
+  "長年の活動が、思わぬ形で社会に認められた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/12-3.png",
+  "特に大きな出来事はなかった。静かに、着実に積み上げる時間が続いた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/13-1.png",
+  "波乱なく過ぎた日常の中で、小さな習慣が土台を作っていた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/13-2.png",
+  "大きな変化はなかった。しかし、その「静けさ」が集中を生んだ。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/14-1.png",
+  "特筆すべき出来事はなかった。それがむしろ、積み上げの時間になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/14-2.png",
+  "嵐の中の凪のような時期だった。静かに次の準備をする時間として使った。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/15-1.png",
+  "業界が揺れる中で、自分の周辺は比較的穏やかだった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/15-2.png",
+  "大きな波はなかった。その分、深く考え、内側を鍛える時間になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/16-1.png",
+  "特別な出来事はなかった。ただ、確実に何かが育っていた。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/16-2.png",
+  "静かな時期が続いた。積み上げたものを整理し、言語化する時間になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/17-1.png",
+  "波乱のない時間だった。それが、深く振り返るための余白になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/17-2.png",
+  "静かな最終章の始まりだった。自分の人生を、静かに俯瞰する時間。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/18-1.png",
+  "大きな出来事はなかった。それが、穏やかな着地点への道になった。":"https://agent-network-alp.github.io/life-shift-simulator-2075/img/18-2.png"
+};
+
 function getDiceEventText(result){
   const pi=Math.min(G.currentPhase,5);
   const pool=DICE_EVENTS[result]?.[pi]||DICE_EVENTS[result]?.[0]||[''];
   return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function getDiceIncident(result){
+  const text=getDiceEventText(result);
+  return {text:text,imageUrl:DICE_EVENT_IMAGE_URLS[text]||''};
 }
 
 function showDice(onResult){
@@ -4636,15 +4844,25 @@ function showDice(onResult){
   ];
   var isGood=Math.random()<0.5;
   window._diceIsGood=isGood;
-  var ev=(isGood?EG:EB)[pi%6];
+  var incidentType=isGood?'good':'bad';
+  var incident=getDiceIncident(incidentType);
+  var fallbackEv=(isGood?EG:EB)[pi%6];
+  var ev={
+    t:incidentType==='good'?'追い風が吹いた':'試練が訪れた',
+    b:incident.text||fallbackEv.b
+  };
+  var bgUrl=incident.imageUrl;
   var nBefore=G.nValueResult||50;
   var nAfter=isGood?Math.min(95,nBefore+Math.floor(Math.random()*8+4)):Math.max(10,nBefore-Math.floor(Math.random()*8+3));
   var diff=nAfter-nBefore;
   var col=diff>=0?'#34D399':'#EF4444';
   var ol=document.createElement('div');
   ol.id='dice-overlay';
-  ol.style.cssText='position:fixed;inset:0;background:#080810;z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .35s';
-  ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center">'
+  var bgStyle=bgUrl
+    ? 'background-image:linear-gradient(180deg,rgba(5,5,12,.58),rgba(5,5,12,.86)),url('+bgUrl+');background-size:cover;background-position:center'
+    : 'background:#080810';
+  ol.style.cssText='position:fixed;inset:0;'+bgStyle+';z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .35s';
+  ol.innerHTML='<div style="max-width:360px;width:100%;text-align:center;background:linear-gradient(180deg,rgba(8,8,16,.42),rgba(8,8,16,.74));border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:24px 18px;box-shadow:0 20px 80px rgba(0,0,0,.45);backdrop-filter:blur(2px)">'
     +'<div style="font-size:.6rem;letter-spacing:5px;color:rgba(232,98,26,.7);margin-bottom:16px;font-family:var(--ff-head)">⚡ 時代が動いた</div>'
     +'<div style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:14px;line-height:1.35">'+ev.t+'</div>'
     +'<div style="font-size:1rem;color:rgba(255,255,255,.75);line-height:1.8;margin-bottom:24px;padding:0 8px">'+ev.b+'</div>'
