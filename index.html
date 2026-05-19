@@ -316,13 +316,17 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .event-choices{display:flex;flex-direction:column;gap:8px}
 .event-choice-btn{background:var(--card);border:1px solid var(--border);color:var(--w90);font-family:var(--ff-body);text-align:left;padding:14px 18px;border-radius:6px;cursor:pointer;font-size:.96rem;line-height:1.55;transition:all .18s;width:100%}
 .event-choice-btn:hover{border-color:var(--cyan);background:rgba(56,189,248,.07);color:var(--white)}
-.narrative-overlay{position:fixed;inset:0;background:rgba(0,0,0,.98);display:flex;align-items:center;justify-content:center;z-index:600;padding:24px;animation:fadeIn .3s ease;cursor:pointer}
-.narrative-card{max-width:540px;width:100%;padding:0 4px;position:relative}
+.narrative-overlay{position:fixed;inset:0;background:#05050c;display:flex;align-items:stretch;justify-content:center;z-index:600;padding:0;animation:fadeIn .3s ease;cursor:pointer;overflow:hidden}
+.narrative-bg-layer{position:absolute;inset:0;background-size:cover;background-position:center;background-repeat:no-repeat;opacity:0;transition:opacity .75s ease,transform 8s ease;transform:scale(1.02)}
+.narrative-bg-layer.show{opacity:1;transform:scale(1)}
+.narrative-overlay::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.18) 0%,rgba(0,0,0,.16) 38%,rgba(0,0,0,.76) 78%,rgba(0,0,0,.94) 100%);pointer-events:none}
+.narrative-card{width:100%;min-height:100%;padding:0 22px 34px;position:relative;z-index:1;display:flex;flex-direction:column;justify-content:flex-end}
+.narrative-content{width:100%;max-width:560px;margin:0 auto}
 .narrative-phase-label{font-size:.72rem;letter-spacing:5px;color:var(--accent);margin-bottom:18px;opacity:.8}
-.narrative-year{font-family:var(--ff-head);font-size:clamp(4rem,12vw,7rem);line-height:1;color:var(--white);opacity:.06;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap}
-.narrative-text{font-size:clamp(1rem,3vw,1.2rem);color:var(--w90);line-height:2;font-weight:400;margin-bottom:32px;position:relative}
+.narrative-year{font-family:var(--ff-head);font-size:clamp(4rem,12vw,7rem);line-height:1;color:var(--white);opacity:.06;position:absolute;top:12%;right:8%;pointer-events:none;white-space:nowrap}
+.narrative-text{font-size:clamp(1.02rem,3.6vw,1.22rem);color:#fff;line-height:2;font-weight:700;margin-bottom:18px;position:relative;text-shadow:0 2px 10px rgba(0,0,0,.72),0 0 24px rgba(0,0,0,.55);letter-spacing:0}
 .narrative-text em{color:var(--accent2);font-style:normal;font-weight:700}
-.narrative-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px}
+.narrative-tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
 .narrative-tag{font-size:.8rem;padding:4px 14px;border-radius:20px;border:1px solid var(--border2);color:var(--w70)}
 .narrative-next{background:transparent;border:1px solid var(--border2);color:var(--w90);font-family:var(--ff-body);font-size:.96rem;padding:12px 28px;border-radius:6px;cursor:pointer;transition:all .2s}
 .narrative-next:hover{border-color:var(--accent);background:rgba(232,98,26,.08);color:var(--white)}
@@ -930,10 +934,10 @@ div[style*="CAREER TRANSLATION"] {
 
 /* ナラティブオーバーレイの改善 */
 .narrative-overlay{
-  background:linear-gradient(160deg,#0a0a18 0%,#12120a 100%)!important;
+  background:#05050c!important;
 }
 .narrative-card{
-  padding:0 8px!important;
+  padding:0 22px 34px!important;
 }
 .narrative-next{
   border-radius:8px!important;
@@ -2101,11 +2105,17 @@ function showPhase1Guide(mode){
 
 function setupPhase1Q1Guide(){
   if(G.currentPhase!==0||G.currentQ!==-1)return;
+  const screen=document.getElementById('screen-phase');
+  if(!screen||!screen.classList.contains('active')){
+    clearTimeout(window._phase1GuideTimer);
+    window._phase1GuideTimer=setTimeout(setupPhase1Q1Guide,120);
+    return;
+  }
   const body=document.getElementById('phase-body-inner');
   const block=document.getElementById('era-q1-block');
   if(!body||!block)return;
   showPhase1Guide('scroll');
-  const scrollTarget=body.scrollHeight>body.clientHeight?body:window;
+  const scrollTarget=body;
   const onScroll=()=>{
     const rect=block.getBoundingClientRect();
     if(rect.top<window.innerHeight*.78){
@@ -2275,8 +2285,6 @@ function renderEraPage(phase){
   // Q1でもVALUE METERを表示（選択結果が見えるように）
   const vmEl=document.getElementById('value-meter');
   if(vmEl){vmEl.classList.add('vm-visible');renderValueMeter(null);}
-  setupPhase1Q1Guide();
-
   // Q1選択肢をDOMで構築（innerHTML内のscriptは実行されないため）
   const q1data=(G.data.q1||[]).find(q=>q.phase_id===phase.id);
   const q1wrap=document.getElementById('era-q1-choices');
@@ -2322,6 +2330,9 @@ function renderEraPage(phase){
       };
       q1wrap.appendChild(btn);
     });
+  }
+  if(G.currentPhase===0){
+    requestAnimationFrame(()=>setTimeout(setupPhase1Q1Guide,160));
   }
 }
 
@@ -2671,6 +2682,26 @@ function pickNarrative(tag,phaseIdx){
 
 
 const NARRATIVE_TAG_LABELS={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+const NARRATIVE_BG_BASE='https://agent-network-alp.github.io/life-shift-simulator-2075/narrative_backgrounds/';
+const NARRATIVE_BG_FILES={
+  '時代背景':'era_background',
+  '個性と読み方':'personality_reading',
+  '選択の結果':'choice_result',
+  '次の問い':'next_question'
+};
+
+function getNarrativeBgUrl(phaseIdx,label){
+  const suffix=NARRATIVE_BG_FILES[label]||'era_background';
+  return `${NARRATIVE_BG_BASE}phase${phaseIdx+1}_${suffix}.png`;
+}
+
+function preloadNarrativeBackgrounds(parts){
+  (parts||[]).forEach(part=>{
+    if(!part.bgUrl)return;
+    const img=new Image();
+    img.src=part.bgUrl;
+  });
+}
 
 function getNarrativeIndustryLine(industry, phaseIdx, name){
   const ind=industry||'選んだ業種';
@@ -2783,13 +2814,14 @@ function buildNarrativeParts(phaseIdx, tag, hadEvent, eventTag){
     `${name}さんの経験は、所属を越えて誰かの判断材料になっていたのか。`,
     `2026年に戻った${name}さんは、最初の一歩として何を選ぶのか。`
   ];
-  return [
-    {label:'時代背景',text:eraLine},
-    {label:'業種の変化',text:industryLine},
-    {label:'個性と読み方',text:mbtiLine+' '+q1Line},
-    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr},
-    {label:'次の問い',text:questions[phaseIdx]}
+  const parts=[
+    {label:'時代背景',text:eraLine+'\n'+industryLine,duration:3000},
+    {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:4000},
+    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:5000},
+    {label:'次の問い',text:questions[phaseIdx],duration:3000}
   ];
+  parts.forEach(part=>{part.bgUrl=getNarrativeBgUrl(phaseIdx,part.label);});
+  return parts;
 }
 
 function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
@@ -2800,12 +2832,28 @@ function renderNarrativePart(){
   const parts=window._narrativeParts||[];
   const idx=Math.max(0,Math.min(window._narrativePartIdx||0,parts.length-1));
   const part=parts[idx]||{label:'',text:''};
+  const overlay=document.getElementById('narrative-overlay');
+  const bgA=document.getElementById('narrative-bg-a');
+  const bgB=document.getElementById('narrative-bg-b');
   const label=document.getElementById('narrative-part-label');
   const textEl=document.getElementById('narrative-text');
   const prog=document.getElementById('narrative-progress-fill');
   const count=document.getElementById('narrative-part-count');
   const btn=document.getElementById('narrative-next-btn');
   const hint=document.getElementById('narrative-hint');
+  if(bgA&&bgB&&part.bgUrl){
+    const useA=window._narrativeBgLayer!=='a';
+    const next=useA?bgA:bgB;
+    const prev=useA?bgB:bgA;
+    next.style.backgroundImage=`url("${part.bgUrl}")`;
+    next.classList.add('show');
+    prev.classList.remove('show');
+    window._narrativeBgLayer=useA?'a':'b';
+  }else if(overlay&&part.bgUrl){
+    overlay.style.backgroundImage=`linear-gradient(180deg,rgba(0,0,0,.15),rgba(0,0,0,.88)),url("${part.bgUrl}")`;
+    overlay.style.backgroundSize='cover';
+    overlay.style.backgroundPosition='center';
+  }
   if(label)label.textContent=part.label||'';
   if(textEl){
     textEl.style.animation='none';
@@ -2821,7 +2869,10 @@ function renderNarrativePart(){
 
 function scheduleNarrativePart(){
   clearTimeout(window._narAutoTimer);
-  window._narAutoTimer=setTimeout(()=>advanceNarrativePart(),7600);
+  const parts=window._narrativeParts||[];
+  const idx=Math.max(0,Math.min(window._narrativePartIdx||0,parts.length-1));
+  const dur=Number(parts[idx]?.duration)||4000;
+  window._narAutoTimer=setTimeout(()=>advanceNarrativePart(),dur);
 }
 
 function advanceNarrativePart(e){
@@ -2874,37 +2925,41 @@ function showNarrative(completedPhaseIdx, onNext){
   const ol=document.createElement('div');
   ol.className='narrative-overlay';ol.id='narrative-overlay';
   ol.innerHTML=`
-    <div class="narrative-card" style="position:relative;overflow:hidden;max-width:500px;width:100%">
+    <div id="narrative-bg-a" class="narrative-bg-layer"></div>
+    <div id="narrative-bg-b" class="narrative-bg-layer"></div>
+    <div class="narrative-card">
       <!-- 背景の年齢ウォーターマーク -->
       <div class="narrative-year">${PHASE_END_AGES[completedPhaseIdx]}</div>
-      <!-- ヘッダー -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;min-width:0">
-        <div style="font-family:var(--ff-head);font-size:clamp(2.4rem,12vw,3.2rem);color:var(--accent);line-height:1;letter-spacing:0;flex-shrink:0">${PHASE_END_AGES[completedPhaseIdx]}<span style="font-size:1.1rem;letter-spacing:0;opacity:.7">歳</span></div>
-        <div style="min-width:0;flex:1">
-          <div style="font-size:.62rem;letter-spacing:2px;color:rgba(255,255,255,.45);margin-bottom:4px;white-space:nowrap;line-height:1.2">${PHASE_YEARS[completedPhaseIdx]}</div>
-          <div style="font-size:.82rem;font-weight:700;color:var(--accent);letter-spacing:.5px;line-height:1.35">${phase?.era||''}</div>
+      <div class="narrative-content">
+        <!-- ヘッダー -->
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px;min-width:0">
+          <div style="min-width:0;flex:1">
+            <div style="font-size:.62rem;letter-spacing:2px;color:rgba(255,255,255,.58);margin-bottom:4px;white-space:nowrap;line-height:1.2;text-shadow:0 2px 8px rgba(0,0,0,.7)">${PHASE_YEARS[completedPhaseIdx]}</div>
+            <div style="font-size:.82rem;font-weight:700;color:var(--accent2);letter-spacing:.5px;line-height:1.35;text-shadow:0 2px 8px rgba(0,0,0,.7)">${phase?.era||''}</div>
+          </div>
+          <div style="font-family:var(--ff-head);font-size:clamp(2rem,10vw,2.8rem);color:rgba(255,255,255,.82);line-height:1;letter-spacing:0;flex-shrink:0;text-shadow:0 2px 10px rgba(0,0,0,.72)">${PHASE_END_AGES[completedPhaseIdx]}<span style="font-size:1rem;letter-spacing:0;opacity:.7">歳</span></div>
         </div>
+        <!-- 区切り線 -->
+        <div style="height:1px;background:linear-gradient(90deg,rgba(232,98,26,.72),transparent);margin-bottom:12px"></div>
+        <!-- 本文 -->
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px">
+          <div id="narrative-part-label" style="font-size:.68rem;letter-spacing:3px;color:var(--cyan);font-weight:700;text-shadow:0 2px 8px rgba(0,0,0,.7)"></div>
+          <div id="narrative-part-count" style="font-family:var(--ff-head);font-size:.82rem;color:rgba(255,255,255,.55);letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.7)"></div>
+        </div>
+        <div id="narrative-text" class="narrative-text"></div>
+        <!-- タグ行 -->
+        <div class="narrative-tag-row">
+          <span class="narrative-tag" style="border-color:rgba(232,98,26,.5);color:var(--accent2);background:rgba(0,0,0,.34);padding:5px 14px;border-radius:20px;font-size:.75rem;letter-spacing:1px;backdrop-filter:blur(8px)">${TL[tag]||tag}</span>
+          ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:rgba(56,189,248,.4);color:var(--cyan);background:rgba(0,0,0,.34);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px;backdrop-filter:blur(8px)">追い風あり</span>':''}
+          ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:rgba(232,98,26,.4);color:var(--accent2);background:rgba(0,0,0,.34);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px;backdrop-filter:blur(8px)">試練あり</span>':''}
+        </div>
+        <div style="height:3px;background:rgba(255,255,255,.14);border-radius:3px;overflow:hidden;margin-bottom:14px">
+          <div id="narrative-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .35s ease"></div>
+        </div>
+        <!-- スキップボタン -->
+        <button id="narrative-next-btn" class="narrative-next" onclick="advanceNarrativePart(event)" style="width:100%;text-align:center;background:rgba(0,0,0,.34);backdrop-filter:blur(8px)">次へ →</button>
+        <p id="narrative-hint" style="font-size:.68rem;color:rgba(255,255,255,.42);text-align:center;margin-top:10px;letter-spacing:2px;text-shadow:0 2px 8px rgba(0,0,0,.7)">タップで次へ</p>
       </div>
-      <!-- 区切り線 -->
-      <div style="height:1px;background:linear-gradient(90deg,rgba(232,98,26,.6),transparent);margin-bottom:22px"></div>
-      <!-- 本文 -->
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
-        <div id="narrative-part-label" style="font-size:.68rem;letter-spacing:3px;color:var(--cyan);font-weight:700"></div>
-        <div id="narrative-part-count" style="font-family:var(--ff-head);font-size:.82rem;color:rgba(255,255,255,.35);letter-spacing:2px"></div>
-      </div>
-      <div style="height:3px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:18px">
-        <div id="narrative-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .35s ease"></div>
-      </div>
-      <div id="narrative-text" class="narrative-text" style="font-size:clamp(.98rem,2.8vw,1.08rem);line-height:2.1;color:rgba(255,255,255,.88);margin-bottom:24px;min-height:9.2em;display:flex;align-items:center"></div>
-      <!-- タグ行 -->
-      <div class="narrative-tag-row" style="margin-bottom:28px">
-        <span class="narrative-tag" style="border-color:rgba(232,98,26,.5);color:var(--accent);background:rgba(232,98,26,.08);padding:5px 14px;border-radius:20px;font-size:.75rem;letter-spacing:1px">${TL[tag]||tag}</span>
-        ${hadEvent==='good'?'<span class="narrative-tag" style="border-color:rgba(56,189,248,.4);color:var(--cyan);background:rgba(56,189,248,.08);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px">✨ 追い風あり</span>':''}
-        ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:rgba(232,98,26,.4);color:var(--accent2);background:rgba(232,98,26,.06);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px">⚡ 試練あり</span>':''}
-      </div>
-      <!-- スキップボタン -->
-      <button id="narrative-next-btn" class="narrative-next" onclick="advanceNarrativePart(event)" style="width:100%;text-align:center">次へ →</button>
-      <p id="narrative-hint" style="font-size:.68rem;color:rgba(255,255,255,.2);text-align:center;margin-top:12px;letter-spacing:2px">タップで次へ</p>
     </div>`;
   document.body.appendChild(ol);
 
@@ -2912,6 +2967,8 @@ function showNarrative(completedPhaseIdx, onNext){
   window._narrativeNext=onNext;
   window._narrativeParts=narrativeParts;
   window._narrativePartIdx=0;
+  window._narrativeBgLayer=null;
+  preloadNarrativeBackgrounds(narrativeParts);
   renderNarrativePart();
   scheduleNarrativePart();
 
@@ -2976,6 +3033,7 @@ function closeNarrative(){
   window._narrativeNext=null;
   window._narrativeParts=null;
   window._narrativePartIdx=0;
+  window._narrativeBgLayer=null;
   ol.style.transition='opacity .2s ease';
   ol.style.opacity='0';
   setTimeout(()=>{ ol.remove(); if(fn) phaseTransition(fn); },200);
