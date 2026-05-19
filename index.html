@@ -2587,7 +2587,8 @@ const NARRATIVE_POOL={
 // ランダムにバリエーションを選択
 function pickNarrative(tag,phaseIdx){
   const pool=NARRATIVE_POOL[tag]?.[phaseIdx];
-  if(!pool||!pool.length)return`${PHASE_AGES[phaseIdx]}歳の私は、自分の道を選んだ。`;
+  const name=sanitizeNickname(G.nickname||'プレイヤー');
+  if(!pool||!pool.length)return`${PHASE_AGES[phaseIdx]}歳の${name}さんは、${NARRATIVE_TAG_LABELS[tag]||'自分の軸'}を手がかりに次の道を選んだ。`;
   return pool[Math.floor(Math.random()*pool.length)];
 }
 
@@ -2596,27 +2597,171 @@ function pickNarrative(tag,phaseIdx){
 // 70歳の自分からのコメンタリー（選択直後にフラッシュ表示）
 
 
-function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
+const NARRATIVE_TAG_LABELS={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+
+function getNarrativeIndustryLine(industry, phaseIdx, name){
+  const ind=industry||'選んだ業種';
+  const rules=[
+    {keys:['IT','SaaS','スタートアップ','VC'],lines:[
+      `${ind}では、AIを使えることより、顧客課題を見つけて素早く形にする力が評価され始めた。`,
+      `${ind}では、プロダクトの更新速度が上がり、学び直しの遅れがそのまま競争力の差になった。`,
+      `${ind}では、技術と事業をつなぐ人材が希少になり、${name}さんの動き方にも広がりが出た。`
+    ]},
+    {keys:['コンサル','事業開発','新規事業','総合商社'],lines:[
+      `${ind}では、正解を知っている人より、複数の情報から意思決定を組み立てる人が求められた。`,
+      `${ind}では、産業の境界が崩れるほど、構想力と実行力を行き来できる人材の価値が上がった。`,
+      `${ind}では、変化を説明するだけでなく、次に張る場所を決める力が問われるようになった。`
+    ]},
+    {keys:['教育','EdTech','研究','アカデミア'],lines:[
+      `${ind}では、知識を教えるだけでなく、人が学び続ける仕組みを設計する力が重要になった。`,
+      `${ind}では、AIが答えを出すほど、問いの立て方と学ぶ意欲を育てる仕事が残った。`,
+      `${ind}では、知見を整理し、次の世代に渡せる人材が静かに評価を高めていった。`
+    ]},
+    {keys:['医療','ヘルスケア'],lines:[
+      `${ind}では、AI診断やデータ活用が進むほど、現場の不安を受け止めて定着させる力が必要になった。`,
+      `${ind}では、効率化だけでは解けない、人の納得や安心を扱える人材が価値を持った。`,
+      `${ind}では、技術と生活の間をつなぐ役割が増え、${name}さんの判断にも重みが出てきた。`
+    ]},
+    {keys:['金融','銀行','証券','投資'],lines:[
+      `${ind}では、分析の自動化が進む一方で、リスクをどう引き受けるかを決める力が残った。`,
+      `${ind}では、数字を読むだけでなく、社会の変化を資金の流れに翻訳する人材が求められた。`,
+      `${ind}では、速い判断と慎重な検証を両立できる人が、信頼を集めるようになった。`
+    ]},
+    {keys:['メーカー','製造'],lines:[
+      `${ind}では、現場のデータ化が進み、ものづくりは経験だけでなく改善を設計する仕事に変わった。`,
+      `${ind}では、自動化された工程の外側で、品質、顧客、供給網をつなぐ判断が重要になった。`,
+      `${ind}では、技術の深さと現場理解をあわせ持つ人材が、再編の中で残っていった。`
+    ]},
+    {keys:['広告','マーケティング','メディア','エンタメ'],lines:[
+      `${ind}では、生成AIで表現量が爆発し、何を伝えるべきかを見抜く力が差になった。`,
+      `${ind}では、似た表現が増えるほど、人の感情や文脈を読める人材が強くなった。`,
+      `${ind}では、届け方だけでなく、誰のどんな変化を起こすのかが問われるようになった。`
+    ]},
+    {keys:['公共','公務員','政策'],lines:[
+      `${ind}では、制度の更新が追いつかない場面が増え、現場と社会をつなぐ調整力が必要になった。`,
+      `${ind}では、効率化よりも、公平性や納得感をどう保つかが大きなテーマになった。`,
+      `${ind}では、変化に置いていかれる人を減らす設計が、仕事の中心に近づいていった。`
+    ]}
+  ];
+  const hit=rules.find(r=>r.keys.some(k=>String(ind).includes(k)));
+  const lines=hit?hit.lines:[
+    `${ind}では、AIによる効率化が進むほど、人間が判断すべき仕事の輪郭がはっきりしていった。`,
+    `${ind}では、前例をなぞるだけでは価値を出しにくくなり、変化を読み替える力が求められた。`,
+    `${ind}では、技術の変化と人の課題をつなげる人材が、少しずつ中心に近づいていった。`
+  ];
+  return lines[Math.min(phaseIdx,lines.length-1)]||lines[0];
+}
+
+function buildNarrativeParts(phaseIdx, tag, hadEvent, eventTag){
   var q2c=G.choices[phaseIdx];
   var q1c=G.q1Choices[phaseIdx];
-  var q2text=q2c&&q2c.text?q2c.text:'';
-  var TL={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
-  var tagJP=TL[tag]||tag;
-  var ERA_CTX=['AIが仕事を書き換え始めた時代に、','AGIの予兆が広がる中で、','産業の地図が塗り替えられていく中で、','人とAIが当然のように協働する時代に、','社会の骨格そのものが変わっていく中で、','人生100年時代の後半戦が始まった今、'];
-  var eraCtx=ERA_CTX[phaseIdx]||'この時代、';
-  var q1pat=q1c&&q1c.erafit>=8?'先読みしていた':q1c&&q1c.erafit>=5?'ながらも前に進んだ':'後から気づいた';
-  var body=q2text&&q2text.length>3
-    ?eraCtx+'私は「'+q2text.trim()+'」という道を選んだ。その選択を、私は'+q1pat+'。'
-    :eraCtx+'私は'+tagJP+'の道を選んだ。その時代を、私は'+q1pat+'。';
+  var name=sanitizeNickname(G.nickname||'プレイヤー');
+  var q2text=(q2c&&(q2c.text||q2c.short||q2c.sub))?String(q2c.text||q2c.short||q2c.sub).trim():'';
+  var tagJP=NARRATIVE_TAG_LABELS[tag]||tag;
+  var industry=G.selectedIndustry||'選んだ業種';
+  var mbtiGroup=G.mbtiData?.group||'';
+  var mbtiLine={
+    '分析家':`${name}さんは、状況を感情で処理するより、構造を見つけてから動くタイプだった。`,
+    '外交官':`${name}さんは、変化の中でも、人の納得や意味を置き去りにしないタイプだった。`,
+    '番人':`${name}さんは、急な変化に流されすぎず、信頼できる土台を作ってから進むタイプだった。`,
+    '探検家':`${name}さんは、先に試し、手触りを確かめながら進路を修正していくタイプだった。`
+  }[mbtiGroup]||`${name}さんの個性は、${tagJP}という軸に強く表れていた。`;
+  var eraLine=[
+    `2025年から2030年、AIは特別な技術ではなく、日々の仕事に入り込む道具になっていった。`,
+    `2030年から2035年、AIは補助役を超え、企画、分析、設計の一部まで担い始めた。`,
+    `2035年から2045年、産業の境界は曖昧になり、ひとつの専門だけでは解けない課題が増えていった。`,
+    `2045年から2055年、人とAIが一緒に働くことは当たり前になり、成果はチームの学び方で決まるようになった。`,
+    `2055年から2065年、働く場所、学び方、所属の意味が大きく揺らぎ、キャリアは会社の中だけで完結しなくなった。`,
+    `2065年から2075年、仕事は人生の中心から少し離れ、何を残し、誰に渡すかが強く問われるようになった。`
+  ][phaseIdx]||`この時代、社会の前提は大きく変わっていった。`;
+  var industryLine=getNarrativeIndustryLine(industry,phaseIdx,name);
+  var q1Line=q1c&&q1c.erafit>=8
+    ? `${name}さんは変化の兆しを早く捉え、周囲が迷っている間に準備を始めていた。`
+    : q1c&&q1c.erafit>=5
+      ? `${name}さんの判断は遅くなかった。ただ、動き出すまでにはもう一つ確信が必要だった。`
+      : `${name}さんが変化の大きさを実感した頃には、すでに評価される力の基準が変わり始めていた。`;
+  var choiceLine=q2text
+    ? `${name}さんは「${q2text}」という選択をした。`
+    : `${name}さんは、${tagJP}を軸に次の道を選んだ。`;
+  var tagLine={
+    specialization:`その選択は、広く浅く動くより、代替されにくい専門性を深める方向へ${name}さんを進ませた。`,
+    'ai-native':`その選択は、AIを道具として使うだけでなく、仕事の組み立て方そのものを変える方向へ${name}さんを進ませた。`,
+    strategic:`その選択は、目の前の作業より、どこに賭けるかを決める立場へ${name}さんを近づけた。`,
+    independent:`その選択は、所属に守られる安心を少し手放し、自分で価値を作る方向へ${name}さんを進ませた。`,
+    'rare-combination':`その選択は、一つの肩書きに収まるより、複数の強みを掛け合わせる方向へ${name}さんを進ませた。`,
+    leadership:`その選択は、自分だけが成果を出すより、人が力を発揮できる場を作る方向へ${name}さんを進ませた。`,
+    'community-builder':`その選択は、個人の成果だけでなく、人と人のつながりから価値を生む方向へ${name}さんを進ませた。`,
+    global:`その選択は、日本の中だけで考えるより、境界を越えて機会を探す方向へ${name}さんを進ませた。`,
+    legacy:`その選択は、成果を消費して終えるより、知見を整理して残す方向へ${name}さんを進ませた。`
+  }[tag]||`その選択は、${name}さんの軸を少しずつ明確にしていった。`;
   var eventStr='';
   if(hadEvent){
     var evG=hadEvent==='good';
-    var EDB={strategic:'想定外の出来事が来た。それでも私は、全体を見る目を失わなかった。','ai-native':'時代の流れが突然変わった。私はその変化を素早く読み取った。',specialization:'嵐の中でも、私は自分の専門性という錨を手放さなかった。',independent:'予期せぬ逆風が、むしろ私の自律性を鍛えた。','rare-combination':'思わぬ壁にぶつかった。しかし掛け算の発想が活路を開いた。',leadership:'逆境の中でこそ、人を育てる覚悟が問われた。','community-builder':'試練の中で、つながりの力が私を支えた。',global:'壁が生まれた。しかし越境する理由はより鮮明になった。',legacy:'積み上げたものが揺らいだ。でも継承への意志は変わらなかった。'};
-    var EDG={strategic:'追い風が吹いた。私はその流れを逃さず次へ踏み出した。','ai-native':'変化の波が来た。準備していた私には、それがチャンスに見えた。',specialization:'時代が専門性を求め始めた。磨いてきたものが輝いた。',independent:'自律的に動いてきた積み重ねが、思わぬ機会を引き寄せた。','rare-combination':'掛け算の組み合わせが、予想外の化学反応を起こした。',leadership:'育てた人間が、予想以上の力を発揮した。','community-builder':'つながりが、新しい可能性を連れてきた。',global:'越境が、新たな世界を開いた。',legacy:'積み上げてきたものの価値が、ついに認められた。'};
-    eventStr='\n'+(evG?(EDG[eventTag]||'時代が私に微笑んだ瞬間があった。'):(EDB[eventTag]||'時代は想定通りには動かなかった。しかし、それが私を鍛えた。'));
+    var eventTagJP=NARRATIVE_TAG_LABELS[eventTag]||tagJP;
+    eventStr=evG
+      ? `\nさらに、${eventTagJP}に関わる追い風が吹いた。${name}さんはその機会を、偶然ではなく次の一手につなげた。`
+      : `\n一方で、${eventTagJP}に関わる逆風も起きた。${name}さんは計画の修正を迫られたが、その過程で何を守るべきかを絞り込んでいった。`;
   }
-  var RIS=['その選択は、恐怖から来ていたか。確信から来ていたか。','あなたのスキルは、変容する側だったか。消える側だったか。','人が減った社会で、あなたは何をする人間だったか。','あなたには、AIが立てられない問いがあったか。','言語の壁が消えた世界で、あなたに残るものは何だったか。','この50年で、あなたは何を残したか。'];
-  return body+eventStr+'\n\n'+(RIS[phaseIdx]||'あなたはその選択を、恐怖から選んだか。確信から選んだか。');
+  var questions=[
+    `${industry}で働く${name}さんにとって、AIに任せず自分で判断すべき仕事は何だったのか。`,
+    `${name}さんは、慣れた役割を守るのか、変化の中心で専門性を作り直すのか。`,
+    `${name}さんの${tagJP}は、誰のどんな課題を解くために使われるべきだったのか。`,
+    `${name}さんは、自分の成果を増やすだけでなく、周囲が成果を出せる場を作れたのか。`,
+    `${name}さんの経験は、所属を越えて誰かの判断材料になっていたのか。`,
+    `2026年に戻った${name}さんは、最初の一歩として何を選ぶのか。`
+  ];
+  return [
+    {label:'時代背景',text:eraLine},
+    {label:'業種の変化',text:industryLine},
+    {label:'個性と読み方',text:mbtiLine+' '+q1Line},
+    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr},
+    {label:'次の問い',text:questions[phaseIdx]}
+  ];
+}
+
+function buildNarrativeText(phaseIdx, tag, hadEvent, eventTag){
+  return buildNarrativeParts(phaseIdx,tag,hadEvent,eventTag).map(p=>p.text).join('\n\n');
+}
+
+function renderNarrativePart(){
+  const parts=window._narrativeParts||[];
+  const idx=Math.max(0,Math.min(window._narrativePartIdx||0,parts.length-1));
+  const part=parts[idx]||{label:'',text:''};
+  const label=document.getElementById('narrative-part-label');
+  const textEl=document.getElementById('narrative-text');
+  const prog=document.getElementById('narrative-progress-fill');
+  const count=document.getElementById('narrative-part-count');
+  const btn=document.getElementById('narrative-next-btn');
+  const hint=document.getElementById('narrative-hint');
+  if(label)label.textContent=part.label||'';
+  if(textEl){
+    textEl.style.animation='none';
+    textEl.offsetHeight;
+    textEl.innerHTML=escHtml(part.text||'').replace(/\n/g,'<br>');
+    textEl.style.animation='';
+  }
+  if(prog)prog.style.width=parts.length?(((idx+1)/parts.length)*100)+'%':'0%';
+  if(count)count.textContent=(idx+1)+' / '+parts.length;
+  if(btn)btn.textContent=idx>=parts.length-1?'次のフェーズへ →':'次へ →';
+  if(hint)hint.textContent=idx>=parts.length-1?'タップで次のフェーズへ':'タップで次へ';
+}
+
+function scheduleNarrativePart(){
+  clearTimeout(window._narAutoTimer);
+  window._narAutoTimer=setTimeout(()=>advanceNarrativePart(),7600);
+}
+
+function advanceNarrativePart(e){
+  if(e){e.preventDefault();e.stopPropagation();}
+  const parts=window._narrativeParts||[];
+  const idx=window._narrativePartIdx||0;
+  if(idx>=parts.length-1){
+    closeNarrative();
+    return;
+  }
+  window._narrativePartIdx=idx+1;
+  renderNarrativePart();
+  scheduleNarrativePart();
 }
 
 
@@ -2637,7 +2782,8 @@ function showNarrative(completedPhaseIdx, onNext){
   const hadEvent=ev?(ev.corr&&ev.corr>0?'good':'bad'):bonusEv?'good':null;
   const eventTag=ev?.tag||bonusEv?.tag||null;
 
-  const text=buildNarrativeText(completedPhaseIdx,tag,hadEvent,eventTag);
+  const narrativeParts=buildNarrativeParts(completedPhaseIdx,tag,hadEvent,eventTag);
+  const text=narrativeParts.map(p=>p.text).join('\n\n');
 
   // 蓄積
   G.narratives[completedPhaseIdx]={
@@ -2669,7 +2815,14 @@ function showNarrative(completedPhaseIdx, onNext){
       <!-- 区切り線 -->
       <div style="height:1px;background:linear-gradient(90deg,rgba(232,98,26,.6),transparent);margin-bottom:22px"></div>
       <!-- 本文 -->
-      <div class="narrative-text" style="font-size:clamp(.98rem,2.8vw,1.08rem);line-height:2.1;color:rgba(255,255,255,.88);margin-bottom:24px">${text.replace(/\n\n/g,'</p><p style="margin-top:18px">').replace(/\n/g,'<br>')}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px">
+        <div id="narrative-part-label" style="font-size:.68rem;letter-spacing:3px;color:var(--cyan);font-weight:700"></div>
+        <div id="narrative-part-count" style="font-family:var(--ff-head);font-size:.82rem;color:rgba(255,255,255,.35);letter-spacing:2px"></div>
+      </div>
+      <div style="height:3px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;margin-bottom:18px">
+        <div id="narrative-progress-fill" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .35s ease"></div>
+      </div>
+      <div id="narrative-text" class="narrative-text" style="font-size:clamp(.98rem,2.8vw,1.08rem);line-height:2.1;color:rgba(255,255,255,.88);margin-bottom:24px;min-height:9.2em;display:flex;align-items:center"></div>
       <!-- タグ行 -->
       <div class="narrative-tag-row" style="margin-bottom:28px">
         <span class="narrative-tag" style="border-color:rgba(232,98,26,.5);color:var(--accent);background:rgba(232,98,26,.08);padding:5px 14px;border-radius:20px;font-size:.75rem;letter-spacing:1px">${TL[tag]||tag}</span>
@@ -2677,41 +2830,22 @@ function showNarrative(completedPhaseIdx, onNext){
         ${hadEvent==='bad'?'<span class="narrative-tag" style="border-color:rgba(232,98,26,.4);color:var(--accent2);background:rgba(232,98,26,.06);padding:5px 14px;border-radius:20px;font-size:.75rem;margin-left:8px">⚡ 試練あり</span>':''}
       </div>
       <!-- スキップボタン -->
-      <button class="narrative-next" onclick="closeNarrative()" style="width:100%;text-align:center">次のフェーズへ →</button>
-      <p style="font-size:.68rem;color:rgba(255,255,255,.2);text-align:center;margin-top:12px;letter-spacing:2px">タップで進む</p>
+      <button id="narrative-next-btn" class="narrative-next" onclick="advanceNarrativePart(event)" style="width:100%;text-align:center">次へ →</button>
+      <p id="narrative-hint" style="font-size:.68rem;color:rgba(255,255,255,.2);text-align:center;margin-top:12px;letter-spacing:2px">タップで次へ</p>
     </div>`;
   document.body.appendChild(ol);
 
   // onNextをコールバックとして保存
   window._narrativeNext=onNext;
+  window._narrativeParts=narrativeParts;
+  window._narrativePartIdx=0;
+  renderNarrativePart();
+  scheduleNarrativePart();
 
-  // 3秒後に自動進行（スワイプ・タップでスキップ可）
-  const _narAuto=setTimeout(()=>{
-    const el=document.getElementById('narrative-overlay');
-    if(el){
-      el.style.opacity='0';
-      setTimeout(()=>{
-        el.remove();
-        if(window._narrativeNext){
-          const fn=window._narrativeNext;
-          window._narrativeNext=null;
-          phaseTransition(fn);
-        }
-      },300);
-    }
-  },5000);
-  window._narAutoTimer=_narAuto;
-
-  // スワイプ上 / タップで即スキップ（ボタン経由はcloseNarrativeに任せる）
+  // タップで次のパートへ
   ol.addEventListener('click',(e)=>{
     if(e.target.closest('.narrative-next')) return;
-    clearTimeout(window._narAutoTimer);
-    // 即座にコールバックを回収してダブルコールを防止
-    const fn=window._narrativeNext;
-    window._narrativeNext=null;
-    ol.style.transition='opacity .15s ease';
-    ol.style.opacity='0';
-    setTimeout(()=>{ ol.remove(); if(fn) phaseTransition(fn); },150);
+    advanceNarrativePart(e);
   });
 }
 
@@ -2767,6 +2901,8 @@ function closeNarrative(){
   // 即座にコールバックを回収してダブルコールを防止（バブリング対策）
   const fn=window._narrativeNext;
   window._narrativeNext=null;
+  window._narrativeParts=null;
+  window._narrativePartIdx=0;
   ol.style.transition='opacity .2s ease';
   ol.style.opacity='0';
   setTimeout(()=>{ ol.remove(); if(fn) phaseTransition(fn); },200);
@@ -3556,7 +3692,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
   const TJPM={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
   const phaseChoiceLog=G.tags.map((tag,i)=>{
     const q1l=G.q1Choices[i];const q2l=G.choices[i];const sl=(G.styleLog||[])[i]||{};
-    const q1label=q1l?.erafit>=8?'先読み':q1l?.erafit>=5?'様子見':'後追い';
+    const q1label=q1l?.erafit>=8?'先読み':q1l?.erafit>=5?'様子見':'基準変化後に対応';
     const q2txt=q2l?.text?`「${q2l.text.slice(0,25)}」`:'';
     return `${PHASE_AGE_LBL[i]||'P'+(i+1)}：${TJPM[tag]||tag}${q2txt} Q1=${q1label} WHY=${sl.why||''} HOW=${sl.how||''}`;
   }).join('\n  ');
@@ -3571,6 +3707,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
 
 【就活生データ】
 名前: ${G.nickname} / MBTI: ${G.mbtiType||'不明'}（${mbtiData?.label||''}）${cogFn}
+選択業種: ${G.selectedIndustry||industryList}
 選択の流れ: ${phaseChoiceLog}
 動機軸: ${{'resolver':'解決者型','contributor':'貢献者型','ownership':'オーナー型'}[G.dominantWhy]||''} / 行動: ${{'visionary':'長期設計','pragmatic':'現実実行','relational':'関係構築','disruptive':'常識破壊'}[G.dominantHow]||''}
 スコア: ${score}点（${tierLabel}）
@@ -3579,10 +3716,11 @@ AI類型: ${aiTypeLabel}（${aiStanceType}）
 
 【生成ルール】
 1. 各フェーズで選択したこと（ログの「」内テキスト）を物語の核心として使え。抽象的な言い換えをせず、その具体的な言葉を文脈に落とし込め。
-1b. MBTI（${G.mbtiType||'不明'}）ならではの内的葛藤と、AI類型（${aiTypeLabel}）に合うAIとの関わり方を各フェーズに描く。
+1b. 選択業種（${G.selectedIndustry||industryList}）でAI化・産業再編がどう起きたかを必ず1箇所入れる。
+1c. MBTI（${G.mbtiType||'不明'}）ならではの内的葛藤と、AI類型（${aiTypeLabel}）に合うAIとの関わり方を各フェーズに描く。
 2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
-3. Q1認識パターンを反映（先読み→「変化を先読みしていた」/様子見→「ためらいながら」/後追い→「気づいたのは後からだった」）
-4. 各80〜100字、完全な一人称過去形
+3. Q1認識パターンを反映。ただし「あとから気づいた」「気づいたのは後からだった」という定型句は禁止。基準が変わった、判断が遅れた、準備が足りなかった等、毎回違う表現にする。
+4. 「あなた」「私」は使わず、必ず「${G.nickname}さん」を主語にする。各80〜110字、三人称の過去形。
 
 {"myStory":["20〜25歳（AI実装期）のナラティブ","25〜30歳（AGI移行期）のナラティブ","30〜40歳（産業再編期）のナラティブ","40〜50歳（人機協働成熟期）のナラティブ","50〜60歳（社会構造変容期）のナラティブ","60〜70歳（ポスト労働期）のナラティブ"]}`;
 
@@ -3928,8 +4066,9 @@ function buildChoiceRecapHtml(phaseIdx){
 function buildPreviewStory(narratives, domTag, TL){
   const tags=narratives.map(n=>n.tag).filter(Boolean);
   const dominant=domTag;
+  const name=sanitizeNickname(G.nickname||'プレイヤー');
 
-  const opening=`20歳から50年間、私は${TL[dominant]||dominant}という軸を核に、6つの時代の岐路を歩んできた。`;
+  const opening=`20歳から50年間、${name}さんは${TL[dominant]||dominant}という軸を核に、6つの時代の岐路を歩んできた。`;
 
   const phaseBlocks=narratives.map((n,i)=>{
     const short=n.text.split('\n')[0].slice(0,80);
@@ -3938,8 +4077,8 @@ function buildPreviewStory(narratives, domTag, TL){
 
   const tagSet=[...new Set(tags)];
   const closing=tagSet.length>=2
-    ? `振り返れば、${tagSet.map(t=>TL[t]||t).join('と')}が交差した50年だった。この旅が終わって、2026年に戻ってきた今——次の選択は、あなた自身が決める。`
-    : `振り返れば、${TL[tags[0]]||tags[0]||'自分の軸'}を磨き続けた50年だった。この旅が終わって、2026年に戻ってきた今——次の選択は、あなた自身が決める。`;
+    ? `振り返れば、${tagSet.map(t=>TL[t]||t).join('と')}が交差した50年だった。この旅が終わって、2026年に戻ってきた今——${name}さんの次の選択が、ここからの現実を動かしていく。`
+    : `振り返れば、${TL[tags[0]]||tags[0]||'自分の軸'}を磨き続けた50年だった。この旅が終わって、2026年に戻ってきた今——${name}さんの次の選択が、ここからの現実を動かしていく。`;
 
   return `<div style="font-size:.9rem;color:var(--w90);line-height:2.1">
     <p style="margin-bottom:16px">${opening}</p>
