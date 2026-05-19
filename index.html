@@ -780,6 +780,7 @@ div[style*="CAREER TRANSLATION"] {
 
 @media(max-width:480px){
   .phase-body{padding:14px 14px 36px}
+  #screen-start .onboard-title{font-size:clamp(3.6rem,15vw,6.3rem)}
   .era-stats-grid{grid-template-columns:1fr}
   .radar-wrap{height:220px}
   .industry-bar-name{width:118px;font-size:.84rem}
@@ -948,6 +949,25 @@ div[style*="CAREER TRANSLATION"] {
   transform:scale(.97)!important;
   transition:all .08s!important;
 }
+@media(hover:none){
+  .choice2-btn:hover{
+    border-color:#E5E7EB;
+    background:#fff;
+    transform:none;
+    box-shadow:0 1px 4px rgba(0,0,0,.06);
+  }
+  .choice4-btn:hover{
+    border-color:#E5E7EB!important;
+    background:#fff!important;
+    transform:none!important;
+    box-shadow:0 1px 4px rgba(0,0,0,.06)!important;
+  }
+  .choice2-btn.selected,
+  .choice4-btn.selected{
+    border-color:var(--accent)!important;
+    background:rgba(232,98,26,.08)!important;
+  }
+}
 </style>
 </head>
 <body>
@@ -988,14 +1008,14 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <p class="onboard-hint" style="font-size:.94rem;color:rgba(255,255,255,.7);margin-bottom:10px;letter-spacing:.5px">▼ ニックネームを入力してスタート</p>
-    <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20">
+    <input class="input-box" id="nickname-input" type="text" placeholder="ニックネームを入力" maxlength="20" oninput="updateStartBtn()">
 
     <!-- 個人情報同意 -->
     <div style="background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin:14px 0 20px;text-align:left">
       <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer">
         <input type="checkbox" id="privacy-check" onchange="updateStartBtn()" style="width:16px;height:16px;margin-top:2px;accent-color:var(--accent);flex-shrink:0">
         <span style="font-size:.88rem;color:var(--w70);line-height:1.7">
-          <a href="https://agent-network.co.jp/privacy-policy/" target="_blank" rel="noopener"
+          <a href="https://agent-network.com/policy/" target="_blank" rel="noopener"
              style="color:var(--cyan);text-decoration:underline">プライバシーポリシー</a>に同意します。<br>
           <span style="font-size:.8rem;color:var(--w40)">収集情報：ニックネーム・MBTI・選択内容・スコア。利用目的：サービス改善・統計分析のみ。第三者提供なし。</span>
         </span>
@@ -1651,13 +1671,15 @@ function showScreen(id){
 // ── START ────────────────────────────────────────────────────────
 function updateStartBtn(){
   const checked=document.getElementById('privacy-check')?.checked;
+  const hasNickname=!!document.getElementById('nickname-input')?.value.trim();
   const btn=document.getElementById('start-btn');
-  if(btn){btn.disabled=!checked;btn.style.opacity=checked?'1':'.35';}
+  if(btn){btn.disabled=!(checked&&hasNickname);btn.style.opacity=(checked&&hasNickname)?'1':'.35';}
 }
 
 function goStart(){
   const raw=document.getElementById('nickname-input');
   if(!raw||!raw.value.trim()){if(raw)raw.focus();return;}
+  if(!document.getElementById('privacy-check')?.checked){updateStartBtn();return;}
   G.nickname=sanitizeNickname(raw.value.trim());
   G.sessionId=crypto.randomUUID();
   showScreen('screen-intro');
@@ -1725,6 +1747,7 @@ const OBQ=[
 
 function renderOb(){
   const s=G.obStep,q=OBQ[s];
+  G.obSelectionLocked=false;
   document.getElementById('ob-step-label').textContent=`STEP ${s+2} / 6`;
   document.getElementById('ob-progress').style.width=`${((s+1)/6)*100}%`;
   document.getElementById('ob-eyebrow').textContent=q.ey;
@@ -1743,8 +1766,11 @@ function renderOb(){
 }
 
 function selectOb(val,btn){
+  if(G.obSelectionLocked)return;
+  G.obSelectionLocked=true;
   document.querySelectorAll('.choice2-btn').forEach(b=>b.classList.remove('selected'));
   btn.classList.add('selected');
+  document.querySelectorAll('.choice2-btn').forEach(b=>{if(b!==btn)b.disabled=true;});
   Object.assign(G.profile,val);
   setTimeout(()=>{
     G.obStep++;
@@ -2177,6 +2203,7 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
   ];
 
   const wrap=document.getElementById('choices4');
+  let selectionLocked=false;
   choiceData.forEach((ch,idx)=>{
     const btn=document.createElement('button');
     btn.className='choice4-btn';
@@ -2194,12 +2221,14 @@ function buildQPage(qNum, qLabel, questionText, choiceData, onSelect){
     if(ch.tag){
       btn.addEventListener('mouseenter',()=>renderValueMeter(ch.tag));
       btn.addEventListener('mouseleave',()=>renderValueMeter(null));
-      btn.addEventListener('touchstart',()=>renderValueMeter(ch.tag),{passive:true});
     }
 
     btn.onclick=()=>{
+      if(selectionLocked)return;
+      selectionLocked=true;
       document.querySelectorAll('.choice4-btn').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
+      document.querySelectorAll('.choice4-btn').forEach(b=>{if(b!==btn)b.disabled=true;});
       if(navigator.vibrate) navigator.vibrate(30);
       if(ch.tag){
         applyValueMeterChoice(ch.tag);
