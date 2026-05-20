@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html><!-- LSS2075 build:20260520-b2 -->
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -2988,9 +2988,9 @@ function buildNarrativeParts(phaseIdx, tag, hadEvent, eventTag){
   ]:qBase;
 
   const parts=[
-    {label:'時代背景',text:eraLine+'\n'+industryLine,duration:4000},
-    {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:5000},
-    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:6000},
+    {label:'時代背景',text:eraLine+'\n'+industryLine,duration:6000},
+    {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:6000},
+    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:7000},
     {label:'次の問い',text:qAlt[phaseIdx]||qBase[phaseIdx],duration:4000}
   ];
   parts.forEach(part=>{part.bgUrl=getNarrativeBgUrl(phaseIdx,part.label);});
@@ -4407,7 +4407,8 @@ function buildChoiceRecapHtml(phaseIdx){
   const q2Html=q2
     ? '<div>Q2 <strong>'+escHtml(q2.label||'-')+'</strong>：'+escHtml(q2Text||'選択内容を記録中')+'</div>'
     : '<div>Q2：選択内容を記録中</div>';
-  return '<div class="story-choice-recap"><strong>あなたの選択</strong>'+q1Html+q2Html+'</div>';
+  const phaseLabel='Phase '+(phaseIdx+1);
+  return '<div class="story-choice-recap"><strong>'+phaseLabel+' あなたの選択</strong>'+q1Html+q2Html+'</div>';
 }
 
 
