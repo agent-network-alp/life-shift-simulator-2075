@@ -55,6 +55,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--ff-body);min-heig
 .top-bar{width:100%;background:rgba(10,10,10,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
 .top-bar-inner{display:flex;align-items:center;padding:0 20px;height:50px}
 .top-logo{font-family:var(--ff-head);font-size:.95rem;letter-spacing:4px;color:var(--accent)}
+.top-step{font-size:.82rem;color:var(--w70);letter-spacing:1px;margin-left:auto}
 .top-phase-info{display:flex;align-items:center;gap:10px;margin-left:auto;flex-wrap:wrap}
 .top-phase-badge{font-family:var(--ff-head);font-size:.94rem;letter-spacing:2px;color:var(--white);background:var(--card2);padding:4px 10px;border-radius:3px;border:1px solid var(--border)}
 .top-era-name{font-size:.8rem;color:var(--accent2);letter-spacing:1px}
@@ -948,12 +949,16 @@ div[style*="CAREER TRANSLATION"] {
 
 /* phase-dot改善 */
 .phase-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:rgba(255,255,255,.22);
   transition:all .4s cubic-bezier(.34,1.56,.64,1)!important;
 }
 .phase-dot.active{
+  background:var(--accent);
   transform:scale(1.4)!important;
 }
 .phase-dot.done{
+  background:rgba(232,98,26,.6);
   transform:scale(1)!important;
 }
 
@@ -1052,7 +1057,7 @@ div[style*="CAREER TRANSLATION"] {
     </div>
 
     <button class="btn-primary" id="start-btn" onclick="goStart()" disabled style="opacity:.35;width:100%">はじめる →</button>
-    <p id="app-version" style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2025.05.16-y</p>
+    <p id="app-version" style="margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.25);text-align:center;letter-spacing:2px">v2026.05.20-b</p>
   </div>
 </div>
 
@@ -1683,21 +1688,19 @@ async function init(){
   // ENTERキー対応
   document.addEventListener('keydown',e=>{
     if(e.key==='Enter'){
+      const cur=document.querySelector('.screen.active');
       if(e.target&&e.target.id==='nickname-input'){
         e.preventDefault();
         e.stopImmediatePropagation();
-        updateStartBtn();
-        showScreen('screen-start');
-        document.getElementById('nickname-input')?.focus();
+        const btn=document.getElementById('start-btn');
+        if(btn&&!btn.disabled) goStart();
         return false;
       }
-      const cur=document.querySelector('.screen.active');
       if(cur?.id==='screen-start'){
         e.preventDefault();
         e.stopImmediatePropagation();
-        showScreen('screen-start');
-        updateStartBtn();
-        document.getElementById('nickname-input')?.focus();
+        const btn=document.getElementById('start-btn');
+        if(btn&&!btn.disabled) goStart();
         return false;
       }
     }
@@ -1722,12 +1725,8 @@ function showScreen(id){
 function updateAppVersion(){
   const el=document.getElementById('app-version');
   if(!el)return;
-  const d=new Date(document.lastModified);
-  if(Number.isNaN(d.getTime()))return;
-  const y=d.getFullYear();
-  const m=String(d.getMonth()+1).padStart(2,'0');
-  const day=String(d.getDate()).padStart(2,'0');
-  el.textContent=`v${y}.${m}.${day}`;
+  // リリース日を固定（document.lastModifiedはサーバー環境で不安定なため）
+  el.textContent='v2026.05.20-b';
 }
 
 // ── START ────────────────────────────────────────────────────────
@@ -2761,64 +2760,238 @@ function buildNarrativeParts(phaseIdx, tag, hadEvent, eventTag){
   var q1c=G.q1Choices[phaseIdx];
   var name=sanitizeNickname(G.nickname||'プレイヤー');
   var q2text=(q2c&&(q2c.text||q2c.short||q2c.sub))?String(q2c.text||q2c.short||q2c.sub).trim():'';
+  var q2label=(q2c&&q2c.label)?String(q2c.label):'';
   var tagJP=NARRATIVE_TAG_LABELS[tag]||tag;
   var industry=G.selectedIndustry||'選んだ業種';
   var mbtiGroup=G.mbtiData?.group||'';
-  var mbtiLine={
-    '分析家':`${name}さんは、状況を感情で処理するより、構造を見つけてから動くタイプだった。`,
-    '外交官':`${name}さんは、変化の中でも、人の納得や意味を置き去りにしないタイプだった。`,
-    '番人':`${name}さんは、急な変化に流されすぎず、信頼できる土台を作ってから進むタイプだった。`,
-    '探検家':`${name}さんは、先に試し、手触りを確かめながら進路を修正していくタイプだった。`
-  }[mbtiGroup]||`${name}さんの個性は、${tagJP}という軸に強く表れていた。`;
-  var eraLine=[
-    `2025年から2030年、AIは特別な技術ではなく、日々の仕事に入り込む道具になっていった。`,
-    `2030年から2035年、AIは補助役を超え、企画、分析、設計の一部まで担い始めた。`,
-    `2035年から2045年、産業の境界は曖昧になり、ひとつの専門だけでは解けない課題が増えていった。`,
-    `2045年から2055年、人とAIが一緒に働くことは当たり前になり、成果はチームの学び方で決まるようになった。`,
-    `2055年から2065年、働く場所、学び方、所属の意味が大きく揺らぎ、キャリアは会社の中だけで完結しなくなった。`,
-    `2065年から2075年、仕事は人生の中心から少し離れ、何を残し、誰に渡すかが強く問われるようになった。`
-  ][phaseIdx]||`この時代、社会の前提は大きく変わっていった。`;
+  var q1erafit=q1c?.erafit??5;
+  // フェーズ×タグ×Q2ラベルの組み合わせで変化パターンを決定（同条件で同じ変化）
+  var seed=(phaseIdx*31+(tag.charCodeAt(0)||0)*7+(q2label.charCodeAt(0)||0)*3)%3;
+
+  // ── eraLine：フェーズ固定・業種連動・3バリエーション
+  var eraVars=[
+    [
+      `2025年から2030年、AIは特定の職種だけの話ではなくなっていた。${industry}でも、仕事の入口と出口の形が静かに変わり始めた。`,
+      `2025年から2030年、ツールとしてのAIが日常に溶け込んだ時代。${industry}では、誰もが同じ道具を使えるからこそ、使い方の差が人の差になっていった。`,
+      `2025年から2030年、AIが手放した仕事と、AIでは埋まらない仕事の輪郭がはっきりし始めた。${industry}でも、求められる力の定義が書き換えられた。`
+    ],[
+      `2030年から2035年、AIは助言者の域を超えた。${industry}では、意思決定の補助だけでなく、提案そのものをAIが担うケースが増えた。`,
+      `2030年から2035年、業務の自動化が進んだことで、${industry}では人間に残された仕事の質と責任が一段と重くなった。`,
+      `2030年から2035年、AGIへの移行が議論される時代。${industry}でも「AIにできること」の境界が、毎年のように動いた。`
+    ],[
+      `2035年から2045年、産業の境界線が溶けた10年間。${industry}は隣接する領域と融合し始め、専門の枠だけで動ける人と越えられる人の差が広がった。`,
+      `2035年から2045年、ひとつの肩書きでは語れないキャリアが当たり前になった。${industry}でも、複数の視点と技術を組み合わせられる人材が中心に動いていた。`,
+      `2035年から2045年、産業再編の波が${industry}にも押し寄せた10年。生き残った仕事には共通点があった——AIが補えない判断と、人間同士の信頼だった。`
+    ],[
+      `2045年から2055年、人とAIが協働する体制が「普通」になった時代。${industry}では、AIの能力を引き出しながら人間の価値を上乗せできる人材が評価された。`,
+      `2045年から2055年、チームにAIが当然のように加わる時代。${industry}では、誰と組むかだけでなく、何と組むかが成果を左右した。`,
+      `2045年から2055年、人機協働が成熟した時代。${industry}でも、AIとの役割分担を自分で設計できる人間が、組織を引っ張っていった。`
+    ],[
+      `2055年から2065年、キャリアの意味が揺らいだ時代。${industry}でも、会社に所属することの意味と、個人として積み上げるものの関係が問い直された。`,
+      `2055年から2065年、働き方の多様化が加速した時代。${industry}では、どこで働くかより、何を残せるかが評価の軸になっていた。`,
+      `2055年から2065年、社会変容の中で個人の役割が問われた時代。${industry}でも、継続するより変化し続けることが最大の専門性になっていた。`
+    ],[
+      `2065年から2075年、仕事は人生の一部として再定義された時代。${industry}でも、成果を出すことより、何を次に渡せるかが最後の問いになっていた。`,
+      `2065年から2075年、キャリアの集大成を問われる時代。${industry}での経験が、後進や社会へどんな形で続くかが、最も重い選択だった。`,
+      `2065年から2075年、ポスト労働期とも呼ばれた時代。${industry}に関わり続けながら、${name}さんは何を残し、何を手放すかを選んだ。`
+    ]
+  ];
+  var eraLine=(eraVars[phaseIdx]||eraVars[0])[seed];
   var industryLine=getNarrativeIndustryLine(industry,phaseIdx,name);
-  var q1Line=q1c&&q1c.erafit>=8
-    ? `${name}さんは変化の兆しを早く捉え、周囲が迷っている間に準備を始めていた。`
-    : q1c&&q1c.erafit>=5
-      ? `${name}さんの判断は遅くなかった。ただ、動き出すまでにはもう一つ確信が必要だった。`
-      : `${name}さんが変化の大きさを実感した頃には、すでに評価される力の基準が変わり始めていた。`;
-  var choiceLine=q2text
-    ? `${name}さんは「${q2text}」という選択をした。`
-    : `${name}さんは、${tagJP}を軸に次の道を選んだ。`;
-  var tagLine={
-    specialization:`その選択は、広く浅く動くより、代替されにくい専門性を深める方向へ${name}さんを進ませた。`,
-    'ai-native':`その選択は、AIを道具として使うだけでなく、仕事の組み立て方そのものを変える方向へ${name}さんを進ませた。`,
-    strategic:`その選択は、目の前の作業より、どこに賭けるかを決める立場へ${name}さんを近づけた。`,
-    independent:`その選択は、所属に守られる安心を少し手放し、自分で価値を作る方向へ${name}さんを進ませた。`,
-    'rare-combination':`その選択は、一つの肩書きに収まるより、複数の強みを掛け合わせる方向へ${name}さんを進ませた。`,
-    leadership:`その選択は、自分だけが成果を出すより、人が力を発揮できる場を作る方向へ${name}さんを進ませた。`,
-    'community-builder':`その選択は、個人の成果だけでなく、人と人のつながりから価値を生む方向へ${name}さんを進ませた。`,
-    global:`その選択は、日本の中だけで考えるより、境界を越えて機会を探す方向へ${name}さんを進ませた。`,
-    legacy:`その選択は、成果を消費して終えるより、知見を整理して残す方向へ${name}さんを進ませた。`
-  }[tag]||`その選択は、${name}さんの軸を少しずつ明確にしていった。`;
+
+  // ── mbtiLine：グループ×フェーズ段階×seed で変化
+  var mbtiVars={
+    '分析家':[
+      [`${name}さんは、状況が変わるたびに構造から読み解くことで方向感を保ってきた。`,`${name}さんは、感情より論理を先に動かすタイプだった。それがこの時代では強みになっていた。`,`${name}さんにとって、変化は感じるものより分析するものだった。その習慣が積み上がっていた。`],
+      [`${name}さんは、周囲が直感で動く場面でも、一拍おいて仮説を立ててから進んでいた。`,`${name}さんの強みは「なぜ」を追いかけ続けることだった。答えが変わっても、問いは揺れなかった。`,`${name}さんは、混乱した時代でも「現在地を正確に知る」ことを怠らなかった。`],
+      [`${name}さんは、先の読めない時代でも、因果を辿ることで次の手を見つけていた。`,`論理を積み上げることに迷いがない${name}さんには、AIが出せない判断の土台があった。`,`${name}さんは、全体の構造を先に見てから動くタイプ。その視点は混乱した局面で際立っていた。`]
+    ],
+    '外交官':[
+      [`${name}さんは、変化の中でも、人が取り残されないよう目を配ることをやめなかった。`,`${name}さんにとって、成果よりも意味が先にあった。それがこの時代では、稀有な視点になっていた。`,`${name}さんは、納得できない変化に対して、人の気持ちを代弁する役割を自然に担っていた。`],
+      [`${name}さんは、ビジョンを語ることで、まわりが動き出せる空気を作ってきた。`,`共感することが得意な${name}さんは、AIが扱えない「人の心の変化」を読み続けていた。`,`${name}さんは、正しいことより人が信じられることを選ぶ場面で、迷わなかった。`],
+      [`${name}さんの動き方は、結果より関係性を優先するように見えた。しかしそれが長く機能した。`,`${name}さんは、価値観を言語化する力を、どの変化の中でも手放さなかった。`,`変化が人を置き去りにしがちな時代に、${name}さんは人の側に立ち続けた。`]
+    ],
+    '番人':[
+      [`${name}さんは、急いで動くより、信頼できる土台を固めてから進むことを選んできた。`,`${name}さんにとって、変化とは脅威より点検の機会だった。その姿勢が周囲の安心を作っていた。`,`${name}さんは、揺れる時代でも「自分がやるべきことを変えない」という判断を貫いていた。`],
+      [`${name}さんは、確実に積み上げることへの自信を、どの時代でも持ち続けていた。`,`責任を取ることを恐れない${name}さんには、変化の中でも頼る人が集まった。`,`${name}さんは、スピードより精度を選ぶ場面で、ぶれなかった。その蓄積が強みになった。`],
+      [`変化に流されすぎない${name}さんは、激動の中でも「変えてはいけないもの」を守り続けた。`,`${name}さんにとって、継続は美徳ではなく戦略だった。それがこの時代で証明されつつあった。`,`${name}さんは、あえて動かないことで価値を作ることができた。そのセンスは、希少だった。`]
+    ],
+    '探検家':[
+      [`${name}さんは、先に動いて手触りを確かめ、それから方向を修正するタイプだった。`,`${name}さんにとって、計画より実験が先だった。その動き方が、変化の速い時代と噛み合っていた。`,`${name}さんは、型から外れることへの抵抗が薄かった。その柔軟さが、何度もターニングポイントを作った。`],
+      [`${name}さんは、状況が変わるたびに面白がれる気質を持っていた。それが最大の武器になっていた。`,`変化を問題より機会として捉えられる${name}さんには、周囲が気づかない入口が見えていた。`,`${name}さんは、現場の感覚を信じることで、データだけでは見えない判断をしてきた。`],
+      [`${name}さんは、考え続けるより動き出すことで、答えを見つけるタイプだった。`,`${name}さんの強みは「正解より速度」の時代に、存分に発揮されていた。`,`試行錯誤を厭わない${name}さんには、積み上げてきた「失敗の経験値」があった。`]
+    ]
+  };
+  var mbtiVSet=mbtiVars[mbtiGroup];
+  var mbtiLine=mbtiVSet
+    ? mbtiVSet[Math.min(Math.floor(phaseIdx/2),2)][seed]
+    : `${name}さんの個性は、${tagJP}という選択に一貫して滲んでいた。`;
+
+  // ── q1Line：erafit×フェーズ×seed で変化
+  var q1Vars={
+    high:[
+      `${name}さんは、変化の波が来る前に準備を始めていた。周囲が迷っている間の動きが、のちに差を生んだ。`,
+      `${name}さんは時代の文脈を早く掴んでいた。その読みが、選択に迷いのなさをもたらした。`,
+      `変化の先を見る目を、${name}さんはこの時期すでに持っていた。それが次のフェーズを有利にした。`,
+      `${name}さんには、流れが変わる前を察知する感度があった。その感覚は、次第に信頼になっていった。`,
+      `準備が早かったぶん、${name}さんには選択肢があった。変化を「脅威」ではなく「起点」にする余地だった。`,
+      `${name}さんは波に乗った。ただし、乗れたのは乗る準備をしていたからだった。`
+    ],
+    mid:[
+      `${name}さんの判断は速くも遅くもなかった。しかし、動き出してからは迷わなかった。`,
+      `${name}さんは様子を見ながら動いた。慎重さと決断の間で、自分なりの着地点を作っていた。`,
+      `周囲と同じタイミングで動いた${name}さんには、比較できる経験値が生まれた。`,
+      `${name}さんは、全員が動いてから動いたわけではない。確信を得てから動いた。`,
+      `状況を見極めながら動いた${name}さんの判断は、結果的に無駄のない選択だった。`,
+      `${name}さんは、周囲に合わせるのではなく、自分の納得のタイミングで選んだ。`
+    ],
+    low:[
+      `${name}さんが変化の大きさを実感した頃、評価される力の基準はすでに書き換えられていた。`,
+      `後から振り返ると、あの時期がターニングポイントだったと${name}さんは気づくことになった。`,
+      `${name}さんには、動き出す前に必要な「最後の一押し」があった。その分、スタートは遅れた。`,
+      `変化への対応が遅れた経験は、次のフェーズで${name}さんをより注意深くさせた。`,
+      `${name}さんにとって、あの選択の遅れは苦い記憶だったかもしれない。しかし、それが次への問いを深めた。`,
+      `時代の変化に準備が追いつかなかった。ただ、その経験が${name}さんをより鋭くしていった。`
+    ]
+  };
+  var q1key=q1erafit>=8?'high':q1erafit>=5?'mid':'low';
+  var q1pool=q1Vars[q1key];
+  var q1Line=q1pool[(phaseIdx*3+seed)%q1pool.length];
+
+  // ── choiceLine：Q2テキストを深く反映・3パターン
+  var choiceVars=q2text?[
+    `${name}さんは「${q2text}」を選んだ。それは、あの時点での自分の優先順位を、そのまま形にした答えだった。`,
+    `「${q2text}」——${name}さんが選んだのは、正解かどうかより、自分が信じられる方向だった。`,
+    `あの場面で${name}さんは「${q2text}」に踏み出した。迷いが残っていても、選んだことが次を作った。`
+  ]:[
+    `${name}さんは、${tagJP}という方向に向かって、次の一歩を選んだ。`,
+    `${name}さんは、いくつかの選択肢の中から、${tagJP}に連なる道を取った。`,
+    `${name}さんはこの局面で、${tagJP}を軸に置いたまま進むことを選んだ。`
+  ];
+  var choiceLine=choiceVars[seed];
+
+  // ── tagLine：タグ×フェーズ段階で変化（6バリエーション）
+  var tagVars={
+    specialization:[
+      `その選択は、広く浅く動くより、AIに代替されにくい深さを作る方向へ向かっていた。`,
+      `時代が変わるたびに、${name}さんは専門性をさらに掘り下げることで応答した。`,
+      `専門を深めるという選択は、孤独な道に見えた。しかし、その深さがやがて希少価値になっていった。`,
+      `${name}さんは、流行に乗るより「自分だけが持てるもの」を育てることを選び続けた。`,
+      `${name}さんが積み上げてきた専門性は、時代が揺れるほど、光を帯びていった。`,
+      `表面的な変化に惑わされず、${name}さんは深みを保つことに価値を見出し続けた。`
+    ],
+    'ai-native':[
+      `その選択は、AIを道具として使うだけでなく、仕事の設計そのものを変える方向だった。`,
+      `${name}さんは、AIを怖れるでも崇めるでもなく、「共に使いこなすもの」として扱い始めた。`,
+      `AIと人間の役割分担を、${name}さんは自分で設計することを選んだ。`,
+      `AIネイティブとして動く${name}さんには、ツールを使う速度より「何に使うか」の判断があった。`,
+      `${name}さんは、AIが変える世界を受け入れながら、人間にしかできない部分を鮮明にしていった。`,
+      `変化の中でAIを味方にした${name}さんの判断は、次第に自分のスタイルとして定着していった。`
+    ],
+    strategic:[
+      `その選択は、目の前の作業より「どこに賭けるか」を決める立場へ近づくものだった。`,
+      `${name}さんは、動くより先に「何のために動くか」を問う癖を持っていた。`,
+      `全体を見てから動くという${name}さんのスタイルは、複雑な時代で際立っていた。`,
+      `${name}さんは、プレイヤーとして動くより、ゲームを設計する側を目指していた。`,
+      `状況を俯瞰して整理できる${name}さんには、混乱した局面で頼られる場面が増えた。`,
+      `意思決定の上流に立つことを選んだ${name}さんの判断は、この時代と噛み合っていた。`
+    ],
+    independent:[
+      `その選択は、所属に守られる安心を手放し、自分の力で立つ方向へ向かっていた。`,
+      `${name}さんは、誰かの庇護より、自分の判断を信じることを優先してきた。`,
+      `組織の枠を越えようとする${name}さんには、リスクと自由が常に隣り合っていた。`,
+      `${name}さんは、自由を得るために必要なリスクを、あえて取ることにした。`,
+      `独立した動き方を選ぶ${name}さんには、組織では作れない種類の信頼が育っていた。`,
+      `${name}さんは、所属よりも成果の中身で価値を示すことを選び続けた。`
+    ],
+    'rare-combination':[
+      `その選択は、一つの肩書きに収まるより、複数の強みを掛け合わせる方向だった。`,
+      `${name}さんは、一分野の専門家より「誰も持っていない組み合わせ」を育てようとしていた。`,
+      `二つの世界を知る${name}さんには、どちらか一方の人には見えない景色があった。`,
+      `掛け算が機能するまでには時間がかかった。しかし${name}さんは、その過程を諦めなかった。`,
+      `${name}さんの希少性は、深さではなく、組み合わせから生まれていた。`,
+      `異なる領域をつなぐ${name}さんの動き方は、時代が進むほど求められるようになっていった。`
+    ],
+    leadership:[
+      `その選択は、自分だけが成果を出すより、人が力を発揮できる場を作る方向だった。`,
+      `${name}さんは、自分が動くより人が動ける環境を整えることに価値を置いていた。`,
+      `誰かの成長を喜べる${name}さんには、育てることへの本質的な関心があった。`,
+      `${name}さんは、リーダーシップを「引っ張る力」ではなく「引き出す力」として使っていた。`,
+      `人を育てることを選んだ${name}さんには、自分の成功より大きな達成感があった。`,
+      `${name}さんの動き方は、チームの可能性を最大化することに向いていた。`
+    ],
+    'community-builder':[
+      `その選択は、個人の成果だけでなく、人と人のつながりから価値を生む方向だった。`,
+      `${name}さんには、人を結びつけることに、特別な喜びがあった。`,
+      `コミュニティを作る力を持つ${name}さんには、AIが代替できない何かがあった。`,
+      `${name}さんは、つながりを作ることで、一人では届かない場所に影響を与え始めた。`,
+      `${name}さんのネットワークは、戦略で作ったものではなかった。信頼の積み重ねだった。`,
+      `人と人を結ぶことを選んだ${name}さんには、孤立した専門家にはない強みがあった。`
+    ],
+    global:[
+      `その選択は、日本の中だけで考えるより、境界を越えて機会を探す方向だった。`,
+      `${name}さんは、国内の常識が通じない場所に出ることで、自分の価値を客観視した。`,
+      `グローバルに動く${name}さんには、一つの文化の中だけでは生まれない視点があった。`,
+      `${name}さんは、言語や文化の壁を越えることを、不便より学びとして受け取っていた。`,
+      `世界の中に自分の立ち位置を探した${name}さんには、独自の参照点が育っていた。`,
+      `${name}さんは、境界を越えることで、国内にいるだけでは見えない需要を掴んでいった。`
+    ],
+    legacy:[
+      `その選択は、成果を消費して終えるより、知見を整理して残す方向だった。`,
+      `${name}さんは、経験を自分の中に留めるより、形にして渡すことを選んでいた。`,
+      `残すものを意識し始めた${name}さんには、日々の仕事の意味が少し変わっていた。`,
+      `${name}さんは、今の成果より、後に残るものの方に目が向くようになっていた。`,
+      `知見を継承することを選んだ${name}さんには、時間の使い方が変わっていった。`,
+      `${name}さんが蓄積してきたものは、この時期から「渡せるもの」として形を持ち始めた。`
+    ]
+  };
+  var tpool=tagVars[tag];
+  var tagLine=tpool
+    ? tpool[(phaseIdx*2+seed)%tpool.length]
+    : `その選択は、${name}さんの軸をより鮮明にしていった。`;
+
+  // ── eventStr：3パターン
   var eventStr='';
   if(hadEvent){
     var evG=hadEvent==='good';
     var eventTagJP=NARRATIVE_TAG_LABELS[eventTag]||tagJP;
-    eventStr=evG
-      ? `\nさらに、${eventTagJP}に関わる追い風が吹いた。${name}さんはその機会を、偶然ではなく次の一手につなげた。`
-      : `\n一方で、${eventTagJP}に関わる逆風も起きた。${name}さんは計画の修正を迫られたが、その過程で何を守るべきかを絞り込んでいった。`;
+    var goodEvts=[
+      `\nさらに、${eventTagJP}に関わる追い風が吹いた。${name}さんはその機会を、偶然ではなく次の一手につなげた。`,
+      `\nこの時期、${eventTagJP}に関連する好機が訪れた。準備していた${name}さんには、受け取れる状態があった。`,
+      `\n想定外の吉報が届いた。${eventTagJP}という軸で動いてきた${name}さんには、そのチャンスを活かす文脈があった。`
+    ];
+    var badEvts=[
+      `\n一方で、${eventTagJP}に関わる逆風も起きた。${name}さんは計画の修正を迫られたが、その過程で何を守るべきかを絞り込んでいった。`,
+      `\nこの時期、${eventTagJP}に関連する予期しない困難があった。${name}さんはその経験から、次の判断材料を取り出した。`,
+      `\n想定外の試練が重なった。しかし${name}さんは、その重さの中から、捨てていいものと守るべきものを見分けた。`
+    ];
+    var evIdx=(phaseIdx+seed)%3;
+    eventStr=evG?goodEvts[evIdx]:badEvts[evIdx];
   }
-  var questions=[
-    `${industry}で働く${name}さんにとって、AIに任せず自分で判断すべき仕事は何だったのか。`,
+
+  // ── questions：Q2テキスト反映版と通常版
+  var qBase=[
+    `${industry}で働く${name}さんにとって、AIに任せず自分で判断すべき仕事は何か。`,
     `${name}さんは、慣れた役割を守るのか、変化の中心で専門性を作り直すのか。`,
-    `${name}さんの${tagJP}は、誰のどんな課題を解くために使われるべきだったのか。`,
-    `${name}さんは、自分の成果を増やすだけでなく、周囲が成果を出せる場を作れたのか。`,
-    `${name}さんの経験は、所属を越えて誰かの判断材料になっていたのか。`,
+    `${name}さんの${tagJP}は、誰のどんな課題を解くために使われるべきか。`,
+    `${name}さんは、自分の成果を増やすだけでなく、周囲が成果を出せる場を作れるか。`,
+    `${name}さんの経験は、所属を越えて誰かの判断材料になっているか。`,
     `2026年に戻った${name}さんは、最初の一歩として何を選ぶのか。`
   ];
+  var qAlt=q2text?[
+    `「${q2text.slice(0,20)}」を選んだ${name}さん。その判断を、次の10年でどう証明するか。`,
+    `${name}さんが「${q2text.slice(0,18)}」に踏み出した理由を、言葉にできるか。`,
+    `「${q2text.slice(0,20)}」という選択は、${name}さんのどんな価値観から来たのか。`,
+    `${name}さんが選んだ道は、10年後の自分に何を残すか。`,
+    `「${q2text.slice(0,18)}」——その選択を後悔しないために、${name}さんは何を積み上げるか。`,
+    `2026年に戻った${name}さんに、50年後の自分は何を伝えるか。`
+  ]:qBase;
+
   const parts=[
-    {label:'時代背景',text:eraLine+'\n'+industryLine,duration:3000},
-    {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:4000},
-    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:5000},
-    {label:'次の問い',text:questions[phaseIdx],duration:4000}
+    {label:'時代背景',text:eraLine+'\n'+industryLine,duration:4000},
+    {label:'個性と読み方',text:mbtiLine+' '+q1Line,duration:5000},
+    {label:'選択の結果',text:choiceLine+' '+tagLine+eventStr,duration:6000},
+    {label:'次の問い',text:qAlt[phaseIdx]||qBase[phaseIdx],duration:4000}
   ];
   parts.forEach(part=>{part.bgUrl=getNarrativeBgUrl(phaseIdx,part.label);});
   return parts;
@@ -3636,18 +3809,18 @@ async function showResult(){
         const el=document.getElementById('story-50years');
         if(el){
           const story=aiResult.myStory;
-          // 6フェーズ分揃っているか確認。不足分はフォールバックで補完
-          // AI生成が揃っているか確認（1件以上ある場合は表示）
-          // AI生成story：配列・オブジェクト({時代名:テキスト})両対応
           let storyArr=Array.isArray(story)?story:Object.values(story||{});
-          const validStories=storyArr.filter(s=>s&&String(s).trim().length>10);
-          console.log('MY STORY: AI生成 '+validStories.length+'/6フェーズ');
+          const validCount=storyArr.filter(s=>s&&String(s).trim().length>10).length;
+          console.log('MY STORY: AI生成 '+validCount+'/6フェーズ');
+          // {text, isAI} 形式で組み立て — AI失敗分は茶色フォントのフォールバックで補完
           const fullStory=G.narratives.map((n,i)=>{
             const aiText=storyArr[i];
-            if(aiText&&String(aiText).trim().length>10) return String(aiText).trim();
-            // フォールバック：ゲーム中に生成したナラティブを使用
+            if(aiText&&String(aiText).trim().length>10){
+              return {text:String(aiText).trim(), isAI:true};
+            }
+            // フォールバック：ゲーム中に生成したナラティブ本文（茶色で表示）
             const fallback=(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
-            return fallback.length>10?fallback:'（この時代の物語を紡いでいます）';
+            return {text:fallback.length>10?fallback:'（この時代の物語を紡いでいます）', isAI:false};
           });
           el.innerHTML=buildAIStory50(fullStory, G.narratives);
         }
@@ -3729,6 +3902,17 @@ async function showResult(){
     console.warn('Gemini生成エラー（フォールバック継続）:', e);
     // Gemini失敗時もフォールバックで就活ワンシートを表示
     renderJobSheet(score,tier.label,domTag,indScores,null);
+    // MY STORYも茶色フォールバックで表示
+    if(storyEl){
+      const el=document.getElementById('story-50years');
+      if(el){
+        const fbStory=G.narratives.map(n=>({
+          text:(n.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim()||'（この時代の物語）',
+          isAI:false
+        }));
+        el.innerHTML=buildAIStory50(fbStory, G.narratives);
+      }
+    }
     // AI生成失敗 → バッジ削除
     document.getElementById('story-ai-badge')?.remove();
   }
@@ -3834,26 +4018,59 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     '番人':'Si/Fe（記憶・調和）','探検家':'Se/Ti（現場感覚・分析）'
   }[mbtiData.group]||''}`:'' ;
 
-  const promptStory=`キャリア診断AIです。日本語JSONのみ返答。
+  // ━━━ MY STORY プロンプト：全フェーズ俯瞰型（影響関数を明示）
+  // ゲーム全体の選択ログを構造化して渡す
+  const PHASE_AGE_LBL2=['20〜25歳','25〜30歳','30〜40歳','40〜50歳','50〜60歳','60〜70歳'];
+  const TJPM2={specialization:'専門特化','ai-native':'AI活用',strategic:'意思決定',independent:'独立','rare-combination':'掛け算',leadership:'育成','community-builder':'コミュニティ',global:'グローバル',legacy:'知見継承'};
+  const Q1_LABEL=['先読み','様子見','後追い'];
+  // 全フェーズの選択を1つの構造化ログにまとめる
+  const fullLog=G.tags.map((tag,i)=>{
+    const q1l=G.q1Choices[i];
+    const q2l=G.choices[i];
+    const q3l=G.q3Choices[i]||'';
+    const sl=(G.styleLog||[])[i]||{};
+    const q1v=q1l?.erafit>=8?'先読み':q1l?.erafit>=5?'様子見':'後追い';
+    const q2txt=q2l?.text?`「${q2l.text.slice(0,30)}」`:(q2l?.short?`「${q2l.short}」`:'（選択なし）');
+    const evPhase=G.eventChoices.filter(e=>e.phaseIdx===i);
+    const evStr=evPhase.length?(evPhase[0].corr>0?'追い風':'逆風'):'なし';
+    return `P${i+1}(${PHASE_AGE_LBL2[i]}) タグ:${TJPM2[tag]||tag} Q1認識:${q1v} Q2選択:${q2txt} Q3投資:${q3l||'未記録'} イベント:${evStr}`;
+  }).join('
+');
 
-【就活生データ】
-名前: ${G.nickname} / MBTI: ${G.mbtiType||'不明'}（${mbtiData?.label||''}）${cogFn}
-選択業種: ${G.selectedIndustry||industryList}
-選択の流れ: ${phaseChoiceLog}
-動機軸: ${{'resolver':'解決者型','contributor':'貢献者型','ownership':'オーナー型'}[G.dominantWhy]||''} / 行動: ${{'visionary':'長期設計','pragmatic':'現実実行','relational':'関係構築','disruptive':'常識破壊'}[G.dominantHow]||''}
-スコア: ${score}点（${tierLabel}）
-AI類型: ${aiTypeLabel}（${aiStanceType}）
-問いの力: ${nVal}
+  // 影響関数として渡す個人特性
+  const mbtiInfluence=mbtiData
+    ? `MBTI: ${G.mbtiType}(${mbtiData.label}/${mbtiData.group||''}) 認知傾向: ${{分析家:'論理・構造思考型',外交官:'共感・ビジョン型',番人:'責任・安定型',探検家:'行動・適応型'}[mbtiData.group]||''}`
+    : 'MBTI: 未設定';
+  const industryInfluence=`選択業種: ${G.selectedIndustry||top3[0]?.name||'不明'}（AI化・産業再編が最も影響する領域）`;
+  const scoreInfluence=`スコア: ${score}点(${tierLabel}) / AI類型: ${aiTypeLabel} / 問いの力: ${nVal}`;
+  const tagFlow=`キャリア軸の変遷: ${G.tags.map(t=>TJPM2[t]||t).join(' → ')}`;
 
-【生成ルール】
-1. 各フェーズで選択したこと（ログの「」内テキスト）を物語の核心として使え。抽象的な言い換えをせず、その具体的な言葉を文脈に落とし込め。
-1b. 選択業種（${G.selectedIndustry||industryList}）でAI化・産業再編がどう起きたかを必ず1箇所入れる。
-1c. MBTI（${G.mbtiType||'不明'}）ならではの内的葛藤と、AI類型（${aiTypeLabel}）に合うAIとの関わり方を各フェーズに描く。
-2. 前フェーズの選択が次フェーズに影響する「因果の糸」を1フェーズに1箇所織り込む
-3. Q1認識パターンを反映。ただし「あとから気づいた」「気づいたのは後からだった」という定型句は禁止。基準が変わった、判断が遅れた、準備が足りなかった等、毎回違う表現にする。
-4. 「あなた」「私」は使わず、必ず「${G.nickname}さん」を主語にする。各80〜110字、三人称の過去形。
+  const promptStory=`あなたはキャリア診断AIです。日本語JSONのみ返答してください。
 
-{"myStory":["20〜25歳（AI実装期）のナラティブ","25〜30歳（AGI移行期）のナラティブ","30〜40歳（産業再編期）のナラティブ","40〜50歳（人機協働成熟期）のナラティブ","50〜60歳（社会構造変容期）のナラティブ","60〜70歳（ポスト労働期）のナラティブ"]}`;
+## 就活生の50年分の選択ログ（全6フェーズ）
+${fullLog}
+
+## 個人特性（影響関数）
+${mbtiInfluence}
+${industryInfluence}
+${scoreInfluence}
+${tagFlow}
+名前: ${G.nickname}さん
+
+## 生成指示
+上記の【全6フェーズのログ】を俯瞰し、50年のキャリアを一本の物語として振り返るMY STORYを生成してください。
+
+### 必須ルール
+1. **個別化**: 各フェーズのQ2選択テキスト（「」内）を必ず文中に組み込む。抽象化しない。
+2. **因果の連鎖**: 前フェーズの選択が次フェーズにどう影響したかを1箇所以上明示。
+3. **MBTI反映**: ${mbtiData?.group||''}型の内的葛藤や判断スタイルを各フェーズに自然に描く。
+4. **業種反映**: ${G.selectedIndustry||top3[0]?.name||'選んだ業種'}でのAI化・産業変化を最低2フェーズで具体的に描く。
+5. **Q1認識反映**: 「先読み/様子見/後追い」を毎回異なる表現で。定型句禁止。
+6. **主語**: 必ず「${G.nickname}さん」。「あなた」「私」禁止。三人称過去形。
+7. **字数**: 各フェーズ80〜120字。長すぎず、短すぎず。
+8. **切れ禁止**: 必ず6要素全てを完全な文で生成すること。
+
+{"myStory":["20〜25歳のナラティブ","25〜30歳のナラティブ","30〜40歳のナラティブ","40〜50歳のナラティブ","50〜60歳のナラティブ","60〜70歳のナラティブ"]}`;
 
   // ━━━ リクエスト②：業種・自己PR・アクション（まとめて軽量に）
   // 就活軸生成のための3要素を構造化してプロンプトに渡す
@@ -3953,13 +4170,14 @@ Q3投資傾向: ${q3Top||'スキル'}
   };
 
   try{
-    // ━━ Req①：MY STORY（6フェーズ分の長文生成のためトークン数を多めに確保）
-    let storyResult = await callGAS(promptStory, 4200);
+    // ━━ Req①：MY STORY（全フェーズ俯瞰型・トークン6000確保）
+    let storyResult = await callGAS(promptStory, 6000);
+    // フォールバック用：ゲーム中ナラティブ本文を文字列で保持
     const fallbackStories=(G.narratives||[]).map((n,i)=>{
       const fallback=(n?.text||'').replace(/<[^>]+>/g,'').replace(/\n/g,' ').trim();
       return fallback.length>10?fallback:`PHASE ${i+1}での選択をもとに、この時代のキャリアを振り返ります。`;
     });
-    // 6要素に満たない場合は、エラーメッセージではなくゲーム中のナラティブで補完
+    // 6要素に満たない場合は、ナラティブ本文で補完（isAI:falseは呼び出し元でマーク）
     if(storyResult?.myStory){
       const stories = Array.isArray(storyResult.myStory) ? storyResult.myStory : Object.values(storyResult.myStory||{});
       storyResult.myStory = fallbackStories.map((fb,i)=>{
@@ -4246,16 +4464,25 @@ function emphasisStoryText(text){
 }
 
 // AI生成6フェーズを1本の流れるストーリーに統合
+// storyArr: [{text, isAI}] の配列
 function buildAIStory50(storyArr, narratives){
   if(!storyArr||!storyArr.length)return'';
 
   const connectors=['','——やがて、','それから、','そして、','歳月が流れ、','最後の章に、'];
 
-  const paragraphs=storyArr.map((text,i)=>{
+  const paragraphs=storyArr.map((item,i)=>{
     const conn=i===0?'':connectors[i]||'';
-    // 強調自動処理
-    const emphasized=emphasisStoryText(text);
-    return `<div style="margin-bottom:20px"><p style="margin-bottom:0">${conn}${emphasized}</p>${buildChoiceRecapHtml(i)}</div>`;
+    // {text, isAI} 形式と後方互換のため文字列もサポート
+    const rawText=typeof item==='string'?item:(item?.text||'');
+    const isAI=typeof item==='string'?true:(item?.isAI!==false);
+    const emphasized=emphasisStoryText(rawText);
+    // フォールバック（ナラティブ本文）は暖色の茶色で表示
+    const textStyle=isAI
+      ? 'margin-bottom:0'
+      : 'margin-bottom:0;color:#7c4c1e;font-style:italic';
+    const fallbackNote=isAI?''
+      : '<span style="font-size:.68rem;color:#a0714a;letter-spacing:1px;margin-left:6px;opacity:.8">（ゲーム中のナラティブより）</span>';
+    return `<div style="margin-bottom:20px"><p style="${textStyle}">${conn}${emphasized}${fallbackNote}</p>${buildChoiceRecapHtml(i)}</div>`;
   });
 
   return `<div style="font-size:.9rem;line-height:2.1">
