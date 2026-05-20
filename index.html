@@ -4034,8 +4034,7 @@ async function generateWithGemini(score, tierLabel, domTag, top3){
     const evPhase=G.eventChoices.filter(e=>e.phaseIdx===i);
     const evStr=evPhase.length?(evPhase[0].corr>0?'追い風':'逆風'):'なし';
     return `P${i+1}(${PHASE_AGE_LBL2[i]}) タグ:${TJPM2[tag]||tag} Q1認識:${q1v} Q2選択:${q2txt} Q3投資:${q3l||'未記録'} イベント:${evStr}`;
-  }).join('
-');
+  }).join('\n');
 
   // 影響関数として渡す個人特性
   const mbtiInfluence=mbtiData
